@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TerminalWindow from '../components/TerminalWindow.astro';
 import TypeWriter from '../components/TypeWriter.astro';
-import { MODULES } from '../data/modules';
+import { MODULES, MODE_LABEL } from '../data/modules';
 import { withBase } from '../lib/urls';
 
 const lessons = await getCollection('lessons');
@@ -44,10 +44,34 @@ const heroLines = [
     </TerminalWindow>
   </section>
 
+  <section class="container start-here">
+    <h2 class="sh-title">从哪里开始？—— 三种学法，选一个</h2>
+    <div class="start-grid">
+      <a class="start-card card" href={withBase('/modules/software/workbuddy/')}>
+        <span class="sc-icon mono" aria-hidden="true">🚀</span>
+        <h3 class="sc-t">我要直接上手一个工具</h3>
+        <p class="sc-d">WorkBuddy 手把手六课，今天学今天用。<span class="sc-tag mono">最推荐</span></p>
+      </a>
+      <a class="start-card card" href={withBase('/modules/creation/task-library/')}>
+        <span class="sc-icon mono" aria-hidden="true">🎯</span>
+        <h3 class="sc-t">我想解决一个具体问题</h3>
+        <p class="sc-d">课堂不生动？重复劳动多？去任务库按目标挑任务。</p>
+      </a>
+      <a class="start-card card" href={withBase('/path/')}>
+        <span class="sc-icon mono" aria-hidden="true">🗺</span>
+        <h3 class="sc-t">我想系统学一遍</h3>
+        <p class="sc-d">跟学习路线图走，从认知到做出作品，一站一站来。</p>
+      </a>
+    </div>
+  </section>
+
   <section class="container" id="modules">
     <header class="sec-head">
-      <h2 class="sec-title">课程模块 <span class="mono sec-code">// modules</span></h2>
-      <p class="sec-sub text-muted">按「六大应用方向 + 认知入门」组织，顺序学习或按需跳转都可以。</p>
+      <h2 class="sec-title">全部课程模块 <span class="mono sec-code">// 按需查阅</span></h2>
+      <p class="sec-sub text-muted">
+        不知道点哪个？用上面的「三种学法」。下面是完整内容仓库：
+        <b>按顺序学</b> 的模块适合从头到尾；<b>按需查阅</b> 的模块像字典，遇到问题再来查。
+      </p>
     </header>
     <div class="module-grid">
       {MODULES.map((m) => {
@@ -60,6 +84,7 @@ const heroLines = [
             </div>
             <h3 class="mc-title">{m.title}</h3>
             <p class="mc-sub">{m.subtitle}</p>
+            <span class="mc-mode" style={`color:${m.accent};border-color:${m.accent}55`}>{MODE_LABEL[m.mode]}</span>
             <div class="mc-foot">
               <span class="mc-count mono">{c.total} 课</span>
               <div class="mc-bar" role="img" aria-label={`${m.title}学习进度`}>
@@ -92,6 +117,16 @@ const heroLines = [
   .hero-gold { color: var(--gold); }
   .hero-sub { margin: 0 0 26px; color: var(--text-muted); max-width: 560px; }
   .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .start-here { margin-top: 52px; }
+  .sh-title { font-size: 20px; margin: 0 0 16px; color: #ffd34d; }
+  .start-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .start-card { padding: 20px 22px; color: var(--text); display: flex; flex-direction: column; gap: 6px; }
+  .start-card:hover { text-decoration: none; }
+  .sc-icon { font-size: 22px; }
+  .sc-t { margin: 0; font-size: 17px; }
+  .sc-d { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.7; }
+  .sc-tag { font-size: 11px; color: #2a1c00; background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+            border-radius: 4px; padding: 1px 8px; margin-left: 6px; font-weight: 700; }
   .sec-head { margin: 64px 0 24px; }
   .sec-title { margin: 0 0 6px; font-size: clamp(22px, 3vw, 30px); }
   .sec-code { font-size: 14px; color: var(--text-faint); font-weight: 400; }
@@ -107,7 +142,11 @@ const heroLines = [
   .mc-icon { font-size: 22px; font-family: var(--mono); }
   .mc-code { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; }
   .mc-title { margin: 0; font-size: 19px; }
-  .mc-sub { margin: 0; font-size: 13.5px; color: var(--text-muted); flex: 1; }
+  .mc-sub { margin: 0 0 8px; font-size: 13.5px; color: var(--text-muted); flex: 1; }
+  .mc-mode {
+    align-self: flex-start; font-size: 11.5px; padding: 1px 9px; border-radius: 4px;
+    border: 1px solid; opacity: .9;
+  }
   .mc-foot { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
   .mc-count { font-size: 12px; color: var(--text-faint); }
   .mc-bar { flex: 1; height: 6px; background: var(--bg-deep); border-radius: 3px; overflow: hidden; border: 1px solid var(--line); }

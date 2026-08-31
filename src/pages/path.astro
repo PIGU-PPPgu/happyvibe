@@ -24,7 +24,9 @@ const totalStations = stations.length;
       <p class="path-kicker mono">// GROWTH PATH · 源自培训成长路径图</p>
       <h1 class="path-title">七站，从「会用」到「形成成果」</h1>
       <p class="path-sub text-muted">
-        逐渐熟悉如何更好地「人机协同」，从而多一种解决教育问题的能力。每一站都对应站内课程，学完可标记已学。
+        <b style="color:var(--gold-soft)">不用纠结先学哪个：</b>
+        路线图就是<b style="color:var(--gold-soft)">推荐的学习顺序</b>——从第 1 站开始，一站一站往下走；
+        每一站里标出的课程，学完自动进入下一站。首页的模块库是「内容仓库」，路线图是「导游」。
       </p>
     </TerminalWindow>
 
@@ -55,6 +57,14 @@ const totalStations = stations.length;
         </li>
       ))}
     </ol>
+
+    <div class="path-finish card">
+      <div>
+        <p class="pf-title mono">// ALL STATIONS CLEARED</p>
+        <p class="pf-text">走完七站？去 <a href={withBase('/modules/creation/task-library/')}>任务库</a> 挑一个真实任务练手——把学会的东西立刻变成作品。</p>
+      </div>
+      <a class="btn btn-gold" href={withBase('/modules/creation/task-library/')}>去任务库 →</a>
+    </div>
   </div>
 </BaseLayout>
 
@@ -63,6 +73,12 @@ const totalStations = stations.length;
   .path-kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
   .path-title { margin: 0 0 10px; font-size: clamp(24px, 4vw, 36px); }
   .path-sub { margin: 0; max-width: 620px; }
+  .path-finish {
+    margin-top: 36px; padding: 24px 28px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .pf-title { font-size: 12px; color: var(--gold); letter-spacing: .12em; margin: 0 0 6px; }
+  .pf-text { margin: 0; max-width: 520px; }
   .stations {
     list-style: none;
     margin: 40px 0 0;
