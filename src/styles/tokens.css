@@ -46,6 +46,45 @@
   --glow-purple: 0 0 28px rgba(166, 61, 151, 0.28);
   --glow-gold: 0 0 20px rgba(254, 179, 0, 0.2);
   --scan: rgba(166, 61, 151, 0.05);
+
+  /* 组件级 */
+  --header-bg: rgba(15, 10, 25, 0.82);
+  --overlay-bg: rgba(10, 6, 18, 0.72);
+  --terminal-bg: rgba(15, 10, 25, 0.92);
+}
+
+/* ---------- 浅色主题（html[data-theme='light']） ---------- */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f7f4fb;
+  --bg-deep: #eeeaf5;
+  --bg-panel: #ffffff;
+  --bg-panel-2: #f3eefb;
+  --bg-inset: #faf8fd;
+
+  --purple: #750f6d;
+  --purple-bright: #8a2f7d;
+  --purple-soft: #8a2f7d;
+  --gold: #b8860b;
+  --gold-soft: #9c7516;
+  --gold-dim: #8a6a1f;
+
+  --text: #241a33;
+  --text-muted: #5e5275;
+  --text-faint: #8b80a3;
+  --line: rgba(90, 50, 120, 0.16);
+  --line-strong: rgba(90, 50, 120, 0.32);
+  --line-gold: rgba(160, 110, 10, 0.45);
+
+  --shadow: 0 10px 30px rgba(80, 40, 110, 0.12);
+  --glow-purple: 0 0 24px rgba(138, 47, 125, 0.14);
+  --glow-gold: 0 0 16px rgba(184, 134, 11, 0.16);
+  --scan: rgba(117, 15, 109, 0.035);
+
+  --header-bg: rgba(255, 255, 255, 0.86);
+  --overlay-bg: rgba(40, 30, 60, 0.4);
+  --terminal-bg: #ffffff;
 }
 
 /* ---------- Reset ---------- */
