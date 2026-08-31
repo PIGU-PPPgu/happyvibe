@@ -23,6 +23,8 @@ status: ready
 
 ![魔法关键词对照手册](/images/lessons/keyword-handbook.webp)
 
+完整的分类触发词词典（8 大类 + 必会 20 词 + 常用组合）见下一课 [AI 触发词速查表](/modules/creation/trigger-words/)。
+
 ## 怎么积累自己的关键词库
 
 1. **看到好的作品就问 AI**：「这个页面用了什么布局和设计关键词？」——把它变成你的词库；

@@ -1,7 +1,7 @@
 ---
 title: 用 HTML 解题：最快见效的练手项目
 module: creation
-order: 5
+order: 6
 description: 把一道中考题变成可交互的解析页面、把随机吐槽做成抽签系统——单文件 HTML 是教师 Vibe Coding 的最佳起点。
 source: 道远 PPT S19、S22-S24
 status: ready

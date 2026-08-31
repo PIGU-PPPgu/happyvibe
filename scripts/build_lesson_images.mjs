@@ -13,7 +13,6 @@ const OUT = 'public/images/lessons';
 // [源文件, 输出名, 可选裁剪 {top,bottom}] crop 为保留区间的像素 y 范围
 const MAP = [
   // M0 basics —— 手绘漫画（安全）
-  ['s002-01.png', 'comics-lazy.png'],
   ['s004-01.png', 'comics-involution.png'],
   // M1 agent
   ['s042-03.png', 'agent-qna-to-flow.png'],

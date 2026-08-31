@@ -10,7 +10,7 @@ interface Props {
   description?: string;
 }
 
-const { title, description = '集团教师 AI 赋能学习站 · 学会「偷懒」= 减负增效' } = Astro.props;
+const { title, description = '集团教师 AI 赋能学习站 · 用好 AI，减负增效' } = Astro.props;
 const pageTitle = title ? `${title} · HappyVibe 数智学园` : 'HappyVibe 数智学园 · 集团教师 AI 赋能学习站';
 
 const lessons = (await getCollection('lessons')).sort(
