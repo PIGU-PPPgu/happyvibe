@@ -1,0 +1,50 @@
+---
+interface Props {
+  lines: string[];
+  /** 每字符打字间隔 ms */
+  speed?: number;
+  class?: string;
+}
+const { lines, speed = 55, class: className } = Astro.props;
+const encoded = JSON.stringify(lines);
+---
+<span class:list={['typewriter mono', className]}>
+  <span class="tw-out" data-lines={encoded} data-speed={speed}></span><span class="cursor-blink" aria-hidden="true"></span>
+</span>
+
+<style>
+  .typewriter { white-space: pre-wrap; }
+</style>
+
+<script>
+  function initTypewriters(root: Document | HTMLElement = document) {
+    root.querySelectorAll<HTMLElement>('.tw-out').forEach((el) => {
+      if (el.dataset.twDone) return;
+      el.dataset.twDone = '1';
+      const lines: string[] = JSON.parse(el.dataset.lines || '[]');
+      const speed = Number(el.dataset.speed || 55);
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) {
+        el.textContent = lines.join('\n');
+        return;
+      }
+      let li = 0;
+      let ci = 0;
+      const step = () => {
+        if (li >= lines.length) return;
+        ci += 1;
+        if (ci > lines[li].length) {
+          li += 1;
+          ci = 0;
+          el.textContent = lines.slice(0, li).join('\n');
+          setTimeout(step, 350);
+          return;
+        }
+        el.textContent = lines.slice(0, li).join('\n') + (li < lines.length ? '\n' + lines[li].slice(0, ci) : '');
+        setTimeout(step, speed);
+      };
+      step();
+    });
+  }
+  initTypewriters();
+</script>
