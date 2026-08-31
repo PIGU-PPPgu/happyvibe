@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PixelBadge from '../../../components/PixelBadge.astro';
 import MarkDoneButton from '../../../components/MarkDoneButton.astro';
@@ -15,6 +15,7 @@ export async function getStaticPaths() {
 }
 
 const { lesson } = Astro.props;
+const { Content } = await render(lesson);
 const { slug } = Astro.params;
 const meta = MODULE_MAP.get(slug as ModuleSlug)!;
 
@@ -48,7 +49,7 @@ const lessonSlug = lesson.id.split('/').pop()!;
     </header>
 
     <article class="prose" data-pagefind-body>
-      <slot />
+      <Content />
     </article>
 
     <nav class="lesson-nav" aria-label="课程导航">
