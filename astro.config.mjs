@@ -23,6 +23,8 @@ export default defineConfig({
   base,
   trailingSlash: 'ignore',
   markdown: {
+    // 关闭 Shiki 内联深色代码块（浅色模式下会变成黑框）；样式由 tokens.css 的 .prose pre 接管
+    syntaxHighlight: false,
     remarkPlugins: [remarkBaseAssets],
   },
   build: {

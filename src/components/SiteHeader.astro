@@ -2,13 +2,15 @@
 import { withBase } from '../lib/urls';
 const nav = [
   { href: '/', label: '首页', code: '00' },
-  { href: '/path/', label: '学习路线图', code: '01' },
-  { href: '/toolbox/', label: '工具箱', code: '02' },
-  { href: '/about/', label: '关于', code: '03' },
+  { href: '/#modules', label: '课程模块', code: '01', anchor: true },
+  { href: '/path/', label: '学习路线图', code: '02' },
+  { href: '/toolbox/', label: '工具箱', code: '03' },
+  { href: '/about/', label: '关于', code: '04' },
 ];
 const path = Astro.url.pathname;
-const isActive = (href: string) => {
+const isActive = (href: string, anchor?: boolean) => {
   const target = withBase(href);
+  if (anchor) return false;
   if (href === '/') return path === withBase('/') || path === withBase('');
   return path.startsWith(target);
 };
@@ -23,7 +25,7 @@ const isActive = (href: string) => {
 
     <nav class="main-nav" aria-label="主导航">
       {nav.map((item) => (
-        <a href={withBase(item.href)} class:list={['nav-link', { active: isActive(item.href) }]}>
+        <a href={withBase(item.href)} class:list={['nav-link', { active: isActive(item.href, item.anchor) }]}>
           <span class="nav-code" aria-hidden="true">{item.code}</span>{item.label}
         </a>
       ))}
@@ -54,7 +56,7 @@ const isActive = (href: string) => {
 
   <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden>
     {nav.map((item) => (
-      <a href={withBase(item.href)} class:list={['mobile-link', { active: isActive(item.href) }]}>{item.label}</a>
+      <a href={withBase(item.href)} class:list={['mobile-link', { active: isActive(item.href, item.anchor) }]}>{item.label}</a>
     ))}
   </nav>
 </header>

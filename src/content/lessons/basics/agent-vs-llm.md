@@ -11,6 +11,8 @@ status: ready
 
 ## 一个比喻讲清楚
 
+![LLM 是脑子，Agent 是完整的人](/images/lessons/agent-vs-llm.webp)
+
 | | LLM（大模型） | Agent（智能体） |
 |---|---|---|
 | 比喻 |  脑子 |  完整的人 |
