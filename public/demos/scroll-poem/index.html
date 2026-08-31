@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>静夜思 · 水墨卷轴</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+         background: radial-gradient(1000px 500px at 50% 110%, #22301f, #101410 60%, #0c0e0c);
+         font-family: 'Kaiti SC','STKaiti','KaiTi','PingFang SC',serif; overflow: hidden; }
+  .scroll { position: relative; width: min(880px, 92vw); padding: 66px 40px 54px;
+            background: linear-gradient(175deg, #f5efdd 0%, #efe6cc 55%, #e7dcbe 100%);
+            border-radius: 6px; box-shadow: 0 24px 70px rgba(0,0,0,.55), inset 0 0 60px rgba(150,120,60,.18); }
+  .scroll::before, .scroll::after { content: ''; position: absolute; top: -18px; bottom: -18px; width: 26px;
+            background: linear-gradient(90deg, #6b4a2a, #9a7146 45%, #5c3f22); border-radius: 13px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.4); }
+  .scroll::before { left: -13px; } .scroll::after { right: -13px; }
+  .title { text-align: center; font-size: 34px; letter-spacing: .35em; color: #3a2f1e; opacity: 0; animation: fade 1.2s .2s forwards; }
+  .author { text-align: center; color: #8a7a55; font-size: 16px; margin-top: 8px; opacity: 0; animation: fade 1s 1s forwards; }
+  .line { font-size: clamp(34px, 6vw, 56px); letter-spacing: .18em; margin: 34px 0 0 18%;
+          color: #2e2617; opacity: 0; transform: translateY(14px); }
+  .line.show { animation: fade 1.4s forwards; }
+  .seal { position: absolute; right: 12%; bottom: 12%; width: 74px; height: 74px; background: #b23a2c; color: #f5efdd;
+          display: flex; align-items: center; justify-content: center; font-size: 22px; line-height: 1.15;
+          text-align: center; border-radius: 8px; transform: rotate(-6deg) scale(0); box-shadow: 0 4px 14px rgba(120,30,20,.4);
+          opacity: .92; }
+  .seal.show { animation: pop .5s cubic-bezier(.2, 1.6, .4, 1) forwards; }
+  .moon { position: absolute; right: 16%; top: 9%; width: 86px; height: 86px; border-radius: 50%;
+          background: radial-gradient(circle at 38% 34%, #fffbe8, #f3e2a0 60%, #e5cf8a);
+          box-shadow: 0 0 46px rgba(243, 226, 160, .55); opacity: 0; animation: fade 1.6s .4s forwards; }
+  @keyframes fade { to { opacity: 1; transform: none; } }
+  @keyframes pop { to { transform: rotate(-6deg) scale(1); opacity: .92; } }
+  .ctrl { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); }
+  .ctrl button { padding: 10px 30px; font-size: 15px; border: 0; border-radius: 8px; cursor: pointer;
+                 background: #b23a2c; color: #f5efdd; letter-spacing: .2em; }
+</style>
+</head>
+<body>
+<div class="scroll" id="scroll">
+  <div class="moon"></div>
+  <div class="title">静 夜 思</div>
+  <div class="author">【唐】李白</div>
+  <div class="line" id="l1">床前明月光，</div>
+  <div class="line" id="l2">疑是地上霜。</div>
+  <div class="line" id="l3">举头望明月，</div>
+  <div class="line" id="l4">低头思故乡。</div>
+  <div class="seal" id="seal">诵读<br>经典</div>
+</div>
+<div class="ctrl"><button onclick="play()">▶ 展开卷轴</button></div>
+<script>
+function play() {
+  const lines = ['l1', 'l2', 'l3', 'l4'];
+  lines.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('show'); void el.offsetWidth;
+    setTimeout(() => el.classList.add('show'), 500 + i * 900);
+  });
+  const seal = document.getElementById('seal');
+  seal.classList.remove('show'); void seal.offsetWidth;
+  setTimeout(() => seal.classList.add('show'), 500 + 4 * 900);
+}
+window.play = play;
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>函数实验室 · y = ax² + bx + c</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { background: #150e22; color: #f2ecf8; font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
+         display: flex; gap: 0; min-height: 100vh; }
+  .panel { width: 300px; padding: 26px 24px; background: #1e1433; border-right: 1px solid rgba(180,130,210,.25); }
+  h1 { font-size: 17px; letter-spacing: .12em; color: #a99cc0; margin-bottom: 20px; }
+  .eq { font-family: ui-monospace, monospace; font-size: 19px; color: #ffd34d; margin-bottom: 24px; }
+  .row { margin-bottom: 20px; }
+  label { display: flex; justify-content: space-between; font-size: 14px; color: #a99cc0; margin-bottom: 8px; }
+  label b { color: #ffd34d; font-family: ui-monospace, monospace; }
+  input[type=range] { width: 100%; accent-color: #feb300; }
+  .facts { margin-top: 26px; padding: 14px; background: #120c1e; border-radius: 10px; font-size: 13.5px; line-height: 2; color: #a99cc0; }
+  .facts b { color: #c98fbf; }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  canvas { width: 100%; max-width: 860px; border-radius: 14px; background: #120c1e; border: 1px solid rgba(180,130,210,.25); }
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>函数实验室</h1>
+  <div class="eq">y = ax² + bx + c</div>
+  <div class="row"><label>a（开口与胖瘦）<b id="va">1.0</b></label>
+    <input type="range" id="sa" min="-4" max="4" step="0.1" value="1"></div>
+  <div class="row"><label>b（左右平移倾向）<b id="vb">0.0</b></label>
+    <input type="range" id="sb" min="-6" max="6" step="0.1" value="0"></div>
+  <div class="row"><label>c（上下平移）<b id="vc">0.0</b></label>
+    <input type="range" id="sc" min="-6" max="6" step="0.1" value="0"></div>
+  <div class="facts" id="facts"></div>
+</div>
+<main><canvas id="cv" width="860" height="620"></canvas></main>
+<script>
+const a = document.getElementById('sa'), b = document.getElementById('sb'), c = document.getElementById('sc');
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+function val() { return { A: +a.value, B: +b.value, C: +c.value }; }
+function draw() {
+  const { A, B, C } = val();
+  document.getElementById('va').textContent = A.toFixed(1);
+  document.getElementById('vb').textContent = B.toFixed(1);
+  document.getElementById('vc').textContent = C.toFixed(1);
+  const W = cv.width, H = cv.height, u = 34; // 每单位像素
+  const ox = W / 2 + B * u * 0.0, oy = H / 2 + C * u; // 原点随 c 上下移动更直观
+  ctx.fillStyle = '#120c1e'; ctx.fillRect(0, 0, W, H);
+  // 网格
+  ctx.strokeStyle = 'rgba(180,130,210,.12)'; ctx.lineWidth = 1;
+  for (let x = ox % u; x < W; x += u) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = oy % u; y < H; y += u) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  // 坐标轴
+  ctx.strokeStyle = 'rgba(240,236,248,.5)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.moveTo(ox, 0); ctx.lineTo(ox, H); ctx.stroke();
+  // 曲线
+  ctx.beginPath(); ctx.strokeStyle = '#feb300'; ctx.lineWidth = 3.5;
+  for (let px = 0; px <= W; px += 2) {
+    const x = (px - ox) / u, y = A * x * x + B * x + C, py = oy - y * u;
+    px === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  // 顶点与对称轴
+  const vx = -B / (2 * A), vy = A * vx * vx + B * vx + C;
+  const sx = ox + vx * u, sy = oy - vy * u;
+  ctx.setLineDash([6, 6]); ctx.strokeStyle = 'rgba(166,61,151,.8)';
+  ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, H); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#a63d97'; ctx.beginPath(); ctx.arc(sx, sy, 6, 0, 6.3); ctx.fill();
+  ctx.font = '14px sans-serif'; ctx.fillStyle = '#c98fbf';
+  ctx.fillText(`顶点 (${vx.toFixed(2)}, ${vy.toFixed(2)})`, sx + 10, sy - 8);
+  // 判别式与开口
+  const disc = B * B - 4 * A * C;
+  const roots = disc >= 0 && A !== 0;
+  document.getElementById('facts').innerHTML =
+    `开口方向：<b>${A > 0 ? '向上 ∪' : A < 0 ? '向下 ∩' : '不是二次函数'}</b><br>` +
+    `对称轴：x = <b>${vx.toFixed(2)}</b>　顶点：(${vx.toFixed(2)}, ${vy.toFixed(2)})<br>` +
+    `判别式 Δ = b²-4ac = <b>${disc.toFixed(2)}</b><br>` +
+    `与 x 轴交点：<b>${A === 0 ? '退化为直线' : disc > 0 ? '2 个交点' : disc === 0 ? '1 个（相切）' : '无交点'}</b>` +
+    (roots && disc > 0 ? `<br>x₁ = ${((-B - Math.sqrt(disc)) / (2 * A)).toFixed(2)}　x₂ = ${((-B + Math.sqrt(disc)) / (2 * A)).toFixed(2)}` : '');
+}
+[a, b, c].forEach(r => r.addEventListener('input', draw));
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>班级学情数据大屏（演示数据）</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { background: #0d0a18; color: #e8e2f2; font-family: 'PingFang SC','Microsoft YaHei',sans-serif; padding: 26px 22px; }
+  header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px; }
+  h1 { font-size: 22px; letter-spacing: .1em; }
+  h1 s { text-decoration: none; color: #feb300; }
+  .sub { color: #6f6390; font-size: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
+  .card { background: linear-gradient(180deg, #1c1430, #141024); border: 1px solid rgba(160,110,200,.25); border-radius: 14px; padding: 16px 18px; }
+  .card .k { font-size: 12px; color: #8b80a3; margin-bottom: 8px; }
+  .card .v { font-size: 34px; font-weight: 800; font-family: ui-monospace, monospace; }
+  .gold { color: #feb300; } .purple { color: #c98fbf; } .green { color: #7ed88a; } .blue { color: #6fb3e8; }
+  .card .d { font-size: 11.5px; color: #6f6390; margin-top: 6px; }
+  .charts { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; }
+  .chart { background: #141024; border: 1px solid rgba(160,110,200,.25); border-radius: 14px; padding: 16px; }
+  .chart h3 { font-size: 13px; color: #a99cc0; margin-bottom: 12px; font-weight: 500; }
+  canvas { width: 100%; display: block; }
+  .foot { margin-top: 14px; font-size: 11px; color: #4a4160; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <h1>七(2)班学情数据大屏 <s>■</s></h1>
+  <div class="sub">演示数据 · 2026-2027 学年第一学期 · 期中</div>
+</header>
+<div class="grid">
+  <div class="card"><div class="k">班级平均分（年级第 2）</div><div class="v gold" id="n1">0</div><div class="d">较上次月考 <span style="color:#7ed88a">+3.6</span></div></div>
+  <div class="card"><div class="k">优秀率</div><div class="v purple" id="n2">0</div><div class="d">人数 14 / 45</div></div>
+  <div class="card"><div class="k">及格率</div><div class="v green" id="n3">0</div><div class="d">较上次 <span style="color:#7ed88a">+6.7%</span></div></div>
+  <div class="card"><div class="k">需重点关注</div><div class="v blue" id="n4">0</div><div class="d">连续两次下滑 · 已约谈</div></div>
+</div>
+<div class="charts">
+  <div class="chart"><h3>历次考试平均分走势</h3><canvas id="c1" width="560" height="240"></canvas></div>
+  <div class="chart"><h3>各科平均分对比</h3><canvas id="c2" width="300" height="240"></canvas></div>
+  <div class="chart"><h3>成绩分布</h3><canvas id="c3" width="300" height="240"></canvas></div>
+</div>
+<div class="foot">演示数据，仅用于展示数据大屏形态 · 上线请替换为脱敏后的真实数据</div>
+<script>
+// 数字滚动
+function roll(id, target, suffix, dec) {
+  const el = document.getElementById(id); let t0 = null;
+  function step(ts) {
+    if (!t0) t0 = ts;
+    const p = Math.min(1, (ts - t0) / 1200), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = (target * e).toFixed(dec) + (suffix || '');
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+roll('n1', 84.6, '', 1); roll('n2', 31.1, '%', 1); roll('n3', 93.3, '%', 1); roll('n4', 3, '', 0);
+
+// 折线：历次平均分
+const c1 = document.getElementById('c1').getContext('2d');
+const pts = [76.2, 79.8, 81.0, 84.6], labels = ['开学摸底', '第一次月考', '第二次月考', '期中'];
+let p1 = 0;
+(function line() {
+  p1 = Math.min(1, p1 + 0.04);
+  c1.clearRect(0, 0, 560, 240);
+  c1.strokeStyle = 'rgba(160,110,200,.18)';
+  for (let y = 30; y < 220; y += 47) { c1.beginPath(); c1.moveTo(30, y); c1.lineTo(540, y); c1.stroke(); }
+  const X = i => 55 + i * 160, Y = v => 210 - (v - 70) / 20 * 170;
+  c1.lineWidth = 3.5; c1.strokeStyle = '#feb300'; c1.beginPath();
+  const n = Math.max(2, Math.ceil(p1 * 4));
+  for (let i = 0; i < n; i++) { const y = Y(pts[i] * Math.min(1, p1 * 4 - (i))); i ? c1.lineTo(X(i), Y(pts[i])) : c1.moveTo(X(0), Y(pts[0])); }
+  c1.stroke();
+  for (let i = 0; i < n; i++) {
+    c1.fillStyle = '#ffd34d'; c1.beginPath(); c1.arc(X(i), Y(pts[i]), 5, 0, 6.3); c1.fill();
+    c1.fillStyle = '#8b80a3'; c1.font = '12px sans-serif'; c1.textAlign = 'center';
+    c1.fillText(labels[i], X(i), 232);
+    c1.fillStyle = '#e8e2f2'; c1.fillText(pts[i].toFixed(1), X(i), Y(pts[i]) - 14);
+  }
+  if (p1 < 1) requestAnimationFrame(line);
+})();
+
+// 柱状：各科平均分
+const c2 = document.getElementById('c2').getContext('2d');
+const subj = [['语', 82.4], ['数', 79.1], ['英', 86.8], ['物', 81.2]]; // 去掉物理则改数据
+let p2 = 0;
+(function bar() {
+  p2 = Math.min(1, p2 + 0.05);
+  c2.clearRect(0, 0, 300, 240);
+  subj.forEach(([n, v], i) => {
+    const x = 30 + i * 68, bh = (v / 100) * 170 * p2;
+    const g = c2.createLinearGradient(0, 210 - bh, 0, 210);
+    g.addColorStop(0, '#c98fbf'); g.addColorStop(1, '#5a2a80');
+    c2.fillStyle = g; c2.fillRect(x, 210 - bh, 44, bh);
+    c2.fillStyle = '#a99cc0'; c2.font = '13px sans-serif'; c2.textAlign = 'center';
+    c2.fillText(n, x + 22, 228);
+    c2.fillStyle = '#e8e2f2'; c2.fillText(v.toFixed(1), x + 22, 206 - bh);
+  });
+  if (p2 < 1) requestAnimationFrame(bar);
+})();
+
+// 环形：成绩分布
+const c3 = document.getElementById('c3').getContext('2d');
+const dist = [[ '优秀 14', 14, '#feb300'], ['良好 18', 18, '#c98fbf'], ['及格 10', 10, '#6fb3e8'], ['待进步 3', 3, '#e06c6c']];
+let p3 = 0;
+(function donut() {
+  p3 = Math.min(1, p3 + 0.045);
+  c3.clearRect(0, 0, 300, 240);
+  const total = 45, cx = 150, cy = 118, r = 74;
+  let start = -Math.PI / 2;
+  dist.forEach(([n, v, c]) => {
+    const end = start + (v / total) * 6.283 * p3;
+    c3.beginPath(); c3.arc(cx, cy, r, start, end); c3.strokeStyle = c; c3.lineWidth = 26; c3.stroke();
+    start = end;
+  });
+  c3.fillStyle = '#e8e2f2'; c3.font = '26px bold sans-serif'; c3.textAlign = 'center';
+  c3.fillText('45', cx, cy + 4);
+  c3.font = '12px sans-serif'; c3.fillStyle = '#8b80a3'; c3.fillText('总人数', cx, cy + 26);
+  dist.forEach(([n, v, c], i) => {
+    c3.fillStyle = c; c3.fillRect(24 + i * 66, 226, 10, 10);
+    c3.fillStyle = '#a99cc0'; c3.font = '11px sans-serif'; c3.textAlign = 'left';
+    c3.fillText(n, 38 + i * 66, 235);
+  });
+  if (p3 < 1) requestAnimationFrame(donut);
+})();
+</script>
+</body>
+</html>
