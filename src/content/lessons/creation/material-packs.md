@@ -48,7 +48,7 @@ status: ready
 | 信息科技 | Python 变量知识点+示例代码、变量盒子图、概念音频 | ![信息](/materials/qr/it.png) | [zip](/materials/it-信息科技.zip) |
 | 劳动 | 番茄炒蛋菜谱+安全要点、流程图、步骤朗读音频 | ![劳动](/materials/qr/labor.png) | [zip](/materials/labor-劳动.zip) |
 
-> 二维码指向线上 zip 地址。**部署域名确定后**，运行 `MATERIALS_BASE_URL=https://你的域名/路径 python3 scripts/build_material_packs.py` 重新生成二维码即可（材料内容不变）。
+> 二维码已指向 `happyvibe.intelliedu.cc` 的正式下载地址，可直接投屏扫码。以后换域名时运行 `MATERIALS_BASE_URL=https://新域名/materials python3 scripts/build_material_packs.py` 重新生成即可。
 
 ## 关于素材的诚实说明
 
