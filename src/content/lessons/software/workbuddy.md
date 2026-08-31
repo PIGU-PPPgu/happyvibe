@@ -3,13 +3,11 @@ title: WorkBuddy 上手指南
 module: software
 order: 1
 description: 桌面端 Agent「五件套」的代表作：可换大脑、可教技能、有记忆。开源教程生态齐全，全校办公、教案、公文、Excel 的首选。
-source: 道远 PPT S36-S40 ／ 开源社区文档
-status: draft
+source: 道远 PPT S36-S40 ／ 开源社区文档 ／ 实机截图（v5.4.5）
+status: ready
 ---
 
 > **一句话结论：WorkBuddy = 工作角色 + 可换的大脑 + Skill + 工具 + 记忆。先跑通第一个任务，再花两周把它养熟。**
-
-> 📷 界面截图待补（权限开通后实操截取）：主界面 / 登录页 / 任务执行 / 交付文件 / 模型选择器
 
 ## 它是什么、适合谁
 
@@ -21,74 +19,79 @@ WorkBuddy（腾讯出品，官网 [workbuddy.ai](https://www.workbuddy.ai/)）�
 - **短板**：PPT 审美、复杂桌面操控（这类活儿换 Kimi 或 Trae 配合）；
 - **适合**：普通教师日常办公，不需要技术背景。
 
-## 开源教程资源（免费）
+## 界面导览（v5.4.5 实机截图）
 
-WorkBuddy 有相当完整的社区开源教程生态：
+打开 WorkBuddy，左侧是一排功能入口：
+
+![WorkBuddy 主界面](/images/lessons/wb-01-main.webp)
+
+- **新建任务**：就是主对话区。中间是场景切换（日常办公 / 代码开发 / 设计创意），选对场景，AI 的默认行为会更贴合；
+- **助理 / 项目**：项目用来长期沉淀一个主题的所有任务和资料；
+- **专家·技能·连接器**：给 Agent「配人手、装技能、接工具」的地方，下一节细讲；
+- **自动化**：定时任务（每天早上自动生成昨日总结之类）；
+- **资料库**：你的私有的知识库文件，任务时可以被引用。
+
+输入框底部还有三个开关：**选择工作空间**（任务在哪个空间跑）、**默认权限**（允许它自动执行还是每步都要你确认——新手建议先保守）、**模型选择器**。
+
+## 换大脑：模型选择器
+
+点输入框右下角的模型名（截图中是 Kimi-K3），弹出完整的「脑子货架」：
+
+![模型选择器](/images/lessons/wb-05-models.webp)
+
+- **Max 模式**开关：开了之后用更强的推理档，适合复杂任务；
+- 档位思维：**快速（如 0.21x）→ 均衡（0.65x）→ 极致（1.20x）**，数字是积分倍率——简单活用快速档，难题再上极致档；
+- 常驻大脑：**GLM-5.3 / GLM-5.2 / Kimi-K3 / Deepseek-V4-Pro / MiniMax-M3** 等，带「夜间折扣」「限时免费」标签的更划算；
+- 都不合适？底部有「**配置自定义模型**」入口（接 DeepSeek API 等自定义模型）。
+
+**选脑心法**（呼应[如何选「脑子」](/modules/basics/choose-model/)）：写代码建站选 Kimi-K3 / GLM-5.3，长文档分析选 Deepseek-V4，日常问答用免费档——倍率就是成本，养成看倍率的习惯。
+
+## 配人手：专家 · 技能 · 连接器
+
+点左侧「专家·技能·连接器」，这是一个巨大的「数字员工市场」：
+
+![专家技能连接器页](/images/lessons/wb-03-experts.webp)
+
+- **专家**：预置角色的提示词包。看顶部的「精选场景」——开学季里有校园求职教练、论文写作导师；分类里有「教育学习」专区；
+- **技能**：即 [Skill](/modules/creation/prompt-vs-skill/)——你或别人固化好的流程包，装上就开会用；
+- **连接器**：让 Agent 能操作外部服务（邮箱、文档、日历等）。
+
+原理都讲过了：**专家=角色，技能=流程，连接器=工具**。老师起步建议先装 1-2 个教育类专家试水，别贪多。
+
+## 真实案例：35 分钟搭出一个教师工作台
+
+来看一个真实跑完的任务（本站作者的实机记录）：任务「搭建教师智能工作台 MVP」，**总耗时 35 分 10 秒，用的还是限时免费的 Hy3 模型，积分消耗为 0**。
+
+![真实任务执行记录](/images/lessons/wb-06-task-exec.webp)
+
+Agent 交付了什么：
+
+- **6 个页面**：首页·今日工作台、教学中心、AI 备课、学生中心、作业中心、AI 助手；
+- **AI 备课页**：选班级和课程 → 自动生成含教学目标、重难点、教学过程、课堂练习、课后作业的完整教案；
+- **学生中心**：142 名学生概览、需关注学生卡片、一键生成学习建议/评语/家长沟通话术；
+- **本地预览服务**：`http://127.0.0.1:8080`，index.html / styles.css / app.js 全部交付；
+- 全程 Linear/Notion 极简风格，演示数据用的是七年级几个班级的数学场景。
+
+注意对话里 Agent 的「老规矩提醒」：本地预览服务是后台进程，会话空了会停——**这就是为什么交付物要落成文件夹（参考[任务一](/modules/software/task-subject-website/)），而不是只依赖它的预览**。
+
+## 上手三步（今天就能做）
+
+1. **安装登录**：官网下载桌面版，登录后左侧点「新建任务」；
+2. **跑通第一个任务**：找一个 Excel 成绩表拖进输入框，发送：
+   ```
+   读取这个表格，统计每个班的平均分并从高到低排序，
+   生成新的 Excel 放到桌面 my-workbuddy 文件夹里。
+   ```
+   观察它拆步骤 → 调工具 → 交付文件的全过程；
+3. **换一次大脑**：点模型选择器，把 Kimi-K3 切成免费的 Hy3 再跑一次同样的任务，对比质量——你就建立「按任务选脑」的手感了。
+
+## 开源教程资源
 
 | 资源 | 适合 | 链接 |
 |---|---|---|
 | WorkBuddy 实战蓝皮书（27 章） | 小白入门 + 11 个真实案例 | [腾讯云社区](https://cloud.tencent.com/developer/article/2710719) ／ [博客园](https://www.cnblogs.com/xiezhr/p/21564296) |
 | 保姆级上手教程 | 安装→配置→第一个 Agent | [知乎](https://zhuanlan.zhihu.com/p/2065473630981583532) |
-| DeepSeek 接入官方文档 | 给 WorkBuddy 换 DeepSeek 大脑 | [awesome-deepseek-agent](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/workbuddy.zh-CN.md) |
+| DeepSeek 接入中文文档 | 给 WorkBuddy 换 DeepSeek 大脑 | [awesome-deepseek-agent](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/workbuddy.zh-CN.md) |
 | 从 0 复刻 WorkBuddy 架构（24 章） | 进阶：搞懂 Harness 原理 | [GitHub learn-workbuddy](https://github.com/adongwanai/learn-workbuddy) |
 
-本课聚焦「老师怎么用」，原理课放在最后的进阶区。
-
-## 上手三步
-
-### 第 1 步：安装登录
-
-从官网下载 macOS / Windows 版，安装后用微信或手机号登录。首次打开建议新建一个工作文件夹（比如桌面建 `my-workbuddy`），后面所有产出都让它放这里，好找好备份。
-
-> 【截图位 wb-02】首次启动的登录/欢迎界面
-
-### 第 2 步：跑通第一个任务
-
-把一个 Excel 成绩表拖进对话，发送：
-
-```
-读取这个表格，统计每个班的平均分并从高到低排序，
-生成一个新的 Excel 文件放到桌面 my-workbuddy 文件夹里。
-```
-
-观察它**拆步骤 → 调工具 → 交付文件**的全过程——这就是 Agent 和普通聊天机器人的本质区别（回看[什么是 Agent](/modules/agent/what-is-agent/)）。
-
-> 【截图位 wb-03】任务执行过程中的步骤展示
-> 【截图位 wb-04】任务完成后交付的文件
-
-### 第 3 步：接入 DeepSeek 大脑（可选）
-
-WorkBuddy 支持通过本地配置文件添加自定义模型。以接入 DeepSeek 为例（[官方中文文档](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/workbuddy.zh-CN.md)）：
-
-1. 到 [DeepSeek 开放平台](https://platform.deepseek.com/api_keys) 申请 API Key；
-2. 在用户目录创建模型配置（macOS：`~/.codebuddy/models.json`），按文档填写接口地址和 Key；
-3. **完全退出并重开** WorkBuddy，在模型选择器里就能看到新大脑。
-
-⚠️ 常见坑（文档里明确提醒的）：
-- 配置文件必须保存为 **UTF-8 无 BOM** 编码，否则读取失败；
-- 401 报错 = Key 填错（别把接口网址填进 Key 字段）；
-- 模型选择器看不到新模型 = 没有完全重启。
-
-> 【截图位 wb-05】模型选择器里出现多个大脑
-
-### 日常：教它你的第一个 Skill
-
-把你最常用的文档格式（比如周计划模板）固化成 Skill，一次教会终身受用——具体做法见 [Prompt 与 Skill](/modules/creation/prompt-vs-skill/) 和 [实战案例](/modules/creation/case-study/)。
-
-## 教师场景推荐
-
-- 每周成绩导入 → 自动出[分析报告](/modules/edu-data/grade-analysis/)；
-- 会议录音 → 提要点 → 按模板成通知；
-- 消息端派单：在外面用手机派任务，回办公室它已做完。
-
-## 进阶：想知道它内部怎么运作？
-
-开源项目 [learn-workbuddy](https://github.com/adongwanai/learn-workbuddy) 用 24 章 Python 教程从零复刻 WorkBuddy 架构，核心思想一句话：**模型是大脑，Harness 是操作系统**。适合信息科技老师带社团玩。
-
-## 待补充（需要真实截图）
-
-- [ ] wb-02 登录/欢迎界面
-- [ ] wb-03 任务执行过程
-- [ ] wb-04 交付文件
-- [ ] wb-05 模型选择器
-- [ ] 主界面导览（wb-01）
+换脑心法总结成一句：**模型是大脑，Harness 是操作系统**——WorkBuddy 就是那台「操作系统」，脑子随你换。
