@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小组积分板</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { min-height: 100vh; background: radial-gradient(1100px 500px at 50% -10%, #2b1845, #150e22);
+         font-family: 'PingFang SC','Microsoft YaHei',sans-serif; color: #f2ecf8; padding: 30px 16px; }
+  h1 { text-align: center; font-size: 20px; letter-spacing: .3em; color: #a99cc0; margin-bottom: 22px; }
+  .board { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  .row { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: 12px;
+         background: #1e1433; border: 1px solid rgba(180,130,210,.25); transition: all .3s; }
+  .row.first { background: linear-gradient(90deg, rgba(254,179,0,.16), #1e1433); border-color: #feb300; }
+  .rank { width: 34px; font-size: 20px; font-weight: 800; color: #6f6390; text-align: center; }
+  .row.first .rank { color: #feb300; }
+  .gname { flex: 1; font-size: 19px; font-weight: 600; }
+  .score { font-size: 30px; font-weight: 800; width: 70px; text-align: right; color: #ffd34d; }
+  .btns { display: flex; gap: 8px; }
+  .btns button { width: 46px; height: 40px; font-size: 18px; font-weight: 700; border: 1px solid rgba(180,130,210,.35);
+                 border-radius: 8px; background: #271a42; color: #f2ecf8; cursor: pointer; }
+  .btns button:hover { border-color: #feb300; color: #feb300; }
+</style>
+</head>
+<body>
+<h1>小 组 积 分 板</h1>
+<div class="board" id="board"></div>
+<script>
+let groups = [
+  { n: '第一组', s: 12 }, { n: '第二组', s: 9 }, { n: '第三组', s: 15 }, { n: '第四组', s: 7 },
+  { n: '第五组', s: 11 }, { n: '第六组', s: 8 }, { n: '第七组', s: 13 }, { n: '第八组', s: 10 },
+];
+function render() {
+  groups.sort((a, b) => b.s - a.s);
+  document.getElementById('board').innerHTML = groups.map((g, i) => `
+    <div class="row ${i === 0 ? 'first' : ''}">
+      <span class="rank">${i + 1}</span>
+      <span class="gname">${g.n}</span>
+      <span class="score">${g.s}</span>
+      <span class="btns">
+        <button onclick="add(${i}, 1)">+1</button>
+        <button onclick="add(${i}, 2)">+2</button>
+        <button onclick="add(${i}, -1)">-1</button>
+      </span>
+    </div>`).join('');
+}
+function add(i, d) { groups[i].s = Math.max(0, groups[i].s + d); render(); }
+window.add = add; render();
+</script>
+</body>
+</html>
