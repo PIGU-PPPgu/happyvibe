@@ -46,6 +46,8 @@ const MAP = [
   ['s070-02.png', 'duty-rules.png'],
   ['s070-04.png', 'praise-cert.png'],
   ['s071-01.png', 'growth-archive.png'],
+  ['s045-03.png', 'coteacher-features.png'],
+  ['s045-04.png', 'coteacher-notice.png'],
   // M4 edu-data
   ['s063-07.png', 'subject-compare.png'],
   ['s063-08.png', 'class-portrait.png'],
