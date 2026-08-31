@@ -139,6 +139,9 @@ const isActive = (href: string) => {
     flex-direction: column;
     padding: 8px 20px 16px;
   }
+  .mobile-nav[hidden] {
+    display: none;
+  }
   .mobile-link { padding: 10px 4px; color: var(--text-muted); border-bottom: 1px dashed var(--line); }
   .mobile-link.active { color: var(--gold-soft); }
   @media (min-width: 900px) {
