@@ -1,0 +1,248 @@
+---
+/**
+ * 堆叠式课程模块轮播卡（原生实现，参考 shadcn stacked carousel 交互）
+ * 拖动甩动翻页 · 弹簧回弹 · 旋转缩放层级 · 键盘可达（左右按钮 + 圆点）
+ */
+import { MODULES, MODE_LABEL } from '../data/modules';
+import { withBase } from '../lib/urls';
+
+const cards = MODULES.map((m) => ({
+  ...m,
+  href: withBase(`/modules/${m.slug}/`),
+}));
+---
+<section class="container" id="modules">
+  <header class="sec-head">
+    <h2 class="sec-title">全部课程模块 <span class="mono sec-code">// 拖动翻页 · 点圆点跳转</span></h2>
+    <p class="sec-sub text-muted">
+      不知道先学哪个？用上面的「三种学法」。这里是完整内容仓库——
+      <b>按顺序学</b>的模块适合从头到尾，<b>按需查阅</b>的模块像字典，遇到问题再来查。
+    </p>
+  </header>
+
+  <div class="carousel" data-carousel>
+    <div class="stage" data-stage>
+      {cards.map((m) => (
+        <article class="mcard" data-card data-href={m.href} style={`--accent:${m.accent}`}>
+          <div class="mc-top">
+            <span class="mc-icon mono" aria-hidden="true">{m.icon}</span>
+            <span class="mc-code mono">{m.code}</span>
+          </div>
+          <h3 class="mc-title">{m.title}</h3>
+          <p class="mc-sub">{m.subtitle}</p>
+          <span class="mc-mode mono">{MODE_LABEL[m.mode]}</span>
+          <div class="mc-foot">
+            <span class="mc-count mono" data-module-count={m.slug}></span>
+            <div class="mc-bar"><div class="mc-bar-fill" data-module-bar={m.slug}></div></div>
+            <span class="mc-pct mono" data-module-pct={m.slug}>0%</span>
+          </div>
+        </article>
+      ))}
+      <div class="drag-surface" data-drag aria-label="拖动切换模块"></div>
+    </div>
+
+    <div class="controls">
+      <button class="arrow" type="button" data-prev aria-label="上一个模块">←</button>
+      <div class="dots" data-dots>
+        {cards.map((m, i) => (
+          <button class="dot" type="button" data-dot={i} aria-label={`跳到 ${m.title}`}></button>
+        ))}
+      </div>
+      <button class="arrow" type="button" data-next aria-label="下一个模块">→</button>
+    </div>
+
+    <a class="cta btn btn-gold" data-cta href={withBase(cards[0].href)}>
+      进入 <span data-cta-code>{cards[0].code} {cards[0].title}</span> →
+    </a>
+
+    <details class="list-fallback">
+      <summary class="mono">以列表查看全部模块</summary>
+      <ul>
+        {cards.map((m) => (
+          <li><a href={m.href}>{m.code} {m.title} — {m.subtitle}</a></li>
+        ))}
+      </ul>
+    </details>
+  </div>
+</section>
+
+<style>
+  .carousel { user-select: none; }
+  .stage {
+    position: relative; height: 380px; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; touch-action: pan-y;
+  }
+  .mcard {
+    position: absolute; width: min(400px, 82vw); height: 300px; border-radius: 18px; overflow: hidden;
+    pointer-events: none;
+    background: linear-gradient(160deg, var(--bg-panel-2), var(--bg-inset));
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .45), 0 0 30px color-mix(in srgb, var(--accent) 22%, transparent);
+    padding: 26px 28px; display: flex; flex-direction: column; will-change: transform;
+  }
+  .mc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .mc-icon { font-size: 30px; color: var(--accent); }
+  .mc-code { font-size: 14px; font-weight: 700; letter-spacing: .12em; color: var(--accent); }
+  .mc-title { font-size: 27px; margin: 0 0 6px; line-height: 1.3; }
+  .mc-sub { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+  .mc-mode {
+    align-self: flex-start; margin-top: auto; font-size: 12px; padding: 2px 10px; border-radius: 5px;
+    background: rgba(254, 179, 0, .12); color: var(--gold-soft); border: 1px solid var(--line-gold);
+  }
+  .mc-foot { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .mc-count { font-size: 12px; color: var(--text-faint); }
+  .mc-bar { flex: 1; height: 6px; background: var(--bg-deep); border-radius: 3px; overflow: hidden; border: 1px solid var(--line); }
+  .mc-bar-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--purple-bright), var(--gold)); transition: width .5s ease; }
+  .mc-pct { font-size: 12px; color: var(--gold-soft); min-width: 34px; text-align: right; }
+
+  .drag-surface { position: absolute; inset: 0; z-index: 50; cursor: grab; touch-action: pan-y; }
+  .drag-surface:active { cursor: grabbing; }
+
+  .controls { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 18px; }
+  .arrow {
+    width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line-strong);
+    background: var(--bg-panel); color: var(--text); font-size: 17px; cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .arrow:hover { border-color: var(--line-gold); color: var(--gold); }
+  .dots { display: flex; gap: 8px; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 2px; border: 0; padding: 0; cursor: pointer;
+    background: var(--line-strong); transition: all .25s;
+  }
+  .dot.active { background: var(--gold); width: 22px; }
+
+  .cta { display: flex; margin: 20px auto 0; width: fit-content; }
+  .list-fallback { margin-top: 26px; border: 1px dashed var(--line); border-radius: var(--radius-sm); }
+  .list-fallback summary { cursor: pointer; padding: 10px 14px; font-size: 13px; color: var(--text-muted); }
+  .list-fallback ul { list-style: none; margin: 0; padding: 6px 18px 14px; }
+  .list-fallback li { padding: 5px 0; }
+  .list-fallback a { color: var(--text-muted); }
+</style>
+
+<script>
+  import { countDone, getDoneMap, getLessonIndex, onProgress } from '../lib/progress';
+
+  const stage = document.querySelector<HTMLElement>('[data-stage]');
+  if (stage) {
+    const cards = [...stage.querySelectorAll<HTMLElement>('[data-card]')];
+    const total = cards.length;
+    const drag = stage.querySelector<HTMLElement>('[data-drag]')!;
+    const dots = [...stage.parentElement!.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+    const cta = document.querySelector<HTMLAnchorElement>('[data-cta]')!;
+    const ctaCode = cta.querySelector<HTMLElement>('[data-cta-code]')!;
+
+    // 响应式参数（对照不同屏宽）
+    const cfg = () => {
+      const w = innerWidth;
+      if (w < 640) return { dist: 120, vel: 500, sens: 180, x: 96, y: 22, rot: 8, shrink: .06 };
+      if (w < 1024) return { dist: 160, vel: 650, sens: 220, x: 140, y: 30, rot: 10, shrink: .09 };
+      return { dist: 210, vel: 850, sens: 250, x: 185, y: 40, rot: 12, shrink: .12 };
+    };
+
+    let progress = 0;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let raf = 0;
+
+    function setProgress(p: number) { progress = p; render(); }
+    function render() {
+      const c = cfg();
+      cards.forEach((card, i) => {
+        let o = (i - progress) % total;
+        if (o > total / 2) o -= total;
+        if (o < -total / 2) o += total;
+        const ao = Math.abs(o);
+        card.style.transform = `translateX(${o * c.x}px) translateY(${ao * c.y}px) rotate(${ao < .05 ? 0 : o * c.rot}deg) scale(${1 - ao * c.shrink})`;
+        card.style.opacity = String(Math.max(0, Math.min(1, 1.15 - ao * .45)));
+        card.style.zIndex = String(100 - Math.round(ao * 10));
+      });
+      // 前卡信息
+      const front = ((Math.round(progress) % total) + total) % total;
+      dots.forEach((d, i) => d.classList.toggle('active', i === front));
+      const id = cards[front].dataset.href!;
+      if (cta.getAttribute('href') !== id) {
+        cta.href = id;
+        ctaCode.textContent = cards[front].querySelector('.mc-code')!.textContent + ' ' + cards[front].querySelector('.mc-title')!.textContent;
+      }
+    }
+
+    function springTo(target: number) {
+      if (reduced) { setProgress(target); return; }
+      cancelAnimationFrame(raf);
+      let pos = progress, v = 0, last = performance.now();
+      const k = 210, damp = 30, m = 1;
+      const step = (now: number) => {
+        const dt = Math.min(.032, (now - last) / 1000); last = now;
+        v += (-k * (pos - target) - damp * v) / m * dt;
+        pos += v * dt;
+        setProgress(pos);
+        if (Math.abs(pos - target) > .001 || Math.abs(v) > .001) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    }
+
+    // 拖拽（move/up 挂 window，避免指针捕获丢失）
+    let startX = 0, startP = 0, lastX = 0, lastT = 0, vel = 0, down = false;
+    const onMove = (e: PointerEvent) => {
+      if (!down) return;
+      const c = cfg();
+      const now = performance.now();
+      vel = (e.clientX - lastX) / Math.max(1, now - lastT) * 1000;
+      lastX = e.clientX; lastT = now;
+      setProgress(startP + (startX - e.clientX) / c.sens);
+    };
+    const onUp = (e: PointerEvent) => {
+      if (!down) return;
+      down = false;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      const c = cfg();
+      let shift = Math.round(-(e.clientX - startX) / c.dist - vel / c.vel);
+      shift = Math.max(-3, Math.min(3, shift));
+      springTo(Math.round(startP) + shift);
+    };
+    drag.addEventListener('pointerdown', (e) => {
+      down = true; startX = lastX = e.clientX; startP = progress; lastT = performance.now(); vel = 0;
+      cancelAnimationFrame(raf);
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    });
+
+    // 按钮 & 圆点
+    document.querySelector('[data-prev]')?.addEventListener('click', () => springTo(Math.round(progress) - 1));
+    document.querySelector('[data-next]')?.addEventListener('click', () => springTo(Math.round(progress) + 1));
+    dots.forEach((d, i) => d.addEventListener('click', () => springTo(i)));
+    // 键盘左右（焦点在轮播区时）
+    stage.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') springTo(Math.round(progress) - 1);
+      if (e.key === 'ArrowRight') springTo(Math.round(progress) + 1);
+    });
+
+    // 进度条渲染（与全站进度打通）
+    function refreshProgress() {
+      const done = getDoneMap();
+      const byModule = new Map<string, { done: number; total: number }>();
+      for (const id of Object.keys(getLessonIndex())) {
+        const m = id.split('/')[0];
+        const st = byModule.get(m) ?? { done: 0, total: 0 };
+        st.total += 1;
+        if (done[id]) st.done += 1;
+        byModule.set(m, st);
+      }
+      cards.forEach((card) => {
+        const slug = (card.dataset.href || '').match(/modules\/([^/]+)/)?.[1] || '';
+        const st = byModule.get(slug);
+        const pct = st && st.total ? Math.round((st.done / st.total) * 100) : 0;
+        const fill = card.querySelector<HTMLElement>('[data-module-bar]');
+        const pctEl = card.querySelector<HTMLElement>('[data-module-pct]');
+        const cnt = card.querySelector<HTMLElement>('[data-module-count]');
+        if (fill) fill.style.width = `${pct}%`;
+        if (pctEl) pctEl.textContent = `${pct}%`;
+        if (cnt) cnt.textContent = `${st?.total ?? 0} 课`;
+      });
+    }
+    refreshProgress();
+    onProgress(refreshProgress);
+    render();
+  }
+</script>

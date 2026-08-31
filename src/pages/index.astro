@@ -3,18 +3,12 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TerminalWindow from '../components/TerminalWindow.astro';
 import TypeWriter from '../components/TypeWriter.astro';
-import { MODULES, MODE_LABEL } from '../data/modules';
+import ModuleCarousel from '../components/ModuleCarousel.astro';
 import { withBase } from '../lib/urls';
 
 const lessons = await getCollection('lessons');
-const counts = new Map<string, { total: number; ready: number }>();
-for (const l of lessons) {
-  const c = counts.get(l.data.module) ?? { total: 0, ready: 0 };
-  c.total += 1;
-  if (l.data.status === 'ready') c.ready += 1;
-  counts.set(l.data.module, c);
-}
 const totalLessons = lessons.length;
+const moduleCount = new Set(lessons.map((l) => l.data.module)).size;
 
 const heroLines = [
   '$ happyvibe --start',
@@ -33,7 +27,7 @@ const heroLines = [
         <span class="hero-gold">让每一位老师都可以用好 AI，减负增效。</span>
       </h1>
       <p class="hero-sub">
-        这里整理了集团培训的全部内容：{totalLessons} 节课、{MODULES.length} 个模块，
+        这里整理了集团培训的全部内容：{totalLessons} 节课、{moduleCount} 个模块，
         从 AI 认知到 Vibe Coding，按你自己的节奏学。
       </p>
       <div class="hero-cta">
@@ -65,38 +59,7 @@ const heroLines = [
     </div>
   </section>
 
-  <section class="container" id="modules">
-    <header class="sec-head">
-      <h2 class="sec-title">全部课程模块 <span class="mono sec-code">// 按需查阅</span></h2>
-      <p class="sec-sub text-muted">
-        不知道点哪个？用上面的「三种学法」。下面是完整内容仓库：
-        <b>按顺序学</b> 的模块适合从头到尾；<b>按需查阅</b> 的模块像字典，遇到问题再来查。
-      </p>
-    </header>
-    <div class="module-grid">
-      {MODULES.map((m) => {
-        const c = counts.get(m.slug)!;
-        return (
-          <a class="module-card card" href={withBase(`/modules/${m.slug}/`)} data-module-card={m.slug}>
-            <div class="mc-top">
-              <span class="mc-icon" style={`color:${m.accent}`} aria-hidden="true">{m.icon}</span>
-              <span class="mc-code mono" style={`color:${m.accent}`}>{m.code}</span>
-            </div>
-            <h3 class="mc-title">{m.title}</h3>
-            <p class="mc-sub">{m.subtitle}</p>
-            <span class="mc-mode" style={`color:${m.accent};border-color:${m.accent}55`}>{MODE_LABEL[m.mode]}</span>
-            <div class="mc-foot">
-              <span class="mc-count mono">{c.total} 课</span>
-              <div class="mc-bar" role="img" aria-label={`${m.title}学习进度`}>
-                <div class="mc-bar-fill" data-module-bar={m.slug}></div>
-              </div>
-              <span class="mc-pct mono" data-module-pct={m.slug}>0%</span>
-            </div>
-          </a>
-        );
-      })}
-    </div>
-  </section>
+  <ModuleCarousel />
 
   <section class="container continue-sec">
     <div class="continue-card card">
