@@ -5,7 +5,8 @@ export type ModuleSlug =
   | 'class-management'
   | 'edu-data'
   | 'research'
-  | 'creation';
+  | 'creation'
+  | 'software';
 
 export interface ModuleMeta {
   slug: ModuleSlug;
@@ -73,6 +74,14 @@ export const MODULES: ModuleMeta[] = [
     subtitle: '会「动嘴」就会 Vibe Coding',
     icon: '</>',
     accent: '#feb300',
+  },
+  {
+    slug: 'software',
+    code: 'M7',
+    title: '软件实操教程',
+    subtitle: 'Trae · WorkBuddy · DeepSeek Harness 手把手上手',
+    icon: '⌘',
+    accent: '#e8935e',
   },
 ];
 

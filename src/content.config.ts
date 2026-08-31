@@ -9,6 +9,7 @@ export const MODULE_SLUGS = [
   'edu-data',
   'research',
   'creation',
+  'software',
 ] as const;
 
 const lessons = defineCollection({
