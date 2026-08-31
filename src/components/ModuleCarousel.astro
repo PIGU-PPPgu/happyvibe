@@ -204,9 +204,38 @@ const cards = MODULES.map((m) => ({
     drag.addEventListener('pointerdown', (e) => {
       down = true; startX = lastX = e.clientX; startP = progress; lastT = performance.now(); vel = 0;
       cancelAnimationFrame(raf);
+      clearTimeout(hoverTimer);
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
     });
+
+    // 悬停侧卡：停留片刻直接划到该卡
+    let hoverTimer = 0, hoverTarget = -1;
+    const frontIndex = () => ((Math.round(progress) % total) + total) % total;
+    drag.addEventListener('pointermove', (e) => {
+      if (down) { clearTimeout(hoverTimer); return; }
+      const rect = stage.getBoundingClientRect();
+      const px = e.clientX - rect.left - rect.width / 2;
+      const c = cfg();
+      let best = -1, bestDist = 1e9;
+      cards.forEach((_, i) => {
+        let o = (i - progress) % total;
+        if (o > total / 2) o -= total;
+        if (o < -total / 2) o += total;
+        const dist = Math.abs(px - o * c.x);
+        if (dist < 180 && dist < bestDist) { bestDist = dist; best = i; }
+      });
+      if (best === -1 || best === frontIndex()) { clearTimeout(hoverTimer); hoverTarget = -1; return; }
+      if (hoverTarget !== best) {
+        clearTimeout(hoverTimer);
+        hoverTarget = best;
+        hoverTimer = window.setTimeout(() => {
+          const k = Math.round((progress - best) / total);
+          springTo(best + k * total);
+        }, 320);
+      }
+    });
+    drag.addEventListener('pointerleave', () => clearTimeout(hoverTimer));
 
     // 按钮 & 圆点
     document.querySelector('[data-prev]')?.addEventListener('click', () => springTo(Math.round(progress) - 1));

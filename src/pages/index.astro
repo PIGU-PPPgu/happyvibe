@@ -42,17 +42,14 @@ const heroLines = [
     <h2 class="sh-title">从哪里开始？—— 三种学法，选一个</h2>
     <div class="start-grid">
       <a class="start-card card" href={withBase('/modules/software/workbuddy/')}>
-        <span class="sc-icon mono" aria-hidden="true">🚀</span>
         <h3 class="sc-t">我要直接上手一个工具</h3>
         <p class="sc-d">WorkBuddy 手把手六课，今天学今天用。<span class="sc-tag mono">最推荐</span></p>
       </a>
       <a class="start-card card" href={withBase('/modules/creation/task-library/')}>
-        <span class="sc-icon mono" aria-hidden="true">🎯</span>
         <h3 class="sc-t">我想解决一个具体问题</h3>
         <p class="sc-d">课堂不生动？重复劳动多？去任务库按目标挑任务。</p>
       </a>
       <a class="start-card card" href={withBase('/path/')}>
-        <span class="sc-icon mono" aria-hidden="true">🗺</span>
         <h3 class="sc-t">我想系统学一遍</h3>
         <p class="sc-d">跟学习路线图走，从认知到做出作品，一站一站来。</p>
       </a>
@@ -85,7 +82,6 @@ const heroLines = [
   .start-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
   .start-card { padding: 20px 22px; color: var(--text); display: flex; flex-direction: column; gap: 6px; }
   .start-card:hover { text-decoration: none; }
-  .sc-icon { font-size: 22px; }
   .sc-t { margin: 0; font-size: 17px; }
   .sc-d { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.7; }
   .sc-tag { font-size: 11px; color: #2a1c00; background: linear-gradient(135deg, var(--gold-soft), var(--gold));
@@ -157,7 +153,7 @@ const heroLines = [
         btn.href = withBase(`/modules/${firstUndone}/`);
         btn.hidden = false;
       } else if (ids.length) {
-        slot.textContent = '> 全部学完了，你就是科组的技术担当！🎉';
+        slot.textContent = '> 全部学完了，你就是科组的技术担当！';
         btn.hidden = false;
         btn.textContent = '再逛逛工具箱 →';
         btn.href = withBase('/toolbox/');

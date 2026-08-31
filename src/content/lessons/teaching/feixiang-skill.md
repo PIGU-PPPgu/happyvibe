@@ -32,7 +32,7 @@ git clone https://github.com/PIGU-PPPgu/feixiang-skill.git
 
 ## 普通老师怎么用
 
-不用自己装——**把链接发给你的🦞**（回看[为什么要养好一只🦞](/modules/agent/why-agent/)：它自己会读取并安装），然后：
+不用自己装——**把链接发给你的电子助手**（回看[为什么要养好一只电子助手](/modules/agent/why-agent/)：它自己会读取并安装），然后：
 
 - 「帮我查一下三年级最近的学情报告」
 - 「按上周错题率组一份 20 题的卷子」

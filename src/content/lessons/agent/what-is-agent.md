@@ -36,5 +36,5 @@ status: ready
 
 ## 延伸阅读
 
-- [桌面 Agent 的组成](/modules/agent/agent-anatomy/)：拆开看一只🦞的身体构造
-- [为什么要养好一只🦞](/modules/agent/why-agent/)：长期主义者的选择
+- [桌面 Agent 的组成](/modules/agent/agent-anatomy/)：拆开看一只电子助手的身体构造
+- [为什么要养好一只电子助手](/modules/agent/why-agent/)：长期主义者的选择

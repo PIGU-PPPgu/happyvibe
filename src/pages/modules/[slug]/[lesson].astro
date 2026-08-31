@@ -60,7 +60,7 @@ const moduleHref = withBase(`/modules/${slug}/`);
           <h1 class="lesson-title">{lesson.data.title}</h1>
           <p class="lesson-desc">{lesson.data.description}</p>
           <div class="lesson-meta">
-            <span class="mono text-muted">📖 {lesson.data.source}</span>
+            <span class="mono text-muted">{lesson.data.source}</span>
             {lesson.data.status === 'draft' && <PixelBadge variant="draft" />}
             <MarkDoneButton lessonId={`${slug}/${lessonSlug}`} />
           </div>
