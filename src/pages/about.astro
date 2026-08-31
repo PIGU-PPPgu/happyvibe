@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import { getCollection } from 'astro:content';
+import { withBase } from '../lib/urls';
+
+const lessons = await getCollection('lessons');
+const ready = lessons.filter((l) => l.data.status === 'ready').length;
+---
+<BaseLayout title="关于本站" description="HappyVibe 数智学园的来源、署名与更新方式">
+  <div class="container about-page">
+    <TerminalWindow title="happyvibe about">
+      <h1 class="ab-title">关于本站</h1>
+      <p class="ab-sub text-muted">一个由培训 PPT 长出来的学习站。</p>
+    </TerminalWindow>
+
+    <div class="ab-body prose">
+      <h2>这是哪里</h2>
+      <p>
+        这里是集团教师 AI 赋能学习站 <strong>HappyVibe 数智学园</strong>。
+        内容整理自吴林璋老师（港中深附属道远学校）在集团内做的「数智赋能教育教学」系列培训，
+        目前共 {lessons.length} 节课（{ready} 节已校对就绪），按
+        「认知入门 + 六大应用方向」组织成 {lessons.length > 0 ? '七' : ''}个模块。
+      </p>
+
+      <h2>怎么用</h2>
+      <ul>
+        <li>零基础请从 <a href={withBase('/modules/basics/')}>M0 认知入门</a> 开始，或者跟着<a href={withBase('/path/')}>学习路线图</a>走七站；</li>
+        <li>每节课右上角有「标记已学」，进度保存在你自己的浏览器里，无需注册；</li>
+        <li>想快速找某个功能（比如「万事留痕」），按 <kbd class="kbd">⌘K</kbd> / <kbd class="kbd">Ctrl K</kbd> 全站搜索。</li>
+      </ul>
+
+      <h2>内容说明</h2>
+      <ul>
+        <li>课程正文由培训 PPT 重写而来；带 <strong>「内容校对中」</strong> 徽章的课程还在等讲述细节补充，仅供参考；</li>
+        <li>截图已做隐私排查：含真实学生姓名/成绩/心理记录的图片一律未上线（详见仓库内《图片待确认清单》）；</li>
+        <li>内容仅供集团内部学习交流，请勿外传。</li>
+      </ul>
+
+      <h2>反馈与贡献</h2>
+      <p>
+        发现讲错了、有更好的做法、或者想把你自己的 Skill 沉淀成一节课——
+        欢迎联系吴老师（联系方式待补充），或在企业微信里直接说。
+      </p>
+
+      <h2>更新日志</h2>
+      <ul>
+        <li><span class="mono">v0.1</span> · 2026-08-31 · 网站上线：七大模块 29 节课、工具箱、学习路线图、全站搜索、本地学习进度。</li>
+      </ul>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page { padding: 48px 0 20px; max-width: 860px; }
+  .ab-title { margin: 0 0 10px; font-size: clamp(26px, 4vw, 38px); }
+  .ab-sub { margin: 0; }
+  .ab-body { margin-top: 34px; }
+</style>

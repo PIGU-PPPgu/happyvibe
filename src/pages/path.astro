@@ -1,0 +1,145 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import { PATH_STATIONS } from '../data/path';
+import { withBase } from '../lib/urls';
+
+// 校验路线图里的课程 ID 都真实存在
+const lessons = await getCollection('lessons');
+const validIds = new Set(lessons.map((l) => `${l.data.module}/${l.id.split('/').pop()}`));
+const stations = PATH_STATIONS.map((s) => ({
+  ...s,
+  lessons: s.lessons.map((l) => ({
+    ...l,
+    href: withBase(`/modules/${l.id}/`),
+    missing: !validIds.has(l.id),
+  })),
+}));
+const totalStations = stations.length;
+---
+<BaseLayout title="学习路线图" description="从会用 AI 到形成成果的七站成长路径">
+  <div class="container path-page">
+    <TerminalWindow title="happyvibe path — 7 stations">
+      <p class="path-kicker mono">// GROWTH PATH · 源自培训成长路径图</p>
+      <h1 class="path-title">七站，从「会用」到「形成成果」</h1>
+      <p class="path-sub text-muted">
+        逐渐熟悉如何更好地「人机协同」，从而多一种解决教育问题的能力。每一站都对应站内课程，学完可标记已学。
+      </p>
+    </TerminalWindow>
+
+    <ol class="stations">
+      {stations.map((s, i) => (
+        <li class="station" data-station={s.code}>
+          <div class="st-node" aria-hidden="true">
+            <span class="st-num mono">{s.code}</span>
+          </div>
+          <div class="st-body card">
+            <header class="st-head">
+              <h2 class="st-title">{s.title}</h2>
+              <span class="st-progress mono" data-station-pct={s.code}></span>
+            </header>
+            <p class="st-desc">{s.desc}</p>
+            <ul class="st-lessons">
+              {s.lessons.map((l) => (
+                <li>
+                  <a class="st-link" href={l.href} data-lesson-link={l.id}>
+                    <span class="st-check mono" aria-hidden="true">✓</span>
+                    {l.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            {i < totalStations - 1 && <span class="st-arrow mono" aria-hidden="true">↓</span>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</BaseLayout>
+
+<style>
+  .path-page { padding: 48px 0 20px; }
+  .path-kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .path-title { margin: 0 0 10px; font-size: clamp(24px, 4vw, 36px); }
+  .path-sub { margin: 0; max-width: 620px; }
+  .stations {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    position: relative;
+  }
+  .station { display: flex; gap: 20px; }
+  .st-node {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-panel);
+    border: 2px solid var(--line-strong);
+    border-radius: 0;
+    box-shadow: 3px 3px 0 rgba(166, 61, 151, 0.35);
+  }
+  .st-num { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .st-body { flex: 1; padding: 20px 24px; position: relative; }
+  .st-head { display: flex; align-items: baseline; gap: 12px; }
+  .st-title { margin: 0; font-size: 20px; }
+  .st-progress { margin-left: auto; font-size: 12px; color: var(--gold-soft); }
+  .st-desc { margin: 6px 0 12px; color: var(--text-muted); font-size: 14.5px; }
+  .st-lessons { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .st-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    font-size: 14.5px;
+    padding: 6px 12px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-sm);
+  }
+  .st-link:hover { border-color: var(--line-gold); color: var(--gold-soft); text-decoration: none; }
+  .st-check { color: var(--text-faint); visibility: hidden; }
+  .st-link.is-done .st-check { visibility: visible; color: var(--gold); }
+  .st-link.is-done { border-style: solid; border-color: var(--line-gold); }
+  .st-arrow {
+    position: absolute;
+    bottom: -34px;
+    left: 24px;
+    color: var(--purple-soft);
+    font-size: 18px;
+    animation: float-y 2s ease-in-out infinite;
+  }
+  @media (min-width: 820px) {
+    .station { padding-left: 12px; }
+  }
+</style>
+
+<script>
+  import { getDoneMap, onProgress } from '../lib/progress';
+
+  function refresh() {
+    const done = getDoneMap();
+    document.querySelectorAll<HTMLElement>('[data-station]').forEach((st) => {
+      const code = st.getAttribute('data-station')!;
+      const links = [...st.querySelectorAll<HTMLAnchorElement>('[data-lesson-link]')];
+      let n = 0;
+      links.forEach((a) => {
+        const id = a.getAttribute('data-lesson-link')!;
+        const isDone = Boolean(done[id]);
+        a.classList.toggle('is-done', isDone);
+        if (isDone) n += 1;
+      });
+      const pctEl = st.querySelector<HTMLElement>(`[data-station-pct="${code}"]`);
+      if (pctEl) pctEl.textContent = `${n}/${links.length} 已学`;
+      const node = st.querySelector<HTMLElement>('.st-node');
+      if (node) node.style.borderColor = n === links.length && links.length > 0 ? 'var(--gold)' : 'var(--line-strong)';
+    });
+  }
+  refresh();
+  onProgress(refresh);
+</script>

@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TerminalWindow from '../../../components/TerminalWindow.astro';
+import LessonCard from '../../../components/LessonCard.astro';
+import { MODULES, MODULE_MAP, type ModuleSlug } from '../../../data/modules';
+import { withBase } from '../../../lib/urls';
+
+export async function getStaticPaths() {
+  return MODULES.map((m) => ({ params: { slug: m.slug } }));
+}
+
+const { slug } = Astro.params;
+const meta = MODULE_MAP.get(slug as ModuleSlug)!;
+
+const lessons = (await getCollection('lessons'))
+  .filter((l) => l.data.module === slug)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const total = lessons.length;
+const readyCount = lessons.filter((l) => l.data.status === 'ready').length;
+---
+<BaseLayout title={`${meta.code} ${meta.title}`} description={meta.subtitle}>
+  <div class="container module-page">
+    <nav class="crumbs mono" aria-label="面包屑">
+      <a href={withBase('/')}>~/happyvibe</a> <span aria-hidden="true">/</span>
+      <a href={withBase('/#modules')}>modules</a> <span aria-hidden="true">/</span>
+      <span class="crumb-here">{slug}</span>
+    </nav>
+
+    <TerminalWindow title={`modules/${slug} — ${total} lessons`}>
+      <div class="module-head">
+        <p class="module-code mono" style={`color:${meta.accent}`}>{meta.code}</p>
+        <h1 class="module-title">{meta.icon} {meta.title}</h1>
+        <p class="module-sub">{meta.subtitle}</p>
+        <p class="module-meta mono text-muted">
+          {total} 节课 · {readyCount} 节已就绪{total - readyCount > 0 ? ` · ${total - readyCount} 节校对中` : ''}
+        </p>
+      </div>
+    </TerminalWindow>
+
+    <div class="lesson-list">
+      {lessons.map((l) => (
+        <LessonCard
+          moduleSlug={slug}
+          slug={l.id.split('/').pop()!}
+          order={l.data.order}
+          title={l.data.title}
+          description={l.data.description}
+          status={l.data.status}
+        />
+      ))}
+    </div>
+
+    <nav class="module-nav" aria-label="模块间导航">
+      {MODULES.map((m, i) => {
+        if (m.slug !== slug) return null;
+        const prev = MODULES[i - 1];
+        const next = MODULES[i + 1];
+        return (
+          <>
+            {prev && <a class="btn btn-ghost" href={withBase(`/modules/${prev.slug}/`)}>← {prev.code} {prev.title}</a>}
+            {next && <a class="btn btn-ghost" href={withBase(`/modules/${next.slug}/`)}>{next.code} {next.title} →</a>}
+          </>
+        );
+      })}
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .module-page { padding: 40px 0 20px; }
+  .crumbs { font-size: 13px; color: var(--text-faint); margin-bottom: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .crumbs a { color: var(--text-muted); }
+  .crumb-here { color: var(--gold); }
+  .module-head { display: flex; flex-direction: column; gap: 6px; }
+  .module-code { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; margin: 0; }
+  .module-title { margin: 0; font-size: clamp(26px, 4vw, 38px); line-height: 1.25; }
+  .module-sub { margin: 0; color: var(--text-muted); font-size: 16px; }
+  .module-meta { margin: 8px 0 0; font-size: 13px; }
+  .lesson-list { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+  .module-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
+</style>

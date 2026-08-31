@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PixelBadge from '../../../components/PixelBadge.astro';
+import MarkDoneButton from '../../../components/MarkDoneButton.astro';
+import { MODULE_MAP, type ModuleSlug } from '../../../data/modules';
+import { withBase } from '../../../lib/urls';
+
+export async function getStaticPaths() {
+  const lessons = await getCollection('lessons');
+  return lessons.map((l) => ({
+    params: { slug: l.data.module, lesson: l.id.split('/').pop()! },
+    props: { lesson: l },
+  }));
+}
+
+const { lesson } = Astro.props;
+const { slug } = Astro.params;
+const meta = MODULE_MAP.get(slug as ModuleSlug)!;
+
+const siblings = (await getCollection('lessons'))
+  .filter((l) => l.data.module === slug)
+  .sort((a, b) => a.data.order - b.data.order);
+const idx = siblings.findIndex((l) => l.id === lesson.id);
+const prev = siblings[idx - 1];
+const next = siblings[idx + 1];
+const lessonSlug = lesson.id.split('/').pop()!;
+---
+<BaseLayout title={lesson.data.title} description={lesson.data.description}>
+  <div class="container lesson-page">
+    <nav class="crumbs mono" aria-label="面包屑">
+      <a href={withBase('/')}>~/happyvibe</a> <span aria-hidden="true">/</span>
+      <a href={withBase(`/modules/${slug}/`)}>{slug}</a> <span aria-hidden="true">/</span>
+      <span class="crumb-here">{lessonSlug}</span>
+    </nav>
+
+    <header class="lesson-header">
+      <p class="lesson-kicker mono">
+        <a href={withBase(`/modules/${slug}/`)} style={`color:${meta.accent}`}>{meta.code} · {meta.title}</a>
+      </p>
+      <h1 class="lesson-title">{lesson.data.title}</h1>
+      <p class="lesson-desc">{lesson.data.description}</p>
+      <div class="lesson-meta">
+        <span class="mono text-muted">📖 {lesson.data.source}</span>
+        {lesson.data.status === 'draft' && <PixelBadge variant="draft" />}
+        <MarkDoneButton lessonId={`${slug}/${lessonSlug}`} />
+      </div>
+    </header>
+
+    <article class="prose" data-pagefind-body>
+      <slot />
+    </article>
+
+    <nav class="lesson-nav" aria-label="课程导航">
+      {prev ? (
+        <a class="btn btn-ghost nav-prev" href={withBase(`/modules/${slug}/${prev.id.split('/').pop()}/`)}>
+          <span class="nav-dir mono">← PREV</span>
+          <span>{prev.data.title}</span>
+        </a>
+      ) : <span />}
+      {next ? (
+        <a class="btn btn-ghost nav-next" href={withBase(`/modules/${slug}/${next.id.split('/').pop()}/`)}>
+          <span class="nav-dir mono">NEXT →</span>
+          <span>{next.data.title}</span>
+        </a>
+      ) : <span />}
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .lesson-page { padding: 40px 0 20px; max-width: 860px; }
+  .crumbs { font-size: 13px; color: var(--text-faint); margin-bottom: 26px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .crumbs a { color: var(--text-muted); }
+  .crumb-here { color: var(--gold); }
+  .lesson-header { margin-bottom: 34px; }
+  .lesson-kicker { font-size: 13px; letter-spacing: 0.06em; margin: 0 0 10px; }
+  .lesson-title { margin: 0 0 12px; font-size: clamp(26px, 4.4vw, 40px); line-height: 1.3; }
+  .lesson-desc { margin: 0 0 18px; color: var(--text-muted); font-size: 16.5px; }
+  .lesson-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+  .lesson-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 56px;
+    flex-wrap: wrap;
+  }
+  .lesson-nav .btn {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    max-width: 48%;
+  }
+  .nav-next { align-items: flex-end; text-align: right; margin-left: auto; }
+  .nav-dir { font-size: 11px; letter-spacing: 0.1em; color: var(--text-faint); }
+  .lesson-nav a:hover .nav-dir { color: var(--gold); }
+</style>
