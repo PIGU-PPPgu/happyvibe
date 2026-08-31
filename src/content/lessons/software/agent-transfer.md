@@ -1,7 +1,7 @@
 ---
 title: 会用 WorkBuddy = 会用所有桌面 Agent
 module: software
-order: 7
+order: 8
 description: 学完五课不用再学别的软件。Trae、DeepSeek Harness、各类 Coding Agent——界面不同，骨子里是同一台机器。
 source: 培训方法论
 status: ready

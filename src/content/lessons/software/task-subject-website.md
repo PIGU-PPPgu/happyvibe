@@ -1,7 +1,7 @@
 ---
 title: 任务一：用 WorkBuddy 打造学科主题网站
 module: software
-order: 4
+order: 9
 description: 任务式实战：从领取素材包到发布上线，带学生走进你的学科主页。每一步都有操作、话术、截图位和检查点。
 source: 任务式教程 · 样板任务
 status: draft
