@@ -1,0 +1,24 @@
+Python 变量与赋值
+
+【概念】变量就像一个贴了名字标签的盒子，里面可以装数据。
+
+【示例】
+age = 12          # 把 12 装进 age 这个盒子
+age = age + 1     # 取出 12，加 1，把 13 重新装回去
+print(age)        # 输出 13
+
+name = "小明"     # 变量也可以装文字（字符串）
+print("你好，" + name)
+
+【命名规则】
+✓ 由字母、数字、下划线组成，不能以数字开头
+✓ 见名知意：score、height 比 a、b1 好
+✗ 不能用关键字：if、for、print 等
+
+【课堂试一试】
+height = 150
+height = height + 5
+print(height)     # 输出多少？（150）
+
+score1, score2 = 90, 85
+print(score1 + score2)   # 输出多少？（175）

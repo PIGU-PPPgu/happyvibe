@@ -5,12 +5,15 @@ import { visit } from 'unist-util-visit';
 // GitHub Pages 项目站部署时用 PUBLIC_BASE=/happyvibe/ 构建；Vercel/根域名留空即可
 const base = process.env.PUBLIC_BASE || '/';
 
-/** Markdown 里的绝对路径图片加上 base 前缀（GitHub Pages 项目站必需） */
-function remarkBaseImages() {
+/** Markdown 里的绝对路径图片/文件链接加上 base 前缀（GitHub Pages 项目站必需） */
+function remarkBaseAssets() {
   const prefix = base === '/' ? '' : base.replace(/\/$/, '');
   return (tree) => {
     visit(tree, 'image', (node) => {
       if (node.url.startsWith('/')) node.url = `${prefix}${node.url}`;
+    });
+    visit(tree, 'link', (node) => {
+      if (node.url.startsWith('/') && !node.url.startsWith('//')) node.url = `${prefix}${node.url}`;
     });
   };
 }
@@ -20,7 +23,7 @@ export default defineConfig({
   base,
   trailingSlash: 'ignore',
   markdown: {
-    remarkPlugins: [remarkBaseImages],
+    remarkPlugins: [remarkBaseAssets],
   },
   build: {
     inlineStylesheets: 'auto',
