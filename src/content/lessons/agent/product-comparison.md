@@ -30,6 +30,8 @@ status: ready
 
 ## 怎么用这张表
 
+![傻瓜三步选型决策图](/images/lessons/selection-flow.png)
+
 1. **先定位自己**：普通教师看「文档 / PPT / Excel」三列；信息科技教师看「网页 / 定时远程 / 安全」；
 2. **再对场景**：写课题 → Kimi Work；做宣传海报 → MiniMax；全校统一推 → WorkBuddy；
 3. **价格策略**：标准版额度少、高级版偏贵——先用免费档试出哪款顺手，再决定要不要付费。

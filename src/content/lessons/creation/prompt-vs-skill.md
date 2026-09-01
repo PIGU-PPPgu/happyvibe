@@ -43,6 +43,10 @@ status: ready
 
 ## 实操：把一个 Prompt 升级成 Skill
 
+先看一份真实的 Skill 固化记录（WorkBuddy 实机）：AI 确认固化后，会列出技能的完整内容和存放位置。
+
+![Skill 固化真实记录](/images/demos/wb2-f1.png)
+
 1. 把你最近一次用得特别顺的对话整理出来；
 2. 按上面的五件套补全（流程、标准、经验、资源）；
 3. 存成一个 `SKILL.md` 文件，放进你的 Agent 技能目录（WorkBuddy / Hermes 等都支持）；

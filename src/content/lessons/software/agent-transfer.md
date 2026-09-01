@@ -11,6 +11,8 @@ status: ready
 
 ## 为什么敢这么说
 
+![六部位对照图](/images/lessons/transfer-map.png)
+
 你在手把手五课里练的所有动作，拆开其实是**六个概念**。任何桌面 Agent——Trae、DeepSeek Harness、各类 Coding Agent——都由同样的六个概念拼成，只是名字不同：
 
 | 你在 WorkBuddy 学的 | 换个软件可能叫 | 不变的本质 |

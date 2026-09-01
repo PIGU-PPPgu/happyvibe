@@ -27,6 +27,8 @@ status: ready
 
 4. 保存（⌘S），关掉表格。
 
+![演练文件夹结构](/images/lessons/folder-structure.png)
+
 ## 第 2 步：把文件交给 WorkBuddy
 
 1. 打开 WorkBuddy，确认在「新建任务」页；
