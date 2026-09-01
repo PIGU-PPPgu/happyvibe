@@ -22,6 +22,10 @@ status: ready
 
 配套教程：[学科课件任务：七步迭代法](/modules/creation/subject-task/)（先读它，再用材料包）
 
+## 加餐：学科网站模板（4 套）
+
+想做学科网站的老师，还有一套现成骨架可领：**[site-templates.zip](/materials/site-templates.zip)**——语文（水墨书香）/ 数学（理性蓝）/ 英语（活力橙绿）/ 科学（实验绿）各一套，单文件、标注了所有要改的位置，配合[任务一](/modules/software/task-subject-website/)使用。
+
 ## 使用场景
 
 1. **老师自学**：点下面的「下载」或扫码，解压后拖进 WorkBuddy；
