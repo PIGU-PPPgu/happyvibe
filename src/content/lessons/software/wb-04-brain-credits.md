@@ -16,6 +16,10 @@ status: ready
 
 对着你的截图认一遍：
 
+**跟着动图看一遍完整动作**（点货架 → 选脑子 → 完成）：
+
+![换大脑完整流程](/images/demos/wb4-brain.gif)
+
 ![模型选择器实拍](/images/lessons/wb-05-models.webp)
 
 ## 第 2 步：看懂三样东西

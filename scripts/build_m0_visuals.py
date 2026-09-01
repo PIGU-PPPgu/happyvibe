@@ -20,9 +20,9 @@ def font(size=30):
     return ImageFont.load_default()
 
 
-F = font(30)
-FS = font(24)
-FT = font(40)
+F = font(38)
+FS = font(30)
+FT = font(48)
 GOLD = (254, 179, 0)
 PURPLE = (166, 61, 151)
 TXT = (242, 236, 248)
@@ -56,7 +56,7 @@ def five_stages_frames():
     total_steps = 5
     for step in range(1, total_steps + 1):
         im, d = new(W, H)
-        d.text((90, 40), 'AI 使用的五个阶段：大多数老师滑向第 5 步', font=font(34), fill=TXT)
+        d.text((90, 40), 'AI 使用的五个阶段：大多数老师滑向第 5 步', font=font(42), fill=TXT)
         # 坐标轴
         d.line((80, 520, 1120, 520), fill=(120, 100, 150), width=3)
         d.line((80, 520, 80, 110), fill=(120, 100, 150), width=3)
@@ -77,7 +77,7 @@ def five_stages_frames():
             lx, ly, c = labels[seg]
             anchor_x = pts_x[seg] - 10
             d.text((anchor_x, pts_y[seg] - 66), lx, font=FS, fill=c)
-            d.text((anchor_x, pts_y[seg] - 34), labels[seg][1], font=font(21), fill=MUT)
+            d.text((anchor_x, pts_y[seg] - 34), labels[seg][1], font=font(27), fill=MUT)
             d.ellipse((pts_x[seg] - 9, pts_y[seg] - 9, pts_x[seg] + 9, pts_y[seg] + 9), fill=c)
         # 当前阶段提示
         cur = labels[step - 1]
@@ -97,13 +97,13 @@ def why_hard_compare():
     d.rounded_rectangle((80, 120, 560, 300), 16, fill=(46, 26, 46), outline=(200, 90, 90), width=3)
     d.text((105, 145), '× 普通问法', font=F, fill=(230, 130, 130))
     d.text((105, 200), '帮我写个通知', font=FS, fill=(220, 200, 210))
-    d.text((105, 250), '→ AI 只能瞎猜，产出一堆套话', font=font(21), fill=(180, 150, 160))
+    d.text((105, 250), '→ AI 只能瞎猜，产出一堆套话', font=font(27), fill=(180, 150, 160))
     # 右：好问
     d.rounded_rectangle((640, 120, 1120, 300), 16, fill=(26, 40, 34), outline=(90, 180, 120), width=3)
     d.text((665, 145), '√ 三句话问法', font=F, fill=(130, 220, 160))
     for i, line in enumerate(['【身份】你是经验丰富的班主任', '【任务】写一份秋游告家长书', '【要求】500 字内，亲切，含回执截止日']):
-        d.text((665, 186 + i * 32), line, font=font(21), fill=(200, 230, 210))
-    d.text((665, 288), '→ 一次到位，只微调', font=font(21), fill=(150, 190, 165))
+        d.text((665, 186 + i * 32), line, font=font(27), fill=(200, 230, 210))
+    d.text((665, 288), '→ 一次到位，只微调', font=font(27), fill=(150, 190, 165))
     # 底部结论条
     d.rounded_rectangle((80, 360, 1120, 470), 16, fill=(40, 30, 60), outline=PURPLE, width=2)
     d.text((110, 385), '差别不在 AI，在表达：', font=F, fill=TXT)
