@@ -25,7 +25,7 @@ status: ready
 | 七(2)班 | 学生D | 248 |
 | 七(2)班 | 学生E | 273 |
 
-4. 保存（⌘S），关掉表格。
+4. 保存（**Mac**：⌘S；**Windows**：Ctrl+S），关掉表格。
 
 ![演练文件夹结构](/images/lessons/folder-structure.png)
 
