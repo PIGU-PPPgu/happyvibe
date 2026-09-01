@@ -1,11 +1,12 @@
 export type ModuleSlug =
   | 'basics'
-  | 'agent'
   | 'teaching'
   | 'class-management'
   | 'edu-data'
   | 'research'
+  | 'growth'
   | 'creation'
+  | 'agent'
   | 'software';
 
 export interface ModuleMeta {
@@ -25,79 +26,93 @@ export const MODE_LABEL: Record<ModuleMeta['mode'], string> = {
   browse: '按需查阅',
 };
 
-/** 模块顺序即全站导航与课程编号顺序（源自 PPT「六大应用方向」内容地图） */
+/**
+ * 模块体系严格对应培训 PPT「六大应用方向」：
+ * 01 AI×教学  02 AI×班级管理  03 AI×教育数据
+ * 04 AI×教研科研  05 AI×教师成长  06 AI×应用创造
+ * 「00 认知入门」为先修，「T1/T2」为工具教程区。
+ */
 export const MODULES: ModuleMeta[] = [
   {
     slug: 'basics',
-    code: 'M0',
+    code: '00',
     title: '认知入门',
-    subtitle: '先把 AI 用对，再谈赋能',
+    subtitle: '先修 · 把 AI 用对，再谈赋能',
     icon: '>_',
     accent: '#a63d97',
-   mode: 'sequence',
-  },
-  {
-    slug: 'agent',
-    code: 'M1',
-    title: 'AI Agent',
-    subtitle: '养一只属于你的电子助手',
-    icon: '◇',
-    accent: '#feb300',
-   mode: 'practice',
+    mode: 'sequence',
   },
   {
     slug: 'teaching',
-    code: 'M2',
+    code: '01',
     title: 'AI × 教学',
-    subtitle: '备课 · 命题 · 让课堂更有意思',
+    subtitle: '智能辅导 · 备课 · 命题 · 个性化学习',
     icon: '▶',
     accent: '#c25aa8',
-   mode: 'browse',
+    mode: 'browse',
   },
   {
     slug: 'class-management',
-    code: 'M3',
+    code: '02',
     title: 'AI × 班级管理',
-    subtitle: '班主任的减负工具箱',
+    subtitle: '班主任助手 · 家校沟通 · 万事留痕',
     icon: '▦',
     accent: '#d98e2b',
-   mode: 'browse',
+    mode: 'browse',
   },
   {
     slug: 'edu-data',
-    code: 'M4',
+    code: '03',
     title: 'AI × 教育数据',
-    subtitle: '看懂平均分背后的学生',
+    subtitle: '学情分析 · 增值评价 · 数据可视化',
     icon: '%',
     accent: '#b877b0',
-   mode: 'browse',
+    mode: 'browse',
   },
   {
     slug: 'research',
-    code: 'M5',
+    code: '04',
     title: 'AI × 教研科研',
-    subtitle: '课题、文献与成果沉淀',
+    subtitle: '课题研究 · 文献分析 · 成果沉淀',
     icon: '§',
     accent: '#8a2f7d',
-   mode: 'browse',
+    mode: 'browse',
+  },
+  {
+    slug: 'growth',
+    code: '05',
+    title: 'AI × 教师成长',
+    subtitle: '知识库 · 素养学习 · 智能体 · 工作流',
+    icon: '✦',
+    accent: '#5fb0a0',
+    mode: 'practice',
   },
   {
     slug: 'creation',
-    code: 'M6',
+    code: '06',
     title: 'AI × 应用创造',
-    subtitle: '会「动嘴」就会 Vibe Coding',
+    subtitle: 'Vibe Coding · 教学网页 · Skills · 智能教务',
     icon: '</>',
     accent: '#feb300',
-   mode: 'practice',
+    mode: 'practice',
+  },
+  {
+    slug: 'agent',
+    code: 'T1',
+    title: 'Agent 通识',
+    subtitle: '工具区 · 什么是 Agent 与产品横评',
+    icon: '◇',
+    accent: '#a63d97',
+    mode: 'browse',
   },
   {
     slug: 'software',
-    code: 'M7',
-    title: '软件实操教程',
-    subtitle: 'Trae · WorkBuddy · DeepSeek Harness 手把手上手',
+    code: 'T2',
+    title: 'WorkBuddy 实操',
+    subtitle: '工具区 · 手把手六课与实战任务',
     icon: '⌘',
     accent: '#e8935e',
-   mode: 'practice',
+    mode: 'sequence',
   },
 ];
 

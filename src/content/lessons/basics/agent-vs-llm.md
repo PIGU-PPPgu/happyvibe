@@ -29,4 +29,4 @@ status: ready
 ## 延伸
 
 - 脑子是可以换的：同一个 Agent，可以接不同的 LLM（这就是「换脑子」），见 [如何选「脑子」](/modules/basics/choose-model/)；
-- 人是可以培训的：给 Agent 装上「技能」（Skill），它就会按你学校的固定流程干活，见 [Prompt 与 Skill](/modules/creation/prompt-vs-skill/) 与 [M1 AI Agent 模块](/modules/agent/)。
+- 人是可以培训的：给 Agent 装上「技能」（Skill），它就会按你学校的固定流程干活，见 [Prompt 与 Skill](/modules/growth/prompt-vs-skill/) 与 [M1 AI Agent 模块](/modules/agent/)。

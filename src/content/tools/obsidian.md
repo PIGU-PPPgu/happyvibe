@@ -7,4 +7,4 @@ image: /images/lessons/obsidian-logo.webp
 order: 7
 ---
 
-详见课程 [Agent + Obsidian](/modules/agent/agent-obsidian/)。数据存在本地，免费供个人使用。
+详见课程 [Agent + Obsidian](/modules/growth/knowledge-base/)。数据存在本地，免费供个人使用。

@@ -39,7 +39,7 @@ status: ready
 
 2. 它确认记住后，下周你只需要打 4 个字：`出周小结`。
 
-更进一步的固化（写成 Skill 文件、跨设备复用）见 [Prompt 与 Skill](/modules/creation/prompt-vs-skill/)。
+更进一步的固化（写成 Skill 文件、跨设备复用）见 [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)。
 
 ## 第 4 步：连接器与小程序（知道有这回事就行）
 

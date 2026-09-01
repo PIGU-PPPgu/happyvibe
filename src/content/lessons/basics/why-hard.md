@@ -36,4 +36,4 @@ status: ready
 
 ## 延伸
 
-表达清楚只是及格线。想让 AI 长期记住你的偏好、不用每次重复交代，就要把提示词升级成 Skill——见 [Prompt 与 Skill](/modules/creation/prompt-vs-skill/)。
+表达清楚只是及格线。想让 AI 长期记住你的偏好、不用每次重复交代，就要把提示词升级成 Skill——见 [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)。

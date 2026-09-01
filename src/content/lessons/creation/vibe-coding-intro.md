@@ -42,7 +42,7 @@ status: ready
 2. [「消费骗局」避坑](/modules/creation/consumption-traps/)——别为免费的 lunch 付冤枉钱
 3. [关键词与提示词](/modules/creation/keywords/)——把嘴动明白
 4. [用 HTML 解题](/modules/creation/html-solving/)——最快见效的练手项目
-5. [Prompt 与 Skill](/modules/creation/prompt-vs-skill/)——从会用到教得会
+5. [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)——从会用到教得会
 6. [实战案例](/modules/creation/case-study/)——别人家老师的成品
 
 **先立个旗：学完本模块，你的第一个作业是做一个解决自己班上真实痛点的小工具。**

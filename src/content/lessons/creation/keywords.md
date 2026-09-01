@@ -44,4 +44,4 @@ AI 会像需求分析师一样把「写给谁、什么场景、多少字、什�
 ## 延伸
 
 - 需求描述的完整模板见 [AI 为什么越用越难用](/modules/basics/why-hard/)；
-- 好的提示词值得沉淀复用 → [Prompt 与 Skill](/modules/creation/prompt-vs-skill/)。
+- 好的提示词值得沉淀复用 → [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)。

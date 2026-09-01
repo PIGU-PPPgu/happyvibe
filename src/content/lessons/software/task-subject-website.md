@@ -201,7 +201,7 @@ WorkBuddy 跑真实任务的完整记录（搭建教师智能工作台，35 分�
 
 > 【截图位 S9】Skill 固化成功的回复
 
-**✓ 检查点**：它确认 Skill 已保存（方法见 [Prompt 与 Skill](/modules/creation/prompt-vs-skill/)）。
+**✓ 检查点**：它确认 Skill 已保存（方法见 [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)）。
 
 ---
 

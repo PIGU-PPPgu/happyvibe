@@ -1,7 +1,7 @@
 ---
 title: AI 任务库：按你想解决的问题找任务
 module: creation
-order: 14
+order: 11
 description: 不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。
 source: 教师真实需求整理（所有成果均为话术真实生成）
 status: ready
@@ -54,10 +54,10 @@ status: ready
 
 > 「我希望我的课，学生是抬着头的。」
 
-**《静夜思》情景诵读课件**（15 科任务卡，各科都有）
-学生得到：能点、能听、能玩的课文，而不是一页 PPT。
-你得到：一件能上公开课的亮点作品，做完可复用到每一届。
-→ [学科课件任务](/modules/creation/subject-task/)
+**《静夜思》情景诵读课件**（15 科任务卡）→ [入口](/modules/creation/subject-task/)
+
+- 学生得到：能点、能听、能玩的课文
+- 你得到：能上公开课的作品，年年复用
 
 **把抽象概念做成可拖动的动画**
 学生得到：自己拖滑块「看」出规律（相遇问题、凸透镜成像）。
@@ -173,12 +173,12 @@ C 层（挑战思维，选做）：1 道综合题，附思路提示（不给答�
 **把你的资料变成学科助教**
 学生得到：课后有问题，先问「懂你班情况」的助教。
 你得到：把讲义攒成私有知识库——你的经验第一次「不在场也在线」。
-→ [Agent + Obsidian](/modules/agent/agent-obsidian/)
+→ [Agent + Obsidian](/modules/growth/knowledge-base/)
 
 **用 Skill 固化你的教学法**
 学生得到：你的教学法可以被完整复现。
 你得到：一套属于你的 Skill 资产——换学校、带新人、开讲座，它都是你的独门秘籍。
-→ [Prompt 与 Skill](/modules/creation/prompt-vs-skill/)
+→ [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)
 
 ## 目标四 · 把重复劳动清零
 

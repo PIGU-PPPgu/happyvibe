@@ -8,6 +8,7 @@ export const MODULE_SLUGS = [
   'class-management',
   'edu-data',
   'research',
+  'growth',
   'creation',
   'software',
 ] as const;

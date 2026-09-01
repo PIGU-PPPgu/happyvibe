@@ -42,7 +42,7 @@ PPT 里给了一个冷冰冰的不等式：
 | 成本 | 解法 | 对应课程 |
 |---|---|---|
 | 学习成本 | 别追新工具，先把一个工具用透 | [如何选「脑子」](/modules/basics/choose-model/) |
-| 操作成本 | 让 Agent 记住你的偏好、固化成 Skill | [Prompt 与 Skill](/modules/creation/prompt-vs-skill/) |
+| 操作成本 | 让 Agent 记住你的偏好、固化成 Skill | [Prompt 与 Skill](/modules/growth/prompt-vs-skill/) |
 | 核对成本 | 只把「大量重复 + 有固定规范」的活交给 AI | [什么时候值得用 AI](/modules/basics/when-to-use/) |
 
 ## 自查

@@ -1,7 +1,7 @@
 ---
 title: 亲手固化一个 Skill：从「重复做事」到「一句话复用」
-module: creation
-order: 9
+module: growth
+order: 5
 description: 用本站的真实案例，手把手带你走完 Skill 形成的四步循环——你会发现：你已经无数次「做过」这件事，只差把它写下来。
 source: 本站 skills/tutorial-visuals/SKILL.md 的真实诞生过程
 status: ready
@@ -66,4 +66,4 @@ status: ready
 - [ ] 用 WorkBuddy 固化了一个自己的 Skill
 - [ ] 成功用一句话触发过一次
 
-完成后，你就同时拥有了 [Prompt 与 Skill](/modules/creation/prompt-vs-skill/) 的方法论和一个真正属于你的数字资产。想看更多结构化示例 → [触发词速查表](/modules/creation/trigger-words/)。
+完成后，你就同时拥有了 [Prompt 与 Skill](/modules/growth/prompt-vs-skill/) 的方法论和一个真正属于你的数字资产。想看更多结构化示例 → [触发词速查表](/modules/creation/trigger-words/)。

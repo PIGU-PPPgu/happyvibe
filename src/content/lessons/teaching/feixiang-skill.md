@@ -19,7 +19,7 @@ status: ready
 - 学情查询、知识错题、成绩单等
 - 高难度自动避免（带失败重试）
 
-这就是 [Skill](/modules/creation/prompt-vs-skill/) 思路的落地：**把你在网页上的每一步操作固化下来，交给 Agent 执行**。
+这就是 [Skill](/modules/growth/prompt-vs-skill/) 思路的落地：**把你在网页上的每一步操作固化下来，交给 Agent 执行**。
 
 ## 安装要点（技术教师）
 

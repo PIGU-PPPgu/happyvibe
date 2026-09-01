@@ -1,7 +1,7 @@
 ---
 title: Skill 的使用与迁移：一个技能，所有 Agent 通用
-module: creation
-order: 10
+module: growth
+order: 6
 description: 固化好的 SKILL.md 怎么用？WorkBuddy 里启用、搬到 Claude Code/ZCode/Trae——技能文件是纯文本，复制粘贴即可迁移。
 source: 本站 skills/tutorial-visuals/SKILL.md 实践 ／ 各 Agent 技能机制通用原理
 status: ready
@@ -34,7 +34,7 @@ status: ready
 3. 发一句触发词测试 → 通过即迁移完成。
 
 **场景 3 · 用代码工具的同学（进阶）**
-Claude Code / ZCode 读取项目里的 `skills/` 文件夹或 `~/.claude/skills/`——把 `SKILL.md` 放进去，AI 自动识别。本站的「教程配图 Skill」就是这么存的：[skills/tutorial-visuals/SKILL.md](https://happyvibe.intelliedu.cc/modules/creation/skill-born/)。
+Claude Code / ZCode 读取项目里的 `skills/` 文件夹或 `~/.claude/skills/`——把 `SKILL.md` 放进去，AI 自动识别。本站的「教程配图 Skill」就是这么存的：[skills/tutorial-visuals/SKILL.md](https://happyvibe.intelliedu.cc/modules/growth/skill-born/)。
 
 ## 迁移检查清单
 

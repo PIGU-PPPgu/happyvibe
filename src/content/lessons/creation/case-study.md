@@ -1,7 +1,7 @@
 ---
 title: 实战案例：从「1人公司」到固化的 Skill
 module: creation
-order: 11
+order: 8
 description: 两个真实案例：让 AI 按你的设计规范自动产出网页（Notion 风 Skill 固化），以及飞象老师的经验教训。
 source: 道远 PPT S15、S30
 status: ready

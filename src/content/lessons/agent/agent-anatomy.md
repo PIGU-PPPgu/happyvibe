@@ -17,7 +17,7 @@ status: ready
 |---|---|---|
 | **WorkBuddy** |  工作角色 | Agent 本体：接收任务、拆解流程、汇报结果 |
 | **GPT / 混元 / DeepSeek** |  可以替换的大脑 | 底层 LLM，按任务随时切换（见[如何选「脑子」](/modules/basics/choose-model/)） |
-| **Skill** |  角色掌握的技能 | 你教给它的固定流程和模板（见[Prompt 与 Skill](/modules/creation/prompt-vs-skill/)） |
+| **Skill** |  角色掌握的技能 | 你教给它的固定流程和模板（见[Prompt 与 Skill](/modules/growth/prompt-vs-skill/)） |
 | **浏览器、文件、Excel、代码、邮箱等** |  能使用的工具 | 让它从「能说」变成「能做」 |
 | **历史任务、资料库** |  记忆 | 你的班级学情、常用格式，越用越懂你 |
 

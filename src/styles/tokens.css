@@ -280,8 +280,16 @@ a:hover {
 /* ---------- 正文排版（课程内容） ---------- */
 .prose {
   font-size: 16.5px;
-  line-height: 1.9;
+  line-height: 1.95;
+  max-width: 42em; /* 中文舒适行宽：约 42 字/行 */
 }
+
+.prose p {
+  margin: 1.1em 0;
+}
+
+/* 长文呼吸感：表格、列表后多留白 */
+.prose table + p, .prose ul + p, .prose ol + p { margin-top: 1.4em; }
 
 .prose h2 {
   font-size: 26px;

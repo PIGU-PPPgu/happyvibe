@@ -50,7 +50,9 @@ status: ready
 
 ## 深挖资料（文字党看这里）
 
-**① WorkBuddy 实战蓝皮书**（开源，27 章）：[workbuddy.homes](https://workbuddy.homes/)。全书结构，想深挖哪块点哪块：
+**① WorkBuddy 实战蓝皮书**（开源，27 章）：[workbuddy.homes](https://workbuddy.homes/)
+
+想深挖哪块点哪块：
 
 | 篇 | 章节 | 内容 |
 |---|---|---|

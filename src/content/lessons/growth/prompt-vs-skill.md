@@ -1,7 +1,7 @@
 ---
 title: Prompt 与 Skill：从「会用」到「教得会」
-module: creation
-order: 8
+module: growth
+order: 4
 description: Prompt 是一次性的指令，Skill 是可复用的技能包。你的教学经验、班级管理经验，都是非常宝贵的 Skill。
 source: 道远 PPT S25-S29
 status: ready
@@ -52,4 +52,4 @@ status: ready
 3. 存成一个 `SKILL.md` 文件，放进你的 Agent 技能目录（WorkBuddy / Hermes 等都支持）；
 4. 下次只说一句「用我的XX技能」——全自动。
 
-具体的固化案例见下一课 [实战案例](/modules/creation/case-study/)；想看「一个 Skill 完整的诞生过程」→ [亲手固化一个 Skill](/modules/creation/skill-born/)。
+具体的固化案例见下一课 [实战案例](/modules/creation/case-study/)；想看「一个 Skill 完整的诞生过程」→ [亲手固化一个 Skill](/modules/growth/skill-born/)。
