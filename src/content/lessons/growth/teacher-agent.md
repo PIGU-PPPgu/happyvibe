@@ -57,4 +57,4 @@ WorkBuddy 左侧「专家·技能·连接器」→ 找教育类专家 → 添加
 - [ ] 喂过一次「基本情况」话术
 - [ ] 纠正过它至少 1 次表达习惯
 
-下一步：把你的智能体经验固化成 Skill → [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)
+下一步：把你的智能体经验固化成 Skill → [Prompt 与 Skill](/modules/growth/prompt-vs-skill/)；想玩出更多自己的花样 → [创意工坊](/modules/growth/innovation/)
