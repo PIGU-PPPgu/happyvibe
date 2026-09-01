@@ -98,3 +98,56 @@ def full_frame(src_png, cap_main, cap_sub=None, focus_rect_css=None, click_css=N
         cx, cy = css_to_px(click_css[0]), css_to_px(click_css[1], False)
         draw_click(im, cx, cy)
     return caption_frame(im, cap_main, cap_sub)
+
+
+# ============ v2：放大镜推近-波纹-拉回 & 红框箭头标注 ============
+
+def push_in_frames(src_png, target_css, steps=(1.0, 0.55, 0.3), click_css=None):
+    """从全景渐进推近到目标区域，返回推近帧序列（不含波纹）。target_css=(x,y,w,h)"""
+    im = Image.open(A / src_png).convert('RGB')
+    W, H = im.size
+    tx, ty, tw, th = target_css
+    tx, ty = tx * SCALE, (ty - WIN_ORIGIN[1]) * SCALE
+    tw, th = tw * SCALE, th * SCALE
+    cx, cy = tx + tw / 2, ty + th / 2
+    frames = []
+    for s in steps:
+        vw, vh = W * s, H * s
+        # 目标中心尽量居中，但裁剪框不超出画布
+        x0 = min(max(cx - vw / 2, 0), W - vw)
+        y0 = min(max(cy - vh / 2, 0), H - vh)
+        crop = im.crop((int(x0), int(y0), int(x0 + vw), int(y0 + vh)))
+        crop = crop.resize((1280, int(crop.height * 1280 / crop.width)))
+        frames.append(crop)
+    return frames
+
+
+def ripple_on(im, click_css):
+    """在图上画点击波纹（css 坐标 → 图内像素按比例）"""
+    im = im.convert('RGB')
+    W, H = im.size
+    cx, cy = click_css[0] * SCALE, (click_css[1] - WIN_ORIGIN[1]) * SCALE
+    # 若是推近帧，坐标不在原图尺度——调用方应先换算。此处按「图=原图等比」处理
+    draw_click(im, int(cx * W / 3024) if W < 3024 else int(cx), int(cy * H / 1898) if H < 1898 else int(cy))
+    return im
+
+
+def annotate(src_png, out_name, boxes, notes=None, arrow_from=None):
+    """静态图标注：红框 + 箭头 + 标签。
+    boxes: [(x0,y0,x1,y1)] 图内像素；notes: [(文字, 文字左上角)]；arrow_from: (x,y) 箭头起点→指向最后一个框"""
+    src = Path('public/images/lessons') / src_png if not (A / src_png).exists() else A / src_png
+    im = Image.open(src).convert('RGB')
+    d = ImageDraw.Draw(im, 'RGBA')
+    RED = (226, 61, 61)
+    for b in boxes:
+        x0, y0, x1, y1 = b
+        d.rounded_rectangle((x0 - 6, y0 - 6, x1 + 6, y1 + 6), 10, outline=RED + (255,), width=6)
+    if arrow_from:
+        tx = boxes[-1][0] - 10
+        ty = (boxes[-1][1] + boxes[-1][3]) // 2
+        d.line([arrow_from, (tx, ty)], fill=RED + (255,), width=7)
+        d.polygon([(tx - 4, ty - 14), (tx - 4, ty + 14), (tx + 26, ty)], fill=RED + (255,))
+    if notes:
+        for text, pos in notes:
+            d.text(pos, text, font=font(30), fill=RED + (255,))
+    im.convert('RGB').save(OUT / out_name, quality=88)
