@@ -11,6 +11,8 @@ status: ready
 
 ## 先看四张牌
 
+![四张牌依次翻开（动图）](/images/demos/cards-flip.gif)
+
 同样一个 WorkBuddy，不同老师用出来的东西完全不同。差别就在这四张牌怎么打：
 
 ![你的风格 × AI 四张牌](/images/lessons/innovation-cards.png)

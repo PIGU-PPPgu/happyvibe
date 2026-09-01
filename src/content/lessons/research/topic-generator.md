@@ -9,6 +9,8 @@ status: ready
 
 > **一句话结论：课题申报最耗人的是格式和资料收集——让 Agent 组队按模板推进，你只负责选题和学术判断。**
 
+![课题六步流程（动图）](/images/demos/research-flow.gif)
+
 ![课题生成器](/images/lessons/topic-generator.webp)
 
 ## EDU RESEARCH WORKBENCH 是什么

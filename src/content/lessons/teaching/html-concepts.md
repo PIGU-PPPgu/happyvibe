@@ -13,6 +13,10 @@ status: ready
 
 ## 为什么交互页面赢了
 
+看一个真实的交互课件（动图；[点开拖拖滑块](/demos/function-lab/)）：
+
+![函数实验室：拖动参数实时变曲线](/images/demos/function.gif)
+
 同一个「抛物线」概念：
 
 - **PPT**：静态图 + 结论，学生被动接收；
