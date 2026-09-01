@@ -22,9 +22,12 @@ status: ready
 | [第 3 课 · 第一次干活](/modules/software/wb-03-real-work/) | 喂 Excel、下任务、验收、纠错、追加 | 15 分钟 |
 | [第 4 课 · 换大脑与省钱](/modules/software/wb-04-brain-credits/) | 选模型、看倍率、管好积分和权限 | 10 分钟 |
 | [第 5 课 · 配人手与自动化](/modules/software/wb-05-market/) | 装专家、教技能、连接器、定时任务 | 15 分钟 |
-| [第 6 课 · 三个抄作业任务](/modules/software/wb-06-office/) | Word 教案 / Excel 全年级 / PPT 大纲（六要素全量话术） | 30 分钟 |
+| [第 6 课 · 三个痛点任务](/modules/software/wb-06-office/) | 批量合并 / 跨文件提炼 / 周报流水线 | 30 分钟 |
+| [第 7 课 · 连接器与手机派单](/modules/software/wb-07-connectors/) | 不在电脑前也能干活 | 15 分钟 |
+| [第 8 课 · 自动化实战](/modules/software/wb-08-automation/) | 晨报 / 周报 / 条件触发三个真实场景 | 20 分钟 |
+| [第 9 课 · 排错手册](/modules/software/wb-09-troubleshooting/) | 卡住了怎么办：万能三招 + 10 种情况 | 随时查 |
 
-学完六课，去 [任务一：打造学科主题网站](/modules/software/task-subject-website/) 实战；再读 [会用 WorkBuddy = 会用所有桌面 Agent](/modules/software/agent-transfer/)，Trae、DeepSeek Harness、任何同类工具就都不教自会了。
+学完九课，挑任务实战：[任务一 · 学科主题网站](/modules/software/task-subject-website/) → [任务二 · 教师工作台](/modules/software/task-workbench/) → [任务三 · 课堂三件套](/modules/software/task-classroom-kit/) → [任务四 · 期末材料大生产](/modules/software/task-final-term/)。最后读 [会用 WorkBuddy = 会用所有桌面 Agent](/modules/software/agent-transfer/)。
 
 ## 界面先睹为快
 

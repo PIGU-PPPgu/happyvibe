@@ -233,6 +233,8 @@ WorkBuddy 跑真实任务的完整记录（搭建教师智能工作台，35 分�
 - [ ] 手机端检查通过
 - [ ] 固化了 `subject-site-builder` Skill
 
+下一个挑战：[任务二 · 打造教师工作台](/modules/software/task-workbench/)
+
 **做完这个任务，你实际已经学会了**：给 Agent 喂文件夹、分步下需求、验收产出、固化 Skill——换任何一个学科、任何一种网站，流程一模一样。
 
 ---
