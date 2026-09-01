@@ -15,6 +15,14 @@ status: ready
 
 ![打开 WorkBuddy 历史任务](/images/demos/wb2-chat.gif)
 
+打字发送的真实样子（三步实拍）：
+
+![① 点输入框，光标闪烁](/images/lessons/type-step1.webp)
+
+![② 话术粘贴好了](/images/lessons/type-step2.webp)
+
+![③ 点黑色圆钮发送](/images/lessons/type-step3.webp)
+
 1. 打开 WorkBuddy，确认在「新建任务」页；
 2. 点一下中间大输入框（光标开始闪烁）；
 3. 打字（或复制下面这句，**在输入框里点右键 → 粘贴**）：
