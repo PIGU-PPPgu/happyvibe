@@ -447,7 +447,7 @@ def main():
             continue
         print('··', s['name'], s['slug'])
         build_pack(s)
-        zpath = ROOT / f'{s["slug"]}-{s["name"]}.zip'
+        zpath = ROOT / f'{s["slug"]}.zip'
         d = ROOT / s['slug']
         if zpath.exists():
             zpath.unlink()
@@ -456,7 +456,7 @@ def main():
                 if p.is_file():
                     z.write(p, p.relative_to(d))
         qr = qrcode.QRCode(box_size=6, border=2)
-        qr.add_data(f'{QR_BASE}/{s["slug"]}-{s["name"]}.zip')
+        qr.add_data(f'{QR_BASE}/{s["slug"]}.zip')
         qr.make(fit=True)
         qr.make_image(fill_color='black', back_color='white').save(qr_dir / f'{s["slug"]}.png')
 

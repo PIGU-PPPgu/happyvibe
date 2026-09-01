@@ -20,7 +20,7 @@ status: ready
 把上面的大纲转成 Mermaid mindmap 语法输出给我
 ```
 
-3. 把代码粘到 [mermaid.live](https://mermaid.live) 或支持 Mermaid 的笔记软件（Obsidian 原生支持），导出图片即可。
+3. 把代码粘到 [mermaid.live](https://mermaid.live) 或支持 Mermaid 的笔记软件（Obsidian 原生支持），导出图片就行。
 
 ## 课堂用法
 
