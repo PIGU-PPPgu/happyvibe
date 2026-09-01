@@ -11,6 +11,14 @@ status: ready
 
 ## 第 1 步：打开模型货架
 
+换脑三步的真实界面（跟着点）：
+
+![① 点右下角模型名](/images/lessons/wbz-model-click.webp)
+
+![② 货架打开](/images/lessons/wbz-shelf.webp)
+
+![③ 换好了](/images/lessons/wbz-switched.webp)
+
 1. 在输入框**右下角**找到当前模型的名字（比如「Kimi-K3」）；
 2. **单击它**——弹出完整列表。
 

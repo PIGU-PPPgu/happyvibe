@@ -22,6 +22,8 @@ status: ready
 
 左侧 **自动化** → 新建，照填：
 
+![左侧「自动化」入口](/images/lessons/wbz-auto-tab.webp)
+
 ```
 任务名：教师晨报
 触发：每天 07:00

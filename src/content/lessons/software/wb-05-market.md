@@ -11,6 +11,10 @@ status: ready
 
 ## 第 1 步：逛「数字员工市场」（5 分钟）
 
+入口在这里（左侧这一排）：
+
+![点左侧「专家·技能·连接器」](/images/lessons/wbz-experts-tab.webp)
+
 1. 点左侧 **专家·技能·连接器**；
 
 ![专家市场：红框处就是「教育学习」分类，点它只看教育类专家](/images/demos/wb-03-experts-annotated.png)

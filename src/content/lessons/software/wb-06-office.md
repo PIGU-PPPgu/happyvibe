@@ -27,6 +27,14 @@ status: ready
 
 本课三个任务，一个特征打一个。
 
+Agent 干活时屏幕上会发生什么（三景对照）：
+
+![任务开始：先列清单](/images/lessons/wbz-plan.webp)
+
+![执行中：写文件、排障](/images/lessons/wbz-running.webp)
+
+![完成后：随时回看积分与模型](/images/lessons/wbz-review.webp)
+
 先看一段真实执行记录——WorkBuddy 用免费模型 Hy3 在 28 秒内交付了一个 6 页面的教师智能工作台：
 
 ![WorkBuddy 真实执行记录：28秒、Hy3免费、交付6个页面](/images/lessons/wb-06-task-exec.webp)

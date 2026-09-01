@@ -37,6 +37,8 @@ status: ready
 
 这是 WorkBuddy 的隐藏大招——右上角有个「扫码」按钮：
 
+![右上角扫码入口](/images/lessons/wbz-scan.webp)
+
 1. 点 WorkBuddy 右上角的**扫码图标**（「扫码 WorkBuddy 小程序」）；
 2. 手机微信扫码 → 确认绑定；
 3. 完成。以后手机上也能给它派活。
