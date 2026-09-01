@@ -23,7 +23,7 @@ status: ready
 2. 完善班级信息，开始使用；
 3. 日常班务随手录入，或者直接对 AI 说。
 
-![数据中心导入规则](/images/lessons/tracedesk-home.webp)
+![万事留痕首页：功能一览](/images/lessons/tracedesk-home.webp)
 
 ## 核心功能
 

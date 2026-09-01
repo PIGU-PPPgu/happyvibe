@@ -27,7 +27,7 @@ status: ready
 
 ![Agent 待办界面](/images/lessons/agent-today.webp)
 
-- 早上打开 Agent：「今天有什么工作要处理？」——它会结合你的记忆里的日程和待办直接开工；
+- 早上打开工作台：「今天有什么工作要处理？」——同类产品（如图中的豆包工作）都会结合你的日程和待办直接开工；
 - 让 Kimi 帮你安排示范任务、让其他大脑做它们擅长的事，**一个身体，随时换脑**。
 
 ![Kimi 安排任务](/images/lessons/kimi-demo.webp)

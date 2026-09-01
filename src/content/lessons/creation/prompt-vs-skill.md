@@ -45,7 +45,7 @@ status: ready
 
 先看一份真实的 Skill 固化记录（WorkBuddy 实机）：AI 确认固化后，会列出技能的完整内容和存放位置。
 
-![Skill 固化真实记录](/images/demos/wb2-f1.png)
+![Skill 固化真实记录](/images/demos/wb2-f1.webp)
 
 1. 把你最近一次用得特别顺的对话整理出来；
 2. 按上面的五件套补全（流程、标准、经验、资源）；
