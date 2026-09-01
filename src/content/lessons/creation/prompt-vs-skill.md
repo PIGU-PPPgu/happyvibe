@@ -48,4 +48,4 @@ status: ready
 3. 存成一个 `SKILL.md` 文件，放进你的 Agent 技能目录（WorkBuddy / Hermes 等都支持）；
 4. 下次只说一句「用我的XX技能」——全自动。
 
-具体的固化案例见下一课 [实战案例](/modules/creation/case-study/)。
+具体的固化案例见下一课 [实战案例](/modules/creation/case-study/)；想看「一个 Skill 完整的诞生过程」→ [亲手固化一个 Skill](/modules/creation/skill-born/)。

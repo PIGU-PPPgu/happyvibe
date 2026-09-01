@@ -1,7 +1,7 @@
 ---
 title: 学科课件任务：为你的课做一个网页，顺便入门 Vibe Coding
 module: creation
-order: 10
+order: 11
 description: 任务驱动实战。15 个学科每个都有一节课的任务卡：备材料 → 七步迭代（文字→图片→音视频→动画）→ 做出属于你这节课的 HTML 课件。
 source: 培训方法论 ／ 国家中小学智慧教育平台资源指引
 status: ready

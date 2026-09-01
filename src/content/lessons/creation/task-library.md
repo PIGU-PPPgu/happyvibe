@@ -1,7 +1,7 @@
 ---
 title: AI 任务库：按你想解决的问题找任务
 module: creation
-order: 12
+order: 13
 description: 不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。
 source: 教师真实需求整理（所有成果均为话术真实生成）
 status: ready

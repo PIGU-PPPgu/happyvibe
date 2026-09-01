@@ -1,7 +1,7 @@
 ---
 title: 学科材料包：15 科打包下载（扫码即得）
 module: creation
-order: 11
+order: 12
 description: 每个学科一个材料包：知识点文字 + 学科示意图/动画 + 朗读音频 + 现成任务话术。下载解压拖进 WorkBuddy 就能开工。
 source: 本站原创整理（TTS 生成音频 / 程序绘制示意图）
 status: ready
