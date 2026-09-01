@@ -1,7 +1,7 @@
 ---
 title: Prompt 与 Skill：从「会用」到「教得会」
 module: creation
-order: 7
+order: 8
 description: Prompt 是一次性的指令，Skill 是可复用的技能包。你的教学经验、班级管理经验，都是非常宝贵的 Skill。
 source: 道远 PPT S25-S29
 status: ready

@@ -1,7 +1,7 @@
 ---
 title: AI 触发词速查表：让 AI 切换「专业输出模式」
 module: creation
-order: 5
+order: 6
 description: 对 AI 说出一个格式关键词，它就会用对应的专业格式输出。8 大类触发词 + 必须掌握的 20 个 + 常用组合，一页查全。
 source: 教师AI触发词速查表.md ／ 触发词图鉴 ／ 魔法关键词手册（吴老师整理）
 status: ready

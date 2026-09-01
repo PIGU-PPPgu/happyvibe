@@ -1,7 +1,7 @@
 ---
 title: Vibe Coding IDE 工具
 module: creation
-order: 2
+order: 3
 description: 从网页对话框到专业 IDE，工具按「敢折腾程度」分三档。零基础从对话框开始就够了。
 source: 道远 PPT S16
 status: draft

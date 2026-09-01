@@ -1,7 +1,7 @@
 ---
 title: 「消费骗局」避坑指南
 module: creation
-order: 3
+order: 4
 description: 朋友圈和小红书上卖 ¥19.9~¥140 的「AI 教师工具」，你自己动嘴就能让 AI 做。破解口诀：输出 html 版本给我即可。
 source: 道远 PPT S17-S19
 status: ready
