@@ -27,6 +27,10 @@ status: ready
 
 本课三个任务，一个特征打一个。
 
+先看一段真实执行记录——WorkBuddy 用免费模型 Hy3 在 28 秒内交付了一个 6 页面的教师智能工作台：
+
+![WorkBuddy 真实执行记录：28秒、Hy3免费、交付6个页面](/images/lessons/wb-06-task-exec.webp)
+
 ---
 
 ## 任务 A · 期末收 6 个班的表，一晚上合并完？（打「批量」）

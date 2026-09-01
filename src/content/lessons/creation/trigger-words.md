@@ -175,6 +175,8 @@ status: ready
 | 教师工作台 | **React + Tailwind CSS + REST API + RBAC** |
 | AI 助手 | **Agent + RAG + Chat UI + REST API** |
 
+想看这些触发词「组合起来」能做出什么？→ [任务一 · 打造学科主题网站](/modules/software/task-subject-website/)
+
 ## 怎么用这一页
 
 1. **收藏本页当词典**：想做什么事，先来查有没有对应的触发词；
