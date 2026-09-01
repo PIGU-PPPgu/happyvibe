@@ -30,17 +30,23 @@ status: ready
 
 ![WorkBuddy 主界面](/images/lessons/wb-01-main.webp)
 
-## 视频课（B 站，配合文字食用）
+## 视频课（站内直接播放，已下载到本站）
 
-看视频找感觉，看文字课学细节。两个口碑不错的入门视频：
+两段完整的中文实操教程，点开即看，不用跳转：
 
-<iframe src="//player.bilibili.com/player.html?bvid=BV1TmwuzFEdd&page=1&autoplay=0&danmaku=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid var(--line-strong);"></iframe>
+<video controls preload="metadata" poster="/videos/workbuddy/intro-poster.jpg" style="width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid var(--line-strong);">
+  <source src="/videos/workbuddy/intro.mp4" type="video/mp4">
+</video>
 
-*《WorkBuddy 彻底玩明白》保姆级教程*
+*入门 ·《腾讯 WorkBuddy 实测：AI 原生桌面智能体工作台，完整安装+体验教程》（5 分钟）· 来源：YouTube @XiaoBeiAI*
 
-<iframe src="//player.bilibili.com/player.html?bvid=BV1RRba6dEPL&page=1&autoplay=0&danmaku=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid var(--line-strong);margin-top:16px;"></iframe>
+<video controls preload="metadata" poster="/videos/workbuddy/practice-poster.jpg" style="width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid var(--line-strong);margin-top:16px;">
+  <source src="/videos/workbuddy/practice.mp4" type="video/mp4">
+</video>
 
-*《60 分钟从会用到会造》（前 20 分钟为快速上手：安装与工作模式）*
+*进阶 ·《WorkBuddy 深度实测：发票、Excel、邮件、HTML 全部交给 AI》（13 分钟）· 来源：YouTube @软核狼哥*
+
+> 来源说明：视频版权归原作者所有，本站仅收录用于集团内部教学展示，建议感兴趣的老师去原频道点赞支持作者。原视频已从 B 站下架，本站版本为 YouTube 存档。
 
 ## 深挖资料（文字党看这里）
 
