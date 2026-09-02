@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>七(2)班月考成绩分析报告</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { background: #150e22; color: #f2ecf8; font-family: 'PingFang SC','Microsoft YaHei',sans-serif; padding: 34px 18px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .tag { font-family: ui-monospace,monospace; font-size: 12px; color: #ffd34d; letter-spacing: .2em; }
+  h1 { font-size: clamp(24px, 4vw, 34px); margin: 8px 0 4px; }
+  .sub { color: #a99cc0; font-size: 13px; margin-bottom: 24px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 26px; }
+  .kpi { background: #1e1433; border: 1px solid rgba(180,130,210,.25); border-radius: 12px; padding: 16px; }
+  .kpi .l { font-size: 12px; color: #a99cc0; margin-bottom: 6px; }
+  .kpi .v { font-size: 30px; font-weight: 800; font-family: ui-monospace,monospace; }
+  .gold { color: #feb300; } .purple { color: #c98fbf; } .green { color: #7ed88a; } .red { color: #e26262; }
+  h2 { font-size: 19px; color: #ffd34d; margin: 30px 0 12px; border-left: 4px solid #feb300; padding-left: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 8px; }
+  th { background: #271a42; color: #ffd34d; padding: 9px 12px; text-align: left; border: 1px solid rgba(180,130,210,.3); font-family: ui-monospace,monospace; font-size: 12.5px; }
+  td { padding: 9px 12px; border: 1px solid rgba(180,130,210,.18); }
+  .note { font-size: 12px; color: #6f6390; margin: 6px 0 0; }
+  .advice { background: #1a1230; border: 1px solid rgba(254,179,0,.3); border-radius: 12px; padding: 18px 20px; }
+  .advice li { margin: 8px 0 8px 1.2em; line-height: 1.7; font-size: 14.5px; }
+  .bar { display: inline-block; height: 10px; border-radius: 4px; background: linear-gradient(90deg,#a63d97,#feb300); vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">MONTHLY EXAM REPORT · 演示数据（化名）</div>
+  <h1>七(2)班 第 3 次月考 · 成绩分析报告</h1>
+  <p class="sub">由一份成绩表 + 一段话术生成 · 数据为演示用假数据</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">班级均分</div><div class="v gold">82.4</div><div class="note">年级第 2/8 班</div></div>
+    <div class="kpi"><div class="l">较上次</div><div class="v green">+3.6</div></div>
+    <div class="kpi"><div class="l">及格率</div><div class="v purple">93.3%</div><div class="note">42/45 人</div></div>
+    <div class="kpi"><div class="l">需重点关注</div><div class="v red">5</div><div class="note">连续两次下滑</div></div>
+  </div>
+
+  <h2>① 各科平均分与班级排名</h2>
+  <table>
+    <tr><th>科目</th><th>均分</th><th>年级排名</th><th>较上次</th><th>分布</th></tr>
+    <tr><td>语文</td><td>84.2</td><td>1/8</td><td class="green">+1.8</td><td><span class="bar" style="width:120px"></span></td></tr>
+    <tr><td>数学</td><td>76.8</td><td>5/8</td><td class="red">-2.4</td><td><span class="bar" style="width:100px"></span></td></tr>
+    <tr><td>英语</td><td>86.1</td><td>2/8</td><td class="green">+4.2</td><td><span class="bar" style="width:126px"></span></td></tr>
+    <tr><td>道法</td><td>88.5</td><td>3/8</td><td class="green">+0.6</td><td><span class="bar" style="width:132px"></span></td></tr>
+  </table>
+  <p class="note">数学是唯一退步科目，且标准差最大（18.6）——两极分化在加剧，见第 ③ 节。</p>
+
+  <h2>② 进步榜（和自己比，增值视角）</h2>
+  <table>
+    <tr><th>学生</th><th>上次 → 本次</th><th>进步</th><th>主要亮点</th></tr>
+    <tr><td>学生H（化名）</td><td>61 → 79</td><td class="green">+18</td><td>数学应用题全对</td></tr>
+    <tr><td>学生K（化名）</td><td>70 → 84</td><td class="green">+14</td><td>英语作文首次进入一类文</td></tr>
+    <tr><td>学生M（化名）</td><td>74 → 86</td><td class="green">+12</td><td>道法主观题答题结构明显改善</td></tr>
+  </table>
+  <p class="note">增值评价：进步被公开看见，不只有前 10 名才光荣。</p>
+
+  <h2>③ 数学两极分化警示</h2>
+  <table>
+    <tr><th>分段</th><th>人数</th><th>占比</th><th>上次占比</th></tr>
+    <tr><td>90 分以上</td><td>9</td><td>20%</td><td>18%</td></tr>
+    <tr><td>75-89</td><td>17</td><td>38%</td><td>42%</td></tr>
+    <tr><td>60-74</td><td>12</td><td>27%</td><td>27%</td></tr>
+    <tr><td>60 以下</td><td>7</td><td class="red">16%</td><td>13%</td></tr>
+  </table>
+  <p class="note">两头增、中间缩——中间层学生在往下滑，需要分层作业干预。</p>
+
+  <h2>④ 给班主任的三条行动建议</h2>
+  <div class="advice">
+    <ol>
+      <li><b>本周内</b>：与数学老师对一次课，确认进度难度与作业分层情况（第 ③ 节数据可直接给她看）；</li>
+      <li><b>两周内</b>：对 5 名连续下滑学生逐一谈话（名单已脱敏存档），先问状态再谈方法；</li>
+      <li><b>家长会</b>：用第 ② 节进步榜替代排名表扬——把「和自己比」的增值口径传达给家长。</li>
+    </ol>
+  </div>
+
+  <p class="note" style="margin-top:24px">本页即「话术 → 成品」的真实产出：一份成绩表 + 一段话术，任何 AI 都能生成。话术见《一次月考后的完整数据分析》课程。</p>
+</div>
+</body>
+</html>

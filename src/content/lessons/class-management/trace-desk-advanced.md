@@ -1,7 +1,7 @@
 ---
 title: 留痕实战：学科协作、值日、电子表扬与成长档案
 module: class-management
-order: 3
+order: 4
 description: 万事留痕的进阶玩法：科任老师一课一反馈、值日劳动自动排班、AI 生成表扬状和全班成长档案。
 source: 道远 PPT S67、S70-S71
 status: ready

@@ -1,7 +1,7 @@
 ---
 title: 智能排座 SEAT OS：从名单到座位表一步生成
 module: class-management
-order: 4
+order: 5
 description: 名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。
 source: 道远 PPT S64
 status: ready
