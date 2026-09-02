@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第19题：长方体收纳盒全流程深度解析</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --blue: #3498db;
+            --red: #e74c3c;
+            --green: #27ae60;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: #333;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 左侧导航 */
+        .sidebar {
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            font-size: 16px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--blue);
+            background: #f0f7ff;
+        }
+
+        .nav-btn.active {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+        }
+
+        .nav-desc {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .stage-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .stage-header {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* 各个模块的特定样式 */
+        .canvas-row {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .canvas-box {
+            flex: 1;
+            background: #fafafa;
+            border-radius: 10px;
+            position: relative;
+            border: 1px solid #eee;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .control-panel {
+            background: #eef2f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        input[type=range] { flex: 1; }
+
+        .stat-badge {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-width: 120px;
+            text-align: center;
+        }
+
+        /* 第2问：剪裁示意图 */
+        .cut-demo-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: stretch;
+            height: 100%;
+            gap: 30px;
+        }
+        .cut-card {
+            flex: 1;
+            background: #fff;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .cut-card.active { border-color: var(--blue); background: #f0f7ff; }
+        .paper-sheet {
+            width: 200px;
+            height: 200px;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            margin: 20px auto;
+            position: relative;
+            display: grid;
+        }
+        .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .grid-2 { grid-template-rows: 1fr 1fr; }
+        
+        .sub-sheet {
+            border: 1px dashed #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            background: white;
+        }
+        .sub-sheet.highlight { background: var(--blue); color: white; border-color: #2980b9; }
+
+        /* 第3问：方程积木 */
+        .equation-builder {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        .equation-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-family: "Times New Roman", serif;
+        }
+        .block {
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .block:hover { transform: scale(1.05); }
+        .block-label {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        .block-a { background: var(--blue); }
+        .block-b1 { background: var(--red); }
+        .block-b2 { background: var(--green); }
+        
+        .explanation-text {
+            background: #fffbe6;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">📐 </div>
+    <button class="nav-btn active" onclick="switchTab(1)">
+        (1) A型盒与体积
+        <div class="nav-desc">折叠动画 / 曲线 / 最值</div>
+    </button>
+    <button class="nav-btn" onclick="switchTab(2)">
+        (2) B型盒剪裁逻辑
+        <div class="nav-desc">为什么是 x/4 和 2x ?</div>
+    </button>
+    <button class="nav-btn" onclick="switchTab(3)">
+        (3) 配套问题方程
+        <div class="nav-desc">170张纸怎么分？</div>
+    </button>
+</div>
+
+<div class="main-content">
+    
+    <div id="section-1" class="stage-container">
+        <div class="stage-header">探究 A 型收纳盒的体积变化</div>
+        <div class="canvas-row">
+            <div class="canvas-box">
+                <div style="position: absolute; top: 10px; left: 10px; font-weight: bold; color: #666;">平面剪裁</div>
+                <canvas id="flatCanvas"></canvas>
+            </div>
+            <div class="canvas-box">
+                <div style="position: absolute; top: 10px; left: 10px; font-weight: bold; color: #666;">体积曲线 $V=(20-2h)^2h$</div>
+                <canvas id="chartCanvas"></canvas>
+            </div>
+        </div>
+        
+        <div class="control-panel">
+            <label style="font-weight: bold;">剪去边长 h (cm): </label>
+            <input type="range" id="hSlider" min="0" max="9.9" step="0.1" value="1">
+            <div class="stat-badge" style="color: var(--red)">h = <span id="valH">1.0</span></div>
+            <div class="stat-badge" style="color: var(--blue)">底 = <span id="valBase">18.0</span></div>
+            <div class="stat-badge" style="color: var(--green)">V = <span id="valV">324.0</span></div>
+            <button onclick="setMaxVolume()" style="padding: 8px 15px; background: #f39c12; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">一键最大值</button>
+        </div>
+        <div class="explanation-text">
+            <strong>教学要点：</strong> A型盒是用整张纸做的。底面边长是原长减去两个h，即 $(20-2h)$。体积公式 $V = \text{底}^2 \times \text{高}$。观察右图，体积随着 h 增大先增后减，在 $h \approx 3.3$ 时达到峰值。
+        </div>
+    </div>
+
+    <div id="section-2" class="stage-container" style="display: none;">
+        <div class="stage-header">解析 B 型收纳盒的材料消耗</div>
+        
+        <div class="cut-demo-container">
+            <div class="cut-card">
+                <h3>需要的零件：小正方形 (底面)</h3>
+                <p>一张大纸可以切成：</p>
+                <div class="paper-sheet grid-4">
+                    <div class="sub-sheet highlight">底</div>
+                    <div class="sub-sheet highlight">底</div>
+                    <div class="sub-sheet highlight">底</div>
+                    <div class="sub-sheet highlight">底</div>
+                </div>
+                <p><strong>结论：</strong> 1 张纸 = 4 个底面</p>
+                <p style="color: var(--red); font-weight: bold;">反之：1 个底面 = 1/4 张纸</p>
+            </div>
+
+            <div class="cut-card">
+                <h3>需要的零件：长方形 (侧面)</h3>
+                <p>一张大纸可以切成：</p>
+                <div class="paper-sheet grid-2">
+                    <div class="sub-sheet highlight">侧</div>
+                    <div class="sub-sheet highlight">侧</div>
+                </div>
+                <p><strong>结论：</strong> 1 张纸 = 2 个侧面</p>
+                <p style="color: var(--green); font-weight: bold;">反之：1 个侧面 = 1/2 张纸</p>
+            </div>
+            
+            <div class="cut-card" style="background: #fff8e1; border-color: #f1c40f;">
+                <h3>组装 1 个 B 型盒</h3>
+                <div style="text-align: left; padding: 10px;">
+                    <div>📦 <strong>结构：</strong> 1 底 + 4 侧</div>
+                    <hr>
+                    <div>📄 <strong>耗材计算：</strong></div>
+                    <div style="margin-top: 5px;">底面消耗：<span style="color:var(--red)">1/4 张</span></div>
+                    <div>侧面消耗：4个 × 1/2 张 = <span style="color:var(--green)">2 张</span></div>
+                    <hr>
+                    <div style="font-weight: bold; font-size: 18px;">做 1 个 B 型盒共需：2.25 张纸</div>
+                    <div style="font-size: 12px; color: #666;">(题目分来算，不需要合并)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation-text">
+            <strong>关键提问：</strong> 同学们，做一个B型盒，需要几个底？(1个)。需要几张纸来剪这个底？(1/4张)。
+            需要几个侧面？(4个)。一张纸能剪几个侧面？(2个)。所以4个侧面需要几张纸？(2张)。
+        </div>
+    </div>
+
+    <div id="section-3" class="stage-container" style="display: none;">
+        <div class="stage-header">第(3)问：配套问题的方程构建</div>
+        
+        <div class="equation-builder">
+            <div style="font-size: 20px; margin-bottom: 20px;">
+                已知：A型盒数量是 B型盒的 2 倍。 总纸张 = 170 张。
+            </div>
+            
+            <div style="background: #eee; padding: 20px; border-radius: 10px;">
+                设做了 <span style="color: var(--red); font-weight: bold; font-size: 24px;">x</span> 个 B型盒
+                &nbsp;&nbsp;→&nbsp;&nbsp; 
+                做了 <span style="color: var(--blue); font-weight: bold; font-size: 24px;">2x</span> 个 A型盒
+            </div>
+
+            <div style="font-size: 18px; color: #555;">👇 消耗的三堆纸加起来等于 170 👇</div>
+
+            <div class="equation-row">
+                <div class="block block-a">
+                    <span class="block-label">A型盒消耗 (1张/个)</span>
+                    2x
+                </div>
+                
+                <span>+</span>
+                
+                <div class="block block-b1">
+                    <span class="block-label">B型底面 (1/4张/个)</span>
+                    x / 4
+                </div>
+                
+                <span>+</span>
+                
+                <div class="block block-b2">
+                    <span class="block-label">B型侧面 (2张/个)</span>
+                    2x
+                </div>
+                
+                <span>=</span>
+                
+                <div class="block" style="background: #333; cursor: default;">
+                    170
+                </div>
+            </div>
+
+            <div id="solve-steps" style="margin-top: 30px; font-size: 18px; text-align: center; line-height: 2;">
+                <button onclick="showSolve()" style="padding: 10px 20px; font-size: 16px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">显示解题步骤</button>
+                <div id="step-content" style="display: none; margin-top: 15px;">
+                    <div>合并同类项：$4.25x = 170$</div>
+                    <div>解得：$x = 40$</div>
+                    <div>求 A 型盒数量：$2x = 2 \times 40 = 80$ (个)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- 导航逻辑 ---
+    function switchTab(idx) {
+        // 隐藏所有
+        document.getElementById('section-1').style.display = 'none';
+        document.getElementById('section-2').style.display = 'none';
+        document.getElementById('section-3').style.display = 'none';
+        
+        // 显示当前
+        document.getElementById('section-'+idx).style.display = 'flex';
+        
+        // 按钮状态
+        const btns = document.querySelectorAll('.nav-btn');
+        btns.forEach((b, i) => {
+            if (i === idx-1) b.classList.add('active');
+            else b.classList.remove('active');
+        });
+
+        // 如果切回第一页，重绘Canvas
+        if(idx === 1) {
+            resizeCanvas();
+            drawFlat();
+            drawChart();
+        }
+    }
+
+    // --- 第1部分 Canvas 逻辑 ---
+    const flatCanvas = document.getElementById('flatCanvas');
+    const chartCanvas = document.getElementById('chartCanvas');
+    const ctxFlat = flatCanvas.getContext('2d');
+    const ctxChart = chartCanvas.getContext('2d');
+    const hSlider = document.getElementById('hSlider');
+
+    // 状态数据
+    let h = 1.0;
+
+    function resizeCanvas() {
+        const box = flatCanvas.parentElement;
+        flatCanvas.width = box.clientWidth;
+        flatCanvas.height = box.clientHeight;
+        chartCanvas.width = box.clientWidth;
+        chartCanvas.height = box.clientHeight;
+    }
+
+    function drawFlat() {
+        const w = flatCanvas.width;
+        const ht = flatCanvas.height;
+        const size = Math.min(w, ht) * 0.7;
+        const scale = size / 20;
+        const cx = w/2, cy = ht/2;
+        const ox = cx - size/2, oy = cy - size/2;
+
+        ctxFlat.clearRect(0, 0, w, ht);
+
+        // 完整纸板 (虚线)
+        ctxFlat.strokeStyle = '#ccc';
+        ctxFlat.setLineDash([5, 5]);
+        ctxFlat.strokeRect(ox, oy, size, size);
+        ctxFlat.setLineDash([]);
+
+        const cut = h * scale;
+        const full = size;
+
+        // 剪裁后的形状
+        ctxFlat.fillStyle = '#eaf2f8';
+        ctxFlat.strokeStyle = '#2980b9';
+        ctxFlat.lineWidth = 2;
+        ctxFlat.beginPath();
+        // 顺时针绘制十字
+        ctxFlat.moveTo(ox+cut, oy);
+        ctxFlat.lineTo(ox+full-cut, oy);
+        ctxFlat.lineTo(ox+full-cut, oy+cut); // corner
+        ctxFlat.lineTo(ox+full, oy+cut);
+        ctxFlat.lineTo(ox+full, oy+full-cut);
+        ctxFlat.lineTo(ox+full-cut, oy+full-cut); // corner
+        ctxFlat.lineTo(ox+full-cut, oy+full);
+        ctxFlat.lineTo(ox+cut, oy+full);
+        ctxFlat.lineTo(ox+cut, oy+full-cut); // corner
+        ctxFlat.lineTo(ox, oy+full-cut);
+        ctxFlat.lineTo(ox, oy+cut);
+        ctxFlat.lineTo(ox+cut, oy+cut); // corner
+        ctxFlat.closePath();
+        ctxFlat.fill();
+        ctxFlat.stroke();
+
+        // 剪掉的角 (红色)
+        ctxFlat.fillStyle = 'rgba(231, 76, 60, 0.3)';
+        ctxFlat.fillRect(ox, oy, cut, cut); // TL
+        ctxFlat.fillRect(ox+full-cut, oy, cut, cut); // TR
+        ctxFlat.fillRect(ox, oy+full-cut, cut, cut); // BL
+        ctxFlat.fillRect(ox+full-cut, oy+full-cut, cut, cut); // BR
+
+        // 文字标注
+        ctxFlat.fillStyle = '#333';
+        ctxFlat.font = '16px Arial';
+        if (h > 1) ctxFlat.fillText('h', ox + cut/2 - 5, oy + cut/2 + 5);
+        ctxFlat.fillStyle = '#2980b9';
+        ctxFlat.fillText(`底面: ${(20-2*h).toFixed(1)}`, cx - 30, cy);
+    }
+
+    function drawChart() {
+        const w = chartCanvas.width;
+        const ht = chartCanvas.height;
+        const padding = 40;
+        
+        ctxChart.clearRect(0,0,w,ht);
+        
+        // 坐标轴
+        ctxChart.beginPath();
+        ctxChart.strokeStyle = '#666';
+        ctxChart.lineWidth = 2;
+        ctxChart.moveTo(padding, padding);
+        ctxChart.lineTo(padding, ht-padding);
+        ctxChart.lineTo(w-padding, ht-padding);
+        ctxChart.stroke();
+
+        // 绘制曲线
+        ctxChart.beginPath();
+        ctxChart.strokeStyle = '#27ae60';
+        ctxChart.lineWidth = 3;
+
+        const maxH = 10;
+        const maxV = 600;
+        const graphW = w - 2*padding;
+        const graphH = ht - 2*padding;
+
+        for(let x=0; x<10; x+=0.1) {
+            let y = Math.pow(20-2*x, 2) * x;
+            let px = padding + (x/maxH)*graphW;
+            let py = (ht-padding) - (y/maxV)*graphH;
+            if(x===0) ctxChart.moveTo(px, py);
+            else ctxChart.lineTo(px, py);
+        }
+        ctxChart.stroke();
+
+        // 当前点
+        let curV = Math.pow(20-2*h, 2) * h;
+        let cPx = padding + (h/maxH)*graphW;
+        let cPy = (ht-padding) - (curV/maxV)*graphH;
+
+        ctxChart.beginPath();
+        ctxChart.fillStyle = '#e74c3c';
+        ctxChart.arc(cPx, cPy, 6, 0, Math.PI*2);
+        ctxChart.fill();
+        
+        // 虚线引导
+        ctxChart.setLineDash([4,4]);
+        ctxChart.beginPath();
+        ctxChart.moveTo(cPx, ht-padding);
+        ctxChart.lineTo(cPx, cPy);
+        ctxChart.lineTo(padding, cPy);
+        ctxChart.strokeStyle = '#999';
+        ctxChart.stroke();
+        ctxChart.setLineDash([]);
+    }
+
+    function updatePart1() {
+        h = parseFloat(hSlider.value);
+        let base = 20 - 2*h;
+        let vol = base*base*h;
+        
+        document.getElementById('valH').innerText = h.toFixed(1);
+        document.getElementById('valBase').innerText = base.toFixed(1);
+        document.getElementById('valV').innerText = vol.toFixed(1);
+
+        drawFlat();
+        drawChart();
+    }
+
+    function setMaxVolume() {
+        hSlider.value = 3.3;
+        updatePart1();
+    }
+
+    hSlider.addEventListener('input', updatePart1);
+
+    // --- 第3部分 解题显示 ---
+    function showSolve() {
+        document.getElementById('step-content').style.display = 'block';
+    }
+
+    // 初始化
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        updatePart1();
+    });
+    setTimeout(() => {
+        resizeCanvas();
+        updatePart1();
+    }, 100);
+
+</script>
+</body>
+</html>

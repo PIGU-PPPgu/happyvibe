@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>707班座位编排系统 · Nothing版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#000000;
+  --surface:#111111;
+  --surface-raised:#1A1A1A;
+  --border:#222222;
+  --border-visible:#333333;
+  --text-disabled:#666666;
+  --text-secondary:#999999;
+  --text-primary:#E8E8E8;
+  --text-display:#FFFFFF;
+  --accent:#D71921;
+  --accent-subtle:rgba(215,25,33,0.16);
+  --success:#4A9E5C;
+  --warning:#D4A843;
+  --error:#D71921;
+  --interactive:#5B9BF6;
+  --bg:var(--black);
+  --card:var(--surface);
+  --blue:var(--interactive);
+  --blue-light:rgba(91,155,246,0.12);
+  --green:var(--success);
+  --green-light:rgba(74,158,92,0.14);
+  --orange:var(--warning);
+  --orange-light:rgba(212,168,67,0.14);
+  --red:var(--accent);
+  --purple:var(--text-secondary);
+  --gray:var(--text-secondary);
+  --text:var(--text-primary);
+  --text-light:var(--text-secondary);
+  --radius:12px;
+  --shadow:none;
+  --shadow-lg:none;
+}
+html{background:var(--black)}
+body{font-family:"Space Grotesk","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#050505;color:var(--text-primary);line-height:1.5;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;background:transparent;pointer-events:none;z-index:-1}
+.header{padding:20px 28px 16px;display:flex;align-items:flex-start;justify-content:space-between;background:rgba(0,0,0,0.94);border-bottom:1px solid var(--border-visible);position:sticky;top:0;z-index:100}
+.header h1{font-family:"Doto","Space Mono",monospace;font-size:34px;line-height:1;font-weight:700;color:var(--text-display);letter-spacing:0;text-transform:uppercase;max-width:680px}
+.header h1:before{content:"[ SEAT OS ]";display:block;font-family:"Space Mono",monospace;font-size:11px;line-height:1.2;font-weight:400;color:var(--accent);letter-spacing:.08em;margin-bottom:8px}
+.header-info{display:flex;gap:14px;align-items:center;font-family:"Space Mono",monospace;font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;flex-wrap:wrap;justify-content:flex-end}
+.tabs{display:flex;gap:22px;padding:12px 28px;background:rgba(0,0,0,0.92);border-bottom:1px solid var(--border);position:sticky;top:73px;z-index:99;overflow-x:auto}
+.tab{padding:8px 0;border-radius:0;font-family:"Space Mono",monospace;font-size:11px;font-weight:400;letter-spacing:.08em;color:var(--text-disabled);background:transparent;border:none;transition:color .18s ease-out;text-transform:uppercase;white-space:nowrap;position:relative}
+.tab.active{color:var(--text-display);background:transparent;border:none;font-weight:700}
+.tab.active:after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:2px;background:var(--accent)}
+.tab:hover{color:var(--text-primary)}
+.content{padding:32px 28px 64px;max-width:1680px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+.card,.glass{padding:24px;margin-bottom:24px;background:var(--surface);border-radius:14px;border:1px solid var(--border-visible);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.card h3{font-family:"Space Mono",monospace;font-size:12px;line-height:1.2;margin-bottom:20px;color:var(--text-secondary);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.guide-kicker{font-family:"Space Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}.guide-title{font-size:26px;line-height:1.15;color:var(--text-display);margin-bottom:10px;max-width:760px}.guide-copy{color:var(--text-secondary);font-size:14px;max-width:900px}.guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:20px}.guide-panel{border:1px solid var(--border-visible);border-radius:10px;padding:16px;background:var(--black)}.guide-panel h4{font-family:"Space Mono",monospace;font-size:12px;color:var(--text-display);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}.guide-panel p,.guide-panel li{font-size:13px;color:var(--text-secondary);line-height:1.7}.guide-panel ol,.guide-panel ul{padding-left:18px}.guide-note{margin-top:16px;padding:12px 14px;border-left:2px solid var(--accent);background:rgba(215,25,33,0.08);color:var(--text-secondary);font-size:13px;line-height:1.7}
+button{font-family:"Space Mono",monospace;cursor:pointer;outline:none;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:11px 18px;border-radius:999px;transition:color .18s ease-out,border-color .18s ease-out,background .18s ease-out;font-weight:700;min-height:40px;background:transparent;color:var(--text-primary);border:1px solid var(--border-visible)}
+button:hover{color:var(--text-display);border-color:var(--text-display)}
+.btn-primary,.btn-green{background:var(--text-display);color:var(--black);border-color:var(--text-display)}
+.btn-primary:hover,.btn-green:hover{background:var(--text-primary);color:var(--black)}
+.btn-orange{background:transparent;color:var(--warning);border-color:var(--warning)}
+.btn-red{background:transparent;color:var(--accent);border-color:var(--accent)}
+.btn-gray{background:transparent;color:var(--text-secondary);border-color:var(--border-visible)}
+.btn-outline{background:transparent;border:1px solid var(--border-visible);color:var(--text-primary)}
+.btn-outline:hover{background:transparent;color:var(--text-display);border-color:var(--text-display)}
+.btn-sm{padding:7px 12px;font-size:11px;min-height:32px}
+.btn-lg{padding:13px 24px;font-size:12px;border-radius:999px}
+input,select,textarea{font-family:"Space Mono","PingFang SC",monospace;font-size:13px;padding:10px 12px;border:1px solid var(--border-visible);border-radius:8px;outline:none;transition:border-color .18s ease-out;background:var(--black);color:var(--text-primary)}
+input:focus,select:focus,textarea:focus{border-color:var(--text-display);box-shadow:none}
+input[type="checkbox"]{accent-color:var(--text-display)}
+input[type="range"]{accent-color:var(--text-display)}
+table{width:100%;border-collapse:collapse;font-size:13px;background:transparent}
+th{background:transparent;padding:12px 14px;text-align:left;font-family:"Space Mono",monospace;font-weight:700;font-size:11px;letter-spacing:.08em;color:var(--text-secondary);border-bottom:1px solid var(--border-visible);text-transform:uppercase;position:sticky;top:0}
+td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-primary)}
+td:first-child,th:first-child{text-align:center;color:var(--text-secondary);font-family:"Space Mono",monospace}
+tr:hover td{background:var(--surface-raised)}
+.seat-grid{display:grid;gap:8px;justify-content:center;margin:20px auto;padding:24px;background:#050505;border-radius:16px;border:1px solid var(--border-visible)}
+.seat-cell{width:86px;height:58px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border-radius:6px;cursor:pointer;transition:border-color .18s ease-out,color .18s ease-out,background .18s ease-out;position:relative;user-select:none;border:1px solid var(--border-visible);background:var(--surface);color:var(--text-primary);font-family:"Space Grotesk","PingFang SC",sans-serif}
+.seat-cell.occupied{background:var(--surface);color:var(--text-display);border:1px solid var(--border-visible);flex-direction:column;font-weight:500}
+.seat-cell.occupied:hover{transform:none;box-shadow:none;border-color:var(--text-display);z-index:10}
+.seat-cell.aisle{background:transparent;border:none;cursor:default;width:16px}
+.seat-cell.empty{background:transparent;border:1px dashed var(--border-visible)}
+.seat-cell .slot-badge{position:absolute;bottom:3px;right:5px;font-family:"Space Mono",monospace;font-size:9px;color:var(--text-secondary);opacity:1;pointer-events:none}
+.seat-cell>span{pointer-events:none}.seat-cell.dragging{opacity:.35}.seat-cell.drag-over{border-color:var(--accent)!important;border-style:solid;background:var(--accent-subtle)!important}.seat-cell.selected{border-color:var(--text-display)!important;background:rgba(255,255,255,0.08)!important;outline:2px solid var(--text-display);outline-offset:2px;z-index:20}.seat-cell.swap-good{border-color:var(--success)!important;background:rgba(74,158,92,0.16)!important;outline:1px solid rgba(74,158,92,0.7);outline-offset:2px}.seat-cell.swap-bad{border-color:var(--accent)!important;background:rgba(215,25,33,0.12)!important;outline:1px solid rgba(215,25,33,0.7);outline-offset:2px}.seat-cell.swap-good:hover,.seat-cell.swap-bad:hover{border-color:var(--text-display)!important}
+.seat-cell.g0,.seat-cell.g1,.seat-cell.g2,.seat-cell.g3,.seat-cell.g4,.seat-cell.g5,.seat-cell.g6,.seat-cell.g7,.seat-cell.g8,.seat-cell.g9,.seat-cell.g10,.seat-cell.g11{border-left:2px solid var(--border-visible)!important}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}.modal{background:var(--surface);border-radius:16px;padding:28px;max-width:640px;width:90%;max-height:82vh;overflow-y:auto;box-shadow:none;border:1px solid var(--border-visible);color:var(--text-primary)}
+.modal h2{font-family:"Space Mono",monospace;font-size:14px;margin-bottom:20px;color:var(--text-display);letter-spacing:.08em;text-transform:uppercase}.modal h3{color:var(--text-primary);margin-bottom:16px}
+.modal .close-btn{position:absolute;top:16px;right:16px;font-size:12px;cursor:pointer;background:none;border:none;color:var(--text-secondary)}
+.tag{display:inline-block;padding:3px 9px;border-radius:999px;font-family:"Space Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:transparent!important;border:1px solid var(--border-visible);color:var(--text-secondary)!important}
+.tag-1{color:var(--text-display)!important;border-color:var(--text-display)}.tag-2{color:var(--success)!important;border-color:var(--success)}.tag-3{color:var(--warning)!important;border-color:var(--warning)}.tag-4{color:var(--accent)!important;border-color:var(--accent)}
+.tag-m,.tag-f{color:var(--text-secondary)!important;border-color:var(--border-visible)}
+.heatmap-grid{display:grid;gap:8px;justify-content:center;margin:22px 0;position:relative}.heatmap-cell{width:132px;height:82px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;border-radius:8px;position:relative;color:#142033;transition:border-color .18s ease-out,background .18s ease-out;background:#F4F6FA;border:1px solid rgba(255,255,255,0.18);cursor:pointer;flex-direction:column;gap:6px}.heatmap-cell:hover{transform:none;box-shadow:none;border-color:var(--text-display);z-index:10}.heatmap-cell .hm-val{font-family:"Space Mono",monospace;font-size:13px;color:rgba(20,32,51,0.62);opacity:1;font-weight:400}.heatmap-cell.aisle-hm{background:transparent!important;pointer-events:none;border:none}
+.stat-bar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:12px}.stat-bar .bar{flex:1;height:8px;background:var(--border);border-radius:0;overflow:hidden}.stat-bar .bar-fill{height:100%;border-radius:0;transition:width .25s ease-out}
+.cluster-box{position:absolute;border:1px solid var(--interactive);border-radius:6px;pointer-events:none;background:rgba(91,155,246,0.10);backdrop-filter:none}.cluster-label{position:absolute;background:var(--black);color:var(--interactive);padding:4px 8px;border-radius:999px;border:1px solid var(--interactive);font-family:"Space Mono",monospace;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:none;letter-spacing:.06em;text-transform:uppercase}
+.wizard{max-width:640px;margin:48px auto;text-align:left}.wizard h2{font-size:28px;margin-bottom:8px}.wizard p{color:var(--text-secondary);margin-bottom:24px}.wizard-step{display:none}.wizard-step.active{display:block}.steps{display:flex;justify-content:flex-start;gap:8px;margin-bottom:24px}.steps span{width:34px;height:34px;border-radius:999px;background:transparent;border:1px solid var(--border-visible);display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--text-secondary)}.steps span.active{background:var(--text-display);color:var(--black);border-color:var(--text-display)}.steps span.done{background:transparent;color:var(--success);border-color:var(--success)}
+.toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}.toolbar select{min-width:0}.arrange-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}.seat-board{min-width:0;text-align:center}.detail-card{position:sticky;top:145px;z-index:20;background:var(--surface);border-radius:12px;padding:16px;box-shadow:none;font-size:12px;min-width:0;pointer-events:auto;border:1px solid var(--border-visible);color:var(--text-primary);text-align:left;max-height:calc(100vh - 170px);overflow:auto}.detail-card h4{font-size:14px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);color:var(--text-display)}.detail-card .row{display:flex;justify-content:space-between;padding:3px 0;gap:12px}.detail-empty{font-family:"Space Mono",monospace;font-size:12px;line-height:1.7;color:var(--text-secondary);letter-spacing:.04em}.arrange-status{font-family:"Space Mono",monospace;font-size:11px;color:var(--text-secondary);letter-spacing:.04em}
+.export-preview{margin:16px 0;text-align:center}.export-preview canvas{border:1px solid var(--border-visible);border-radius:8px;max-width:100%;background:#fff}.paste-area{width:100%;min-height:140px;font-family:"Space Mono",monospace;font-size:12px;resize:vertical}.form-row{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}.form-row label{min-width:88px;font-family:"Space Mono",monospace;font-size:11px;font-weight:700;text-align:right;color:var(--text-secondary);letter-spacing:.08em;text-transform:uppercase}.form-row input,.form-row select{flex:1;min-width:120px}.score-input{width:58px;padding:5px 6px;font-size:12px;text-align:center}.dim-slider{width:64px;vertical-align:middle}.dim-val{display:inline-block;width:32px;text-align:center;font-family:"Space Mono",monospace;font-size:12px;color:var(--text-secondary)}.inline-edit{display:flex;align-items:center;gap:6px}.dim-control{display:flex;flex-direction:column;gap:6px;align-items:center;min-width:132px}.dim-stepper{display:flex;align-items:center;justify-content:center;gap:4px}.dim-btn{width:26px;height:26px;min-height:26px;padding:0;border-radius:6px;font-size:13px}.dim-number{width:52px;min-width:52px;padding:5px 6px;text-align:center}.dim-presets{display:flex;gap:4px}.dim-presets button{min-height:22px;padding:3px 7px;border-radius:6px;font-size:10px;color:var(--text-secondary)}.csv-chip{display:inline-flex;align-items:center;border:1px solid var(--border-visible);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--text-secondary);margin:2px 4px 2px 0}.legend{display:flex;gap:14px;align-items:center;font-family:"Space Mono",monospace;font-size:11px;margin:12px 0;flex-wrap:wrap;color:var(--text-secondary);letter-spacing:.04em;text-transform:uppercase}.legend-item{display:flex;align-items:center;gap:6px}.legend-color{width:20px;height:12px;border-radius:0;border:1px solid var(--border-visible)}.empty-state{text-align:center;padding:72px 20px;color:var(--text-secondary);font-family:"Space Mono",monospace}.empty-state .icon{display:none}.flex-center{display:flex;align-items:center;justify-content:center;gap:8px}.group-colors span{display:inline-block;width:12px;height:12px;border-radius:0;margin:0 2px;border:1px solid var(--border-visible);background:transparent!important}
+#loadingScreen{position:fixed;inset:0;background:#050505;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .35s ease-out}#loadingScreen .inner{text-align:left;color:var(--text-display);border-left:2px solid var(--accent);padding-left:24px}#loadingScreen h1{font-family:"Doto","Space Mono",monospace;font-size:42px;line-height:1;margin-bottom:12px;font-weight:700;letter-spacing:0}#loadingScreen p{font-family:"Space Mono",monospace;opacity:1;font-size:12px;color:var(--text-secondary);letter-spacing:.08em;text-transform:uppercase}
+#balanceScore{font-family:"Space Mono",monospace;color:var(--text-display)!important;letter-spacing:.06em}.tooltip{position:absolute;background:var(--surface-raised);color:var(--text-primary);padding:6px 10px;border-radius:6px;font-size:11px;pointer-events:none;z-index:300;white-space:nowrap;border:1px solid var(--border-visible);box-shadow:none}.help-tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:4px;border:1px solid var(--border-visible);border-radius:50%;font-family:"Space Mono",monospace;font-size:10px;color:var(--text-secondary);cursor:help;vertical-align:middle}.help-tip:hover{color:var(--text-display);border-color:var(--text-display)}
+@media(max-width:768px){.header{padding:18px 16px;flex-direction:column}.header h1{font-size:24px}.header-info{justify-content:flex-start;width:100%;margin-top:12px}.tabs{top:107px;padding:10px 16px;gap:18px}.content{padding:20px 14px;overflow:hidden}.seat-cell{width:64px;height:46px;font-size:11px}.heatmap-cell{width:96px;height:64px;font-size:13px}.heatmap-cell .hm-val{font-size:11px}.form-row{flex-direction:column;align-items:stretch}.form-row label{text-align:left;min-width:auto}.card,.glass{padding:18px}.toolbar{gap:8px}.arrange-workspace{grid-template-columns:1fr}.detail-card{position:static;max-height:none}.seat-grid{justify-content:flex-start!important;overflow-x:auto;align-items:flex-start}.seat-grid>div{justify-content:flex-start!important}.seat-grid::-webkit-scrollbar{height:8px}.seat-grid::-webkit-scrollbar-thumb{background:var(--border-visible);border-radius:999px}}
+</style>
+</head>
+<body>
+<div id="loadingScreen"><div class="inner"><h1>707 SEAT OS</h1><p>[LOADING CLASS DATA]</p></div></div>
+
+<div id="mainApp" style="display:none">
+<div class="header">
+<h1>七年级707班座位编排系统</h1>
+<div class="header-info">
+<span id="classNameDisplay">未设置班级</span>
+<span id="studentCountDisplay">0人</span>
+<button class="btn-sm btn-outline" onclick="resetTo707()">设置</button>
+</div>
+</div>
+<div class="tabs" id="tabBar">
+<button class="tab" onclick="switchTab('guide')">说明</button>
+<button class="tab" onclick="switchTab('onboarding')">操作指引</button>
+<button class="tab active" onclick="switchTab('roster')">花名册</button>
+<button class="tab" onclick="switchTab('scores')">成绩分析</button>
+<button class="tab" onclick="switchTab('personality')">性格维度</button>
+<button class="tab" onclick="switchTab('arrange')">座位编排</button>
+<button class="tab" onclick="switchTab('heatmap')">热力图</button>
+<button class="tab" onclick="switchTab('export')">导出</button>
+</div>
+<div class="content">
+<!-- 说明 -->
+<div class="page" id="page-guide">
+<div class="card glass">
+<div class="guide-kicker">功能</div>
+<div class="guide-title">导入成绩，一键排座</div>
+<p class="guide-copy">号段、偏科、状态、交换、热力图、导出。</p>
+<div class="guide-grid">
+<div class="guide-panel"><h4>自动识别</h4><p>姓名、性别、科目、性格维度。</p></div>
+<div class="guide-panel"><h4>自动号段</h4><p>按成绩分 1-4 号。</p></div>
+<div class="guide-panel"><h4>偏科分析</h4><p>文强、理强、均衡。</p></div>
+<div class="guide-panel"><h4>智能编排</h4><p>组数、容量可调。</p></div>
+<div class="guide-panel"><h4>交换建议</h4><p>绿框可换，红框慎换。</p></div>
+<div class="guide-panel"><h4>导出备份</h4><p>图片和 JSON 都能存。</p></div>
+</div>
+<div class="guide-note">导入 -> 调整 -> 编排 -> 检查 -> 导出。</div>
+</div>
+</div>
+
+<!-- 操作指引 -->
+<div class="page" id="page-onboarding">
+<div class="card glass">
+<div class="guide-kicker">流程</div>
+<div class="guide-title">四步上手</div>
+<div class="guide-grid">
+<div class="guide-panel"><h4>1. 下模板</h4><p>初中 / 高中二选一。</p></div>
+<div class="guide-panel"><h4>2. 导入</h4><p>确认字段映射。</p></div>
+<div class="guide-panel"><h4>3. 调维度</h4><p>用低 / 中 / 高。</p></div>
+<div class="guide-panel"><h4>4. 生成</h4><p>看绿红框和热力图。</p></div>
+</div>
+<div class="toolbar" style="margin-top:18px">
+<button class="btn-sm btn-primary" onclick="downloadCSVTemplate('junior')">初中模板</button>
+<button class="btn-sm btn-outline" onclick="downloadCSVTemplate('senior')">高中模板</button>
+<button class="btn-sm btn-outline" onclick="switchTab('roster')">导入名单</button>
+<button class="btn-sm btn-outline" onclick="switchTab('arrange')">生成座位</button>
+</div>
+</div>
+</div>
+
+<!-- 花名册 -->
+<div class="page active" id="page-roster">
+<div class="card glass">
+<h3>班级花名册</h3>
+<div class="toolbar">
+<button class="btn-sm btn-primary" onclick="addStudent()">添加学生</button>
+<button class="btn-sm btn-outline" onclick="showPasteModal()">粘贴名单</button>
+<button class="btn-sm btn-outline" onclick="showCSVPrompt()">导入CSV</button>
+<button class="btn-sm btn-outline" onclick="downloadCSVTemplate('junior')">初中模板</button>
+<button class="btn-sm btn-outline" onclick="downloadCSVTemplate('senior')">高中模板</button>
+<button class="btn-sm btn-red" onclick="clearAll()">清空所有</button>
+<select id="rosterSort" onchange="renderRoster()" style="width:150px">
+<option value="rank">按排名</option>
+<option value="total">按总分</option>
+<option value="slot">按号段</option>
+<option value="risk">按状态</option>
+<option value="bias">按偏科指数</option>
+<option value="name">按姓名</option>
+</select>
+</div>
+<div style="overflow-x:auto"><table id="rosterTable"><thead><tr>
+<th>#</th><th>姓名</th><th>性别</th><th>总分</th><th>排名</th><th>号段</th><th>偏科方向</th><th>偏科指数</th><th>操作</th>
+</tr></thead><tbody id="rosterBody"></tbody></table></div>
+</div>
+</div>
+
+<!-- 成绩分析 -->
+<div class="page" id="page-scores">
+<div class="card glass">
+<h3>成绩录入与分析</h3>
+<div class="toolbar">
+<button class="btn-sm btn-primary" onclick="showScorePasteModal()">粘贴成绩</button>
+<button class="btn-sm btn-outline" onclick="recalcScores()">重新计算</button>
+<span style="font-size:12px;color:var(--gray)">支持从Excel直接复制粘贴</span>
+</div>
+<div style="overflow-x:auto"><table id="scoreTable"><thead id="scoreHead"></thead><tbody id="scoreBody"></tbody></table></div>
+</div>
+<div class="card glass" id="scoreStats"></div>
+</div>
+
+<!-- 性格维度 -->
+<div class="page" id="page-personality">
+<div class="card glass">
+<h3>性格维度评分</h3>
+<div class="toolbar">
+<button class="btn-sm btn-primary" onclick="showDimSettings()">维度设置</button>
+<button class="btn-sm btn-outline" onclick="randomizeDims()">随机填充</button>
+<span style="font-size:12px;color:var(--gray)">0-1分制，0.1步进</span>
+</div>
+<div style="overflow-x:auto"><table id="dimTable"><thead id="dimHead"></thead><tbody id="dimBody"></tbody></table></div>
+</div>
+</div>
+
+<!-- 热力图 -->
+<div class="page" id="page-heatmap">
+<div class="card glass">
+<h3>座位热力图</h3>
+<div class="toolbar" style="gap:10px;align-items:center;flex-wrap:wrap">
+  <div style="display:flex;align-items:center;gap:6px">
+    <label style="font-size:12px;color:var(--text-light);font-weight:500">维度</label>
+    <select id="heatmapDim" onchange="renderHeatmap()" style="min-width:120px"></select>
+  </div>
+  <button class="btn-sm btn-primary" onclick="renderHeatmap()">刷新</button>
+  <button class="btn-sm btn-outline" onclick="showCompositeHeatmap()">课堂状态</button>
+  <div style="display:flex;align-items:center;gap:6px;margin-left:8px">
+    <label class="hm-toggle" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-light);cursor:pointer">
+      <input type="checkbox" id="heatmapGaussian" checked onchange="renderHeatmap()" style="width:14px;height:14px;accent-color:var(--blue)"> 高斯扩散<span class="help-tip" title="把每个学生的状态值轻微扩散到周围座位，用来看局部课堂氛围是否集中。关闭后只看学生本人所在座位。">?</span>
+    </label>
+    <label class="hm-toggle" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-light);cursor:pointer">
+      <input type="checkbox" id="heatmapCluster" checked onchange="renderHeatmap()" style="width:14px;height:14px;accent-color:var(--blue)"> 集中检测
+    </label>
+  </div>
+</div>
+<div id="hmLegendBar" style="display:flex;align-items:center;gap:12px;margin:10px 0 6px;flex-wrap:wrap">
+  <div style="display:flex;align-items:center;gap:6px">
+    <span style="font-size:11px;color:var(--text-light)">偏安静</span>
+    <div style="display:grid;grid-template-columns:repeat(16,8px);gap:2px;width:auto;height:10px"><span style="display:block;background:#E9EDF3"></span><span style="display:block;background:#E7EDF3"></span><span style="display:block;background:#E5EEF1"></span><span style="display:block;background:#E2EFEF"></span><span style="display:block;background:#DFF1EC"></span><span style="display:block;background:#DBF2E9"></span><span style="display:block;background:#D5F2E4"></span><span style="display:block;background:#CEF0DF"></span><span style="display:block;background:#C8EEDB"></span><span style="display:block;background:#C8E9DF"></span><span style="display:block;background:#C9E4E6"></span><span style="display:block;background:#F7D9DE"></span><span style="display:block;background:#FAD1D7"></span><span style="display:block;background:#FFC8CC"></span><span style="display:block;background:#F7BCC5"></span><span style="display:block;background:#F0B1BC"></span></div>
+    <span style="font-size:11px;color:var(--text-light)">偏活跃</span>
+  </div>
+</div>
+<div id="heatmapContainer" style="position:relative;display:inline-block"></div>
+<div id="heatmapStats" style="margin-top:8px;font-size:12px;color:var(--text-light)"></div>
+<div id="clusterWarnings" style="margin-top:8px"></div>
+</div>
+</div>
+
+<!-- 座位编排 -->
+<div class="page" id="page-arrange">
+<div class="card glass">
+<h3>座位编排</h3>
+<div class="toolbar">
+<div class="form-row" style="margin:0;gap:8px">
+<label style="min-width:auto">行数:</label>
+<input type="number" id="seatRows" value="7" min="1" max="15" style="width:56px" onchange="updateSeatLayout()">
+<label style="min-width:auto">列数:</label>
+<input type="number" id="seatCols" value="8" min="1" max="15" style="width:56px" onchange="updateSeatLayout()">
+<label style="min-width:auto">过道位置:</label>
+<input type="text" id="aislePositions" value="4" placeholder="如:4或3,6" style="width:80px" onchange="updateSeatLayout()">
+<label style="min-width:auto">小组数:</label>
+<input type="number" id="groupCount" value="12" min="1" max="20" style="width:64px" onchange="updateGroupSettings()">
+<label style="min-width:auto">组容量:</label>
+<select id="groupCapacityMode" style="width:132px" onchange="updateGroupSettings()">
+<option value="oneSix">1个6人组</option>
+<option value="balanced">均衡分配</option>
+<option value="custom">自定义</option>
+</select>
+<input type="text" id="groupSizes" value="6,4,4,4,4,4,4,4,4,4,4,4" placeholder="如:6,4,4..." style="width:220px" onchange="updateGroupSettings()">
+</div>
+</div>
+<div class="toolbar">
+<button class="btn-sm btn-green btn-lg" onclick="smartArrange()">智能编排</button>
+<button class="btn-sm btn-outline" onclick="randomArrange()">随机编排</button>
+<button class="btn-sm btn-outline" onclick="clearSeats()">清空座位</button>
+<span id="balanceScore" style="font-size:13px;font-weight:600;color:var(--blue)"></span>
+<span id="arrangeStatus" class="arrange-status"></span>
+</div>
+<div style="font-size:12px;color:var(--gray);margin-bottom:8px">[HINT] 拖拽座位可手动微调，点击学生查看详情</div>
+<div class="arrange-workspace">
+<div class="seat-board">
+<div id="seatGrid" class="seat-grid"></div>
+<div style="text-align:center;font-size:11px;color:var(--gray);margin-top:4px">讲台方向 ↓</div>
+</div>
+<aside class="detail-card" id="detailCard"><div class="detail-empty">点击任意学生块，右侧会显示成绩、号段、偏科和性格维度。选中后座位图会用绿色/红色边框提示适合或不适合交换的对象。</div></aside>
+</div>
+</div>
+</div>
+
+<!-- 导出 -->
+<div class="page" id="page-export">
+<div class="card glass">
+<h3>导出座位表</h3>
+<div class="toolbar">
+<button class="btn-sm btn-primary btn-lg" onclick="exportSeatImage()">导出PNG</button>
+<button class="btn-sm btn-outline" onclick="exportJSON()">备份JSON</button>
+<button class="btn-sm btn-outline" onclick="showImportJSON()">恢复JSON</button>
+</div>
+<div class="form-row"><label>标题:</label><input type="text" id="exportTitle" style="flex:1" placeholder="如：七年级707班座位表"></div>
+<div class="form-row"><label>副标题:</label><input type="text" id="exportSubtitle" style="flex:1" placeholder="如：2025-2026学年第二学期"></div>
+<div class="export-preview" id="exportPreview"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Wizard Modal -->
+<div class="modal-overlay" id="wizardModal">
+<div class="modal" style="max-width:500px">
+<h2>初始设置向导</h2>
+<div class="steps" id="wizardSteps">
+<span class="active">1</span><span>2</span><span>3</span>
+</div>
+<div class="wizard-step active" id="wizStep1">
+<h3>第一步：基本信息</h3>
+<div class="form-row"><label>班级名称:</label><input type="text" id="wizClassName" placeholder="如：七年级707班"></div>
+<div class="form-row"><label>学生人数:</label><input type="number" id="wizStudentCount" value="50" min="1" max="100"></div>
+<div style="text-align:right;margin-top:16px"><button class="btn-primary" onclick="wizNext(2)">下一步 →</button></div>
+</div>
+<div class="wizard-step" id="wizStep2">
+<h3>第二步：科目设置</h3>
+<div id="wizSubjects"></div>
+<button class="btn-sm btn-outline" onclick="addWizSubject()">添加科目</button>
+<div style="text-align:right;margin-top:16px"><button class="btn-outline" onclick="wizPrev(1)">← 上一步</button> <button class="btn-primary" onclick="wizNext(3)">下一步 →</button></div>
+</div>
+<div class="wizard-step" id="wizStep3">
+<h3>第三步：导入名单</h3>
+<p style="font-size:13px;color:var(--gray);margin-bottom:12px">每行一个学生姓名（可带性别，用逗号分隔，如：张三,男）</p>
+<textarea id="wizNames" class="paste-area" placeholder="张三,男&#10;李四,女&#10;王五,男&#10;..."></textarea>
+<div style="text-align:right;margin-top:16px"><button class="btn-outline" onclick="wizPrev(2)">← 上一步</button> <button class="btn-green btn-lg" onclick="wizFinish()">✅ 完成设置</button></div>
+</div>
+</div>
+</div>
+
+<!-- Generic Modal -->
+<div class="modal-overlay" id="genericModal">
+<div class="modal" id="genericModalContent"></div>
+</div>
+
+<!-- Hidden file input -->
+<input type="file" id="csvFileInput" accept=".csv,.txt" style="display:none" onchange="handleCSVImport(event)">
+<input type="file" id="jsonFileInput" accept=".json,.txt" style="display:none" onchange="handleJSONImport(event)">
+
+<script>
+// ========== GLOBAL STATE ==========
+let APP = {
+  className: '',
+  students: [],
+  subjects: ['语文','数学','英语','历史','道法','生物','地理'],
+  subjectFull: [120,120,120,100,100,50,50],
+  dimensions: [
+    {key:'talkative',name:'外向话多',desc:'话多程度'},
+    {key:'selfControl',name:'自控力',desc:'自律自控能力'},
+    {key:'leadership',name:'领导力',desc:'组织协调能力'},
+    {key:'emotionStable',name:'情绪稳定',desc:'情绪控制能力'}
+  ],
+  seats: [], // [row][col] = student index or -1
+  seatRows: 7,
+  seatCols: 8,
+  groupCount: 12,
+  groupCapacityMode: 'oneSix',
+  groupSizes: '6,4,4,4,4,4,4,4,4,4,4,4',
+  groupSeatSlots: [],
+  aislePositions: [4], // columns after which aisle is inserted
+  arranged: false
+};
+let dragSource=null;
+let selectedSeat=null;
+let swapHintMap={};
+const SCORE_TEMPLATES={
+  junior:{label:'初中',subjects:['语文','数学','英语','历史','道法','生物','地理'],full:[120,120,120,100,100,50,50]},
+  senior:{label:'高中',subjects:['语文','数学','英语','物理','化学','生物','政治','历史','地理'],full:[150,150,150,100,100,100,100,100,100]}
+};
+const SUBJECT_FULL_MAP={语文:150,数学:150,英语:150,历史:100,道法:100,生物:100,地理:100,物理:100,化学:100,政治:100};
+const KNOWN_SUBJECTS=[...new Set([...SCORE_TEMPLATES.junior.subjects,...SCORE_TEMPLATES.senior.subjects])];
+
+// ========== DEMO DATA ==========
+const DEMO_STUDENTS = [
+{name:"同学24",gender:"女",scores:{语文:100.5,数学:87,英语:92.2,历史:66,道法:43.5,生物:39,地理:41},talkative:0.5,selfControl:1,leadership:0.7,emotionStable:0.8},
+{name:"同学41",gender:"女",scores:{语文:95.5,数学:94,英语:83.4,历史:55,道法:40.5,生物:41,地理:42},talkative:0.5,selfControl:1,leadership:0.6,emotionStable:0.9},
+{name:"同学27",gender:"男",scores:{语文:94.5,数学:82,英语:78.4,历史:63,道法:39.5,生物:38,地理:39},talkative:0.5,selfControl:1,leadership:0.5,emotionStable:0.8},
+{name:"同学35",gender:"男",scores:{语文:93,数学:88,英语:85.6,历史:49.5,道法:44.5,生物:38,地理:39},talkative:1,selfControl:1,leadership:0.8,emotionStable:0.7},
+{name:"同学05",gender:"男",scores:{语文:92,数学:55,英语:69.3,历史:57,道法:41,生物:41,地理:41},talkative:0.4,selfControl:1,leadership:0.4,emotionStable:0.8},
+{name:"同学42",gender:"男",scores:{语文:92.5,数学:59,英语:70.8,历史:61.5,道法:46,生物:30.5,地理:37},talkative:0.7,selfControl:0.5,leadership:0.6,emotionStable:0.5},
+{name:"同学26",gender:"女",scores:{语文:95,数学:66.5,英语:72.7,历史:48,道法:40,生物:30.5,地理:33.5},talkative:0.6,selfControl:1,leadership:0.5,emotionStable:0.7},
+{name:"同学47",gender:"女",scores:{语文:95,数学:82,英语:94.2,历史:55,道法:41,生物:29.5,地理:39},talkative:1,selfControl:0,leadership:0.7,emotionStable:0.4},
+{name:"同学15",gender:"女",scores:{语文:88,数学:58,英语:69.1,历史:58,道法:41.5,生物:33,地理:38},talkative:0.6,selfControl:0.5,leadership:0.5,emotionStable:0.6},
+{name:"同学21",gender:"男",scores:{语文:87,数学:75,英语:59.7,历史:52,道法:39,生物:30.5,地理:31},talkative:0.6,selfControl:0.5,leadership:0.4,emotionStable:0.6},
+{name:"同学06",gender:"男",scores:{语文:72.5,数学:64,英语:57.6,历史:45,道法:33.5,生物:35,地理:27},talkative:0.6,selfControl:0.5,leadership:0.4,emotionStable:0.6},
+{name:"同学10",gender:"女",scores:{语文:82.5,数学:59,英语:69.5,历史:51,道法:42,生物:34,地理:37},talkative:0.7,selfControl:0,leadership:0.5,emotionStable:0.5},
+{name:"同学43",gender:"男",scores:{语文:85.5,数学:73,英语:66.9,历史:45,道法:34,生物:24.5,地理:37},talkative:0.7,selfControl:0,leadership:0.6,emotionStable:0.4},
+{name:"同学19",gender:"男",scores:{语文:69.5,数学:66,英语:47.6,历史:52,道法:37,生物:32.5,地理:27},talkative:0.6,selfControl:0.5,leadership:0.3,emotionStable:0.6},
+{name:"同学25",gender:"女",scores:{语文:81.5,数学:67,英语:51.2,历史:47,道法:39.5,生物:28,地理:27},talkative:0.6,selfControl:0.5,leadership:0.4,emotionStable:0.6},
+{name:"同学22",gender:"女",scores:{语文:75,数学:71.5,英语:67.7,历史:44,道法:32,生物:23,地理:19},talkative:0.8,selfControl:0.5,leadership:0.5,emotionStable:0.5},
+{name:"同学11",gender:"男",scores:{语文:66.5,数学:62,英语:62.6,历史:46,道法:40,生物:23,地理:29},talkative:0.9,selfControl:0,leadership:0.6,emotionStable:0.3},
+{name:"同学39",gender:"男",scores:{语文:77.5,数学:42,英语:0,历史:46.5,道法:34.5,生物:30,地理:31},talkative:0.7,selfControl:0.5,leadership:0.4,emotionStable:0.5},
+{name:"同学02",gender:"男",scores:{语文:82,数学:52,英语:41.4,历史:51,道法:39,生物:21,地理:32},talkative:0.7,selfControl:0,leadership:0.5,emotionStable:0.4},
+{name:"同学14",gender:"男",scores:{语文:74.5,数学:74,英语:59.7,历史:38.5,道法:29.5,生物:31,地理:32},talkative:0.4,selfControl:0.5,leadership:0.3,emotionStable:0.7},
+{name:"同学30",gender:"女",scores:{语文:75,数学:43,英语:41.9,历史:46,道法:39,生物:20.5,地理:16},talkative:1,selfControl:0,leadership:0.6,emotionStable:0.3},
+{name:"同学01",gender:"女",scores:{语文:83,数学:33,英语:35.2,历史:40,道法:41.5,生物:17,地理:16},talkative:0.5,selfControl:0.5,leadership:0.3,emotionStable:0.6},
+{name:"同学18",gender:"男",scores:{语文:70.5,数学:36,英语:47.5,历史:30,道法:39,生物:19,地理:16},talkative:1,selfControl:0,leadership:0.5,emotionStable:0.3},
+{name:"同学40",gender:"男",scores:{语文:74.5,数学:58.5,英语:50.6,历史:38,道法:34,生物:22.5,地理:26},talkative:0.9,selfControl:0,leadership:0.5,emotionStable:0.4},
+{name:"同学36",gender:"男",scores:{语文:76.5,数学:59,英语:39.8,历史:54.5,道法:39.5,生物:28.5,地理:32},talkative:0.1,selfControl:1,leadership:0.3,emotionStable:0.9},
+{name:"同学07",gender:"男",scores:{语文:84,数学:54.5,英语:37.2,历史:48,道法:36.5,生物:31.5,地理:29},talkative:0.1,selfControl:1,leadership:0.3,emotionStable:0.8},
+{name:"同学33",gender:"男",scores:{语文:78.5,数学:57,英语:44.5,历史:51,道法:33.5,生物:25.5,地理:30},talkative:0.2,selfControl:1,leadership:0.4,emotionStable:0.8},
+{name:"同学17",gender:"男",scores:{语文:72,数学:71,英语:46.3,历史:32,道法:33.5,生物:22,地理:15},talkative:0.8,selfControl:0.5,leadership:0.5,emotionStable:0.5},
+{name:"同学13",gender:"女",scores:{语文:81,数学:42,英语:35.9,历史:44,道法:32,生物:19.5,地理:21},talkative:0.3,selfControl:1,leadership:0.3,emotionStable:0.8},
+{name:"同学31",gender:"男",scores:{语文:72.5,数学:48,英语:28.6,历史:33,道法:34.5,生物:18.5,地理:18},talkative:0.8,selfControl:0,leadership:0.4,emotionStable:0.4},
+{name:"同学04",gender:"女",scores:{语文:78.5,数学:59,英语:44.9,历史:17,道法:38,生物:18.5,地理:12},talkative:0.8,selfControl:0,leadership:0.5,emotionStable:0.4},
+{name:"同学29",gender:"男",scores:{语文:67.5,数学:52,英语:43.9,历史:48,道法:37,生物:26.5,地理:21},talkative:0.6,selfControl:0,leadership:0.4,emotionStable:0.5},
+{name:"同学44",gender:"男",scores:{语文:64.5,数学:42,英语:22.4,历史:43,道法:32,生物:27.5,地理:21},talkative:0.5,selfControl:0.5,leadership:0.3,emotionStable:0.6},
+{name:"同学45",gender:"男",scores:{语文:73.5,数学:32,英语:28.8,历史:47,道法:43,生物:26,地理:26.5},talkative:0.4,selfControl:1,leadership:0.3,emotionStable:0.8},
+{name:"同学16",gender:"男",scores:{语文:62.5,数学:39,英语:28.3,历史:25,道法:35,生物:18.5,地理:22},talkative:0.5,selfControl:0.5,leadership:0.3,emotionStable:0.6},
+{name:"同学08",gender:"男",scores:{语文:62.5,数学:50,英语:31.4,历史:39,道法:36.5,生物:27.5,地理:25},talkative:0.9,selfControl:0,leadership:0.5,emotionStable:0.3},
+{name:"同学09",gender:"男",scores:{语文:62.5,数学:49,英语:31.9,历史:36,道法:37.5,生物:27,地理:23},talkative:1,selfControl:0,leadership:0.6,emotionStable:0.3},
+{name:"同学46",gender:"女",scores:{语文:62,数学:26,英语:29.2,历史:25,道法:40,生物:18,地理:22},talkative:0.4,selfControl:0.5,leadership:0.2,emotionStable:0.6},
+{name:"同学34",gender:"男",scores:{语文:56.5,数学:48,英语:26.6,历史:19,道法:32,生物:25,地理:9},talkative:0.8,selfControl:0,leadership:0.4,emotionStable:0.4},
+{name:"同学32",gender:"女",scores:{语文:74.5,数学:24,英语:32.4,历史:32.5,道法:37.5,生物:17.5,地理:19},talkative:0.8,selfControl:0,leadership:0.5,emotionStable:0.4},
+{name:"同学23",gender:"女",scores:{语文:66.5,数学:62,英语:37.7,历史:24,道法:34.5,生物:17,地理:19},talkative:0.5,selfControl:0.5,leadership:0.3,emotionStable:0.6},
+{name:"同学37",gender:"女",scores:{语文:69.5,数学:31,英语:24.5,历史:45,道法:32.5,生物:19,地理:15},talkative:0.4,selfControl:0,leadership:0.3,emotionStable:0.5},
+{name:"同学48",gender:"女",scores:{语文:31.5,数学:23,英语:38.2,历史:22,道法:39.5,生物:18.5,地理:22},talkative:0.8,selfControl:0,leadership:0.4,emotionStable:0.4},
+{name:"同学20",gender:"女",scores:{语文:66.5,数学:23,英语:24.9,历史:18,道法:38,生物:11,地理:18},talkative:1,selfControl:0,leadership:0.5,emotionStable:0.3},
+{name:"同学49",gender:"男",scores:{语文:62.5,数学:12,英语:22.3,历史:35.5,道法:35,生物:15.5,地理:11},talkative:0.4,selfControl:1,leadership:0.2,emotionStable:0.7},
+{name:"同学12",gender:"女",scores:{语文:52,数学:50,英语:26.3,历史:30,道法:29,生物:24.5,地理:18.5},talkative:0.7,selfControl:0.5,leadership:0.4,emotionStable:0.5},
+{name:"同学03",gender:"女",scores:{语文:59,数学:4,英语:27.2,历史:32,道法:39,生物:18.5,地理:14},talkative:0.4,selfControl:0.5,leadership:0.2,emotionStable:0.6},
+{name:"同学28",gender:"男",scores:{语文:48,数学:16,英语:13.5,历史:17,道法:23.5,生物:8,地理:11},talkative:0.5,selfControl:0.5,leadership:0.3,emotionStable:0.5},
+{name:"同学38",gender:"女",scores:{语文:47,数学:9,英语:21.4,历史:14,道法:25.5,生物:7,地理:4},talkative:0.5,selfControl:0.5,leadership:0.2,emotionStable:0.5},
+{name:"同学51",gender:"女",scores:{语文:43,数学:12,英语:15.7,历史:15,道法:29.5,生物:7,地理:4},talkative:0.5,selfControl:0.5,leadership:0.2,emotionStable:0.5}
+];
+
+// ========== INIT ==========
+window.onload = function(){
+  let saved = localStorage.getItem('seatApp707');
+  if(saved){
+    try{
+      let d = JSON.parse(saved);
+      APP = {...APP,...d};
+      if(!APP.dimensions || APP.dimensions.length===0) APP.dimensions=[
+        {key:'talkative',name:'外向话多',desc:'话多程度'},
+        {key:'selfControl',name:'自控力',desc:'自律自控能力'},
+        {key:'leadership',name:'领导力',desc:'组织协调能力'},
+        {key:'emotionStable',name:'情绪稳定',desc:'情绪控制能力'}
+      ];
+    }catch(e){}
+  }
+  document.getElementById('loadingScreen').style.opacity='0';
+  setTimeout(()=>{
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('mainApp').style.display='';
+    // 707班专属：自动加载数据，无需设置向导
+    if(!APP.className || APP.students.length===0){
+      APP.className = '七年级707班';
+      APP.students = JSON.parse(JSON.stringify(DEMO_STUDENTS));
+    }
+    if(APP.students.length===50 && (!APP.groupCapacityMode || APP.groupCapacityMode==='oneSix') && APP.groups && APP.groups.some(g=>g.length===5)){
+      APP.groupCapacityMode='oneSix';
+      APP.groupCount=12;
+      APP.groupSizes='6,4,4,4,4,4,4,4,4,4,4,4';
+      APP.arranged=false;
+    }
+    updateAll();
+    if(!APP.arranged && APP.students.length>0) smartArrange();
+  },600);
+};
+
+function save(){
+  let toSave = {...APP};
+  localStorage.setItem('seatApp707',JSON.stringify(toSave));
+}
+
+function updateAll(){
+  recalcStudents();
+  document.getElementById('classNameDisplay').textContent = APP.className||'未设置';
+  document.getElementById('studentCountDisplay').textContent = APP.students.length+'人';
+  document.getElementById('exportTitle').value = (APP.className||'班级')+'座位表';
+  document.getElementById('seatRows').value = APP.seatRows;
+  document.getElementById('seatCols').value = APP.seatCols;
+  document.getElementById('aislePositions').value = APP.aislePositions.join(',');
+  if(document.getElementById('groupCount')) document.getElementById('groupCount').value = APP.groupCount||12;
+  if(document.getElementById('groupCapacityMode')) document.getElementById('groupCapacityMode').value = APP.groupCapacityMode||'oneSix';
+  if(document.getElementById('groupSizes')) document.getElementById('groupSizes').value = APP.groupSizes||buildDefaultGroupSizes(APP.students.length,APP.groupCount||12).join(',');
+  renderRoster();
+  renderScoreTable();
+  renderDimTable();
+  updateSeatLayout();
+  populateHeatmapDim();
+  save();
+}
+
+// ========== CALCULATIONS ==========
+function recalcStudents(){
+  APP.students.forEach(s=>{
+    let scores = Object.values(s.scores).filter(v=>v!==null&&v!==undefined);
+    s.total = scores.reduce((a,b)=>a+b,0);
+    if(scores.length>0){
+      let mean = s.total/scores.length;
+      let variance = scores.reduce((a,v)=>a+Math.pow(v-mean,2),0)/scores.length;
+      s.biasIndex = Math.sqrt(variance)/mean;
+    } else { s.biasIndex=0; }
+  });
+  // Rank by total descending
+  let sorted = [...APP.students].sort((a,b)=>(b.total||0)-(a.total||0));
+  sorted.forEach((s,i)=>s.rank=i+1);
+  // Slot assignment (quartiles)
+  let n = APP.students.length;
+  let q1 = Math.ceil(n*0.25), q2 = Math.ceil(n*0.5), q3 = Math.ceil(n*0.75);
+  sorted.forEach((s,i)=>{
+    if(i<q1) s.slot=1;
+    else if(i<q2) s.slot=2;
+    else if(i<q3) s.slot=3;
+    else s.slot=4;
+  });
+  // Bias direction
+  APP.students.forEach(s=>{
+    let arts=0,scis=0;
+    let sciSubs = ['数学','物理','化学','生物','地理'];
+    let artSubs = ['语文','英语','历史','道法','政治'];
+    for(let sub in s.scores){
+      if(s.scores[sub]===null) continue;
+      let fi = APP.subjects.indexOf(sub);
+      if(fi<0) continue;
+      let full = APP.subjectFull[fi]||100;
+      let pct = s.scores[sub]/full*100;
+      if(sciSubs.includes(sub)) scis+=pct;
+      if(artSubs.includes(sub)) arts+=pct;
+    }
+    let artN = artSubs.filter(x=>APP.subjects.includes(x)).length||1;
+    let sciN = sciSubs.filter(x=>APP.subjects.includes(x)).length||1;
+    let artAvg = arts/artN, sciAvg = scis/sciN;
+    let diff = artAvg - sciAvg;
+    if(s.biasIndex < 0.15) s.biasDir='均衡';
+    else if(diff > 10) s.biasDir='文科强';
+    else if(diff < -10) s.biasDir='理科强';
+    else s.biasDir='均衡';
+  });
+}
+
+// ========== TAB SWITCHING ==========
+function switchTab(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  let activeTab=(typeof event!=='undefined'&&event&&event.target)?event.target:document.querySelector(`.tab[onclick*="'${name}'"]`);
+  if(activeTab) activeTab.classList.add('active');
+  if(name==='heatmap') renderHeatmap();
+  if(name==='export') renderExportPreview();
+  hideDetailCard();
+}
+
+// ========== ROSTER ==========
+function renderRoster(){
+  let tbody = document.getElementById('rosterBody');
+  tbody.innerHTML='';
+  let sortKey=(document.getElementById('rosterSort')&&document.getElementById('rosterSort').value)||'rank';
+  let order=APP.students.map((_,i)=>i).sort((a,b)=>{
+    let sa=APP.students[a], sb=APP.students[b];
+    if(sortKey==='name') return (sa.name||'').localeCompare(sb.name||'','zh-Hans-CN');
+    if(sortKey==='slot') return (sa.slot||9)-(sb.slot||9)||(sa.rank||999)-(sb.rank||999);
+    if(sortKey==='risk') return studentRisk(b)-studentRisk(a);
+    if(sortKey==='bias') return (sb.biasIndex||0)-(sa.biasIndex||0);
+    if(sortKey==='total') return (sb.total||0)-(sa.total||0);
+    return (sa.rank||999)-(sb.rank||999);
+  });
+  order.forEach((i,displayIdx)=>{
+    let s=APP.students[i];
+    let tr=document.createElement('tr');
+    tr.innerHTML=`<td>${displayIdx+1}</td><td><b>${s.name}</b></td><td><span class="tag ${s.gender==='男'?'tag-m':'tag-f'}">${s.gender}</span></td><td>${s.total!==undefined?s.total.toFixed(1):'-'}</td><td>${s.rank||'-'}</td><td><span class="tag tag-${s.slot||1}">${s.slot||'-'}号</span></td><td>${s.biasDir||'-'}</td><td>${s.biasIndex?s.biasIndex.toFixed(2):'-'}</td><td><button class="btn-sm btn-red" onclick="removeStudent(${i})">删除</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function addStudent(){
+  showGenericModal(`<h2>添加学生</h2><div class="form-row"><label>姓名:</label><input id="newName" placeholder="学生姓名"></div><div class="form-row"><label>性别:</label><select id="newGender"><option>男</option><option>女</option></select></div><div style="text-align:right;margin-top:12px"><button class="btn-gray" onclick="closeGenericModal()">取消</button> <button class="btn-primary" onclick="doAddStudent()">添加</button></div>`);
+}
+
+function doAddStudent(){
+  let name=document.getElementById('newName').value.trim();
+  let gender=document.getElementById('newGender').value;
+  if(!name){alert('请输入姓名');return;}
+  let s={name,gender,scores:{},talkative:0.5,selfControl:0.5,leadership:0.5,emotionStable:0.5};
+  APP.subjects.forEach(sub=>s.scores[sub]=null);
+  APP.students.push(s);
+  closeGenericModal();
+  updateAll();
+}
+
+function removeStudent(idx){
+  if(!confirm('确定删除 '+APP.students[idx].name+'？')) return;
+  APP.students.splice(idx,1);
+  updateAll();
+}
+
+function showPasteModal(){
+  showGenericModal(`<h2>粘贴名单</h2><p style="font-size:12px;color:var(--gray);margin-bottom:8px">每行一个学生，格式：姓名,性别（性别可省略）</p><textarea id="pasteNames" class="paste-area" placeholder="张三,男&#10;李四,女&#10;王五"></textarea><div style="text-align:right;margin-top:12px"><button class="btn-gray" onclick="closeGenericModal()">取消</button> <button class="btn-primary" onclick="doPasteNames()">导入</button></div>`);
+}
+
+function doPasteNames(){
+  let text=document.getElementById('pasteNames').value.trim();
+  if(!text){alert('请输入名单');return;}
+  let lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+  lines.forEach(line=>{
+    let parts=line.split(/[,\t，]/);
+    let name=parts[0].trim();
+    let gender=parts[1]?parts[1].trim():'男';
+    if(gender!=='女') gender='男';
+    let s={name,gender,scores:{},talkative:0.5,selfControl:0.5,leadership:0.5,emotionStable:0.5};
+    APP.subjects.forEach(sub=>s.scores[sub]=null);
+    APP.students.push(s);
+  });
+  closeGenericModal();
+  updateAll();
+}
+
+let CSV_IMPORT_PENDING=null;
+
+function showCSVPrompt(){document.getElementById('csvFileInput').click();}
+
+function detectCSVDelimiter(line){
+  let candidates=['\t',',','，',';','；'];
+  let best=',', bestCount=-1;
+  candidates.forEach(d=>{
+    let count=parseCSVLine(line,d).length;
+    if(count>bestCount){best=d;bestCount=count;}
+  });
+  return best;
+}
+
+function parseCSVLine(line,delimiter){
+  let cells=[], cur='', inQuotes=false;
+  for(let i=0;i<line.length;i++){
+    let ch=line[i];
+    if(ch==='"'){
+      if(inQuotes&&line[i+1]==='"'){cur+='"';i++;}
+      else inQuotes=!inQuotes;
+    } else if(ch===delimiter&&!inQuotes){
+      cells.push(cur.trim());cur='';
+    } else cur+=ch;
+  }
+  cells.push(cur.trim());
+  return cells;
+}
+
+function parseCSVText(text){
+  text=String(text||'').replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  let rawLines=text.split('\n').filter(l=>l.trim());
+  if(rawLines.length===0) return {headers:[],rows:[],delimiter:','};
+  let delimiter=detectCSVDelimiter(rawLines[0]);
+  let headers=parseCSVLine(rawLines[0],delimiter).map(h=>h.trim());
+  let rows=rawLines.slice(1).map(line=>parseCSVLine(line,delimiter));
+  return {headers,rows,delimiter};
+}
+
+function normalizeHeader(v){
+  return String(v||'').trim().toLowerCase().replace(/[\s_\-（）()\[\]【】]/g,'');
+}
+
+function subjectAliases(sub){
+  let map={
+    语文:['yuwen','chinese','语文成绩','语文分数','语'],
+    数学:['shuxue','math','maths','数学成绩','数学分数'],
+    英语:['yingyu','english','eng','英语成绩','英语分数'],
+    历史:['lishi','history','历史成绩'],
+    道法:['daofa','道德与法治','道德法治','道法成绩'],
+    生物:['shengwu','biology','bio','生物成绩'],
+    地理:['dili','geography','geo','地理成绩'],
+    物理:['wuli','physics','phy','物理成绩'],
+    化学:['huaxue','chemistry','chem','化学成绩'],
+    政治:['zhengzhi','politics','political','政治成绩','思想政治']
+  };
+  return [sub,sub+'成绩',sub+'分数',...(map[sub]||[])];
+}
+
+function subjectFullFor(sub){
+  return SUBJECT_FULL_MAP[sub]||100;
+}
+
+function scoreTemplateForSubjects(subjects){
+  return subjects.some(sub=>['物理','化学','政治'].includes(sub))?SCORE_TEMPLATES.senior:SCORE_TEMPLATES.junior;
+}
+
+function subjectFullInSet(sub,subjects){
+  let tpl=scoreTemplateForSubjects(subjects);
+  let idx=tpl.subjects.indexOf(sub);
+  return idx>=0?tpl.full[idx]:subjectFullFor(sub);
+}
+
+function mappedScoreSubjects(mapping){
+  return Object.keys(mapping)
+    .filter(key=>key.startsWith('subject:'))
+    .map(key=>({sub:key.slice(8),col:mapping[key]}))
+    .sort((a,b)=>a.col-b.col)
+    .map(x=>x.sub);
+}
+
+function setScoreSubjects(subjects){
+  if(!subjects.length) return;
+  APP.subjects=[...subjects];
+  APP.subjectFull=subjects.map(sub=>subjectFullInSet(sub,subjects));
+  APP.students.forEach(s=>{
+    let old=s.scores||{};
+    s.scores={};
+    subjects.forEach(sub=>{s.scores[sub]=old[sub]??null;});
+  });
+}
+
+function ensureSubjectInApp(sub){
+  if(APP.subjects.includes(sub)) return;
+  APP.subjects.push(sub);
+  APP.subjectFull.push(subjectFullFor(sub));
+  APP.students.forEach(s=>{
+    if(!s.scores) s.scores={};
+    if(!(sub in s.scores)) s.scores[sub]=null;
+  });
+}
+
+function fieldAliases(field){
+  let key=field.key, label=field.label;
+  let aliases=[key,label,normalizeHeader(label)];
+  if(key==='name') aliases.push('姓名','名字','学生','学生姓名','name','student','studentname','username');
+  if(key==='gender') aliases.push('性别','gender','sex','男女');
+  if(key.startsWith('subject:')){
+    let sub=key.slice(8);
+    aliases.push(...subjectAliases(sub));
+  }
+  if(key.startsWith('dim:')){
+    let dimKey=key.slice(4);
+    let dim=APP.dimensions.find(d=>d.key===dimKey);
+    if(dim) aliases.push(dim.key,dim.name,dim.desc||'');
+    if(dimKey==='talkative') aliases.push('话多','话多程度','外向','活跃','活跃度','talk','talkative');
+    if(dimKey==='selfControl') aliases.push('自控','自控力','自律','selfcontrol','control');
+    if(dimKey==='leadership') aliases.push('领导','领导力','leadership');
+    if(dimKey==='emotionStable') aliases.push('情绪','情绪稳定','emotion','emotionstable');
+  }
+  return aliases.map(normalizeHeader).filter(Boolean);
+}
+
+function buildCSVFields(){
+  let subjects=[...new Set([...APP.subjects,...KNOWN_SUBJECTS])];
+  if(CSV_IMPORT_PENDING&&CSV_IMPORT_PENDING.headers){
+    let normalized=CSV_IMPORT_PENDING.headers.map(normalizeHeader);
+    KNOWN_SUBJECTS.forEach(sub=>{
+      let aliases=subjectAliases(sub).map(normalizeHeader);
+      if(!subjects.includes(sub)&&normalized.some(h=>aliases.includes(h)||aliases.some(a=>a&&h.includes(a)))) subjects.push(sub);
+    });
+  }
+  return [
+    {key:'name',label:'姓名',required:true},
+    {key:'gender',label:'性别'},
+    ...subjects.map(sub=>({key:'subject:'+sub,label:sub})),
+    ...APP.dimensions.map(d=>({key:'dim:'+d.key,label:d.name}))
+  ];
+}
+
+function inferCSVMapping(headers){
+  let normalized=headers.map(normalizeHeader);
+  let mapping={};
+  buildCSVFields().forEach(field=>{
+    let aliases=fieldAliases(field);
+    let idx=normalized.findIndex(h=>aliases.includes(h));
+    if(idx<0) idx=normalized.findIndex(h=>aliases.some(a=>a&&h.includes(a)));
+    if(idx>=0) mapping[field.key]=idx;
+  });
+  if(mapping.name===undefined&&headers.length) mapping.name=0;
+  return mapping;
+}
+
+function csvHtml(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+
+function showCSVMappingModal(){
+  let p=CSV_IMPORT_PENDING;
+  let fields=buildCSVFields();
+  let options='<option value="">不导入</option>'+p.headers.map((h,i)=>`<option value="${i}">${csvHtml(h||('第'+(i+1)+'列'))}</option>`).join('');
+  let rows=fields.map((field,idx)=>`<tr><td>${csvHtml(field.label)}${field.required?' *':''}</td><td><select id="csvMap${idx}" data-key="${csvHtml(field.key)}">${options}</select></td></tr>`).join('');
+  let previewRows=p.rows.slice(0,5).map((row,i)=>`<tr><td>${i+1}</td>${p.headers.map((_,ci)=>`<td>${csvHtml(row[ci]||'')}</td>`).join('')}</tr>`).join('');
+  showGenericModal(`<h2>确认 CSV 字段</h2><p style="font-size:12px;color:var(--gray);margin-bottom:10px">已识别 ${p.rows.length} 行。请确认每个字段对应哪一列，重复姓名会更新原学生。</p><div style="display:grid;grid-template-columns:minmax(220px,320px) 1fr;gap:16px;align-items:start"><div style="overflow:auto;max-height:420px"><table><thead><tr><th>系统字段</th><th>CSV 列</th></tr></thead><tbody>${rows}</tbody></table></div><div style="overflow:auto;max-height:420px"><table><thead><tr><th>#</th>${p.headers.map(h=>`<th>${csvHtml(h)}</th>`).join('')}</tr></thead><tbody>${previewRows}</tbody></table></div></div><div style="text-align:right;margin-top:14px"><button class="btn-gray" onclick="closeGenericModal()">取消</button> <button class="btn-primary" onclick="confirmCSVImport()">确认导入</button></div>`);
+  fields.forEach((field,idx)=>{
+    let sel=document.getElementById('csvMap'+idx);
+    if(sel&&p.mapping[field.key]!==undefined) sel.value=String(p.mapping[field.key]);
+  });
+}
+
+function handleCSVImport(e){
+  let file=e.target.files[0];if(!file)return;
+  let reader=new FileReader();
+  reader.onload=function(ev){
+    let parsed=parseCSVText(ev.target.result);
+    if(parsed.headers.length<1){alert('文件为空');return;}
+    CSV_IMPORT_PENDING={...parsed,mapping:inferCSVMapping(parsed.headers)};
+    showCSVMappingModal();
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function parseNumberCell(v){
+  if(v===undefined||v===null) return null;
+  let text=String(v).trim().replace('%','');
+  if(!text) return null;
+  let n=parseFloat(text);
+  return Number.isFinite(n)?n:null;
+}
+
+function normalizeGender(v){
+  let text=String(v||'').trim();
+  if(['女','女生','female','f'].includes(text.toLowerCase())) return '女';
+  return '男';
+}
+
+function confirmCSVImport(){
+  let p=CSV_IMPORT_PENDING;if(!p) return;
+  let mapping={};
+  buildCSVFields().forEach((field,idx)=>{
+    let val=document.getElementById('csvMap'+idx).value;
+    if(val!=='') mapping[field.key]=parseInt(val,10);
+  });
+  if(mapping.name===undefined){alert('请至少映射姓名列');return;}
+  let added=0,updated=0,skipped=0;
+  let importedSubjects=mappedScoreSubjects(mapping);
+  if(importedSubjects.length>=3) setScoreSubjects(importedSubjects);
+  else importedSubjects.forEach(ensureSubjectInApp);
+  p.rows.forEach(row=>{
+    let name=String(row[mapping.name]||'').trim();
+    if(!name){skipped++;return;}
+    let s=APP.students.find(x=>x.name===name);
+    if(!s){
+      s={name,gender:'男',scores:{},talkative:0.5,selfControl:0.5,leadership:0.5,emotionStable:0.5};
+      APP.subjects.forEach(sub=>s.scores[sub]=null);
+      APP.students.push(s);added++;
+    } else updated++;
+    if(mapping.gender!==undefined) s.gender=normalizeGender(row[mapping.gender]);
+    APP.subjects.forEach(sub=>{
+      let key='subject:'+sub;
+      if(mapping[key]!==undefined){
+        let n=parseNumberCell(row[mapping[key]]);
+        s.scores[sub]=n;
+      }
+    });
+    APP.dimensions.forEach(d=>{
+      let key='dim:'+d.key;
+      if(mapping[key]!==undefined){
+        let n=parseNumberCell(row[mapping[key]]);
+        if(n!==null) s[d.key]=Math.max(0,Math.min(1,n));
+      }
+    });
+  });
+  CSV_IMPORT_PENDING=null;
+  closeGenericModal();
+  updateAll();
+  alert(`CSV 导入完成：新增 ${added} 人，更新 ${updated} 人，跳过 ${skipped} 行。`);
+}
+
+function csvEscape(v){return '"'+String(v??'').replace(/"/g,'""')+'"';}
+
+function templateDimLabel(d){
+  if(d.key==='talkative') return '话多程度';
+  if(d.key==='selfControl') return '自控力';
+  return d.name;
+}
+
+function downloadCSVTemplate(stage='junior'){
+  let tpl=SCORE_TEMPLATES[stage]||SCORE_TEMPLATES.junior;
+  let headers=['姓名','性别',...tpl.subjects,...APP.dimensions.map(templateDimLabel)];
+  let sample=['学生姓名','男',...tpl.subjects.map(()=>''),...APP.dimensions.map(()=> '0.5')];
+  let csv='\uFEFF'+[headers,sample].map(row=>row.map(csvEscape).join(',')).join('\n');
+  let blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  let a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(APP.className||'班级')+'-'+tpl.label+'成绩导入模板.csv';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+function clearAll(){
+  if(!confirm('确定清空所有数据？此操作不可恢复！')) return;
+  APP.students=[];
+  APP.className='';
+  APP.seats=[];
+  APP.arranged=false;
+  localStorage.removeItem('seatApp707');
+  updateAll();
+  showWizard();
+}
+
+function loadDemo(){
+  if(APP.students.length>0 && !confirm('将替换当前数据，确定载入707班演示数据？')) return;
+  APP.className='七年级707班';
+  APP.students=JSON.parse(JSON.stringify(DEMO_STUDENTS));
+  APP.seatRows=7;APP.seatCols=8;APP.aislePositions=[4];
+  APP.seats=[];APP.arranged=false;
+  updateAll();
+}
+
+// ========== SCORE TABLE ==========
+function renderScoreTable(){
+  let thead=document.getElementById('scoreHead');
+  let tbody=document.getElementById('scoreBody');
+  let hhtml='<tr><th>#</th><th>姓名</th>';
+  APP.subjects.forEach((sub,i)=>hhtml+=`<th>${sub}<br><span style="font-weight:400;font-size:10px">(${APP.subjectFull[i]||''})</span></th>`);
+  hhtml+='<th>总分</th><th>排名</th></tr>';
+  thead.innerHTML=hhtml;
+  let bhtml='';
+  APP.students.forEach((s,si)=>{
+    bhtml+=`<tr><td>${si+1}</td><td>${s.name}</td>`;
+    APP.subjects.forEach((sub,subi)=>{
+      let val=s.scores[sub];
+      bhtml+=`<td><input class="score-input" type="number" step="0.5" value="${val!==null&&val!==undefined?val:''}" onchange="updateScore(${si},'${sub}',this.value)"></td>`;
+    });
+    bhtml+=`<td><b>${s.total!==undefined?s.total.toFixed(1):'-'}</b></td><td>${s.rank||'-'}</td></tr>`;
+  });
+  tbody.innerHTML=bhtml;
+  renderScoreStats();
+}
+
+function updateScore(si,sub,val){
+  let v=parseFloat(val);
+  APP.students[si].scores[sub]=isNaN(v)?null:v;
+  recalcStudents();
+  renderRoster();
+  renderScoreTable();
+  save();
+}
+
+function recalcScores(){
+  recalcStudents();
+  renderRoster();
+  renderScoreTable();
+  renderDimTable();
+  save();
+}
+
+function renderScoreStats(){
+  let div=document.getElementById('scoreStats');
+  if(APP.students.length===0){div.innerHTML='';return;}
+  let html='<h3>成绩统计</h3><table><tr><th>科目</th><th>满分</th><th>平均分</th><th>最高分</th><th>最低分</th><th>及格率</th><th>优秀率</th></tr>';
+  APP.subjects.forEach((sub,i)=>{
+    let full=APP.subjectFull[i]||100;
+    let vals=APP.students.map(s=>s.scores[sub]).filter(v=>v!==null&&v!==undefined);
+    if(vals.length===0){html+=`<tr><td>${sub}</td><td>${full}</td><td colspan="5">无数据</td></tr>`;return;}
+    let avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+    let max=Math.max(...vals), min=Math.min(...vals);
+    let pass=vals.filter(v=>v>=full*0.6).length;
+    let exc=vals.filter(v=>v>=full*0.85).length;
+    html+=`<tr><td>${sub}</td><td>${full}</td><td>${avg.toFixed(1)}</td><td>${max}</td><td>${min}</td><td>${(pass/vals.length*100).toFixed(1)}%</td><td>${(exc/vals.length*100).toFixed(1)}%</td></tr>`;
+  });
+  // Total stats
+  let totals=APP.students.map(s=>s.total).filter(v=>v!==undefined);
+  if(totals.length){
+    let avg=totals.reduce((a,b)=>a+b,0)/totals.length;
+    let totalFull=APP.subjectFull.reduce((a,b)=>a+b,0);
+    html+=`<tr style="font-weight:bold;background:#f0f7ff"><td>总分</td><td>${totalFull}</td><td>${avg.toFixed(1)}</td><td>${Math.max(...totals).toFixed(1)}</td><td>${Math.min(...totals).toFixed(1)}</td><td colspan="2"></td></tr>`;
+  }
+  html+='</table>';
+  // Quartile summary
+  html+='<div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">';
+  [1,2,3,4].forEach(slot=>{
+    let group=APP.students.filter(s=>s.slot===slot);
+    if(group.length===0) return;
+    let avg=group.reduce((a,s)=>a+(s.total||0),0)/group.length;
+    html+=`<div class="glass" style="padding:8px 12px;border-radius:8px;flex:1;min-width:120px"><span class="tag tag-${slot}">${slot}号段</span> ${group.length}人 平均${avg.toFixed(1)}</div>`;
+  });
+  html+='</div>';
+  div.innerHTML=html;
+}
+
+function showScorePasteModal(){
+  let hint=APP.subjects.join('\t');
+  showGenericModal(`<h2>粘贴成绩</h2><p style="font-size:12px;color:var(--gray);margin-bottom:8px">从Excel复制，格式：姓名\\t${APP.subjects.join('\\t')}</p><textarea id="scorePaste" class="paste-area" placeholder="张三\\t85\\t90\\t78\\t..."></textarea><div style="text-align:right;margin-top:12px"><button class="btn-gray" onclick="closeGenericModal()">取消</button> <button class="btn-primary" onclick="doScorePaste()">导入</button></div>`);
+}
+
+function doScorePaste(){
+  let text=document.getElementById('scorePaste').value.trim();
+  if(!text){alert('请粘贴成绩');return;}
+  let lines=text.split('\n').filter(l=>l.trim());
+  lines.forEach(line=>{
+    let cols=line.split(/[\t,，]/).map(c=>c.trim());
+    let name=cols[0];
+    if(!name) return;
+    let s=APP.students.find(x=>x.name===name);
+    if(!s) return;
+    APP.subjects.forEach((sub,i)=>{
+      if(cols[i+1]!==undefined){
+        let v=parseFloat(cols[i+1]);
+        if(!isNaN(v)) s.scores[sub]=v;
+      }
+    });
+  });
+  closeGenericModal();
+  updateAll();
+}
+
+// ========== PERSONALITY DIMENSIONS ==========
+function renderDimTable(){
+  let thead=document.getElementById('dimHead');
+  let tbody=document.getElementById('dimBody');
+  let hhtml='<tr><th>#</th><th>姓名</th>';
+  APP.dimensions.forEach(d=>hhtml+=`<th>${d.name}</th>`);
+  hhtml+='</tr>';
+  thead.innerHTML=hhtml;
+  let bhtml='';
+  APP.students.forEach((s,si)=>{
+    bhtml+=`<tr><td>${si+1}</td><td>${s.name}</td>`;
+    APP.dimensions.forEach(d=>{
+      let val=s[d.key]!==undefined?s[d.key]:0.5;
+      bhtml+=`<td><div class="dim-control"><div class="dim-stepper"><button class="dim-btn" onclick="adjustDim(${si},'${d.key}',-0.1)">-</button><input class="dim-number" type="number" min="0" max="1" step="0.1" value="${val.toFixed(1)}" onchange="setDimValue(${si},'${d.key}',this.value)"><button class="dim-btn" onclick="adjustDim(${si},'${d.key}',0.1)">+</button></div><div class="dim-presets"><button onclick="setDimValue(${si},'${d.key}',0.2)">低</button><button onclick="setDimValue(${si},'${d.key}',0.5)">中</button><button onclick="setDimValue(${si},'${d.key}',0.8)">高</button></div></div></td>`;
+    });
+    bhtml+='</tr>';
+  });
+  tbody.innerHTML=bhtml;
+}
+
+function normalizeDimValue(val){
+  let n=parseFloat(val);
+  if(!Number.isFinite(n)) n=0.5;
+  return Math.max(0,Math.min(1,Math.round(n*10)/10));
+}
+
+function setDimValue(si,key,val){
+  APP.students[si][key]=normalizeDimValue(val);
+  renderDimTable();
+  save();
+}
+
+function adjustDim(si,key,delta){
+  let cur=APP.students[si][key]!==undefined?APP.students[si][key]:0.5;
+  setDimValue(si,key,cur+delta);
+}
+
+function updateDim(si,key,val){
+  setDimValue(si,key,val);
+}
+
+function showDimSettings(){
+  let html='<h2>维度设置</h2><div id="dimList">';
+  APP.dimensions.forEach((d,i)=>{
+    html+=`<div class="form-row"><input value="${d.key}" placeholder="键名" style="width:80px" id="dk${i}"><input value="${d.name}" placeholder="显示名" style="width:100px" id="dn${i}"><input value="${d.desc}" placeholder="描述" style="width:120px" id="dd${i}"><button class="btn-sm btn-red" onclick="removeDim(${i})">删除</button></div>`;
+  });
+  html+='</div><button class="btn-sm btn-outline" onclick="addDim()">添加</button><div style="text-align:right;margin-top:12px"><button class="btn-primary" onclick="saveDimSettings()">保存</button> <button class="btn-gray" onclick="closeGenericModal()">取消</button></div>';
+  showGenericModal(html);
+}
+
+function addDim(){
+  let list=document.getElementById('dimList');
+  let i=APP.dimensions.length;
+  let div=document.createElement('div');div.className='form-row';
+  div.innerHTML=`<input value="" placeholder="键名(英文)" style="width:80px" id="dk${i}"><input value="" placeholder="显示名" style="width:100px" id="dn${i}"><input value="" placeholder="描述" style="width:120px" id="dd${i}">`;
+  list.appendChild(div);
+}
+
+function removeDim(idx){
+  APP.dimensions.splice(idx,1);
+  showDimSettings();
+}
+
+function saveDimSettings(){
+  let dims=[];
+  let i=0;
+  while(document.getElementById('dk'+i)){
+    let key=document.getElementById('dk'+i).value.trim();
+    let name=document.getElementById('dn'+i).value.trim();
+    let desc=document.getElementById('dd'+i).value.trim();
+    if(key&&name) dims.push({key,name,desc});
+    i++;
+  }
+  if(dims.length===0){alert('至少需要一个维度');return;}
+  APP.dimensions=dims;
+  // Ensure students have all dims
+  APP.students.forEach(s=>{
+    APP.dimensions.forEach(d=>{
+      if(s[d.key]===undefined) s[d.key]=0.5;
+    });
+  });
+  closeGenericModal();
+  updateAll();
+}
+
+function randomizeDims(){
+  APP.students.forEach(s=>{
+    APP.dimensions.forEach(d=>{
+      s[d.key]=Math.round(Math.random()*10)/10;
+    });
+  });
+  updateAll();
+}
+
+// ========== HEATMAP ==========
+function populateHeatmapDim(){
+  let sel=document.getElementById('heatmapDim');
+  sel.innerHTML='';
+  APP.dimensions.forEach(d=>{
+    let label=d.name;
+    if(d.key==='talkative') label='活跃度';
+    if(d.key==='selfControl') label='需要提醒';
+    sel.innerHTML+=`<option value="${d.key}">${label}</option>`;
+  });
+}
+
+function getHeatmapColor(val){
+  val=Math.max(0,Math.min(1,val));
+  if(val>0.72) return 'linear-gradient(135deg,#FFE6E6,#FFC8CC)';
+  if(val>0.48) return 'linear-gradient(135deg,#E0F7EF,#BFEBD9)';
+  return 'linear-gradient(135deg,#F4F6FA,#E5E9F0)';
+}
+
+function getHeatmapTextColor(val){
+  return '#142033';
+}
+
+function heatmapZoneLabel(dimKey){
+  if(dimKey==='talkative') return '活跃区';
+  if(dimKey==='selfControl') return '需要关注区';
+  if(dimKey==='composite') return '课堂状态集中区';
+  let dim=APP.dimensions.find(d=>d.key===dimKey);
+  return (dim?dim.name:'状态')+'集中区';
+}
+
+function heatmapGroupZone(members,grid,rows,cols,dimKey){
+  let vals=[];
+  members.forEach(si=>{
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(APP.seats[r]&&APP.seats[r][c]===si&&grid[r]&&grid[r][c]!==null) vals.push(grid[r][c]);
+      }
+    }
+  });
+  if(vals.length<2) return null;
+  let avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+  let high=vals.filter(v=>v>=0.72).length;
+  let max=Math.max(...vals);
+  if(max<0.72&&!(high>=2&&avg>=0.62)) return null;
+  return {label:heatmapZoneLabel(dimKey),avg,high:Math.max(1,high)};
+}
+
+// Build a value grid from APP.seats (handles group layout or random layout)
+function buildHeatGrid(dimKey){
+  let rows=APP.seats.length;
+  let cols=APP.seats[0]?APP.seats[0].length:0;
+  let grid=[];
+  for(let r=0;r<rows;r++){
+    grid[r]=[];
+    for(let c=0;c<cols;c++){
+      if(APP.seats[r][c]<0) grid[r][c]=null;
+      else{
+        let s=APP.students[APP.seats[r][c]];
+        let val=s[dimKey]!==undefined?s[dimKey]:0.5;
+        if(dimKey==='selfControl') val=1-val;
+        grid[r][c]=val;
+      }
+    }
+  }
+  return {grid,rows,cols};
+}
+
+function applyGaussian(grid,rows,cols){
+  let newGrid=grid.map(r=>[...r]);
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(grid[r][c]===null) continue;
+      let sum=0,wsum=0;
+      for(let dr=-1;dr<=1;dr++){
+        for(let dc=-1;dc<=1;dc++){
+          let nr=r+dr,nc=c+dc;
+          if(nr<0||nr>=rows||nc<0||nc>=cols) continue;
+          if(grid[nr][nc]===null) continue;
+          let dist=Math.sqrt(dr*dr+dc*dc);
+          let w=Math.exp(-dist*dist*1.5);
+          sum+=grid[nr][nc]*w;wsum+=w;
+        }
+      }
+      newGrid[r][c]=sum/wsum;
+    }
+  }
+  return newGrid;
+}
+
+// Render a group-based heatmap that matches the seat layout
+function renderGroupHeatmap(grid,rows,cols,dimKey,container){
+  // Build group map
+  let groupMap={};
+  if(APP.groups){
+    APP.groups.forEach((members,gIdx)=>{
+      members.forEach(si=>{groupMap[si]=gIdx;});
+    });
+  }
+
+  let gBorder=Array(12).fill('var(--border-visible)');
+  let gLabel=Array(12).fill('var(--text-secondary)');
+
+  let wrapper=document.createElement('div');
+  wrapper.style.cssText='display:flex;flex-direction:column;gap:24px;align-items:center;width:100%';
+
+  // 3 row-pair blocks, each with 4 groups
+  for(let rp=0;rp<3;rp++){
+    let rowDiv=document.createElement('div');
+    rowDiv.style.cssText='display:flex;gap:18px;justify-content:center;flex-wrap:nowrap;align-items:flex-start;width:100%';
+    
+    for(let gc=0;gc<4;gc++){
+      let gIdx=rp*4+gc;
+      if(gIdx>=(APP.groups?APP.groups.length:12)) break;
+      let members=APP.groups?APP.groups[gIdx]:[];
+      
+      let groupBox=document.createElement('div');
+      let borderColor=gBorder[gIdx]||'#ccc';
+      groupBox.style.cssText='border:1px solid var(--border-visible);border-radius:14px;padding:12px;text-align:center;min-width:300px;background:var(--surface)';
+      
+      let label=document.createElement('div');
+      label.style.cssText='font-family:"Space Mono",monospace;font-size:13px;font-weight:700;color:var(--text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)';
+      label.textContent='第'+(gIdx+1)+'组 ('+members.length+'人)';
+      groupBox.appendChild(label);
+      let zone=heatmapGroupZone(members,grid,rows,cols,dimKey);
+      if(zone){
+        let badge=document.createElement('div');
+        badge.style.cssText='display:inline-flex;align-items:center;gap:6px;margin:-4px 0 10px;padding:4px 10px;border-radius:999px;background:#FFF1F2;border:1px solid #FFC8CC;color:#A92B3D;font-size:11px;font-weight:700';
+        badge.textContent=zone.label+' · '+zone.high+'人';
+        badge.title='本组局部平均 '+zone.avg.toFixed(2);
+        groupBox.appendChild(badge);
+      }
+      
+      let seatWrap=document.createElement('div');
+      seatWrap.style.cssText='display:grid;grid-template-columns:132px 132px;gap:8px;justify-content:center';
+      
+      members.forEach(si=>{
+        let s=APP.students[si];
+        // Find position in grid
+        let foundR=-1,foundC=-1;
+        for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(APP.seats[r]&&APP.seats[r][c]===si){foundR=r;foundC=c;}
+        let val=(foundR>=0&&grid[foundR]&&grid[foundR][foundC]!==null)?grid[foundR][foundC]:0;
+        let bg=getHeatmapColor(val);
+        let tc=getHeatmapTextColor(val);
+        let cell=document.createElement('div');
+        cell.className='heatmap-cell';
+        cell.style.background=bg;
+        cell.style.color=tc;
+        cell.innerHTML=s.name+'<span class="hm-val">'+val.toFixed(2)+'</span>';
+        cell.title=s.name+' | '+dimKey+': '+val.toFixed(3);
+        seatWrap.appendChild(cell);
+      });
+      
+      // Fill empty slot if odd
+      if(members.length%2===1){
+        let empty=document.createElement('div');
+        empty.style.cssText='width:132px;height:82px;border-radius:8px;background:transparent;border:1px dashed var(--border-visible)';
+        seatWrap.appendChild(empty);
+      }
+      
+      groupBox.appendChild(seatWrap);
+      rowDiv.appendChild(groupBox);
+    }
+    wrapper.appendChild(rowDiv);
+  }
+  container.appendChild(wrapper);
+}
+
+// Render flat grid heatmap (for random layout without groups)
+function renderFlatHeatmap(grid,rows,cols,container){
+  let gridDiv=document.createElement('div');
+  gridDiv.className='heatmap-grid';
+  gridDiv.style.gridTemplateColumns='repeat('+cols+',132px)';
+  gridDiv.style.padding='22px';
+  gridDiv.style.background='var(--black)';
+  gridDiv.style.borderRadius='16px';
+  gridDiv.style.border='1px solid var(--border-visible)';
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      let cell=document.createElement('div');
+      cell.className='heatmap-cell';
+      if(grid[r][c]===null){
+        cell.classList.add('aisle-hm');
+        cell.style.width='16px';
+      } else {
+        cell.style.background=getHeatmapColor(grid[r][c]);
+        cell.style.color=getHeatmapTextColor(grid[r][c]);
+        let si=APP.seats[r][c];
+        let s=APP.students[si];
+        cell.innerHTML=(s?s.name:'')+'<span class="hm-val">'+grid[r][c].toFixed(2)+'</span>';
+        cell.title=(s?s.name:'')+' ('+grid[r][c].toFixed(3)+')';
+      }
+      gridDiv.appendChild(cell);
+    }
+  }
+  container.appendChild(gridDiv);
+}
+
+// Render cluster overlay boxes on top of heatmap
+function renderClusterOverlay(clusters,container,isGroupLayout){
+  let warnDiv=document.getElementById('clusterWarnings');
+  warnDiv.innerHTML='';
+  if(!isGroupLayout){
+    clusters.forEach(cl=>{
+      let box=document.createElement('div');
+      box.className='cluster-box';
+      let cellW=140,cellH=90;
+      let x=cl.minC*cellW+6, y=cl.minR*cellH+6;
+      let w=(cl.maxC-cl.minC+1)*cellW-12, h=(cl.maxR-cl.minR+1)*cellH-12;
+      box.style.cssText='left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px';
+      let label=document.createElement('div');
+      label.className='cluster-label';
+      label.textContent=cl.label;
+      label.style.left=(x+4)+'px';
+      label.style.top=(y-22)+'px';
+      container.appendChild(box);
+      container.appendChild(label);
+      warnDiv.innerHTML+='<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(91,155,246,0.10);border:1px solid var(--interactive);border-radius:8px;padding:4px 10px;margin:3px;font-size:11px;color:var(--interactive)">提示：'+cl.label+' ('+cl.cells.length+'人, 平均'+cl.avgVal.toFixed(2)+')</div>';
+    });
+  } else {
+    // For group layout, just show warnings
+    clusters.forEach(cl=>{
+      warnDiv.innerHTML+='<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(91,155,246,0.10);border:1px solid var(--interactive);border-radius:8px;padding:4px 10px;margin:3px;font-size:11px;color:var(--interactive)">提示：'+cl.label+' ('+cl.cells.length+'人, 平均'+cl.avgVal.toFixed(2)+')</div>';
+    });
+  }
+}
+
+function renderHeatmap(){
+  let container=document.getElementById('heatmapContainer');
+  container.innerHTML='';
+  if(!APP.arranged||APP.seats.length===0){
+    container.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-light)"><div style="font-family:&quot;Space Mono&quot;,monospace;font-size:12px;margin-bottom:12px;color:var(--text-secondary)">[EMPTY]</div><p style="font-size:14px">[NO SEAT DATA] 请先在「座位编排」中生成座位</p></div>';
+    return;
+  }
+  let dimKey=document.getElementById('heatmapDim').value;
+  let useGaussian=document.getElementById('heatmapGaussian').checked;
+  let useCluster=document.getElementById('heatmapCluster').checked;
+  let {grid,rows,cols}=buildHeatGrid(dimKey);
+
+  if(useGaussian) grid=applyGaussian(grid,rows,cols);
+
+  // Decide layout: if groups exist and match seat data, use group layout
+  let isGroupLayout=APP.groups&&APP.groups.length>0&&APP.seatCols===8;
+
+  if(isGroupLayout){
+    renderGroupHeatmap(grid,rows,cols,dimKey,container);
+  } else {
+    renderFlatHeatmap(grid,rows,cols,container);
+  }
+
+  // Stats
+  let vals=[];
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(grid[r][c]!==null) vals.push(grid[r][c]);
+  let statsDiv=document.getElementById('heatmapStats');
+  if(vals.length){
+    let avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+    let mn=Math.min(...vals),mx=Math.max(...vals);
+    statsDiv.innerHTML='<div style="display:flex;gap:16px;flex-wrap:wrap;padding:8px 12px;background:var(--surface);border-radius:8px;font-size:11px;color:var(--text-light)"><span>[AVG] 平均 <strong style="color:var(--text)">'+avg.toFixed(2)+'</strong></span><span>[HIGH] 偏活跃 <strong style="color:var(--interactive)">'+mx.toFixed(2)+'</strong></span><span>[LOW] 偏安静 <strong style="color:var(--green)">'+mn.toFixed(2)+'</strong></span><span>[N] 样本 <strong style="color:var(--text)">'+vals.length+'</strong></span></div>';
+  }
+
+  // Cluster detection
+  if(useCluster){
+    let clusters=detectClusters(grid,rows,cols);
+    renderClusterOverlay(clusters,container,isGroupLayout);
+  } else {
+    document.getElementById('clusterWarnings').innerHTML='';
+  }
+}
+
+function detectClusters(grid,rows,cols){
+  let clusters=[];
+  let visited={};
+  let threshold=0.7;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(grid[r][c]===null||grid[r][c]<threshold) continue;
+      let key=r+','+c;
+      if(visited[key]) continue;
+      let cells=[];
+      let queue=[[r,c]];
+      visited[key]=true;
+      while(queue.length){
+        let [cr,cc]=queue.shift();
+        cells.push([cr,cc]);
+        for(let [dr,dc] of [[0,1],[0,-1],[1,0],[-1,0]]){
+          let nr=cr+dr,nc=cc+dc;
+          if(nr<0||nr>=rows||nc<0||nc>=cols) continue;
+          let nk=nr+','+nc;
+          if(visited[nk]) continue;
+          if(grid[nr][nc]===null||grid[nr][nc]<threshold) continue;
+          visited[nk]=true;
+          queue.push([nr,nc]);
+        }
+      }
+      if(cells.length>=2){
+        let minR=Math.min(...cells.map(c=>c[0])),maxR=Math.max(...cells.map(c=>c[0]));
+        let minC=Math.min(...cells.map(c=>c[1])),maxC=Math.max(...cells.map(c=>c[1]));
+        let avgVal=cells.reduce((a,c)=>a+grid[c[0]][c[1]],0)/cells.length;
+        let dimKey=document.getElementById('heatmapDim').value;
+        let label=heatmapZoneLabel(dimKey);
+        clusters.push({cells,minR,maxR,minC,maxC,avgVal,label});
+      }
+    }
+  }
+  return clusters;
+}
+
+function showCompositeHeatmap(){
+  if(!APP.arranged){alert('请先编排座位');return;}
+  let container=document.getElementById('heatmapContainer');
+  container.innerHTML='';
+  let rows=APP.seats.length, cols=APP.seats[0]?APP.seats[0].length:0;
+  let grid=[];
+  for(let r=0;r<rows;r++){
+    grid[r]=[];
+    for(let c=0;c<cols;c++){
+      if(APP.seats[r][c]<0){grid[r][c]=null;continue;}
+      let s=APP.students[APP.seats[r][c]];
+      let talk=s.talkative||0;
+      let ctrl=1-(s.selfControl||0);
+      grid[r][c]=(talk+ctrl)/2;
+    }
+  }
+  grid=applyGaussian(grid,rows,cols);
+
+  let isGroupLayout=APP.groups&&APP.groups.length>0&&APP.seatCols===8;
+
+  if(isGroupLayout){
+    renderGroupHeatmap(grid,rows,cols,'composite',container);
+  } else {
+    renderFlatHeatmap(grid,rows,cols,container);
+  }
+
+  // Stats
+  let vals=[];
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(grid[r][c]!==null) vals.push(grid[r][c]);
+  let statsDiv=document.getElementById('heatmapStats');
+  if(vals.length){
+    let avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+    statsDiv.innerHTML='<div style="display:flex;gap:16px;flex-wrap:wrap;padding:8px 12px;background:var(--surface);border-radius:8px;font-size:11px"><span>课堂状态（活跃 + 需要提醒）</span><span>[AVG] 平均 <strong>'+avg.toFixed(2)+'</strong></span><span>[MAX] 偏活跃 <strong style="color:var(--interactive)">'+Math.max(...vals).toFixed(2)+'</strong></span></div>';
+  }
+
+  // Cluster detection
+  let clusters=detectClusters(grid,rows,cols);
+  let warnDiv=document.getElementById('clusterWarnings');
+  warnDiv.innerHTML='<div style="font-weight:600;color:var(--interactive);margin:4px 0;font-size:13px">课堂状态图（活跃 + 需要提醒）</div>';
+  renderClusterOverlay(clusters,container,isGroupLayout);
+}
+
+// ========== SEAT LAYOUT ==========
+function updateSeatLayout(){
+  APP.seatRows=parseInt(document.getElementById('seatRows').value)||7;
+  APP.seatCols=parseInt(document.getElementById('seatCols').value)||8;
+  let aisleStr=document.getElementById('aislePositions').value.trim();
+  APP.aislePositions=aisleStr.split(/[,，]/).map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)&&n>0);
+  renderSeatGrid();
+  save();
+}
+
+function getGridCols(){
+  let cols=APP.seatCols;
+  let aisles=APP.aislePositions.filter(a=>a>0&&a<cols);
+  return cols + aisles.length;
+}
+
+function seatKey(r,c){return r+','+c;}
+
+function seatStudentAt(seats,r,c){
+  return seats&&seats[r]&&seats[r][c]!==undefined?seats[r][c]:-1;
+}
+
+function groupSlotInfo(r,c){
+  if(!APP.groupSeatSlots) return {group:-1,index:-1};
+  for(let g=0;g<APP.groupSeatSlots.length;g++){
+    let idx=APP.groupSeatSlots[g].findIndex(([sr,sc])=>sr===r&&sc===c);
+    if(idx>=0) return {group:g,index:idx};
+  }
+  return {group:-1,index:-1};
+}
+
+function desiredSlotForSeatIndex(idx){
+  return [1,4,2,3][idx]||0;
+}
+
+function slotPositionPenalty(si,slotIndex){
+  if(si<0||si>=APP.students.length) return 0;
+  let desired=desiredSlotForSeatIndex(slotIndex);
+  if(!desired) return 0;
+  return (APP.students[si].slot||0)===desired?0:8;
+}
+
+function pairConflictScore(siA,siB,weight=1){
+  if(siA<0||siB<0||siA>=APP.students.length||siB>=APP.students.length) return 0;
+  return neighborPenalty(APP.students[siA],APP.students[siB])*weight;
+}
+
+function arrangementSeatScore(seats){
+  let score=0;
+  if(APP.groups&&APP.groupSeatSlots&&APP.groupSeatSlots.length){
+    APP.groupSeatSlots.forEach(slots=>{
+      slots.forEach(([r,c],idx)=>{
+        score+=slotPositionPenalty(seatStudentAt(seats,r,c),idx);
+      });
+      for(let i=0;i<slots.length;i++){
+        let visualRow=Math.floor(i/2), visualCol=i%2;
+        let right=i+1, down=i+2;
+        if(visualCol===0&&right<slots.length){
+          score+=pairConflictScore(seatStudentAt(seats,slots[i][0],slots[i][1]),seatStudentAt(seats,slots[right][0],slots[right][1]),1);
+        }
+        if(down<slots.length&&Math.floor(down/2)===visualRow+1){
+          score+=pairConflictScore(seatStudentAt(seats,slots[i][0],slots[i][1]),seatStudentAt(seats,slots[down][0],slots[down][1]),0.7);
+        }
+      }
+    });
+    return score;
+  }
+  let rows=seats?seats.length:0, cols=rows?(seats[0]||[]).length:0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(c+1<cols) score+=pairConflictScore(seatStudentAt(seats,r,c),seatStudentAt(seats,r,c+1),1);
+      if(r+1<rows) score+=pairConflictScore(seatStudentAt(seats,r,c),seatStudentAt(seats,r+1,c),0.7);
+    }
+  }
+  return score;
+}
+
+function pairCompatibilityScore(a,b){
+  let sa=APP.students[a], sb=APP.students[b];
+  if(!sa||!sb) return {score:0,status:'neutral'};
+  let score=0;
+  let hard=false;
+  if((sa.talkative||0)>0.65&&(sb.talkative||0)>0.65){score+=3;hard=true;}
+  if((sa.selfControl||0)<0.35&&(sb.selfControl||0)<0.35){score+=3;hard=true;}
+  if(sa.biasDir&&sb.biasDir&&sa.biasDir===sb.biasDir&&sa.biasDir!=='均衡'&&(sa.biasIndex||0)>0.18&&(sb.biasIndex||0)>0.18){score+=2;}
+  if((sa.biasIndex||0)>0.32&&(sb.biasIndex||0)>0.32){score+=1.5;}
+  let riskDiff=Math.abs(studentRisk(a)-studentRisk(b));
+  score-=riskDiff*0.8;
+  let slotPair=[sa.slot,sb.slot].sort().join('-');
+  if(slotPair==='1-4'||slotPair==='2-3') score-=0.8;
+  if(hard||score>=2.2) return {score,status:'bad'};
+  if(score<=0.6) return {score,status:'good'};
+  return {score,status:'neutral'};
+}
+
+function scoreSeatSwap(src,dst){
+  let srcSi=seatStudentAt(APP.seats,src.row,src.col);
+  let dstSi=seatStudentAt(APP.seats,dst.row,dst.col);
+  if(srcSi<0||dstSi<0||(src.row===dst.row&&src.col===dst.col)) return null;
+  let next=APP.seats.map(row=>row.slice());
+  next[src.row][src.col]=dstSi;
+  next[dst.row][dst.col]=srcSi;
+  let srcInfo=groupSlotInfo(src.row,src.col);
+  let dstInfo=groupSlotInfo(dst.row,dst.col);
+  let hardMismatch=slotPositionPenalty(srcSi,dstInfo.index)>0||slotPositionPenalty(dstSi,srcInfo.index)>0;
+  let pair=pairCompatibilityScore(srcSi,dstSi);
+  return {delta:arrangementSeatScore(next)-arrangementSeatScore(APP.seats),hardMismatch,pairScore:pair.score,pairStatus:pair.status};
+}
+
+function buildSwapHintsForSeat(src){
+  let candidates=[];
+  for(let r=0;r<APP.seats.length;r++){
+    for(let c=0;c<(APP.seats[r]||[]).length;c++){
+      let si=seatStudentAt(APP.seats,r,c);
+      if(si<0||(r===src.row&&c===src.col)) continue;
+      let score=scoreSeatSwap(src,{row:r,col:c});
+      if(score) candidates.push({row:r,col:c,...score});
+    }
+  }
+  let hints={};
+  candidates.filter(x=>!x.hardMismatch&&x.pairStatus!=='bad').sort((a,b)=>(a.pairScore-b.pairScore)||(a.delta-b.delta)).slice(0,6).forEach(x=>{hints[seatKey(x.row,x.col)]='good';});
+  candidates.filter(x=>x.hardMismatch||x.pairStatus==='bad').sort((a,b)=>(b.pairScore-a.pairScore)||(b.delta-a.delta)).slice(0,8).forEach(x=>{
+    let key=seatKey(x.row,x.col);
+    if(!hints[key]) hints[key]='bad';
+  });
+  return hints;
+}
+
+function applySwapHintClass(cell,si,r,c){
+  if(selectedSeat&&selectedSeat.row===r&&selectedSeat.col===c) cell.classList.add('selected');
+  let hint=swapHintMap[seatKey(r,c)];
+  if(si>=0&&hint==='good') cell.classList.add('swap-good');
+  if(si>=0&&hint==='bad') cell.classList.add('swap-bad');
+}
+
+function clearSeatSelection(shouldRender=true){
+  selectedSeat=null;
+  swapHintMap={};
+  if(shouldRender) renderSeatGrid();
+}
+
+function commitSeatSwap(src,dst){
+  if(!src||!dst) return false;
+  let srcSi=seatStudentAt(APP.seats,src.row,src.col);
+  let dstSi=seatStudentAt(APP.seats,dst.row,dst.col);
+  if(srcSi<0) return false;
+  APP.seats[src.row][src.col]=dstSi;
+  APP.seats[dst.row][dst.col]=srcSi;
+  syncGroupsFromSeatSlots();
+  clearSeatSelection(false);
+  renderSeatGrid();
+  calculateBalance();
+  save();
+  return true;
+}
+
+function renderSeatGrid(){
+  let grid=document.getElementById('seatGrid');
+  grid.innerHTML='';
+  let rows=APP.seatRows, cols=APP.seatCols||8;
+  if(APP.groups&&(!APP.groupSeatSlots||APP.groupSeatSlots.length!==APP.groups.length)){
+    placeGroupsIntoSeats(APP.groups,rows,cols);
+    rows=APP.seatRows; cols=APP.seatCols||8;
+  }
+  
+  if(!APP.seats||APP.seats.length!==rows){
+    APP.seats=[];
+    for(let r=0;r<rows;r++){APP.seats[r]=[];for(let c=0;c<cols;c++) APP.seats[r][c]=-1;}
+  }
+
+  // Group colors (12 groups, soft pastels)
+  let gBg=Array(12).fill('var(--surface)');
+  let gBorder=Array(12).fill('var(--border-visible)');
+  let gText=Array(12).fill('var(--text-secondary)');
+
+  // Build a grid with group separators
+  // Layout: 3 row-pairs, 4 groups per row-pair
+  // Grid = separator | g0 | separator | g1 | separator | g2 | separator | g3 | separator
+  // Each group = 2 cols x 2 rows of seat-cells + label
+  // Separator = thin gap column
+
+  grid.style.display='flex';
+  grid.style.flexDirection='column';
+  grid.style.gap='16px';
+  grid.style.padding='16px';
+  grid.style.background='var(--black)';
+  grid.style.borderRadius='16px';
+  grid.style.border='1px solid var(--border-visible)';
+
+  let groupMap={}; // studentIdx -> groupIdx
+  if(APP.groups){
+    APP.groups.forEach((members,gIdx)=>{
+      members.forEach(si=>{groupMap[si]=gIdx;});
+    });
+  }
+
+  // If no groups (e.g. random layout), render flat grid
+  if(!APP.groups||APP.groups.length===0){
+    grid.style.display='grid';
+    grid.style.gridTemplateColumns='repeat('+cols+',80px)';
+    grid.style.gap='5px';
+    grid.style.padding='16px';
+    grid.style.background='var(--black)';
+    grid.style.borderRadius='16px';
+    grid.style.border='1px solid var(--border-visible)';
+    grid.style.justifyContent='center';
+    let aisles=APP.aislePositions||[];
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(aisles.includes(c)){
+          let gap=document.createElement('div');
+          gap.className='seat-cell aisle';
+          grid.appendChild(gap);
+        }
+        let si=APP.seats[r]?APP.seats[r][c]:-1;
+        let cell=makeSeatCell(si,r,c);
+        grid.appendChild(cell);
+      }
+    }
+    return;
+  }
+
+  // Render group blocks, 4 groups per visual row.
+  let visualRows=Math.ceil(APP.groups.length/4);
+  for(let rp=0;rp<visualRows;rp++){
+    let rowDiv=document.createElement('div');
+    rowDiv.style.cssText='display:flex;gap:12px;justify-content:center;flex-wrap:nowrap;align-items:flex-start';
+    
+    for(let gc=0;gc<4;gc++){
+      let gIdx=rp*4+gc;
+      if(gIdx>=APP.groups.length) break;
+      let slots=(APP.groupSeatSlots&&APP.groupSeatSlots[gIdx])||[];
+      let members=slots.map(([r,c])=>APP.seats[r]&&APP.seats[r][c]).filter(si=>si!==undefined&&si>=0);
+      
+      let groupBox=document.createElement('div');
+      groupBox.style.cssText='background:var(--surface);border:1px solid var(--border-visible);border-radius:12px;padding:8px 6px 6px;text-align:center;min-width:184px';
+      
+      let label=document.createElement('div');
+      label.style.cssText='font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)';
+      label.textContent='第'+(gIdx+1)+'组 ('+members.length+'人)';
+      groupBox.appendChild(label);
+      
+      let seatWrap=document.createElement('div');
+      seatWrap.style.cssText='display:grid;grid-template-columns:80px 80px;gap:5px;justify-content:center';
+      
+      slots.forEach(([foundR,foundC])=>{
+        let si=(APP.seats[foundR]&&APP.seats[foundR][foundC]!==undefined)?APP.seats[foundR][foundC]:-1;
+        let cell=document.createElement('div');
+        cell.dataset.row=foundR;cell.dataset.col=foundC;
+        if(si>=0&&si<APP.students.length){
+          let s=APP.students[si];
+          cell.className='seat-cell occupied';
+          cell.draggable=true;
+          cell.style.borderColor='var(--border-visible)';
+          cell.innerHTML='<span style="font-size:13px">'+s.name+'</span><span style="position:absolute;bottom:1px;right:4px;font-size:9px;color:#999">'+(s.slot||'')+'号</span>';
+          applySwapHintClass(cell,si,foundR,foundC);
+          cell.addEventListener('dragstart',onDragStart);
+          cell.addEventListener('dragend',onDragEnd);
+          cell.addEventListener('click',e=>onSeatClick(si,foundR,foundC,e));
+        } else {
+          cell.className='seat-cell empty';
+        }
+        cell.addEventListener('dragover',onDragOver);
+        cell.addEventListener('dragleave',onDragLeave);
+        cell.addEventListener('drop',onDrop);
+        seatWrap.appendChild(cell);
+      });
+      
+      groupBox.appendChild(seatWrap);
+      rowDiv.appendChild(groupBox);
+    }
+    
+    grid.appendChild(rowDiv);
+  }
+  
+  // All groups rendered in the 3 row-pair loop above
+}
+
+function makeSeatCell(si,r,c){
+  let cell=document.createElement('div');
+  cell.dataset.row=r;cell.dataset.col=c;
+  if(si>=0&&si<APP.students.length){
+    let s=APP.students[si];
+    cell.className='seat-cell occupied';
+    cell.draggable=true;
+    cell.innerHTML='<span style="font-size:13px">'+s.name+'</span><span style="position:absolute;bottom:1px;right:4px;font-size:9px;color:#999">'+(s.slot||'')+'号</span>';
+    applySwapHintClass(cell,si,r,c);
+    cell.addEventListener('dragstart',onDragStart);
+    cell.addEventListener('dragend',onDragEnd);
+  } else {
+    cell.className='seat-cell empty';
+    cell.textContent='';
+  }
+  cell.addEventListener('dragover',onDragOver);
+  cell.addEventListener('dragleave',onDragLeave);
+  cell.addEventListener('drop',onDrop);
+  cell.addEventListener('click',e=>onSeatClick(si,r,c,e));
+  return cell;
+}
+
+function onSeatClick(si,r,c,e){
+  if(e) e.stopPropagation();
+  if(si<0||si>=APP.students.length) return;
+  if(selectedSeat&&selectedSeat.row===r&&selectedSeat.col===c){
+    hideDetailCard();
+    return;
+  }
+  if(selectedSeat&&Number.isInteger(selectedSeat.row)&&Number.isInteger(selectedSeat.col)){
+    commitSeatSwap(selectedSeat,{row:r,col:c});
+    hideDetailCard();
+    return;
+  }
+  selectedSeat={si,row:r,col:c};
+  swapHintMap=buildSwapHintsForSeat(selectedSeat);
+  renderSeatGrid();
+  showStudentDetail(si,r,c);
+}
+
+function onDragStart(e){
+  let cell=e.currentTarget;
+  clearSeatSelection(false);
+  dragSource={row:parseInt(cell.dataset.row),col:parseInt(cell.dataset.col)};
+  cell.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',JSON.stringify(dragSource));
+}
+function onDragEnd(e){e.currentTarget.classList.remove('dragging');}
+function onDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function onDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function onDrop(e){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  let target={row:parseInt(e.currentTarget.dataset.row),col:parseInt(e.currentTarget.dataset.col)};
+  if(dragSource&&Number.isInteger(dragSource.row)&&Number.isInteger(dragSource.col)&&Number.isInteger(target.row)&&Number.isInteger(target.col)){
+    commitSeatSwap(dragSource,target);
+  }
+  dragSource=null;
+}
+
+function showStudentDetail(si,r,c){
+  if(si<0||si>=APP.students.length) return;
+  let s=APP.students[si];
+  let card=document.getElementById('detailCard');
+  let dimHtml=APP.dimensions.map(d=>{
+    let val=s[d.key]!==undefined?s[d.key]:0.5;
+    let pct=(val*100).toFixed(0);
+    let color=val>=0.7?'var(--red)':val>=0.4?'var(--orange)':'var(--green)';
+    return `<div class="row"><span>${d.name}</span><div style="flex:1;margin:0 8px"><div style="background:#e8e8ed;border-radius:4px;height:6px"><div style="background:${color};width:${pct}%;height:100%;border-radius:4px"></div></div></div><span>${val.toFixed(1)}</span></div>`;
+  }).join('');
+  let scoreHtml=APP.subjects.map((sub,i)=>{
+    let val=s.scores[sub];
+    let full=APP.subjectFull[i]||100;
+    let pct=val!==null?(val/full*100).toFixed(0):'-';
+    let color=!val?'var(--gray)':pct>=85?'var(--green)':pct>=60?'var(--orange)':'var(--red)';
+    return `<div class="row"><span>${sub}</span><span style="color:${color}">${val!==null?val:'-'}</span></div>`;
+  }).join('');
+  let hintHtml=selectedSeat&&selectedSeat.si===si?`<div style="margin:8px 0 10px;padding:8px 10px;border:1px solid var(--border-visible);border-radius:8px;color:var(--text-secondary);font-size:11px;line-height:1.6"><span style="color:var(--success);font-weight:700">绿色</span>：更适合尝试交换　<span style="color:var(--accent);font-weight:700">红色</span>：特别不适合。再次点击一个学生即可交换。</div>`:'';
+  card.innerHTML=`<h4>${s.name} <span class="tag ${s.gender==='男'?'tag-m':'tag-f'}">${s.gender}</span> <span class="tag tag-${s.slot}">${s.slot}号</span></h4>${hintHtml}<div style="margin-bottom:6px">${scoreHtml}</div><div style="margin-bottom:4px;font-weight:600">总分 ${s.total!==undefined?s.total.toFixed(1):'-'} | 排名 ${s.rank||'-'} | ${s.biasDir||''}</div><div>${dimHtml}</div>`;
+  card.style.display='block';
+}
+
+function hideDetailCard(){
+  let card=document.getElementById('detailCard');
+  if(card) card.innerHTML='<div class="detail-empty">点击任意学生块，右侧会显示成绩、号段、偏科和性格维度。选中后座位图会用绿色/红色边框提示适合或不适合交换的对象。</div>';
+  if(selectedSeat) clearSeatSelection(true);
+}
+
+// ========== SMART ARRANGE ==========
+function getGroupOf(si){if(!APP.groups)return -1;for(let g=0;g<APP.groups.length;g++){if(APP.groups[g].includes(si))return g;}return -1;}
+
+function studentRisk(si){
+  let s=APP.students[si]||{};
+  return (s.talkative||0)*2 + (1-(s.selfControl??0.5))*2 + (s.biasIndex||0)*1.5;
+}
+
+function stableStudentCompare(a,b){
+  let ra=studentRisk(a), rb=studentRisk(b);
+  if(Math.abs(rb-ra)>1e-9) return rb-ra;
+  let sa=APP.students[a]||{}, sb=APP.students[b]||{};
+  if((sa.rank||999)!==(sb.rank||999)) return (sa.rank||999)-(sb.rank||999);
+  return (sa.name||'').localeCompare(sb.name||'', 'zh-Hans-CN') || a-b;
+}
+
+function randomShuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    let j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function isDeskPair(a,b){
+  let sa=(APP.students[a]||{}).slot||0, sb=(APP.students[b]||{}).slot||0;
+  return (sa===1&&sb===4)||(sa===4&&sb===1)||(sa===2&&sb===3)||(sa===3&&sb===2);
+}
+
+// Penalty for two students sitting next to each other.
+function neighborPenalty(a,b){
+  let penalty=0;
+  let ta=a.talkative||0, tb=b.talkative||0;
+  if(ta>0.6 && tb>0.6) penalty+=5;
+  else if(ta>0.4 && tb>0.4) penalty+=2;
+  if((a.selfControl??0.5)<0.4 && (b.selfControl??0.5)<0.4) penalty+=4;
+  if(a.biasDir && b.biasDir && a.biasDir===b.biasDir && a.biasDir!=='均衡') penalty+=2.5;
+  if((a.biasIndex||0)>0.25 && (b.biasIndex||0)>0.25) penalty+=2;
+  return penalty;
+}
+
+function pairScore(i,j){
+  let a=APP.students[i], b=APP.students[j];
+  if(!a||!b) return 0;
+  let score=neighborPenalty(a,b);
+  let sa=a.slot||0, sb=b.slot||0;
+  if((sa===1&&sb===4)||(sa===4&&sb===1)||(sa===2&&sb===3)||(sa===3&&sb===2)) score-=2;
+  if(sa&&sb&&sa===sb) score+=2;
+  return score;
+}
+
+function buildDeskPairs(randomize=false){
+  let bySlot={1:[],2:[],3:[],4:[]}, noSlot=[];
+  APP.students.forEach((s,i)=>{
+    let sl=s.slot||0;
+    if(sl>=1&&sl<=4) bySlot[sl].push(i);
+    else noSlot.push(i);
+  });
+  for(let sl=1;sl<=4;sl++){
+    if(randomize) randomShuffle(bySlot[sl]);
+    else bySlot[sl].sort(stableStudentCompare);
+  }
+
+  function pairSlots(leftSlot,rightSlot){
+    let left=[...bySlot[leftSlot]];
+    let right=[...bySlot[rightSlot]];
+    if(!randomize) right.sort((a,b)=>stableStudentCompare(b,a)); // high risk with low risk
+    let pairs=[];
+    while(left.length&&right.length) pairs.push([left.shift(),right.shift()]);
+    return {pairs, rest:[...left,...right]};
+  }
+
+  let p14=pairSlots(1,4);
+  let p23=pairSlots(2,3);
+  let pairs14=p14.pairs, pairs23=p23.pairs;
+  let singles=[...p14.rest,...p23.rest,...noSlot];
+  if(randomize) randomShuffle(singles);
+  else singles.sort(stableStudentCompare);
+  return {pairs14,pairs23,singles};
+}
+
+function buildDefaultGroupSizes(studentCount,groupCount){
+  groupCount=Math.max(1,parseInt(groupCount)||12);
+  let sizes=Array(groupCount).fill(4);
+  if(studentCount===50&&groupCount===12){sizes[0]=6;return sizes;}
+  if(sizes.reduce((a,b)=>a+b,0)<studentCount){
+    while(sizes.reduce((a,b)=>a+b,0)<studentCount) sizes.push(4);
+  }
+  let spare=sizes.reduce((a,b)=>a+b,0)-studentCount;
+  if(spare===2 && sizes.length>0) sizes[0]=6;
+  return sizes;
+}
+
+function parseGroupSizes(raw){
+  return String(raw||'').split(/[,，\s]+/).map(x=>parseInt(x,10)).filter(n=>Number.isFinite(n)&&n>0);
+}
+
+function updateGroupSettings(){
+  let countEl=document.getElementById('groupCount');
+  let modeEl=document.getElementById('groupCapacityMode');
+  let sizesEl=document.getElementById('groupSizes');
+  APP.groupCount=Math.max(1,parseInt(countEl&&countEl.value)||APP.groupCount||12);
+  APP.groupCapacityMode=(modeEl&&modeEl.value)||APP.groupCapacityMode||'oneSix';
+  if(APP.groupCapacityMode!=='custom'){
+    let sizes=APP.groupCapacityMode==='oneSix'
+      ? buildDefaultGroupSizes(APP.students.length,APP.groupCount)
+      : buildBalancedGroupSizes(APP.students.length,APP.groupCount);
+    APP.groupSizes=sizes.join(',');
+    if(sizesEl) sizesEl.value=APP.groupSizes;
+  } else {
+    APP.groupSizes=(sizesEl&&sizesEl.value)||APP.groupSizes||'';
+  }
+  save();
+}
+
+function buildBalancedGroupSizes(studentCount,groupCount){
+  groupCount=Math.max(1,parseInt(groupCount)||Math.ceil(studentCount/4)||1);
+  let base=Math.floor(studentCount/groupCount);
+  let extra=studentCount%groupCount;
+  return Array.from({length:groupCount},(_,i)=>base+(i<extra?1:0)).map(n=>Math.max(1,n));
+}
+
+function getGroupCapacities(){
+  updateGroupSettingsFromInputs(false);
+  let mode=APP.groupCapacityMode||'oneSix';
+  let count=APP.groupCount||12;
+  let sizes=mode==='custom'?parseGroupSizes(APP.groupSizes):mode==='balanced'?buildBalancedGroupSizes(APP.students.length,count):buildDefaultGroupSizes(APP.students.length,count);
+  if(!sizes.length) sizes=buildDefaultGroupSizes(APP.students.length,count);
+  while(sizes.reduce((a,b)=>a+b,0)<APP.students.length) sizes.push(4);
+  APP.groupCount=sizes.length;
+  APP.groupSizes=sizes.join(',');
+  return sizes;
+}
+
+function updateGroupSettingsFromInputs(writeBack=true){
+  let countEl=document.getElementById('groupCount');
+  let modeEl=document.getElementById('groupCapacityMode');
+  let sizesEl=document.getElementById('groupSizes');
+  if(countEl) APP.groupCount=Math.max(1,parseInt(countEl.value)||APP.groupCount||12);
+  if(modeEl) APP.groupCapacityMode=modeEl.value||APP.groupCapacityMode||'oneSix';
+  if(sizesEl) APP.groupSizes=sizesEl.value||APP.groupSizes||'';
+  if(writeBack){
+    if(countEl) countEl.value=APP.groupCount;
+    if(modeEl) modeEl.value=APP.groupCapacityMode;
+    if(sizesEl) sizesEl.value=APP.groupSizes;
+  }
+}
+
+function groupMetrics(members){
+  let m={risk:0,talk:0,self:0,highBias:0,lowSelf:0,lib:0,sci:0,slots:{},size:members.length};
+  members.forEach(si=>{
+    let s=APP.students[si];
+    m.risk+=studentRisk(si);
+    m.talk+=s.talkative||0;
+    m.self+=s.selfControl??0.5;
+    if((s.biasIndex||0)>0.25) m.highBias++;
+    if((s.selfControl??0.5)<0.4) m.lowSelf++;
+    if(s.biasDir==='文科强') m.lib++;
+    if(s.biasDir==='理科强') m.sci++;
+    if(s.slot) m.slots[s.slot]=(m.slots[s.slot]||0)+1;
+  });
+  return m;
+}
+
+function scoreGroupAddition(group,piece,capacity,avgRisk){
+  let next=group.concat(piece);
+  let m=groupMetrics(next);
+  let n=Math.max(1,next.length);
+  let score=0;
+  score+=Math.abs(capacity-next.length)*1.8;
+  score+=Math.abs(m.risk/n-avgRisk)*1.3;
+  score+=Math.max(0,m.talk/n-0.58)*10;
+  score+=Math.max(0,0.48-m.self/n)*10;
+  score+=Math.max(0,m.lowSelf-1)*8;
+  score+=Math.max(0,m.highBias-2)*3;
+  score+=Math.max(0,Math.max(m.lib,m.sci)-Math.ceil(n*0.65))*5;
+  [1,2,3,4].forEach(sl=>{score+=Math.max(0,(m.slots[sl]||0)-Math.ceil(capacity/4))*2;});
+  if(piece.length===2) score+=pairScore(piece[0],piece[1])*0.8;
+  return score;
+}
+
+function assignPiecesToGroups(pieces,randomize=false){
+  let capacities=getGroupCapacities();
+  let groups=Array.from({length:capacities.length},()=>[]);
+  let avgRisk=APP.students.reduce((sum,_,i)=>sum+studentRisk(i),0)/Math.max(1,APP.students.length);
+  pieces.forEach(piece=>{
+    let best=-1,bestScore=Infinity;
+    for(let g=0;g<groups.length;g++){
+      let projected=groups[g].length+piece.length;
+      if(projected>capacities[g]) continue;
+      let score=scoreGroupAddition(groups[g],piece,capacities[g],avgRisk);
+      score+=groups[g].length*0.25;
+      if(randomize) score+=Math.random()*3;
+      if(score<bestScore-1e-9){bestScore=score;best=g;}
+    }
+    if(best<0){
+      for(let g=0;g<groups.length;g++){
+        let remaining=capacities[g]-groups[g].length;
+        let score=-remaining*10+groups[g].length;
+        if(score<bestScore){bestScore=score;best=g;}
+      }
+    }
+    groups[best].push(...piece);
+  });
+  return groups;
+}
+
+function buildGroups(randomize=false){
+  let {pairs14,pairs23,singles}=buildDeskPairs(randomize);
+  let capacities=getGroupCapacities();
+  let groups=Array.from({length:capacities.length},()=>[]);
+  if(randomize){randomShuffle(pairs14);randomShuffle(pairs23);}
+
+  // Hard rule first: each standard group receives one 1+4 pair and one 2+3 pair.
+  for(let g=0;g<groups.length;g++){
+    if(capacities[g]>=2&&pairs14.length) groups[g].push(...pairs14.shift());
+    if(capacities[g]>=4&&pairs23.length) groups[g].push(...pairs23.shift());
+  }
+
+  let remainingPieces=[...pairs14,...pairs23,...singles.map(si=>[si])];
+  if(randomize) randomShuffle(remainingPieces);
+  else remainingPieces.sort((a,b)=>{
+    let r=Math.max(...b.map(studentRisk))-Math.max(...a.map(studentRisk));
+    return Math.abs(r)>1e-9?r:a.length-b.length;
+  });
+
+  let avgRisk=APP.students.reduce((sum,_,i)=>sum+studentRisk(i),0)/Math.max(1,APP.students.length);
+  remainingPieces.forEach(piece=>{
+    let best=-1,bestScore=Infinity;
+    for(let g=0;g<groups.length;g++){
+      if(groups[g].length+piece.length>capacities[g]) continue;
+      let score=scoreGroupAddition(groups[g],piece,capacities[g],avgRisk);
+      if(score<bestScore){bestScore=score;best=g;}
+    }
+    if(best<0) best=groups.reduce((bi,cur,i)=>cur.length<groups[bi].length?i:bi,0);
+    groups[best].push(...piece);
+  });
+
+  return groups.map(g=>optimizeGroupOrder(g,randomize));
+}
+
+function groupOrderScore(order){
+  let score=0;
+  const edges=[[0,1,1],[2,3,1],[4,5,1],[0,2,0.7],[1,3,0.7],[2,4,0.7],[3,5,0.7]];
+  edges.forEach(([a,b,w])=>{
+    if(a<order.length&&b<order.length) score+=neighborPenalty(APP.students[order[a]],APP.students[order[b]])*w;
+  });
+  [[0,1,1,4],[2,3,2,3]].forEach(([a,b,leftSlot,rightSlot])=>{
+    if(a>=order.length||b>=order.length) return;
+    let la=(APP.students[order[a]]||{}).slot||0;
+    let rb=(APP.students[order[b]]||{}).slot||0;
+    if(la===leftSlot&&rb===rightSlot) score-=20;
+    else if(la===rightSlot&&rb===leftSlot) score+=8;
+    else if(isDeskPair(order[a],order[b])) score+=12;
+    else score+=30;
+  });
+  for(let i=4;i<order.length;i++){
+    let s=APP.students[order[i]];
+    score+=studentRisk(order[i])*0.2;
+    if(s.slot&&order.slice(0,4).some(si=>(APP.students[si]||{}).slot===s.slot)) score-=1;
+  }
+  return score;
+}
+
+function optimizeGroupOrder(members,randomize=false){
+  if(members.length<=2) return members;
+  let best=[...members], bestScore=Infinity;
+  let arr=[...members];
+  if(randomize) randomShuffle(arr);
+  function visit(start){
+    if(start===arr.length){
+      let score=groupOrderScore(arr);
+      if(randomize) score+=Math.random()*1.5;
+      if(score<bestScore){bestScore=score;best=[...arr];}
+      return;
+    }
+    for(let i=start;i<arr.length;i++){
+      [arr[start],arr[i]]=[arr[i],arr[start]];
+      visit(start+1);
+      [arr[start],arr[i]]=[arr[i],arr[start]];
+    }
+  }
+  visit(0);
+  return best;
+}
+
+function syncGroupsFromSeatSlots(){
+  if(!APP.groupSeatSlots||!APP.groupSeatSlots.length) return;
+  APP.groups=APP.groupSeatSlots.map(slots=>slots.map(([r,c])=>APP.seats[r]&&APP.seats[r][c]).filter(si=>si!==undefined&&si>=0));
+}
+
+function setArrangeStatus(text){
+  let el=document.getElementById('arrangeStatus');
+  if(el) el.textContent=text;
+}
+
+// Core layout is 8 columns x 6 rows: 12 groups of 2x2. Extra seats are attached to their group.
+function placeGroupsIntoSeats(groups,rows,cols){
+  cols=8;
+  let coreRows=6;
+  let extraCount=groups.reduce((sum,members)=>sum+Math.max(0,members.length-4),0);
+  let neededRows=Math.max(coreRows,coreRows+Math.ceil(extraCount/cols));
+  APP.seatRows=neededRows;
+  APP.seatCols=cols;
+  APP.aislePositions=[];
+  APP.groupSeatSlots=[];
+  APP.seats=[];
+  for(let r=0;r<neededRows;r++){APP.seats[r]=[];for(let c=0;c<cols;c++) APP.seats[r][c]=-1;}
+  let overflowIdx=0;
+  groups.forEach((members,gp)=>{
+    let baseR=Math.floor(gp/4)*2, baseC=(gp%4)*2;
+    let slots=[];
+    for(let i=0;i<4;i++) slots.push([baseR+Math.floor(i/2),baseC+(i%2)]);
+    for(let i=4;i<members.length;i++){
+      slots.push([coreRows+Math.floor(overflowIdx/cols),overflowIdx%cols]);
+      overflowIdx++;
+    }
+    APP.groupSeatSlots[gp]=slots;
+    members.forEach((si,i)=>{
+      let [r,c]=slots[i];
+      if(APP.seats[r]) APP.seats[r][c]=si;
+    });
+  });
+  syncGroupsFromSeatSlots();
+}
+
+function finishArrangement(groups){
+  clearSeatSelection(false);
+  APP.groups=groups;
+  placeGroupsIntoSeats(groups,APP.seatRows,8);
+  document.getElementById('seatRows').value=APP.seatRows;
+  document.getElementById('seatCols').value=APP.seatCols;
+  if(document.getElementById('groupCount')) document.getElementById('groupCount').value=APP.groupCount||groups.length;
+  if(document.getElementById('groupSizes')) document.getElementById('groupSizes').value=APP.groupSizes||groups.map(g=>g.length).join(',');
+  APP.arranged=true;
+  renderSeatGrid();
+  calculateBalance();
+  save();
+}
+
+function smartArrange(){
+  if(APP.students.length===0){alert('请先添加学生');return;}
+  finishArrangement(buildGroups(false));
+  setArrangeStatus('已智能编排 '+new Date().toLocaleTimeString('zh-CN',{hour12:false}));
+  hideDetailCard();
+}
+
+function randomArrange(){
+  if(APP.students.length===0){alert('请先添加学生');return;}
+  finishArrangement(buildGroups(true));
+  setArrangeStatus('已随机编排 '+new Date().toLocaleTimeString('zh-CN',{hour12:false}));
+  hideDetailCard();
+}
+
+function clearSeats(){
+  APP.seats=[];
+  APP.arranged=false;
+  APP.groups=null;
+  APP.groupSeatSlots=[];
+  renderSeatGrid();
+  document.getElementById('balanceScore').textContent='';
+  save();
+}
+
+function calculateBalance(){
+  if(!APP.seats||!APP.seats.length) return;
+  let rows=APP.seats.length,cols=APP.seats[0]?APP.seats[0].length:0;
+  let totalPenalty=0,pairs=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols-1;c++){
+      let a=APP.seats[r][c],b=APP.seats[r][c+1];
+      if(a<0||b<0) continue;
+      totalPenalty+=pairScore(a,b);
+      pairs++;
+    }
+  }
+  // Also check front-back pairs
+  for(let r=0;r<rows-1;r++){
+    for(let c=0;c<cols;c++){
+      let a=APP.seats[r][c],b=APP.seats[r+1][c];
+      if(a<0||b<0) continue;
+      totalPenalty+=pairScore(a,b)*0.5;
+      pairs++;
+    }
+  }
+  let avgPenalty=pairs>0?totalPenalty/pairs:0;
+  let balance=Math.max(0,Math.min(100,100-avgPenalty*20));
+  let color=balance>=70?'var(--green)':balance>=40?'var(--orange)':'var(--red)';
+  document.getElementById('balanceScore').innerHTML=`平衡度: <span style="color:${color};font-size:18px">${balance.toFixed(0)}分</span>`;
+}
+
+// ========== EXPORT ==========
+function exportSeatImage(){
+  if(!APP.arranged){alert('请先编排座位');return;}
+  let canvas=renderCanvas();
+  let link=document.createElement('a');
+  let title=document.getElementById('exportTitle').value||'座位表';
+  link.download=title+'.png';
+  link.href=canvas.toDataURL('image/png');
+  link.click();
+}
+
+function renderExportPreview(){
+  if(!APP.arranged) return;
+  let canvas=renderCanvas();
+  let div=document.getElementById('exportPreview');
+  div.innerHTML='';
+  canvas.style.maxWidth='100%';
+  div.appendChild(canvas);
+}
+
+function renderCanvas(){
+  syncGroupsFromSeatSlots();
+  let title=document.getElementById('exportTitle').value||'座位表';
+  let subtitle=document.getElementById('exportSubtitle').value||new Date().toLocaleDateString('zh-CN');
+  if(APP.groups&&APP.groups.length&&APP.groupSeatSlots&&APP.groupSeatSlots.length){
+    let colsPerRow=4,pad=28,titleH=78,colGap=14,rowGap=22,groupW=190,cellW=78,cellH=44,cellGap=6,labelH=28;
+    let visualRows=Math.ceil(APP.groups.length/colsPerRow);
+    let rowHeights=[];
+    for(let rr=0;rr<visualRows;rr++){
+      let maxSlots=0;
+      for(let gc=0;gc<colsPerRow;gc++){
+        let g=rr*colsPerRow+gc;
+        if(g<APP.groups.length) maxSlots=Math.max(maxSlots,(APP.groupSeatSlots[g]||[]).length||4);
+      }
+      rowHeights[rr]=labelH+Math.ceil(maxSlots/2)*cellH+Math.max(0,Math.ceil(maxSlots/2)-1)*cellGap+20;
+    }
+    let W=pad*2+colsPerRow*groupW+(colsPerRow-1)*colGap;
+    let H=pad*2+titleH+rowHeights.reduce((a,b)=>a+b,0)+(visualRows-1)*rowGap+34;
+    let canvas=document.createElement('canvas');
+    canvas.width=W*2;canvas.height=H*2;
+    let ctx=canvas.getContext('2d');
+    ctx.scale(2,2);
+    ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#D71921';ctx.font='12px "Space Mono","PingFang SC",monospace';ctx.textAlign='left';
+    ctx.fillText('[ SEAT OS ]',pad,pad+10);
+    ctx.fillStyle='#fff';ctx.font='bold 26px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(title,pad,pad+42);
+    ctx.fillStyle='#999';ctx.font='12px "Space Mono","PingFang SC",monospace';
+    ctx.fillText(subtitle,pad,pad+62);
+    let y=pad+titleH;
+    for(let rr=0;rr<visualRows;rr++){
+      for(let gc=0;gc<colsPerRow;gc++){
+        let g=rr*colsPerRow+gc;
+        if(g>=APP.groups.length) continue;
+        let x=pad+gc*(groupW+colGap);
+        let slots=APP.groupSeatSlots[g]||[];
+        let members=slots.map(([r,c])=>APP.seats[r]&&APP.seats[r][c]).filter(si=>si!==undefined&&si>=0);
+        ctx.fillStyle='#111';ctx.fillRect(x,y,groupW,rowHeights[rr]);
+        ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.strokeRect(x,y,groupW,rowHeights[rr]);
+        ctx.fillStyle='#999';ctx.font='bold 12px "Space Mono","PingFang SC",monospace';ctx.textAlign='center';
+        ctx.fillText('第'+(g+1)+'组 ('+members.length+'人)',x+groupW/2,y+19);
+        ctx.strokeStyle='#222';ctx.beginPath();ctx.moveTo(x+10,y+labelH);ctx.lineTo(x+groupW-10,y+labelH);ctx.stroke();
+        slots.forEach(([r,c],i)=>{
+          let cx=x+12+(i%2)*(cellW+10), cy=y+labelH+10+Math.floor(i/2)*(cellH+cellGap);
+          let si=(APP.seats[r]&&APP.seats[r][c]!==undefined)?APP.seats[r][c]:-1;
+          ctx.fillStyle='#141414';ctx.fillRect(cx,cy,cellW,cellH);
+          ctx.strokeStyle=si>=0?'#444':'#333';ctx.setLineDash(si>=0?[]:[4,3]);ctx.strokeRect(cx,cy,cellW,cellH);ctx.setLineDash([]);
+          if(si>=0&&si<APP.students.length){
+            let s=APP.students[si];
+            ctx.fillStyle='#fff';ctx.font='bold 13px "PingFang SC","Microsoft YaHei",sans-serif';ctx.textAlign='center';
+            ctx.fillText(s.name,cx+cellW/2,cy+24);
+            ctx.fillStyle='#999';ctx.font='10px "Space Mono",monospace';ctx.textAlign='right';
+            ctx.fillText((s.slot||'')+'号',cx+cellW-5,cy+cellH-6);
+          }
+        });
+      }
+      y+=rowHeights[rr]+rowGap;
+    }
+    ctx.fillStyle='#999';ctx.font='12px "Space Mono","PingFang SC",monospace';ctx.textAlign='center';
+    ctx.fillText('讲台方向 ↓',W/2,H-pad+10);
+    return canvas;
+  }
+
+  let rows=APP.seatRows,cols=APP.seatCols;
+  let cellW=100,cellH=50,headerH=36,pad=20,titleH=60;
+  let W=pad*2+cols*cellW;
+  let H=pad*2+titleH+headerH+rows*cellH+30;
+  let canvas=document.createElement('canvas');
+  canvas.width=W*2;canvas.height=H*2;
+  let ctx=canvas.getContext('2d');
+  ctx.scale(2,2);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#000';ctx.font='bold 22px "PingFang SC","Microsoft YaHei",sans-serif';ctx.textAlign='center';ctx.fillText(title,W/2,pad+28);
+  ctx.font='13px "PingFang SC","Microsoft YaHei",sans-serif';ctx.fillStyle='#666';ctx.fillText(subtitle,W/2,pad+48);
+  let y0=pad+titleH;
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    let x=pad+c*cellW,y=y0+r*cellH;
+    let si=APP.seats[r]?APP.seats[r][c]:-1;
+    ctx.fillStyle=si>=0?'#fff':'#f8f8f8';ctx.fillRect(x,y,cellW,cellH);ctx.strokeStyle='#999';ctx.strokeRect(x,y,cellW,cellH);
+    if(si>=0&&si<APP.students.length){let s=APP.students[si];ctx.fillStyle='#000';ctx.font='bold 13px "PingFang SC","Microsoft YaHei",sans-serif';ctx.textAlign='center';ctx.fillText(s.name,x+cellW/2,y+cellH/2+2);}
+  }
+  return canvas;
+}
+
+function exportJSON(){
+  let data=JSON.stringify(APP,null,2);
+  let blob=new Blob([data],{type:'application/json'});
+  let url=URL.createObjectURL(blob);
+  let a=document.createElement('a');a.href=url;
+  a.download=(APP.className||'座位数据')+'.json';
+  a.click();URL.revokeObjectURL(url);
+}
+
+function showImportJSON(){document.getElementById('jsonFileInput').click();}
+function handleJSONImport(e){
+  let file=e.target.files[0];if(!file)return;
+  let reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      let d=JSON.parse(ev.target.result);
+      APP={...APP,...d};
+      updateAll();
+      alert('导入成功！');
+    }catch(err){alert('JSON格式错误：'+err.message);}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+// ========== GENERIC MODAL ==========
+function showGenericModal(html){
+  document.getElementById('genericModalContent').innerHTML=html;
+  document.getElementById('genericModal').classList.add('show');
+}
+function closeGenericModal(){document.getElementById('genericModal').classList.remove('show');}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{
+    if(e.target===el) el.classList.remove('show');
+  });
+});
+</script>
+
+<script>
+// ========== 707班专属 ==========
+function resetTo707(){
+  if(!confirm('确定重置？手动修改将丢失。')) return;
+  localStorage.removeItem('seatApp707');
+  APP.className='七年级707班';
+  APP.students=JSON.parse(JSON.stringify(DEMO_STUDENTS));
+  APP.arranged=false;APP.seats=[];
+  updateAll();smartArrange();
+}
+</script>
+</body>
+</html>

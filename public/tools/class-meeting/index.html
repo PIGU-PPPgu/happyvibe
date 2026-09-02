@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>班会课：和爸妈说说话</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Space+Mono&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #f5f0e8;
+  --ink:     #1a1410;
+  --accent1: #c8432a;
+  --accent2: #2a5fc8;
+  --accent3: #e8a020;
+  --accent4: #2a8c4a;
+  --accent5: #6b3fa0;
+  --white:   #ffffff;
+  --font-display: 'Caveat', 'Noto Sans SC', cursive;
+  --font-label:   'Space Mono', monospace;
+  --font-body:    'Noto Sans SC', sans-serif;
+  --card-bg:     #ffffff;
+  --card-border: 2px solid var(--ink);
+  --card-shadow: 6px 6px 0 var(--ink);
+  --card-radius: 4px;
+  --texture: radial-gradient(circle, rgba(26,20,16,.08) 1.5px, transparent 1.5px);
+  --texture-size: 40px 40px;
+  --size-hero:    clamp(64px, 8vw, 160px);
+  --size-display: clamp(56px, 7vw, 140px);
+  --size-h1:      clamp(36px, 4.5vw, 80px);
+  --size-h2:      clamp(28px, 3.2vw, 60px);
+  --size-body:    clamp(22px, 2.2vw, 42px);
+  --size-label:   clamp(16px, 1.4vw, 28px);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#333; overflow:hidden; font-family:var(--font-body); color:var(--ink); }
+
+#deck {
+  position:relative;
+  background: var(--bg);
+  background-image: var(--texture);
+  background-size: var(--texture-size);
+  overflow:hidden;
+}
+
+.slide {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding: clamp(32px, 4vw, 80px);
+  opacity:0; visibility:hidden;
+  transition: opacity .5s, visibility .5s;
+}
+.slide.active { opacity:1; visibility:visible; }
+
+/* Elements with data-step start hidden, appear on click */
+[data-step] {
+  opacity:0; transform:translateY(20px);
+  transition: opacity .5s cubic-bezier(.2,1,.4,1), transform .5s cubic-bezier(.2,1,.4,1);
+}
+[data-step].on { opacity:1; transform:none; }
+
+/* Typography */
+.hero { font-family:var(--font-display); font-size:var(--size-hero); font-weight:700; line-height:1.15; }
+.display { font-family:var(--font-display); font-size:var(--size-display); font-weight:700; line-height:1.2; }
+.h1 { font-size:var(--size-h1); font-weight:900; line-height:1.3; }
+.h2 { font-size:var(--size-h2); font-weight:700; line-height:1.4; }
+.body { font-size:var(--size-body); line-height:1.7; }
+.label { font-family:var(--font-label); font-size:var(--size-label); }
+.caption { font-size:clamp(11px,0.7vw,14px); opacity:.6; }
+
+/* Card */
+.card {
+  background:var(--card-bg); border:var(--card-border);
+  box-shadow:var(--card-shadow); border-radius:var(--card-radius);
+  padding:clamp(16px,2vw,40px);
+}
+.card-accent {
+  background:var(--card-bg); border:3px solid var(--accent2);
+  box-shadow:6px 6px 0 var(--accent2); border-radius:var(--card-radius);
+  padding:clamp(16px,2vw,40px);
+}
+.card-warm {
+  background:var(--card-bg); border:3px solid var(--accent3);
+  box-shadow:6px 6px 0 var(--accent3); border-radius:var(--card-radius);
+  padding:clamp(16px,2vw,40px);
+}
+
+/* Progress bar */
+#prog {
+  position:fixed; top:0; left:0; height:4px;
+  background:var(--accent2); transition:width .4s; z-index:100;
+}
+
+/* Nav hint */
+#navHint {
+  position:fixed; bottom:16px; right:24px;
+  font-family:var(--font-label); font-size:13px;
+  color:rgba(26,20,16,.35); z-index:100;
+}
+
+/* Slide number */
+#slideNum {
+  position:fixed; bottom:16px; left:24px;
+  font-family:var(--font-label); font-size:13px;
+  color:rgba(26,20,16,.35); z-index:100;
+}
+
+/* Edit toolbar */
+#editWrap {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:var(--ink); color:var(--bg);
+  padding:10px 20px; border-radius:999px; z-index:999;
+  display:none; gap:12px; font-size:14px;
+}
+#editWrap button {
+  background:none; border:1px solid rgba(255,255,255,.3);
+  color:inherit; padding:6px 16px; border-radius:999px;
+  cursor:pointer; font-size:14px;
+}
+#editWrap button:hover { background:rgba(255,255,255,.1); }
+
+/* Utility */
+.text-center { text-align:center; }
+.text-accent1 { color:var(--accent1); }
+.text-accent2 { color:var(--accent2); }
+.text-accent3 { color:var(--accent3); }
+.text-accent4 { color:var(--accent4); }
+.text-accent5 { color:var(--accent5); }
+.mt-1 { margin-top:clamp(8px,1vw,16px); }
+.mt-2 { margin-top:clamp(16px,2vw,32px); }
+.mt-3 { margin-top:clamp(24px,3vw,48px); }
+.mb-1 { margin-bottom:clamp(8px,1vw,16px); }
+.mb-2 { margin-bottom:clamp(16px,2vw,32px); }
+.gap-sm { gap:clamp(8px,1vw,16px); }
+.flex-row { display:flex; align-items:center; }
+.flex-col { display:flex; flex-direction:column; }
+.flex-center { display:flex; align-items:center; justify-content:center; }
+.w-full { width:100%; }
+.max-600 { max-width:600px; }
+.max-800 { max-width:800px; }
+.max-1000 { max-width:1000px; }
+
+/* Emoji big */
+.emoji-big { font-size:clamp(48px,5vw,96px); }
+
+/* Flip card */
+.flip-wrap { perspective:1400px; }
+.flip-card { width:clamp(280px,30vw,520px); height:clamp(200px,20vw,360px); cursor:pointer; }
+.flip-inner { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.4,0,.2,1); }
+.flip-card.flipped .flip-inner { transform:rotateY(180deg); }
+.flip-f, .flip-b {
+  position:absolute; inset:0; backface-visibility:hidden;
+  border:2px solid var(--ink); padding:clamp(20px,3vw,44px);
+  display:flex; flex-direction:column; gap:clamp(12px,1.5vw,20px); justify-content:center;
+  border-radius:var(--card-radius);
+}
+.flip-f { background:var(--bg); box-shadow:8px 8px 0 var(--ink); }
+.flip-b { background:var(--ink); color:var(--bg); transform:rotateY(180deg); box-shadow:8px 8px 0 var(--accent3); }
+
+/* Domino */
+.domino-track { display:flex; align-items:flex-end; gap:clamp(8px,1vw,16px); justify-content:center; flex-wrap:wrap; }
+.domino-tile {
+  width:clamp(30px,3vw,46px); height:clamp(70px,8vw,120px);
+  border:2px solid var(--ink); background:var(--accent2);
+  border-radius:3px; transform-origin:bottom center;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+  box-shadow:3px 3px 0 var(--ink);
+}
+.domino-tile.fallen { transform:rotate(82deg) translateX(14px); }
+.domino-label { font-size:clamp(11px,1vw,16px); text-align:center; margin-top:6px; max-width:60px; }
+.domino-item { display:flex; flex-direction:column; align-items:center; }
+.domino-arrow { font-size:20px; opacity:0; transition:opacity .3s; color:var(--accent1); margin-bottom:40px; }
+.domino-arrow.show { opacity:1; }
+
+/* Thought bubble */
+.thought-bubble {
+  position:relative; background:var(--card-bg);
+  border:2px solid var(--ink); border-radius:20px;
+  padding:clamp(12px,1.5vw,22px) clamp(16px,2vw,28px);
+  font-size:var(--size-body); line-height:1.5;
+  box-shadow:4px 4px 0 var(--ink);
+  opacity:0; transform:translateY(-16px) scale(.95);
+  transition:opacity .4s cubic-bezier(.2,1,.4,1), transform .4s cubic-bezier(.2,1,.4,1);
+}
+.thought-bubble.on { opacity:1; transform:none; animation:bubblePop .5s cubic-bezier(.2,1,.4,1); }
+@keyframes bubblePop {
+  0%   { transform:scale(.95) translateY(-12px); }
+  60%  { transform:scale(1.03); }
+  100% { transform:scale(1); }
+}
+
+/* VS divider */
+.vs-divider {
+  font-family:var(--font-display); font-size:clamp(28px,3vw,48px);
+  color:var(--accent1); font-weight:700; padding:0 clamp(16px,2vw,32px);
+}
+
+/* Two column */
+.two-col { display:flex; gap:clamp(16px,2vw,40px); width:100%; align-items:stretch; }
+.two-col > * { flex:1; }
+
+/* Ripple */
+.ripple-ring {
+  position:absolute; border-radius:50%;
+  border:2px solid var(--accent2);
+  transform:translate(-50%,-50%) scale(0);
+  pointer-events:none;
+  animation:rippleOut 2s ease-out forwards;
+}
+@keyframes rippleOut {
+  0%   { width:0; height:0; opacity:.8; }
+  100% { width:300px; height:300px; opacity:0; }
+}
+
+/* Breathing */
+.breathe { animation:breathe 3s ease-in-out infinite; }
+@keyframes breathe {
+  0%,100% { transform:scale(1); opacity:.8; }
+  50%     { transform:scale(1.05); opacity:1; }
+}
+
+/* Scene badge */
+.scene-badge {
+  display:inline-block; background:var(--accent3); color:var(--ink);
+  padding:6px 18px; border-radius:999px; font-size:clamp(14px,1.2vw,20px); font-weight:700;
+  border:2px solid var(--ink); box-shadow:3px 3px 0 var(--ink);
+}
+
+/* Freeze phrase */
+.freeze-phrase {
+  font-family:var(--font-display);
+  font-size:clamp(32px,4.5vw,80px); font-weight:700; line-height:1.3;
+  text-align:center; padding:8%;
+  transform:scale(.4); opacity:0;
+  transition:transform .7s cubic-bezier(.2,.9,.3,1), opacity .6s;
+}
+.freeze-phrase.on { transform:scale(1); opacity:1; }
+
+/* Quote block */
+.quote-block {
+  border-left:4px solid var(--accent3);
+  padding-left:clamp(16px,2vw,28px);
+  font-size:var(--size-h2); line-height:1.6;
+  font-style:italic; color:var(--ink);
+}
+
+/* Step indicator */
+.step-num {
+  width:clamp(36px,4vw,56px); height:clamp(36px,4vw,56px);
+  border-radius:50%; border:3px solid var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-size:clamp(20px,2.2vw,32px); font-weight:700;
+  background:var(--accent3); color:var(--ink);
+  box-shadow:4px 4px 0 var(--ink);
+  flex-shrink:0;
+}
+
+/* Letter card */
+.letter-card {
+  background:#fefcf3; border:2px solid var(--ink);
+  box-shadow:6px 6px 0 var(--ink); border-radius:2px;
+  padding:clamp(24px,3vw,48px); position:relative;
+  transform:rotate(-1deg);
+  background-image:
+    repeating-linear-gradient(transparent, transparent 27px, rgba(26,20,16,.06) 28px);
+}
+.letter-card::before {
+  content:''; position:absolute; top:0; left:clamp(40px,5vw,80px);
+  width:2px; height:100%; background:rgba(200,67,42,.15);
+}
+
+/* Heart SVG animation */
+.heart-draw {
+  stroke-dasharray:200; stroke-dashoffset:200;
+  transition:stroke-dashoffset 1.5s ease;
+}
+.heart-draw.on { stroke-dashoffset:0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<div id="slideNum"></div>
+<div id="navHint">→ 点击/空格翻页 | ← 返回 | E 编辑</div>
+
+<div id="deck" data-w="1920" data-h="1080">
+
+<!-- ==================== S01: 封面 ==================== -->
+<div class="slide active" id="s1">
+  <div data-step="1" class="text-center">
+    <div class="emoji-big mb-2">🤫</div>
+  </div>
+  <div data-step="2" class="hero text-center" style="max-width:900px;">
+    你最想对爸妈说的<br>一句话是什么？
+  </div>
+  <div data-step="3" class="h2 text-center mt-2" style="opacity:.5;">
+    班会课 · 学会和父母沟通
+  </div>
+  <div data-step="4" class="caption mt-3 text-center">
+    准备好一张纸和一支笔 ✏️
+  </div>
+</div>
+
+<!-- ==================== S02: 共情开场 ==================== -->
+<div class="slide" id="s2">
+  <div data-step="1" class="h1 text-center mb-2 text-accent1">
+    你是不是也有这样的时刻……
+  </div>
+  <div class="flex-col gap-sm mt-2" style="width:100%;max-width:750px;">
+    <div class="thought-bubble" data-step="2">"他们根本不理解我。"</div>
+    <div class="thought-bubble" data-step="3">"说什么都是废话，说了也白说。"</div>
+    <div class="thought-bubble" data-step="4">"他们只关心成绩，不关心我。"</div>
+    <div class="thought-bubble" data-step="5">"我好想告诉他们我的感受，但话到嘴边就变成了吵架。"</div>
+  </div>
+  <div data-step="6" class="body text-center mt-3" style="opacity:.6;">
+    如果你有过这些想法——你不是一个人。
+  </div>
+</div>
+
+<!-- ==================== S03: 数据冲击 ==================== -->
+<div class="slide" id="s3">
+  <div data-step="1" class="h1 text-center mb-2">
+    青春期亲子沟通现状
+  </div>
+  <div class="two-col max-1000 mt-2">
+    <div class="card" data-step="2" style="text-align:center;">
+      <div class="display text-accent1" id="counter1">0%</div>
+      <div class="body mt-1">的中学生觉得<br>"爸妈不太理解我"</div>
+    </div>
+    <div class="card" data-step="3" style="text-align:center;">
+      <div class="display text-accent2" id="counter2">0%</div>
+      <div class="body mt-1">的中学生每天和父母<br>"有效聊天不到10分钟"</div>
+    </div>
+  </div>
+  <div data-step="4" class="body text-center mt-2" style="max-width:700px;opacity:.7;">
+    数据来源：中国科学院心理研究所《青少年心理健康报告》<br>
+    这不是你的错，也不是爸妈的错——这是一个阶段。
+  </div>
+</div>
+
+<!-- ==================== S04: 问题诊断 ==================== -->
+<div class="slide" id="s4">
+  <div data-step="1" class="h1 text-center mb-2">
+    为什么越长大越难沟通？
+  </div>
+  <div class="domino-track mt-3" id="dominoTrack">
+    <div class="domino-item">
+      <div class="domino-tile" id="d0"></div>
+      <div class="domino-label">身体在变</div>
+    </div>
+    <div class="domino-arrow" id="da1">→</div>
+    <div class="domino-item">
+      <div class="domino-tile" id="d1"></div>
+      <div class="domino-label">情绪敏感</div>
+    </div>
+    <div class="domino-arrow" id="da2">→</div>
+    <div class="domino-item">
+      <div class="domino-tile" id="d2"></div>
+      <div class="domino-label">想要独立</div>
+    </div>
+    <div class="domino-arrow" id="da3">→</div>
+    <div class="domino-item">
+      <div class="domino-tile" id="d3"></div>
+      <div class="domino-label">产生冲突</div>
+    </div>
+    <div class="domino-arrow" id="da4">→</div>
+    <div class="domino-item">
+      <div class="domino-tile" id="d4"></div>
+      <div class="domino-label">选择沉默</div>
+    </div>
+  </div>
+  <div data-step="6" class="h2 text-center mt-3 text-accent2">
+    但这个链条，可以被打断。
+  </div>
+</div>
+
+<!-- ==================== S05: 青春期大脑 ==================== -->
+<div class="slide" id="s5">
+  <div data-step="1" class="h1 text-center mb-1">
+    你的大脑正在经历一场"装修" 🧠
+  </div>
+  <div class="two-col max-1000 mt-2">
+    <div class="card" data-step="2">
+      <div class="h2 text-accent1 mb-1">🧨 情绪中心（杏仁核）</div>
+      <div class="body">青春期最先发育完成。<br>所以你：<strong>反应快、感受强烈、容易爆炸</strong>。</div>
+    </div>
+    <div class="card" data-step="3">
+      <div class="h2 text-accent2 mb-1">🎯 理性中心（前额叶）</div>
+      <div class="body">要到 <strong>25岁左右</strong>才完全成熟。<br>所以你：知道不该发火，但就是控制不住。</div>
+    </div>
+  </div>
+  <div data-step="4" class="card-warm mt-2" style="text-align:center;max-width:700px;">
+    <div class="h2">这叫 <span class="text-accent3">「刹车还没装好，油门已经踩到底」</span></div>
+    <div class="body mt-1">不是你的错。但你越早知道这件事，越能主动踩刹车。</div>
+  </div>
+</div>
+
+<!-- ==================== S06: 父母视角 ==================== -->
+<div class="slide" id="s6">
+  <div data-step="1" class="h1 text-center mb-2">
+    现在，换到爸妈的角度看一看
+  </div>
+  <div class="flex-col gap-sm max-800" style="width:100%;">
+    <div class="thought-bubble" data-step="2" style="background:#f0e8ff;">
+      "孩子以前什么都跟我说，现在什么都不讲了……"
+    </div>
+    <div class="thought-bubble" data-step="3" style="background:#fff4e0;">
+      "是不是我哪里做错了？是不是孩子不信任我了？"
+    </div>
+    <div class="thought-bubble" data-step="4" style="background:#e8f5e8;">
+      "我担心他/她的学习、安全、未来……但一开口就吵架。"
+    </div>
+  </div>
+  <div data-step="5" class="h2 text-center mt-3">
+    父母不是"敌人"，他们只是 <span class="text-accent5">不知道该怎么靠近你了</span>。
+  </div>
+</div>
+
+<!-- ==================== S07: 翻译问题 ==================== -->
+<div class="slide" id="s7">
+  <div data-step="1" class="h1 text-center mb-2">
+    "翻译机"失灵了 📡
+  </div>
+  <div class="max-800 w-full mt-2">
+    <div class="card" data-step="2" style="margin-bottom:clamp(12px,1.5vw,24px);">
+      <div class="label mb-1" style="color:var(--accent1);">你说的</div>
+      <div class="h2">"烦死了！别管我！"</div>
+    </div>
+    <div class="card" data-step="3" style="border-color:var(--accent4);box-shadow:6px 6px 0 var(--accent4);">
+      <div class="label mb-1" style="color:var(--accent4);">他们听到的</div>
+      <div class="h2">"我讨厌你，你不配当家长。"</div>
+    </div>
+  </div>
+  <div data-step="4" class="body text-center mt-2" style="max-width:700px;">
+    <div class="card-accent">
+      <strong>你实际的意思可能是：</strong>"我需要一点自己的空间，但我不是不爱你。"<br><br>
+      同样一句话，两边理解完全不同。<strong>这就是沟通的第一道墙。</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S08: 误解链动画 ==================== -->
+<div class="slide" id="s8">
+  <div data-step="1" class="h1 text-center mb-2">
+    沟通是怎么一步步坏掉的
+  </div>
+  <div class="max-900 w-full mt-2" style="display:flex;flex-direction:column;gap:clamp(8px,1vw,16px);">
+    <div class="flex-row gap-sm" data-step="2">
+      <div class="step-num">1</div>
+      <div class="body"><strong>你有一件事想说</strong>，但不知道怎么开口</div>
+    </div>
+    <div class="flex-row gap-sm" data-step="3">
+      <div class="step-num">2</div>
+      <div class="body">好不容易说了，<strong>语气有点冲</strong>（因为紧张+不知道怎么表达）</div>
+    </div>
+    <div class="flex-row gap-sm" data-step="4">
+      <div class="step-num">3</div>
+      <div class="body">爸妈觉得你态度不好，<strong>也用生气的语气回应</strong></div>
+    </div>
+    <div class="flex-row gap-sm" data-step="5">
+      <div class="step-num">4</div>
+      <div class="body">你觉得"果然说了也没用"，<strong>决定以后再也不说了</strong></div>
+    </div>
+    <div class="flex-row gap-sm" data-step="6">
+      <div class="step-num" style="background:var(--accent1);color:var(--white);">5</div>
+      <div class="body"><strong class="text-accent1">沉默变成习惯 → 距离越来越远</strong></div>
+    </div>
+  </div>
+  <div data-step="7" class="card-warm mt-2 text-center" style="max-width:600px;">
+    <div class="h2">任何一步都可以被改写。<br>关键在<span class="text-accent3">第 1 步</span>和<span class="text-accent3">第 2 步</span>。</div>
+  </div>
+</div>
+
+<!-- ==================== S09: 理解自己的情绪 ==================== -->
+<div class="slide" id="s9">
+  <div data-step="1" class="h1 text-center mb-1">
+    方法一：先读懂自己的情绪 🎭
+  </div>
+  <div data-step="2" class="h2 text-center mb-2" style="opacity:.6;">
+    沟通不是从"开口"开始的，是从"搞清楚自己怎么了"开始的。
+  </div>
+  <div class="max-800 w-full">
+    <div class="card" data-step="3">
+      <div class="h2 mb-1">练习：情绪拆解法</div>
+      <div class="body">
+        当你感到<strong>"烦躁/不想说话/想发火"</strong>时，问自己三个问题：
+      </div>
+      <div class="mt-2" style="display:flex;flex-direction:column;gap:clamp(8px,1vw,16px);">
+        <div class="flex-row gap-sm" data-step="4">
+          <div class="step-num" style="background:var(--accent4);width:clamp(28px,3vw,44px);height:clamp(28px,3vw,44px);font-size:clamp(16px,1.8vw,26px);">1</div>
+          <div class="body"><strong>我此刻的感受是什么？</strong>（生气？委屈？害怕？难过？）</div>
+        </div>
+        <div class="flex-row gap-sm" data-step="5">
+          <div class="step-num" style="background:var(--accent4);width:clamp(28px,3vw,44px);height:clamp(28px,3vw,44px);font-size:clamp(16px,1.8vw,26px);">2</div>
+          <div class="body"><strong>是什么事引发的？</strong>（具体的一件事，不是"一切都烦"）</div>
+        </div>
+        <div class="flex-row gap-sm" data-step="6">
+          <div class="step-num" style="background:var(--accent4);width:clamp(28px,3vw,44px);height:clamp(28px,3vw,44px);font-size:clamp(16px,1.8vw,26px);">3</div>
+          <div class="body"><strong>我想要什么结果？</strong>（被理解？被帮助？只想安静待一会儿？）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S10: "我"句式 ==================== -->
+<div class="slide" id="s10">
+  <div data-step="1" class="h1 text-center mb-1">
+    方法二：学会用"我"句式说话 💬
+  </div>
+  <div data-step="2" class="body text-center mb-2" style="max-width:700px;opacity:.7;">
+    同一个意思，换一种说法，效果天差地别。
+  </div>
+  <div class="two-col max-1000 w-full">
+    <div class="card" data-step="3" style="border-color:var(--accent1);box-shadow:6px 6px 0 var(--accent1);">
+      <div class="label mb-1 text-accent1">✗ "你"句式（指责型）</div>
+      <div class="h2">"你从来不听我说话！"</div>
+      <div class="body mt-1" style="opacity:.6;">对方立刻进入防御状态</div>
+    </div>
+    <div class="card" data-step="4" style="border-color:var(--accent4);box-shadow:6px 6px 0 var(--accent4);">
+      <div class="label mb-1 text-accent4">✓ "我"句式（表达型）</div>
+      <div class="h2">"我说话的时候觉得没被听见，<br>我有点难过。"</div>
+      <div class="body mt-1" style="opacity:.6;">对方会认真听你说完</div>
+    </div>
+  </div>
+  <div data-step="5" class="card-accent mt-2 text-center" style="max-width:700px;">
+    <div class="h2">万能公式：</div>
+    <div class="h1 mt-1" style="font-size:clamp(20px,2vw,36px);">
+      <span class="text-accent2">「我感到...</span> + <span class="text-accent3">因为...</span> + <span class="text-accent4">我希望...</span>」
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S11: 更多对比例子 ==================== -->
+<div class="slide" id="s11">
+  <div data-step="1" class="h1 text-center mb-2">
+    来，试试看 🔄
+  </div>
+  <div class="flex-col gap-sm max-800 w-full">
+    <div class="flip-wrap" data-step="2" style="align-self:center;">
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-f">
+            <div class="label" style="opacity:.5;">点击翻转 👆</div>
+            <div class="h2">"你别老翻我手机！"</div>
+          </div>
+          <div class="flip-b">
+            <div class="label" style="opacity:.5;">更好的说法</div>
+            <div class="h2" style="color:var(--bg);">"我需要一些隐私空间，这让我觉得自己被信任。"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flip-wrap" data-step="3" style="align-self:center;">
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-f">
+            <div class="label" style="opacity:.5;">点击翻转 👆</div>
+            <div class="h2">"你只知道逼我学习！"</div>
+          </div>
+          <div class="flip-b">
+            <div class="label" style="opacity:.5;">更好的说法</div>
+            <div class="h2" style="color:var(--bg);">"我也知道学习重要，但我现在压力很大，需要一点喘息的时间。"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flip-wrap" data-step="4" style="align-self:center;">
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-f">
+            <div class="label" style="opacity:.5;">点击翻转 👆</div>
+            <div class="h2">"说了你也不懂。"</div>
+          </div>
+          <div class="flip-b">
+            <div class="label" style="opacity:.5;">更好的说法</div>
+            <div class="h2" style="color:var(--bg);">"我想试着自己解释一下，你能先听我说完吗？"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S12: 找对时机 ==================== -->
+<div class="slide" id="s12">
+  <div data-step="1" class="h1 text-center mb-1">
+    方法三：选对时机，成功一半 ⏰
+  </div>
+  <div data-step="2" class="h2 text-center mb-2" style="opacity:.6;">
+    同样一句话，在不同时间说，效果完全不同。
+  </div>
+  <div class="two-col max-1000 w-full">
+    <div class="card" data-step="3" style="border-color:var(--accent1);box-shadow:6px 6px 0 var(--accent1);">
+      <div class="h2 text-accent1 mb-1">✗ 最差时机</div>
+      <div class="body">
+        · 双方都在气头上的时候<br>
+        · 爸妈刚下班很累的时候<br>
+        · 你刚被批评的时候<br>
+        · 公共场合 / 有外人在场
+      </div>
+    </div>
+    <div class="card" data-step="4" style="border-color:var(--accent4);box-shadow:6px 6px 0 var(--accent4);">
+      <div class="h2 text-accent4 mb-1">✓ 最佳时机</div>
+      <div class="body">
+        · 吃完饭散步的时候<br>
+        · 一起看电视/做家务的时候<br>
+        · 睡前安静的时候<br>
+        · 写一张小纸条悄悄递过去
+      </div>
+    </div>
+  </div>
+  <div data-step="5" class="body text-center mt-2" style="max-width:600px;opacity:.7;">
+    💡 提示：如果面对面太难，<strong>写纸条、发微信</strong>也是很好的沟通方式！
+  </div>
+</div>
+
+<!-- ==================== S13: 用行动说话 ==================== -->
+<div class="slide" id="s13">
+  <div data-step="1" class="h1 text-center mb-2">
+    方法四：行动比语言更有力 🤝
+  </div>
+  <div class="flex-col gap-sm max-700 w-full">
+    <div class="card" data-step="2">
+      <div class="flex-row gap-sm">
+        <div class="emoji-big" style="font-size:clamp(32px,3vw,56px);">🫖</div>
+        <div>
+          <div class="h2">倒杯水</div>
+          <div class="body">爸妈加班回来，默默递上一杯水。不需要说任何话。</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" data-step="3">
+      <div class="flex-row gap-sm">
+        <div class="emoji-big" style="font-size:clamp(32px,3vw,56px);">🧹</div>
+        <div>
+          <div class="h2">帮个小忙</div>
+          <div class="body">主动收拾一下房间、倒个垃圾。他们嘴上不说，心里特别温暖。</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" data-step="4">
+      <div class="flex-row gap-sm">
+        <div class="emoji-big" style="font-size:clamp(32px,3vw,56px);">📱</div>
+        <div>
+          <div class="h2">分享一点日常</div>
+          <div class="body">"今天学校发生了一件好笑的事……"——哪怕只说一句，都是在打开门。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-step="5" class="h2 text-center mt-3 text-accent4">
+    沟通不只有"坐下来谈心"这一种方式。
+  </div>
+</div>
+
+<!-- ==================== S14: 写信的力量 ==================== -->
+<div class="slide" id="s14">
+  <div data-step="1" class="h1 text-center mb-2">
+    写下你想说的话 ✉️
+  </div>
+  <div class="two-col max-1000 w-full" style="align-items:center;">
+    <div data-step="2">
+      <div class="letter-card">
+        <div class="h2" style="padding-left:clamp(20px,2.5vw,40px);">
+          亲爱的爸妈：
+          <br><br>
+          <span class="body" style="opacity:.5;">有些话我一直想说，但面对面总是说不出口……</span>
+          <br><br>
+          <span class="body" style="opacity:.5;">其实我想告诉你们的是……</span>
+          <br><br>
+          <span class="body" style="opacity:.5;">（你的心里话）</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex-col gap-sm">
+      <div class="card" data-step="3">
+        <div class="body"><strong class="text-accent2">为什么写字比说话容易？</strong><br><br>
+        ① 没有即时压力，不用面对对方反应<br>
+        ② 可以反复修改，说出最想说的话<br>
+        ③ 对方读的时候，有足够时间消化<br>
+        ④ 文字可以反复读，不会"左耳进右耳出"</div>
+      </div>
+      <div class="card-warm" data-step="4">
+        <div class="h2 text-center text-accent3">
+          今天的班会课，<br>你就有这个机会。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S15: 真实案例 ==================== -->
+<div class="slide" id="s15">
+  <div data-step="1" class="scene-badge">
+    📍 真实故事
+  </div>
+  <div class="mt-2 max-800 w-full">
+    <div data-step="2" class="h2 mb-1">
+      小宇的故事
+    </div>
+    <div class="flex-col gap-sm">
+      <div class="body" data-step="3">
+        小宇上初二后，和妈妈的关系越来越差。他嫌妈妈啰嗦，妈妈觉得他叛逆。
+        两个人在家基本不说话，除了吵架就是冷战。
+      </div>
+      <div class="body" data-step="4">
+        有一次班会课，老师让每个人给家长写一封信。小宇本来不想写，
+        但最后写了一句：
+      </div>
+      <div class="quote-block" data-step="5">
+        "妈，我知道你关心我。但我已经不是小孩子了，<br>
+        我希望你能相信我能做好，而不是总提醒我。"
+      </div>
+      <div class="body" data-step="6">
+        妈妈看完这封信，哭了。她跟小宇说：<strong>"我不知道你其实是这么想的。对不起。"</strong>
+      </div>
+      <div class="h2 text-accent4 text-center mt-1" data-step="7">
+        从那以后，母子俩的关系慢慢变好了。<br>一切的开始，只是一句话。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S16: 现场写信活动 ==================== -->
+<div class="slide" id="s16">
+  <div data-step="1" class="h1 text-center mb-1">
+    ✍️ 现在，轮到你了
+  </div>
+  <div data-step="2" class="display text-center text-accent3 mb-2">
+    给爸妈写一封信
+  </div>
+  <div class="card max-800 w-full" data-step="3">
+    <div class="h2 mb-1">写信指引（不会写也没关系，跟着提示来）</div>
+    <div class="body">
+      <strong>第一段：开头</strong>（挑一句）<br>
+      　· "有些话我一直想说，但没找到合适的机会……"<br>
+      　· "其实我一直很感谢你们，只是不知道怎么表达……"<br><br>
+      <strong>第二段：一件具体的事</strong>（写一件真实的感受或经历）<br>
+      　· 最近让我开心/难过/委屈的一件事<br>
+      　· 我希望你们能理解我的一件事<br><br>
+      <strong>第三段：你的愿望</strong><br>
+      　· "我希望我们可以……"<br>
+      　· "我想告诉你的是……"<br><br>
+      <strong>结尾：</strong>"爱你们的孩子" 或 任何你想写的
+    </div>
+  </div>
+  <div data-step="4" class="h2 text-center mt-2 text-accent1">
+    ⏰ 给大家 <span style="font-size:1.3em;">8 分钟</span>，现在开始写。
+  </div>
+</div>
+
+<!-- ==================== S17: 家长会计划 ==================== -->
+<div class="slide" id="s17">
+  <div data-step="1" class="h1 text-center mb-2">
+    🎁 家长会上的惊喜
+  </div>
+  <div class="flex-col gap-sm max-700 w-full" style="align-items:center;">
+    <div data-step="2" class="emoji-big breathe">📨</div>
+    <div class="h2 text-center" data-step="3">
+      几天后就是家长会。<br>
+      到时候，你们写的信会<strong class="text-accent1">悄悄放在每位家长的座位上</strong>。
+    </div>
+    <div data-step="4" class="card max-600 w-full">
+      <div class="body">
+        <strong>想象一下：</strong><br><br>
+        你爸妈走进教室，坐下来——<br>
+        发现桌上有一封信。<br>
+        打开一看，是你写给他们的。<br><br>
+        他们可能眼圈会红。<br>
+        他们可能会反复读好几遍。<br>
+        他们可能会把信一直留着。
+      </div>
+    </div>
+    <div data-step="5" class="card-warm text-center">
+      <div class="h2">不需要写得多好。<strong>真心的就好。</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S18: 给家长的话 ==================== -->
+<div class="slide" id="s18">
+  <div data-step="1" class="h1 text-center mb-2">
+    （这页是家长会时给家长看的 👀）
+  </div>
+  <div class="flex-col gap-sm max-800 w-full" style="align-items:center;">
+    <div class="letter-card" data-step="2" style="transform:rotate(0.5deg);">
+      <div class="h2" style="padding-left:clamp(20px,2.5vw,40px);">
+        各位家长：
+        <br><br>
+        <div class="body">
+          您孩子桌上这封信，是班会课上写的。<br><br>
+          这节课的主题是「学会和父母沟通」。<br>
+          我们讨论了青春期的心理变化、表达的技巧、以及孩子们内心的真实感受。<br><br>
+          <strong>很多孩子其实很想和您说话，只是不知道怎么开口。</strong><br><br>
+          如果您收到这封信：<br>
+          ① 请认真读完<br>
+          ② 如果可以，也写几句话回给孩子<br>
+          ③ 今晚回家，试着用孩子说的方式聊聊<br><br>
+          <span class="text-accent4"><strong>沟通是双向的。谢谢您愿意迈出这一步。</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S19: 金句总结 ==================== -->
+<div class="slide" id="s19">
+  <div data-step="1" class="h1 text-center mb-3">
+    今天记住这三句话
+  </div>
+  <div class="flex-col gap-sm max-800 w-full">
+    <div class="card" data-step="2" style="border-color:var(--accent2);box-shadow:6px 6px 0 var(--accent2);text-align:center;">
+      <div class="display text-accent2" style="font-size:clamp(24px,2.5vw,44px);">
+        "沟通不是你说了多少，<br>而是对方收到了多少。"
+      </div>
+    </div>
+    <div class="card" data-step="3" style="border-color:var(--accent4);box-shadow:6px 6px 0 var(--accent4);text-align:center;">
+      <div class="display text-accent4" style="font-size:clamp(24px,2.5vw,44px);">
+        "你不需要变成完美的小孩，<br>但你可以学会表达真实的自己。"
+      </div>
+    </div>
+    <div class="card" data-step="4" style="border-color:var(--accent3);box-shadow:6px 6px 0 var(--accent3);text-align:center;">
+      <div class="display text-accent3" style="font-size:clamp(24px,2.5vw,44px);">
+        "最远的距离不是吵架，<br>而是沉默。"
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== S20: 结尾 ==================== -->
+<div class="slide" id="s20">
+  <div data-step="1" class="text-center">
+    <svg width="120" height="110" viewBox="0 0 120 110" style="margin-bottom:clamp(16px,2vw,32px);">
+      <path class="heart-draw" id="heartPath"
+        d="M60,100 C60,100 10,65 10,35 C10,15 25,5 40,5 C50,5 57,12 60,20 C63,12 70,5 80,5 C95,5 110,15 110,35 C110,65 60,100 60,100 Z"
+        fill="none" stroke="var(--accent1)" stroke-width="3"/>
+    </svg>
+  </div>
+  <div data-step="2" class="hero text-center" style="max-width:900px;">
+    勇敢说出你的心里话
+  </div>
+  <div data-step="3" class="h2 text-center mt-2" style="opacity:.6;">
+    因为爱你的人，<br>一直都在等你开口。
+  </div>
+  <div data-step="4" class="body text-center mt-3" style="opacity:.4;">
+    班会课 · 和爸妈说说话
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div id="editWrap">
+  <button onclick="toggleEdit()">✏️ 编辑模式</button>
+  <button onclick="exportHTML()">⬇️ 导出</button>
+</div>
+
+<script>
+// ====== Slide Controller ======
+class SlideController {
+  constructor() {
+    this.slides = [...document.querySelectorAll('.slide')];
+    this.cur = 0;
+    this.stepIdx = 0;
+    this.progBar = document.getElementById('prog');
+    this.slideNum = document.getElementById('slideNum');
+    this.init();
+  }
+  stepsOf(slide) {
+    return [...slide.querySelectorAll('[data-step]')]
+      .sort((a,b) => +a.dataset.step - +b.dataset.step);
+  }
+  goto(n) {
+    this.slides[this.cur].classList.remove('active');
+    this.cur = Math.max(0, Math.min(n, this.slides.length - 1));
+    this.stepIdx = 0;
+    const slide = this.slides[this.cur];
+    slide.classList.add('active');
+    this.stepsOf(slide).forEach(el => el.classList.remove('on'));
+    this.updateProgress();
+    this.onEnter(this.cur);
+  }
+  advance() {
+    const steps = this.stepsOf(this.slides[this.cur]);
+    if (this.stepIdx < steps.length) {
+      const el = steps[this.stepIdx];
+      el.classList.add('on');
+      this.onReveal(this.cur, this.stepIdx, el);
+      this.stepIdx++;
+    } else if (this.cur < this.slides.length - 1) {
+      this.goto(this.cur + 1);
+    }
+  }
+  retreat() { if (this.cur > 0) this.goto(this.cur - 1); }
+  updateProgress() {
+    if (this.progBar) this.progBar.style.width = ((this.cur + 1) / this.slides.length * 100) + '%';
+    if (this.slideNum) this.slideNum.textContent = `${this.cur + 1} / ${this.slides.length}`;
+  }
+  onEnter(idx) {}
+  onReveal(slideIdx, stepIdx, el) {}
+  init() {
+    document.addEventListener('keydown', e => {
+      if (e.target.closest('[contenteditable]')) return;
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); this.advance(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); this.retreat(); }
+      if (e.key === 'f') document.documentElement.requestFullscreen?.();
+      if (e.key === 'e') document.getElementById('editWrap').style.display = 'flex';
+    });
+    document.addEventListener('click', e => {
+      if (e.target.closest('[data-interactive], button, a, input, select, .flip-card')) return;
+      this.advance();
+    });
+    let tx = 0;
+    document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 50) { dx < 0 ? this.advance() : this.retreat(); }
+    });
+    this.updateProgress();
+  }
+}
+
+const ctrl = new SlideController();
+
+// ====== Canvas scaling ======
+function scaleCanvas() {
+  const deck = document.getElementById('deck');
+  const W = parseInt(deck.dataset.w) || 1920;
+  const H = parseInt(deck.dataset.h) || 1080;
+  const scaleX = window.innerWidth / W;
+  const scaleY = window.innerHeight / H;
+  const scale = Math.min(scaleX, scaleY);
+  const ml = (window.innerWidth - W * scale) / 2;
+  const mt = (window.innerHeight - H * scale) / 2;
+  deck.style.cssText = `width:${W}px;height:${H}px;transform:scale(${scale});transform-origin:top left;margin-left:${ml}px;margin-top:${mt}px;`;
+}
+window.addEventListener('resize', scaleCanvas);
+scaleCanvas();
+
+// ====== Domino animation (S04) ======
+ctrl.onReveal = function(slideIdx, stepIdx, el) {
+  // Domino on slide 4 (index 3)
+  if (slideIdx === 3) {
+    if (stepIdx === 0) {
+      // Trigger domino chain on first step reveal
+      const tiles = [document.getElementById('d0'),document.getElementById('d1'),document.getElementById('d2'),document.getElementById('d3'),document.getElementById('d4')];
+      const arrows = [document.getElementById('da1'),document.getElementById('da2'),document.getElementById('da3'),document.getElementById('da4')];
+      tiles.forEach((tile, i) => {
+        setTimeout(() => {
+          if(tile) tile.classList.add('fallen');
+          if(i > 0 && arrows[i-1]) arrows[i-1].classList.add('show');
+        }, i * 350);
+      });
+    }
+  }
+
+  // Counter animation (S03)
+  if (slideIdx === 2) {
+    if (el.id === 'counter1' || el.closest?.('[data-step]')?.querySelector?.('#counter1')) {
+      animateCounter(document.getElementById('counter1'), 67);
+    }
+    if (el.id === 'counter2' || el.closest?.('[data-step]')?.querySelector?.('#counter2')) {
+      animateCounter(document.getElementById('counter2'), 73);
+    }
+  }
+
+  // Heart draw (S20)
+  if (slideIdx === 19 && stepIdx === 0) {
+    document.getElementById('heartPath')?.classList.add('on');
+  }
+};
+
+// ====== Counter animation ======
+function animateCounter(el, target) {
+  if (!el) return;
+  const duration = 1500;
+  const start = performance.now();
+  function update(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.floor(ease * target) + '%';
+    if (t < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// ====== Edit mode ======
+let editMode = false;
+function toggleEdit() {
+  editMode = !editMode;
+  document.querySelectorAll('.editable').forEach(el => {
+    el.contentEditable = editMode ? 'true' : 'false';
+    el.style.outline = editMode ? '2px dashed var(--accent3)' : 'none';
+  });
+}
+function exportHTML() {
+  const editables = [...document.querySelectorAll('[contenteditable]')];
+  editables.forEach(el => el.removeAttribute('contenteditable'));
+  document.querySelectorAll('.editable').forEach(el => el.style.outline = 'none');
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'parent-communication-slides.html';
+  a.click();
+  if (editMode) {
+    editables.forEach(el => el.setAttribute('contenteditable', 'true'));
+    document.querySelectorAll('.editable').forEach(el => el.style.outline = '2px dashed var(--accent3)');
+  }
+}
+</script>
+</body>
+</html>

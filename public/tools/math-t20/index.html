@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第20题：动点与动角交互式教学（合并版）</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-color: #f5f7fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 1.5rem; }
+        
+        /* 选项卡导航 */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background: white;
+            width: 100%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 15px 30px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            color: var(--accent-color);
+            border-bottom: 3px solid var(--accent-color);
+        }
+        .tab-btn:hover { background-color: #f8f9fa; }
+
+        /* 内容区域 */
+        .content-container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 0 20px 40px;
+            box-sizing: border-box;
+        }
+        .scene {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.4s;
+        }
+        .scene.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 两栏布局 */
+        .flex-row {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .canvas-col {
+            flex: 0 0 auto;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .info-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        canvas {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        /* 控制面板样式 */
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            appearance: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-color);
+            border-radius: 50%;
+        }
+
+        /* 按钮样式 */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--accent-color);
+            background: white;
+            color: var(--accent-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #ecf0f1;
+        }
+        .btn.primary {
+            background: var(--accent-color);
+            color: white;
+        }
+        .btn.primary:hover {
+            background: #2980b9;
+        }
+
+        /* 信息卡片 */
+        .info-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .highlight { color: #e74c3c; font-weight: bold; }
+        .note { font-size: 0.9em; color: #666; margin-top: 5px; }
+
+        /* 特殊颜色边框 */
+        .border-blue { border-left-color: #3498db; background: #eef7fc; }
+        .border-red { border-left-color: #e74c3c; background: #fcebeb; }
+        .border-green { border-left-color: #27ae60; background: #eafaf1; }
+        .border-purple { border-left-color: #9b59b6; background: #f5eef8; }
+        .border-orange { border-left-color: #f39c12; background: #fef5e7; }
+
+        @media (max-width: 800px) {
+            .flex-row { flex-direction: column; }
+            .canvas-col { width: 100%; display: flex; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>第十九周数学思维训练 - 第20题交互演示</h1>
+</header>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(1)">第一问：时钟原理</button>
+    <button class="tab-btn" onclick="switchTab(2)">第二问：直线追及</button>
+    <button class="tab-btn" onclick="switchTab(3)">第三问：环形追及</button>
+    <button class="tab-btn" onclick="switchTab(4)">第四问：自制装置</button>
+</div>
+
+<div class="content-container">
+
+    <div id="scene1" class="scene active">
+        <div class="flex-row">
+            <div class="canvas-col">
+                <canvas id="canvas1" width="400" height="400"></canvas>
+            </div>
+            <div class="info-col">
+                <div class="control-panel">
+                    <div class="panel-title">第一问：时针与分针的转动</div>
+                    <div class="control-group">
+                        <label>经过时间: <span id="val1" class="highlight">0</span> 分钟</label>
+                        <input type="range" id="slider1" min="0" max="60" value="0" step="0.5">
+                    </div>
+                </div>
+                <div class="info-card border-blue">
+                    <strong>核心知识点：</strong>
+                    <ul style="padding-left: 20px; margin: 5px 0;">
+                        <li>分针速度：\(360^\circ \div 60 = 6^\circ/\text{min}\) <span style="color:#3498db">(蓝色区域)</span></li>
+                        <li>时针速度：\(30^\circ \div 60 = 0.5^\circ/\text{min}\) <span style="color:#e74c3c">(红色区域)</span></li>
+                    </ul>
+                    <hr style="border:0; border-top:1px solid #ddd; margin:10px 0;">
+                    <div>分针转过：\(6 \times t = \) <span id="mAngle1">0</span>\(^\circ\)</div>
+                    <div>时针转过：\(0.5 \times t = \) <span id="hAngle1">0</span>\(^\circ\)</div>
+                    <div>当前时刻：9:<span id="timeDisplay1">30</span></div>
+                </div>
+                <div class="info-card border-green">
+                    <strong>题目解答：</strong><br>
+                    9:30时，分针指6(180°)，时针指9和10之间(270°+15°=285°)。<br>
+                    夹角 \(\angle AOB = 285^\circ - 180^\circ = \mathbf{105^\circ}\)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scene2" class="scene">
+        <div class="canvas-col" style="width: 100%; padding: 20px; box-sizing: border-box;">
+            <canvas id="canvas2" width="800" height="250" style="width:100%"></canvas>
+        </div>
+        <div class="flex-row">
+            <div class="info-col">
+                <div class="control-panel">
+                    <div class="panel-title">第二问：高速公路追及</div>
+                    <div class="control-group">
+                        <label>行驶时间: <span id="val2" class="highlight">0</span> 小时</label>
+                        <input type="range" id="slider2" min="0" max="1.2" value="0" step="0.01">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn primary" onclick="togglePlayQ2()" id="playBtnQ2">开始追击动画</button>
+                        <button class="btn" onclick="resetQ2()">重置</button>
+                    </div>
+                </div>
+            </div>
+            <div class="info-col">
+                <div class="info-card border-blue">
+                    <strong>追及公式演示：</strong>
+                    $$t = \frac{\Delta S}{\Delta v} = \frac{20 \text{km}}{(120 - 100) \text{km/h}} = 1 \text{小时}$$
+                    <div class="note">甲车速度 120km/h，乙车速度 100km/h，初始相距 20km。</div>
+                </div>
+                <div class="info-card border-green">
+                    <strong>角度计算：</strong><br>
+                    追上时经过1小时，时刻变为 10:30。<br>
+                    此时 \(\angle AOB = \mathbf{135^\circ}\)。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scene3" class="scene">
+        <div class="flex-row">
+            <div class="canvas-col">
+                <canvas id="canvas3" width="400" height="400"></canvas>
+                <div style="text-align: center; color: #7f8c8d; font-size: 0.9em; margin-top: 10px;">
+                    灰色虚线：9:30 初始位置<br>
+                    实线：当前位置
+                </div>
+            </div>
+            <div class="info-col">
+                <div class="control-panel">
+                    <div class="panel-title">第三问：环形追及 (修正答案演示)</div>
+                    <div class="control-group">
+                        <label>经过时间 t: <span id="val3" class="highlight">0</span> 分钟</label>
+                        <input type="range" id="slider3" min="0" max="60" value="0" step="0.1">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn" onclick="setQ3Time(30/11)">情况1: \(\frac{30}{11}\) 分</button>
+                        <button class="btn" onclick="setQ3Time(390/11)">情况2: \(\frac{390}{11}\) 分</button>
+                    </div>
+                </div>
+                
+                <div class="info-card border-purple">
+                    <strong>解题思路纠正：</strong>
+                    <p>设经过 \(t\) 分钟，\(\angle AOB = 90^\circ\)。<br>
+                    初始状态(9:30)：时针领先分针 \(105^\circ\)。<br>
+                    追及速度差：\(5.5^\circ/\text{min}\)。</p>
+                    
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 4px;">
+                        <strong>情况 1：分针在后，距离缩小为 90°</strong><br>
+                        路程差缩短了：\(105 - 90 = 15^\circ\)<br>
+                        \(5.5t = 15 \Rightarrow t = \frac{30}{11}\) min
+                    </div>
+                    
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 4px;">
+                        <strong>情况 2：分针反超时针，拉开距离为 90°</strong><br>
+                        路程差变化：先追平 \(105^\circ\)，再超前 \(90^\circ\)。共追了 \(195^\circ\)。<br>
+                        \(5.5t = 195 \Rightarrow t = \frac{390}{11}\) min
+                    </div>
+                    
+                    <div class="note" style="color: #c0392b; margin-top: 8px;">
+                        ⚠️ 提示：原题解析中第二个答案 \(300/11\) 有误，正确应为 \(390/11\)（约35.45分）。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scene4" class="scene">
+        <div class="flex-row">
+            <div class="canvas-col">
+                <canvas id="canvas4" width="400" height="400"></canvas>
+            </div>
+            <div class="info-col">
+                <div class="control-panel">
+                    <div class="panel-title">第四问：自制角平分线装置</div>
+                    
+                    <div class="control-group">
+                        <label>阶段 1：OF 转动时间 t (0-15s)</label>
+                        <input type="range" id="slider4_t" min="0" max="15" value="5" step="0.1">
+                        <div style="text-align: right; color: #555;">t = <span id="val4_t">5</span> s</div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>阶段 2：继续转动时间 m (0-15s)</label>
+                        <input type="range" id="slider4_m" min="0" max="15" value="0" step="0.1">
+                        <div style="text-align: right; color: #555;">m = <span id="val4_m">0</span> s</div>
+                    </div>
+                    
+                    <div class="info-card border-orange" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+                        <span>当前 \(|x - y|\) 值:</span>
+                        <span id="diffVal" style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">0.00</span>
+                    </div>
+
+                    <button class="btn primary" onclick="solveQ4()" style="width: 100%; margin-top: 10px;">自动演示解题 (设置 m=7)</button>
+                </div>
+
+                <div class="info-card border-orange">
+                    <strong>计算逻辑：</strong>
+                    <ul style="padding-left: 20px; margin: 5px 0;">
+                        <li>目标角 \(x = \angle EOD = 90 - 3t\)</li>
+                        <li>目标角 \(y = 90 - 3(t+m)\)</li>
+                        <li>方程：\(|x - y| = |(90-3t) - (90-3(t+m))| = |-3m| = 3m\)</li>
+                    </ul>
+                    <div style="margin-top: 10px;">
+                        题目条件 \(|x-y|=21 \Rightarrow 3m=21 \Rightarrow m=7\)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const DEG_TO_RAD = Math.PI / 180;
+
+    // --- 通用绘图函数 ---
+    function drawClockFace(ctx, x, y, radius) {
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        
+        for(let i=0; i<12; i++) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(i * 30 * DEG_TO_RAD);
+            ctx.beginPath();
+            ctx.moveTo(0, -radius + 10);
+            ctx.lineTo(0, -radius);
+            ctx.lineWidth = (i % 3 === 0) ? 4 : 2;
+            ctx.stroke();
+            ctx.restore();
+        }
+        
+        ctx.font = "bold 16px Arial";
+        ctx.fillStyle = "#333";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        // 绘制数字 12, 3, 6, 9
+        [[0, -radius+25, "12"], [radius-25, 0, "3"], [0, radius-25, "6"], [-radius+25, 0, "9"]].forEach(item => {
+            ctx.fillText(item[2], x + item[0], y + item[1]);
+        });
+    }
+
+    function drawHand(ctx, cx, cy, angleDeg, length, color, width) {
+        let angleRad = (angleDeg - 90) * DEG_TO_RAD;
+        let ex = cx + Math.cos(angleRad) * length;
+        let ey = cy + Math.sin(angleRad) * length;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ex, ey);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = "round";
+        ctx.stroke();
+    }
+
+    function drawSector(ctx, cx, cy, radius, startDeg, endDeg, color) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, (startDeg - 90) * DEG_TO_RAD, (endDeg - 90) * DEG_TO_RAD);
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    function drawArrow(ctx, fromX, fromY, toX, toY, color, label) {
+        const headlen = 10;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        if (label) {
+            ctx.font = "bold 14px Arial";
+            ctx.fillStyle = color;
+            ctx.fillText(label, toX + 15 * Math.cos(angle), toY + 15 * Math.sin(angle));
+        }
+    }
+
+    // --- 第一问：时钟原理 ---
+    const canvas1 = document.getElementById('canvas1');
+    const ctx1 = canvas1.getContext('2d');
+    const slider1 = document.getElementById('slider1');
+
+    function renderScene1() {
+        let t = parseFloat(slider1.value);
+        document.getElementById('val1').innerText = t;
+        
+        // 计算时间显示
+        let totalMin = 30 + t;
+        let displayMin = Math.floor(totalMin);
+        let displayHour = 9;
+        if (displayMin >= 60) {
+            displayHour = 10;
+            displayMin -= 60;
+        }
+        document.getElementById('timeDisplay1').innerText = displayMin.toString().padStart(2, '0');
+
+        ctx1.clearRect(0, 0, 400, 400);
+        let cx = 200, cy = 200, r = 150;
+        
+        drawClockFace(ctx1, cx, cy, r);
+
+        // 初始角度 (9:30)
+        let hStart = 285; // 270 + 15
+        let mStart = 180; // 180
+
+        let hMoved = 0.5 * t;
+        let mMoved = 6 * t;
+        
+        let hCurrent = hStart + hMoved;
+        let mCurrent = mStart + mMoved;
+
+        // 绘制扇形区域
+        drawSector(ctx1, cx, cy, r*0.6, hStart, hCurrent, "rgba(231, 76, 60, 0.2)"); 
+        drawSector(ctx1, cx, cy, r*0.8, mStart, mCurrent, "rgba(52, 152, 219, 0.2)"); 
+
+        // 绘制当前指针
+        drawHand(ctx1, cx, cy, hCurrent, r*0.6, "#e74c3c", 6); // 时针
+        drawHand(ctx1, cx, cy, mCurrent, r*0.8, "#3498db", 4); // 分针
+
+        document.getElementById('hAngle1').innerText = hMoved.toFixed(1);
+        document.getElementById('mAngle1').innerText = mMoved.toFixed(1);
+    }
+    slider1.addEventListener('input', renderScene1);
+
+    // --- 第二问：直线追及 ---
+    const canvas2 = document.getElementById('canvas2');
+    const ctx2 = canvas2.getContext('2d');
+    const slider2 = document.getElementById('slider2');
+    let isPlayingQ2 = false;
+    let animFrameQ2;
+
+    function renderScene2() {
+        let t = parseFloat(slider2.value);
+        document.getElementById('val2').innerText = t.toFixed(2);
+        
+        ctx2.clearRect(0, 0, 800, 250);
+        
+        let startX = 50, endX = 750, roadY = 125;
+        let totalDist = 140; // 视野总距离 km
+        let scale = (endX - startX) / totalDist;
+
+        // 绘制道路
+        ctx2.beginPath();
+        ctx2.moveTo(0, roadY);
+        ctx2.lineTo(800, roadY);
+        ctx2.strokeStyle = "#7f8c8d";
+        ctx2.lineWidth = 4;
+        ctx2.stroke();
+        
+        // 绘制虚线（追及点）
+        let catchX = startX + 120 * scale;
+        ctx2.beginPath();
+        ctx2.moveTo(catchX, 20);
+        ctx2.lineTo(catchX, 230);
+        ctx2.strokeStyle = "#ccc";
+        ctx2.setLineDash([5, 5]);
+        ctx2.stroke();
+        ctx2.setLineDash([]);
+        ctx2.fillStyle = "#999";
+        ctx2.fillText("相遇点 (120km)", catchX - 40, 40);
+
+        // 计算位置
+        let posA = 120 * t; // 甲速度 120
+        let posB = 20 + 100 * t; // 乙初始20，速度100
+        
+        // 绘制车辆 A (甲)
+        let xA = startX + posA * scale;
+        ctx2.fillStyle = "#e74c3c";
+        ctx2.fillRect(xA - 20, roadY + 10, 40, 20);
+        ctx2.fillStyle = "#c0392b";
+        ctx2.font = "bold 14px Arial";
+        ctx2.fillText("甲 (刚)", xA - 20, roadY + 50);
+
+        // 绘制车辆 B (乙)
+        let xB = startX + posB * scale;
+        ctx2.fillStyle = "#27ae60";
+        ctx2.fillRect(xB - 20, roadY - 30, 40, 20);
+        ctx2.fillStyle = "#2ecc71";
+        ctx2.fillText("乙 (颖)", xB - 20, roadY - 40);
+
+        // 绘制差距连线
+        if (xB > xA) {
+            ctx2.beginPath();
+            ctx2.moveTo(xA, roadY);
+            ctx2.lineTo(xB, roadY);
+            ctx2.strokeStyle = "#3498db";
+            ctx2.lineWidth = 2;
+            ctx2.stroke();
+        }
+    }
+    slider2.addEventListener('input', renderScene2);
+
+    function togglePlayQ2() {
+        if (isPlayingQ2) {
+            isPlayingQ2 = false;
+            cancelAnimationFrame(animFrameQ2);
+            document.getElementById('playBtnQ2').innerText = "开始追击动画";
+        } else {
+            isPlayingQ2 = true;
+            document.getElementById('playBtnQ2').innerText = "暂停";
+            let lastTime = performance.now();
+            function loop(now) {
+                if (!isPlayingQ2) return;
+                let dt = (now - lastTime) / 1000;
+                lastTime = now;
+                let val = parseFloat(slider2.value);
+                if (val < 1.0) {
+                    slider2.value = val + dt * 0.2; // 速度系数
+                    renderScene2();
+                    animFrameQ2 = requestAnimationFrame(loop);
+                } else {
+                    isPlayingQ2 = false;
+                    document.getElementById('playBtnQ2').innerText = "开始追击动画";
+                }
+            }
+            animFrameQ2 = requestAnimationFrame(loop);
+        }
+    }
+    function resetQ2() {
+        isPlayingQ2 = false;
+        cancelAnimationFrame(animFrameQ2);
+        slider2.value = 0;
+        renderScene2();
+        document.getElementById('playBtnQ2').innerText = "开始追击动画";
+    }
+
+    // --- 第三问：环形追及 (New Logic) ---
+    const canvas3 = document.getElementById('canvas3');
+    const ctx3 = canvas3.getContext('2d');
+    const slider3 = document.getElementById('slider3');
+
+    function setQ3Time(val) {
+        slider3.value = val;
+        renderScene3();
+    }
+
+    function renderScene3() {
+        let t = parseFloat(slider3.value);
+        document.getElementById('val3').innerText = t.toFixed(2);
+        
+        ctx3.clearRect(0, 0, 400, 400);
+        let cx = 200, cy = 200, r = 140;
+        
+        drawClockFace(ctx3, cx, cy, r);
+
+        // 初始位置 (9:30)
+        let startMin = 180; // 6点方向
+        let startHour = 285; // 9点半方向
+
+        // 当前位置
+        let currMin = startMin + 6 * t;
+        let currHour = startHour + 0.5 * t;
+
+        // 绘制虚线幽灵指针 (初始位置)
+        ctx3.save();
+        ctx3.setLineDash([5, 5]);
+        drawHand(ctx3, cx, cy, startMin, r*0.8, "#ccc", 2);
+        drawHand(ctx3, cx, cy, startHour, r*0.6, "#ccc", 4);
+        ctx3.restore();
+
+        // 绘制实线当前指针
+        drawHand(ctx3, cx, cy, currMin, r*0.8, "#3498db", 4); // 分针 Blue
+        drawHand(ctx3, cx, cy, currHour, r*0.6, "#e74c3c", 6); // 时针 Red
+
+        // 绘制夹角弧线
+        // 计算归一化角度
+        let angM = (currMin - 90) * DEG_TO_RAD;
+        let angH = (currHour - 90) * DEG_TO_RAD;
+        
+        ctx3.beginPath();
+        ctx3.strokeStyle = "#9b59b6";
+        ctx3.lineWidth = 3;
+        // 简单画弧示意，从分针到时针
+        ctx3.arc(cx, cy, 50, angM, angH, false);
+        ctx3.stroke();
+
+        // 检查90度
+        let diff = Math.abs((currMin - currHour) % 360);
+        if (diff > 180) diff = 360 - diff;
+        
+        if (Math.abs(diff - 90) < 0.5) {
+            ctx3.font = "bold 24px Arial";
+            ctx3.fillStyle = "#9b59b6";
+            ctx3.fillText("90°", cx, cy - 80);
+        }
+    }
+    slider3.addEventListener('input', renderScene3);
+
+    // --- 第四问：自制装置 (New Logic) ---
+    const canvas4 = document.getElementById('canvas4');
+    const ctx4 = canvas4.getContext('2d');
+    const slider4_t = document.getElementById('slider4_t');
+    const slider4_m = document.getElementById('slider4_m');
+
+    function solveQ4() {
+        slider4_m.value = 7;
+        renderScene4();
+    }
+
+    function renderScene4() {
+        let t = parseFloat(slider4_t.value);
+        let m = parseFloat(slider4_m.value);
+        document.getElementById('val4_t').innerText = t;
+        document.getElementById('val4_m').innerText = m;
+
+        // 计算 |x - y|
+        // x = 90 - 3t
+        // y = 90 - 3(t+m)
+        // |x-y| = 3m
+        let diff = Math.abs(3 * m);
+        let diffEl = document.getElementById('diffVal');
+        diffEl.innerText = diff.toFixed(2) + "°";
+        if (Math.abs(diff - 21) < 0.1) {
+            diffEl.style.color = "#27ae60"; // Green match
+        } else {
+            diffEl.style.color = "#333";
+        }
+
+        // 绘图
+        ctx4.clearRect(0, 0, 400, 400);
+        let cx = 200, cy = 200;
+        
+        // 绘制坐标轴 MN (竖直)
+        ctx4.beginPath();
+        ctx4.moveTo(cx, 20);
+        ctx4.lineTo(cx, 380);
+        ctx4.strokeStyle = "#ccc";
+        ctx4.setLineDash([5, 5]);
+        ctx4.stroke();
+        ctx4.setLineDash([]);
+        ctx4.fillStyle = "#999";
+        ctx4.fillText("M", cx, 15);
+        ctx4.fillText("N", cx, 395);
+        ctx4.fillText("O", cx - 15, cy - 5);
+
+        // 坐标系转换：以O为中心，N(下)为基准。
+        // "顺时针旋转"：在Canvas标准坐标系(0为右, 90为下)中，N是90度。
+        // OF 从 N 开始顺时针转 => 角度增加。
+        // OF角度(Canvas) = 90 + 6*(t+m)。(注意这里t是阶段1时间, m是阶段2, 总时间 t+m)
+        let totalTime = t + m;
+        
+        // 角度计算 (相对于 Canvas X轴)
+        // ON = 90度
+        // OF = 90 + 6 * totalTime
+        // OD 平分 FON。FON 夹角是 6*totalTime。
+        // OD = 90 + 3 * totalTime
+        // OE 与 OF 垂直。OF 初始在 N (90)。E 初始在哪？图5显示 E 在右侧。
+        // 即 E 初始 0度。E 随 F 动，保持垂直。
+        // OE = 0 + 6 * totalTime = OF - 90。
+        
+        let angF_rad = (90 + 6 * totalTime) * DEG_TO_RAD;
+        let angD_rad = (90 + 3 * totalTime) * DEG_TO_RAD;
+        let angE_rad = (6 * totalTime) * DEG_TO_RAD; // Start at 0, move CW (positive)
+
+        let len = 140;
+
+        // 绘制扇形 FON (蓝色背景)
+        ctx4.beginPath();
+        ctx4.moveTo(cx, cy);
+        ctx4.arc(cx, cy, len, 90 * DEG_TO_RAD, angF_rad);
+        ctx4.fillStyle = "rgba(52, 152, 219, 0.1)";
+        ctx4.fill();
+
+        // 绘制射线
+        let fx = cx + Math.cos(angF_rad) * len;
+        let fy = cy + Math.sin(angF_rad) * len;
+        drawArrow(ctx4, cx, cy, fx, fy, "#3498db", "F");
+
+        let dx = cx + Math.cos(angD_rad) * (len - 20);
+        let dy = cy + Math.sin(angD_rad) * (len - 20);
+        drawArrow(ctx4, cx, cy, dx, dy, "#1abc9c", "D"); // Greenish
+
+        let ex = cx + Math.cos(angE_rad) * len;
+        let ey = cy + Math.sin(angE_rad) * len;
+        drawArrow(ctx4, cx, cy, ex, ey, "#f39c12", "E"); // Orange
+
+        // 标注角 EOD (x 或 y)
+        // 画个小弧线连接 E 和 D
+        ctx4.beginPath();
+        ctx4.strokeStyle = "#555";
+        ctx4.lineWidth = 1;
+        ctx4.arc(cx, cy, 60, angE_rad, angD_rad);
+        ctx4.stroke();
+    }
+    
+    slider4_t.addEventListener('input', renderScene4);
+    slider4_m.addEventListener('input', renderScene4);
+
+
+    // --- 页面初始化 ---
+    function switchTab(idx) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn')[idx-1].classList.add('active');
+        
+        document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+        document.getElementById('scene'+idx).classList.add('active');
+        
+        // 触发重绘以防止 Canvas 尺寸问题
+        if(idx===1) renderScene1();
+        if(idx===2) renderScene2();
+        if(idx===3) renderScene3();
+        if(idx===4) renderScene4();
+    }
+
+    // 初始化运行
+    renderScene1();
+    renderScene2();
+    renderScene3();
+    renderScene4();
+
+</script>
+</body>
+</html>
