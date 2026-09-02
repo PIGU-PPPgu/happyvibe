@@ -7,53 +7,103 @@ import { withBase } from '../lib/urls';
 const lessons = await getCollection('lessons');
 const ready = lessons.filter((l) => l.data.status === 'ready').length;
 ---
-<BaseLayout title="关于本站" description="HappyVibe 数智学园的来源、署名与更新方式">
+<BaseLayout title="关于本站" description="我是谁，为什么做 HappyVibe 数智学园——一个一线班主任写给老师们的话">
   <div class="container about-page">
-    <TerminalWindow title="happyvibe about">
-      <h1 class="ab-title">关于本站</h1>
-      <p class="ab-sub text-muted">一个由培训 PPT 长出来的学习站。</p>
+    <TerminalWindow title="happyvibe about — who & why">
+      <p class="path-kicker mono">// ABOUT · 我和这个站</p>
+      <h1 class="ab-title">我是谁，为什么做这个站</h1>
+      <p class="ab-sub text-muted">港中深附属道远学校 · 智慧校园建设 · 吴林璋</p>
     </TerminalWindow>
 
     <div class="ab-body prose">
-      <h2>这是哪里</h2>
+      <h2>先自我介绍</h2>
       <p>
-        这里是集团教师 AI 赋能学习站 <strong>HappyVibe 数智学园</strong>。
-        内容整理自吴林璋老师（港中深附属道远学校）在集团内做的「数智赋能教育教学」系列培训，
-        目前共 {lessons.length} 节课（{ready} 节已校对就绪），按
-        「认知入门 + 六大应用方向」组织成 {lessons.length > 0 ? '七' : ''}个模块。
+        我是吴林璋，港中深附属道远学校的一名老师，也是班主任。
+        不是技术专家，不是程序员——和你一样，我的日常是备课、上课、带班、开会、收材料。
+      </p>
+      <p>
+        区别只有一点：这几年我把 AI 拉进了这些日常琐事里，
+        做出了一些真正给自己省时间的东西——
+        「万事留痕」小程序、智能排座、班级小工具一堆，
+        都是先解决我自己班上的问题，再分享给同事的。
       </p>
 
-      <h2>怎么用</h2>
-      <ul>
-        <li>零基础请从 <a href={withBase('/modules/basics/')}>M0 认知入门</a> 开始，或者跟着<a href={withBase('/path/')}>学习路线图</a>走七站；</li>
-        <li>每节课右上角有「标记已学」，进度保存在你自己的浏览器里，无需注册；</li>
-        <li>想快速找某个功能（比如「万事留痕」），按 <kbd class="kbd">⌘K</kbd> / <kbd class="kbd">Ctrl K</kbd> 全站搜索。</li>
-      </ul>
-
-      <h2>内容说明</h2>
-      <ul>
-        <li>课程正文由培训 PPT 重写而来；全部课程均已校对完成；如发现讲错或有更好的做法，欢迎反馈修正；</li>
-        <li>截图已做隐私排查：含真实学生姓名/成绩/心理记录的图片一律未上线（详见仓库内《图片待确认清单》）；</li>
-        <li>内容仅供集团内部学习交流，请勿外传。</li>
-      </ul>
-
-      <h2>反馈与贡献</h2>
+      <h2>为什么做这个站</h2>
       <p>
-        发现讲错了、有更好的做法、或者想把你自己的 Skill 沉淀成一节课——
-        欢迎随时通过企业微信反馈。
+        我在集团做过几场「数智赋能」培训。每场讲完，都有老师问我：
+        <strong>「讲得挺好，可我回去从哪开始？」</strong>
+      </p>
+      <p>
+        这句话戳中了两个问题。一是 PPT 是讲给人听的，图片多、靠现场讲述，
+        老师们回去翻不到、复习不了；二是我见过太多老师的 AI 之路是这样一个曲线——
+        起初觉得很神奇什么都想试，接着发现回答不稳定，然后发现还得自己核对，
+        最后只留下写写通知的用途，慢慢就不用了。
+      </p>
+      <p>
+        <strong>不是老师学不会，是缺一个随时能翻、看得懂、跟得上手的「自习室」。</strong>
+        于是有了这个站：培训的内容全部重写进来，配了大量真实截图和动图，
+        每一步都写到「点哪个按钮」——因为我的目标用户，
+        就是只会打字和点鼠标的老师。这不丢人，这恰恰是绝大多数老师的样子。
+      </p>
+
+      <h2>这个站本身，就是它教的那个东西</h2>
+      <p>
+        值得一提：这个网站没有请任何一个「专业团队」。
+        它是我和 AI 一起用 <a href={withBase('/modules/software/task-subject-website/')}>Vibe Coding</a> 的方式做出来的——
+        就像站里《任务一》教的那样，一句话一句话「说」出来的。
+        所以它本身就是个活案例：
+        <strong>一个普通老师，真的可以做出能用的东西。</strong>
+        你看完任务一，也能做出属于你的。
+      </p>
+
+      <h2>我坚信的几件事</h2>
+      <ul>
+        <li><strong>AI 不该成为教师的负担。</strong>它只该干两类活：大量重复的、有固定流程的。判断永远留给你；</li>
+        <li><strong>省下来的时间要回到学生身上。</strong>否则「提效」就只是把班加得更长；</li>
+        <li><strong>事实层永远在老师。</strong>AI 负责措辞和格式，你负责真实与分寸——尤其是评语和家校沟通；</li>
+        <li><strong>工具是大家的。</strong>我做的每个东西都可以搬走；你做出好东西，也欢迎放进来署你的名。</li>
+      </ul>
+
+      <h2>怎么用这个站</h2>
+      <ul>
+        <li>完全零基础：从 <a href={withBase('/modules/basics/')}>00 认知入门</a> 开始，或跟着<a href={withBase('/path/')}>学习路线图</a>走七站；</li>
+        <li>想解决具体问题：进<a href={withBase('/modules/creation/task-library/')}>任务库</a>按目标挑；</li>
+        <li>下学期想系统学：看<a href={withBase('/challenge/')}>21 天挑战</a>，每天 15 分钟；</li>
+        <li>每课的「标记已学」记在你自己浏览器里，不用注册；<kbd class="kbd">⌘K</kbd> 全站搜任何功能。</li>
+      </ul>
+
+      <h2>内容与隐私承诺</h2>
+      <ul>
+        <li>课程由我的培训内容重写，全部校对过；发现讲错，欢迎随时拍砖；</li>
+        <li>全站截图经过隐私排查，含真实学生姓名/成绩的一律脱敏或不上线；</li>
+        <li>内容供集团内部学习交流，请勿外传。</li>
+      </ul>
+
+      <h2>找得到我</h2>
+      <p>
+        企业微信随时找我：反馈问题、聊想法、投稿你的作品和话术（任务库署名收录）。
+        培训组织者另有专用<a href={withBase('/facilitator/')}>工具包</a>。
+        「万事留痕」小程序的完整说明见<a href="https://mp.weixin.qq.com/s/7QFpIVYD3o17k-FpX_V8EQ" target="_blank" rel="noopener">公众号文章</a>。
       </p>
 
       <h2>更新日志</h2>
       <ul>
-        <li><span class="mono">v0.1</span> · 2026-08-31 · 网站上线：七大模块 29 节课、工具箱、学习路线图、全站搜索、本地学习进度。</li>
+        <li><span class="mono">v0.3</span> · 2026-09-02 · {lessons.length} 门课全就绪：六大方向对齐、实战课带真实成品、工具箱 16 件、21 天挑战、培训者工具包。</li>
+        <li><span class="mono">v0.1</span> · 2026-08-31 · 网站上线。</li>
       </ul>
+
+      <blockquote>
+        <p>老师们都特别辛苦——所以一定要把能用的工具都用起来。<br />
+        用好 AI，减负增效。省下来的时间，还给学生，也还给自己。</p>
+      </blockquote>
     </div>
   </div>
 </BaseLayout>
 
 <style>
   .about-page { padding: 48px 0 20px; max-width: 860px; }
-  .ab-title { margin: 0 0 10px; font-size: clamp(26px, 4vw, 38px); }
+  .path-kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .ab-title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
   .ab-sub { margin: 0; }
   .ab-body { margin-top: 34px; }
 </style>
