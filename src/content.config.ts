@@ -7,6 +7,7 @@ export const MODULE_SLUGS = [
   'teaching',
   'class-management',
   'edu-data',
+  'policy',
   'research',
   'growth',
   'creation',
@@ -29,7 +30,7 @@ const tools = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/tools' }),
   schema: z.object({
     name: z.string(),
-    category: z.enum(['class', 'teaching', 'creation', 'agent', 'local']),
+    category: z.enum(['class', 'teaching', 'creation', 'agent', 'local', 'design', 'learn']),
     description: z.string(),
     url: z.string().optional(),
     image: z.string().optional(),

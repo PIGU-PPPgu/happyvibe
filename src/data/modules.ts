@@ -3,6 +3,7 @@ export type ModuleSlug =
   | 'teaching'
   | 'class-management'
   | 'edu-data'
+  | 'policy'
   | 'research'
   | 'growth'
   | 'creation'
@@ -67,6 +68,15 @@ export const MODULES: ModuleMeta[] = [
     subtitle: '学情分析 · 增值评价 · 数据可视化',
     icon: '%',
     accent: '#b877b0',
+    mode: 'browse',
+  },
+  {
+    slug: 'policy',
+    code: 'P',
+    title: '政策速查',
+    subtitle: 'AI 赋能教育的政策依据（全国/广东/深圳）',
+    icon: '§',
+    accent: '#5f8fb0',
     mode: 'browse',
   },
   {
