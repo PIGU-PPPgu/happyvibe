@@ -55,6 +55,8 @@ const cards = MODULES.map((m) => ({
       进入 <span data-cta-code>{cards[0].code} {cards[0].title}</span> →
     </a>
 
+    <a class="modules-link mono" href={withBase('/modules/')}>以目录页查看全部模块 →</a>
+
     <details class="list-fallback">
       <summary class="mono">以列表查看全部模块</summary>
       <ul>
@@ -113,6 +115,7 @@ const cards = MODULES.map((m) => ({
   .dot.active { background: var(--gold); width: 22px; }
 
   .cta { display: flex; margin: 20px auto 0; width: fit-content; }
+  .modules-link { display: block; width: fit-content; margin: 18px auto 0; font-size: 13px; color: var(--gold-soft); border-bottom: 1px dashed var(--line-gold); padding-bottom: 2px; }
   .list-fallback { margin-top: 26px; border: 1px dashed var(--line); border-radius: var(--radius-sm); }
   .list-fallback summary { cursor: pointer; padding: 10px 14px; font-size: 13px; color: var(--text-muted); }
   .list-fallback ul { list-style: none; margin: 0; padding: 6px 18px 14px; }
