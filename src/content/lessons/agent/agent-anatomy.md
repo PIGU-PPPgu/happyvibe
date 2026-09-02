@@ -21,18 +21,23 @@ status: ready
 | **浏览器、文件、Excel、代码、邮箱等** |  能使用的工具 | 让它从「能说」变成「能做」 |
 | **历史任务、资料库** |  记忆 | 你的班级学情、常用格式，越用越懂你 |
 
-![WorkBuddy 对话界面](/images/lessons/workbuddy-chat.webp)
+下面这张是一次**真实的 WorkBuddy 执行记录**——五件套全在里面：它自己拆任务（角色）、用了哪个模型（大脑）全程可见、调用工具写文件、执行轨迹留档（记忆）：
 
-## 实际用起来是什么样
+![WorkBuddy 真实执行记录：拆任务/调工具/积分与模型全程可见](/images/lessons/wb-real-run.webp)
 
-![Agent 待办界面](/images/lessons/agent-today.webp)
+## 两个部件的实拍
 
-- 早上打开工作台：「今天有什么工作要处理？」——同类产品（如图中的豆包工作）都会结合你的日程和待办直接开工；
-- 让 Kimi 帮你安排示范任务、让其他大脑做它们擅长的事，**一个身体，随时换脑**。
+**大脑可以换**——输入框右下角点开就是「货架」，从限时免费到旗舰随时切换：
 
-![Kimi 安排任务](/images/lessons/kimi-demo.webp)
+![WorkBuddy 模型货架：一排大脑随时换](/images/lessons/wbz-shelf.webp)
 
-![Qoder 智能体平台](/images/lessons/qoder-platform.webp)
+**技能与专家**——左侧「专家·技能·连接器」就是给它配人手的市场：
+
+![WorkBuddy 专家·技能市场](/images/lessons/wb-03-experts.webp)
+
+同类产品都有类似的「智能体广场」（下图为 Qoder 的）——换任何软件，先找这几个部件：
+
+![Qoder 智能体广场（同类产品示例）](/images/lessons/qoder-platform.webp)
 
 ## 选购时看什么
 
