@@ -3,7 +3,7 @@ title: 用 AI 做思维导图
 module: teaching
 order: 4
 description: 把课文、章节、单元整理成结构化思维导图，配合 Mermaid 语法可以直接生成可编辑的图。
-source: 道远 PPT S10-S11、S55
+source: 培训 PPT S10-S11、S55
 status: ready
 ---
 

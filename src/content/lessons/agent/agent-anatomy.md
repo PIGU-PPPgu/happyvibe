@@ -3,7 +3,7 @@ title: 桌面 Agent 的组成（以 WorkBuddy 为例）
 module: agent
 order: 3
 description: Agent = 工作角色 + 可替换的大脑 + 技能 + 工具 + 记忆。拆开一只电子助手，看清每个部位干什么。
-source: 道远 PPT S37
+source: 培训 PPT S37
 status: ready
 ---
 

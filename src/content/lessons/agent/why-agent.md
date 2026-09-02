@@ -3,7 +3,7 @@ title: 为什么要养好一只电子助手
 module: agent
 order: 2
 description: Agent 不是工具，是可以积累的数字同事——养得越久，越懂你。五个让你「终身适用」的理由。
-source: 道远 PPT S41、S58
+source: 培训 PPT S41、S58
 status: ready
 ---
 

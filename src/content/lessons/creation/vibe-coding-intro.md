@@ -3,7 +3,7 @@ title: Vibe Coding 入门：会「动嘴」就会写程序
 module: creation
 order: 1
 description: Vibe Coding = 用自然语言让 AI 把想法变成能用的网页和小工具。门槛只剩一条：把你想要的东西说清楚。
-source: 道远 PPT S12-S14、S25、S73
+source: 培训 PPT S12-S14、S25、S73
 status: ready
 ---
 

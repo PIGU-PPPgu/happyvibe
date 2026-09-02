@@ -3,7 +3,7 @@ title: 关键词与提示词：把「嘴」动明白
 module: creation
 order: 5
 description: 描述得越具体，产出越可控。积累领域关键词 + 让 AI 反向提问，是普通教师和高手之间唯一的差距。
-source: 道远 PPT S20、S33
+source: 培训 PPT S20、S33
 status: ready
 ---
 

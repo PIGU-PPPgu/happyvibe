@@ -3,7 +3,7 @@ title: Agent 和 LLM 是什么关系
 module: basics
 order: 5
 description: LLM 是「脑子」，Agent 是「完整的人」。搞混这两个概念，是很多老师选错工具的根源。
-source: 道远 PPT S34
+source: 培训 PPT S34
 status: ready
 ---
 

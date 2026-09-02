@@ -3,7 +3,7 @@ title: AI 辅助备课：从一份「完整备课包」开始
 module: teaching
 order: 1
 description: 让 Agent 按你的教学流程产出完整备课包——知识点、视频、分层练习、课程流程、教学建议，一次生成。
-source: 道远 PPT S47-S48
+source: 培训 PPT S47-S48
 status: ready
 ---
 

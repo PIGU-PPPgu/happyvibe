@@ -3,7 +3,7 @@ title: AI 为什么越用越难用
 module: basics
 order: 4
 description: 不是 AI 变笨了，是沟通方式出了问题。三个常见卡点：表达不具体、不知道关键词、不知道 AI 能反向提问。
-source: 道远 PPT S33
+source: 培训 PPT S33
 status: ready
 ---
 

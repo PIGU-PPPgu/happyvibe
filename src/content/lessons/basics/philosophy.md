@@ -3,7 +3,7 @@ title: AI 赋能的核心理念：把精力还给学生
 module: basics
 order: 1
 description: AI 赋能不应成为教师的负担。搞清楚「为什么用、用在哪」，比急着学工具更重要。
-source: 道远 PPT S2-S4 ／ 时进 PPT S2-S3
+source: 培训 PPT S2-S4 ／ 培训 PPT S2-S3
 status: ready
 ---
 

@@ -3,7 +3,7 @@ title: AI 使用的五个阶段：你卡在哪一层
 module: basics
 order: 2
 description: 从「什么都想试」到「AI 也就这样」——绝大多数老师停在第四阶段。看清这个曲线，才能走到收益区。
-source: 道远 PPT S32 ／ 时进 PPT S4
+source: 培训 PPT S32 ／ 培训 PPT S4
 status: ready
 ---
 

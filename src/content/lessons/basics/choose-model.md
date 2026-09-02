@@ -3,7 +3,7 @@ title: 如何选「脑子」（模型）
 module: basics
 order: 6
 description: 没有全能冠军，只有分工不同。做设计找 Kimi，写代码找 GLM，做视频找 MiniMax，全能型选 ChatGPT / Claude。
-source: 道远 PPT S35
+source: 培训 PPT S35
 status: ready
 ---
 

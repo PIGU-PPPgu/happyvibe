@@ -3,7 +3,7 @@ title: 飞象 Skill：让 Agent 自动跑平台里的学情与组卷
 module: teaching
 order: 5
 description: 一个 OpenClaw Skill：操作浏览器登录飞象平台，自动完成学情分析、智能组卷和出题。
-source: 道远 PPT S49
+source: 培训 PPT S49
 status: ready
 ---
 

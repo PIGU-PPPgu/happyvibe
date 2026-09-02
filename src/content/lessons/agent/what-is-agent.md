@@ -3,7 +3,7 @@ title: 什么是 Agent：从「能回答」到「能帮你做流程」
 module: agent
 order: 1
 description: 普通对话式 AI 只负责回答；Agent 会拆解任务、调用工具、自动流转，把一件事从头做到尾。
-source: 道远 PPT S42
+source: 培训 PPT S42
 status: ready
 ---
 

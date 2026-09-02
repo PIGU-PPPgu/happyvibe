@@ -3,7 +3,7 @@ title: 课题生成器：把一个想法推进成完整申报材料
 module: research
 order: 1
 description: EDU RESEARCH WORKBENCH：内置市、区级申报书模板，Agent 组队写课题，联网找资料，一键导出 Word。
-source: 道远 PPT S57
+source: 培训 PPT S57
 status: ready
 ---
 

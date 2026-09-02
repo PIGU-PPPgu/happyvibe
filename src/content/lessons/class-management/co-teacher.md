@@ -3,7 +3,7 @@ title: 「副」班主任：接入班级群的 Agent
 module: class-management
 order: 1
 description: 让 Agent 接入班级群：自动记录群聊、智能回复家长提问、定时提醒作业——给你配一个不知疲倦的副班。
-source: 道远 PPT S45-S46
+source: 培训 PPT S45-S46
 status: ready
 ---
 

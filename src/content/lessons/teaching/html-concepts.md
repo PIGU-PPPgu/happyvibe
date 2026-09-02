@@ -3,7 +3,7 @@ title: HTML 讲概念 ＞ PPT
 module: teaching
 order: 2
 description: 抽象概念做成可拖动参数的交互网页，学生自己试出来的理解，比看三遍幻灯片都扎实。
-source: 道远 PPT S50、S24
+source: 培训 PPT S50、S24
 status: ready
 ---
 

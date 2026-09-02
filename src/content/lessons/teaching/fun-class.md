@@ -3,7 +3,7 @@ title: 让课堂更有意思：交互式实验与演示
 module: teaching
 order: 3
 description: 欧姆定律实验演示、高锰酸钾制氧气流程页——把危险、昂贵、不可逆的实验搬进网页，随便试、反复看。
-source: 道远 PPT S52-S54
+source: 培训 PPT S52-S54
 status: ready
 ---
 

@@ -3,7 +3,7 @@ title: 什么时候才值得用 AI
 module: basics
 order: 3
 description: 一个判断标准就够了：大量重复劳动，或有固定流程规范的事，都建议交给 AI。
-source: 时进 PPT S5
+source: 培训 PPT S5
 status: ready
 ---
 

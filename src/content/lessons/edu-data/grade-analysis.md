@@ -3,7 +3,7 @@ title: 成绩分析与增值评价：看懂平均分背后的学生
 module: edu-data
 order: 1
 description: 班级分析报告、学科对比、班级画像——AI 把成绩表变成能指导行动的诊断书。
-source: 道远 PPT S63
+source: 培训 PPT S63
 status: ready
 ---
 

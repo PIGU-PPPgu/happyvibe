@@ -3,7 +3,7 @@ title: 大厂 Agent 产品横评
 module: agent
 order: 4
 description: 8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。
-source: 道远 PPT S36、S38-S40
+source: 培训 PPT S36、S38-S40
 status: ready
 ---
 
