@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import { withBase } from '../lib/urls';
+---
+<BaseLayout title="培训者工具包" description="两小时工作坊流程、现场应对、作品墙——把本站变成你的授课基础设施">
+  <div class="container fac-page">
+    <TerminalWindow title="happyvibe facilitator — workshop kit">
+      <p class="kicker mono">// FOR TRAINERS · 培训者专用</p>
+      <h1>培训者工具包</h1>
+      <p class="sub text-muted">去别的学校分享时，这个网站就是你的讲义 + 实验环境。这一页只给培训者看——投屏时别打开它。</p>
+    </TerminalWindow>
+
+    <section>
+      <h2>两小时工作坊 · 分钟级流程</h2>
+      <table>
+        <tr><th>时间</th><th>环节</th><th>你做什么</th><th>老师做什么</th></tr>
+        <tr><td>00:00-10</td><td>开场</td><td>投屏首页，讲一句口号「让每一位老师都可以用好 AI」；现场发网站地址</td><td>手机/电脑打开网站</td></tr>
+        <tr><td>10-20</td><td>炫技吸引</td><td>打开<a href={withBase('/modules/creation/task-library/')}>任务库炫技演示区</a>：拖太阳系、弹钢琴</td><td>哇（就是这一声，值 10 分钟）</td></tr>
+        <tr><td>20-35</td><td>装软件</td><td>投屏<a href={withBase('/modules/software/wb-01-start/')}>第 1 课的「三分钟装好」</a>；巡场帮卡住的</td><td>装 WorkBuddy + 登录</td></tr>
+        <tr><td>35-60</td><td>跑通第一单</td><td>带做<a href={withBase('/modules/software/wb-03-real-work/')}>第 3 课 Excel 任务</a>（话术直接抄屏幕上的）</td><td>亲手完成第一个任务</td></tr>
+        <tr><td>60-75</td><td>休息 + 扫码领材料</td><td>投屏<a href={withBase('/modules/creation/material-packs/')}>材料包页</a>让大家扫码领自己学科的</td><td>扫码下载、互看别科有什么</td></tr>
+        <tr><td>75-105</td><td>实操任务</td><td>二选一：<a href={withBase('/modules/software/task-classroom-kit/')}>任务三课堂三件套</a>（零基础）或<a href={withBase('/modules/software/task-subject-website/')}>任务一学科网站</a>（进阶）</td><td>做出自己的第一个作品</td></tr>
+        <tr><td>105-115</td><td>作品墙</td><td>让大家把作品截图发到现场群；投屏轮播点评 2-3 个</td><td>晒作品（成就感闭环）</td></tr>
+        <tr><td>115-120</td><td>收尾</td><td>指路<a href={withBase('/path/')}>学习路线图</a> + <a href={withBase('/challenge/')}>21 天挑战</a>；留网站地址</td><td>知道回去怎么继续学</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>现场高频状况 · 应对卡</h2>
+      <div class="cards">
+        <div class="card"><h3>老师电脑装不上</h3><p>别当场修——让他跟邻座拼一台，课后用<a href={withBase('/modules/software/wb-09-troubleshooting/')}>排错手册</a>自救。绝不能让装软件吃掉 20 分钟。</p></div>
+        <div class="card"><h3>积分不够 / 网络慢</h3><p>统一换免费档模型（现场投屏教「换大脑」30 秒）；网络不行就 3-4 人一组共用一个热点设备。</p></div>
+        <div class="card"><h3>有人做完了没事干</h3><p>指到<a href={withBase('/modules/creation/task-library/')}>任务库</a>自选任务，或让他当「小助教」帮邻座。</p></div>
+        <div class="card"><h3>有人质疑「AI 不靠谱」</h3><p>认同 + 转化：「所以第 1 课就教三问决策图——什么事给 AI、什么事留给自己」。别辩论，给框架。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>作品墙 · 长期机制</h2>
+      <ul>
+        <li>现场群相册命名「学校+日期」；学期末汇总评选，优秀作品收录进本站<a href={withBase('/modules/creation/task-library/')}>任务库</a>（署名）</li>
+        <li>收录模板一句话：作品截图 + 用了哪课的话术 + 一句学生/自己的反馈</li>
+        <li>收录作品是下一次培训的最好素材——本地老师的例子比任何炫技都可信</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>投屏清单（哪些页面适合大屏）</h2>
+      <ul>
+        <li>任务库炫技区（太阳系/钢琴/卷轴）——开场抓注意力</li>
+        <li>材料包下载页——二维码大而清晰，全场同时扫码</li>
+        <li>第 3/4 课的实机 GIF——讲操作时替代真机演示，不怕现场翻车</li>
+        <li>学习路线图——收尾指路，三段式结构一屏讲清</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .fac-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 36px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  h1 { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .sub { margin: 0; }
+  h2 { font-size: 22px; color: var(--gold-soft); margin: 0 0 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: var(--bg-panel-2); color: var(--gold-soft); text-align: left; padding: 10px 12px; border: 1px solid var(--line-strong); font-family: var(--mono); font-size: 12.5px; }
+  td { padding: 10px 12px; border: 1px solid var(--line); vertical-align: top; }
+  td:first-child { font-family: var(--mono); white-space: nowrap; color: var(--purple-soft); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .card { padding: 18px 20px; }
+  .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--text); }
+  .card p { margin: 0; font-size: 14px; color: var(--text-muted); }
+  ul { padding-left: 1.3em; }
+  li { margin: .45em 0; }
+</style>

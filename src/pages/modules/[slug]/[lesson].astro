@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PixelBadge from '../../../components/PixelBadge.astro';
 import MarkDoneButton from '../../../components/MarkDoneButton.astro';
+import StuckButton from '../../../components/StuckButton.astro';
 import { MODULE_MAP, type ModuleSlug } from '../../../data/modules';
 import { withBase } from '../../../lib/urls';
 
@@ -70,9 +71,12 @@ const moduleHref = withBase(`/modules/${slug}/`);
           <Content />
         </article>
 
-        <a class="btn btn-ghost back-btn" href={moduleHref}>
-          <span aria-hidden="true">↑</span> 返回 {meta.code} {meta.title} · 课程列表
-        </a>
+        <div class="lesson-tail">
+          <StuckButton lessonTitle={lesson.data.title} moduleTitle={meta.title} />
+          <a class="btn btn-ghost back-btn" href={moduleHref}>
+            <span aria-hidden="true">↑</span> 返回 {meta.code} {meta.title} · 课程列表
+          </a>
+        </div>
 
         <nav class="lesson-nav" aria-label="课程导航">
           {prev ? (
@@ -149,7 +153,8 @@ const moduleHref = withBase(`/modules/${slug}/`);
   .lesson-desc { margin: 0 0 18px; color: var(--text-muted); font-size: 16.5px; }
   .lesson-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 13px; }
 
-  .back-btn { margin-top: 44px; }
+  .lesson-tail { margin-top: 44px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .back-btn { margin-top: 0; }
   .lesson-nav {
     display: flex;
     justify-content: space-between;

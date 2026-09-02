@@ -1,0 +1,115 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import { withBase } from '../lib/urls';
+
+interface Day {
+  n: number;
+  theme: string;
+  task: string;
+  link?: string;
+  linkText?: string;
+  week: 1 | 2 | 3;
+}
+
+const days: Day[] = [
+  // 第 1 周 · 会用（认知 + 第一次）
+  { n: 1, week: 1, theme: '开局', task: '打开网站，走「三种学法」选定你的入口', link: '/', linkText: '首页' },
+  { n: 2, week: 1, theme: '认知', task: '学五阶段曲线，对号入座你在第几站', link: '/modules/basics/five-stages/', linkText: '五阶段' },
+  { n: 3, week: 1, theme: '上手', task: '第 1 课：认全界面每个按钮（9 张图对照点一遍）', link: '/modules/software/wb-01-start/', linkText: '第 1 课' },
+  { n: 4, week: 1, theme: '对话', task: '第 2 课：三句话框架发第一个需求', link: '/modules/software/wb-02-first-chat/', linkText: '第 2 课' },
+  { n: 5, week: 1, theme: '干活', task: '第 3 课：让 AI 处理一份成绩表（六要素话术）', link: '/modules/software/wb-03-real-work/', linkText: '第 3 课' },
+  { n: 6, week: 1, theme: '选脑', task: '第 4 课：换一次大脑，对比免费档和贵档', link: '/modules/software/wb-04-brain-credits/', linkText: '第 4 课' },
+  { n: 7, week: 1, theme: '周复盘', task: '把本周最顺的一段话术存进备忘录（这就是 Skill 的种子）', link: '/modules/growth/skill-born/', linkText: 'Skill 入门' },
+
+  // 第 2 周 · 用好（真实场景）
+  { n: 8, week: 2, theme: '痛点', task: '第 6 课任务 A：批量合并多班成绩表', link: '/modules/software/wb-06-office/', linkText: '三个痛点任务' },
+  { n: 9, week: 2, theme: '提炼', task: '第 6 课任务 B：从一批周记/作业里提炼共性', link: '/modules/software/wb-06-office/', linkText: '同上' },
+  { n: 10, week: 2, theme: '固化', task: '把你的一个固定流程口述教给 AI（一句话复用）', link: '/modules/growth/prompt-vs-skill/', linkText: 'Prompt 与 Skill' },
+  { n: 11, week: 2, theme: '领材料', task: '扫码领你学科的材料包，看一遍里面有什么', link: '/modules/creation/material-packs/', linkText: '材料包' },
+  { n: 12, week: 2, theme: '课堂', task: '任务三：做出你的随机点名器（明天就用）', link: '/modules/software/task-classroom-kit/', linkText: '课堂三件套' },
+  { n: 13, week: 2, theme: '课堂+', task: '任务三续：积分板或抢答页任选其一', link: '/modules/software/task-classroom-kit/', linkText: '同上' },
+  { n: 14, week: 2, theme: '周复盘', task: '挑一件本周真实在课堂用过的事，写 3 句心得发群里', link: '/modules/growth/ai-learning/', linkText: '素养地图' },
+
+  // 第 3 周 · 做出来（作品与分享）
+  { n: 15, week: 3, theme: '骨架', task: '任务一第 1-2 步：领模板，让 AI 出结构方案', link: '/modules/software/task-subject-website/', linkText: '任务一' },
+  { n: 16, week: 3, theme: '填肉', task: '任务一第 3-4 步：换上你的真文字和图片', link: '/modules/software/task-subject-website/', linkText: '同上' },
+  { n: 17, week: 3, theme: '动起来', task: '任务一第 6 步：加一个交互（滑块/点击/小游戏）', link: '/modules/software/task-subject-website/', linkText: '同上' },
+  { n: 18, week: 3, theme: '验收', task: '任务一第 7 步：手机端检查 + 让 AI 做质检', link: '/modules/software/task-subject-website/', linkText: '同上' },
+  { n: 19, week: 3, theme: '用起来', task: '把作品用在真实课堂/发到班级群一次', link: '/modules/growth/innovation/', linkText: '创意工坊' },
+  { n: 20, week: 3, theme: '晒出来', task: '作品截图 + 一句心得，投到任务库（署你的名）', link: '/modules/creation/task-library/', linkText: '任务库' },
+  { n: 21, week: 3, theme: '毕业', task: '走一遍学习路线图，看看你从第几站到了第几站', link: '/path/', linkText: '路线图' },
+];
+
+const weeks = [
+  { w: 1 as const, title: '第 1 周 · 会用', desc: '认知打底 + 跑通第一单' },
+  { w: 2 as const, title: '第 2 周 · 用好', desc: '真实场景 + 固化你的流程' },
+  { w: 3 as const, title: '第 3 周 · 做出来', desc: '从模板到属于你的作品' },
+];
+---
+<BaseLayout title="21 天 AI 教学挑战" description="每天 15 分钟，三周从会用到做出自己的作品——做完晒作品，收录进任务库署你的名。">
+  <div class="container ch-page">
+    <TerminalWindow title="happyvibe challenge — 21 days">
+      <p class="kicker mono">// CHALLENGE · 每天只需 15 分钟</p>
+      <h1>21 天 AI 教学挑战</h1>
+      <p class="sub text-muted">
+        规则简单：每天照着当天的卡做 15 分钟，做完在教研群打卡（截图 + 一句话）。
+        坚持 21 天，你会带走：<b style="color:var(--gold-soft)">一个自己做的学科网页、两三个课堂神器、一套自己的话术</b>。
+      </p>
+    </TerminalWindow>
+
+    {weeks.map((wk) => (
+      <section class="week">
+        <header class="wk-head">
+          <h2>{wk.title}</h2>
+          <span class="wk-desc text-muted">{wk.desc}</span>
+        </header>
+        <div class="day-grid">
+          {days.filter((d) => d.week === wk.w).map((d) => (
+            <a class="day card" href={d.link ? withBase(d.link) : '#'}>
+              <div class="d-top">
+                <span class="d-num mono">D{d.n}</span>
+                <span class="d-theme">{d.theme}</span>
+              </div>
+              <p class="d-task">{d.task}</p>
+              {d.linkText && <span class="d-link mono">{d.linkText} →</span>}
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="rules card">
+      <h2>打卡 & 收录规则</h2>
+      <ul>
+        <li><b>打卡格式</b>：Day N + 截图 + 一句话（做了什么/卡在哪）</li>
+        <li><b>断了怎么办</b>：断一天补一天，别从头再来——持续比完美重要</li>
+        <li><b>作品收录</b>：Day 20 投递的作品经筛选后进入<a href={withBase('/modules/creation/task-library/')}>任务库</a>，<b>署作者名字</b>，全集团老师都能用</li>
+        <li><b>卡住了</b>：每课底部有「复制求助话术」按钮，粘贴到群里就有人救</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .ch-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 34px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  h1 { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .sub { margin: 0; max-width: 640px; }
+  .wk-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+  .wk-head h2 { margin: 0; font-size: 21px; color: var(--gold-soft); }
+  .wk-desc { font-size: 14px; }
+  .day-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .day { padding: 16px 18px; color: var(--text); display: flex; flex-direction: column; gap: 8px; }
+  .day:hover { text-decoration: none; }
+  .d-top { display: flex; align-items: center; gap: 10px; }
+  .d-num { font-size: 18px; font-weight: 700; color: var(--gold); }
+  .d-theme { font-size: 12px; color: var(--purple-soft); border: 1px solid var(--line); padding: 1px 8px; border-radius: 4px; }
+  .d-task { margin: 0; font-size: 14px; line-height: 1.65; flex: 1; }
+  .d-link { font-size: 12px; color: var(--gold-soft); }
+  .rules { padding: 22px 26px; }
+  .rules h2 { margin: 0 0 10px; font-size: 19px; color: var(--gold-soft); }
+  .rules ul { margin: 0; padding-left: 1.3em; }
+  .rules li { margin: .4em 0; font-size: 14.5px; }
+</style>

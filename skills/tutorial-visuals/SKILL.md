@@ -76,6 +76,17 @@ from make_tutorial_gif import build, zoom_frame, full_frame, annotate, push_in_f
 5. **线上验证**：curl 正式页 URL 确认 200 且内容含新元素——本地构建 ≠ 上线
 6. `git commit`
 
+## 月度保鲜巡检（每月 1 日执行）
+
+模型与产品界面迭代很快（WorkBuddy 一个月内已变两次）。每月核对：
+
+1. **实机截图时效**：模型货架/倍率/界面截图是否与最新版本一致，过期重截（重点：wb-05-models、wbz-* 系列）
+2. **下载链抽查**：材料包 16 个 zip + site-templates 全部 curl 200；扫码实测一次直达下载
+3. **视频可播**：2 部自托管视频 range 请求 206
+4. **搜索新鲜度**：新建一课后 pagefind 索引是否包含（搜新课标题）
+5. **数据回顾**（若已开 Web Analytics）：看访问/流失 top 页，决定下月优化点
+6. 巡检结果记入 docs/巡检记录.md（日期 + 发现 + 处理）
+
 ## 验收清单（缺一不交付）
 
 - [ ] GIF 里能看到「点了哪里」（波纹+高亮），不只是结果画面

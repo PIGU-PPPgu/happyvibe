@@ -1,0 +1,48 @@
+---
+interface Props {
+  lessonTitle: string;
+  moduleTitle: string;
+}
+const { lessonTitle, moduleTitle } = Astro.props;
+---
+<button class="stuck-btn" type="button" data-stuck
+  data-lesson={lessonTitle} data-module={moduleTitle}>
+  <span aria-hidden="true">?</span> 卡住了？复制求助话术
+</button>
+
+<style>
+  .stuck-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: var(--radius-sm);
+    background: var(--bg-panel); border: 1px dashed var(--line-gold);
+    color: var(--gold-soft); font-family: var(--mono); font-size: 13.5px;
+    cursor: pointer; transition: all .2s ease;
+  }
+  .stuck-btn:hover { background: rgba(254, 179, 0, .1); }
+  .stuck-btn.copied { color: #2a1c00; background: linear-gradient(135deg, var(--gold-soft), var(--gold)); border-style: solid; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-stuck]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const lesson = btn.dataset.lesson || '';
+      const mod = btn.dataset.module || '';
+      const text =
+`【HappyVibe 求助】我在学「${lesson}」（${mod}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); ta.remove();
+      }
+      const old = btn.innerHTML;
+      btn.innerHTML = '✓ 已复制，粘贴到教研群或发给 AI';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = old; btn.classList.remove('copied'); }, 2400);
+    });
+  });
+</script>
