@@ -23,7 +23,7 @@ status: ready
 2. 完善班级信息，开始使用；
 3. 日常班务随手录入，或者直接对 AI 说。
 
-![万事留痕首页：功能一览](/images/lessons/tracedesk-home.webp)
+![万事留痕「数据中心」：名单与成绩导入（含隐私承诺）](/images/lessons/tracedesk-home.webp)
 
 ## 核心功能
 

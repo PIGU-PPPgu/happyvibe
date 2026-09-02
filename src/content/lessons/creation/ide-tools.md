@@ -13,11 +13,11 @@ status: ready
 
 1. **网页对话框**（豆包 / Kimi / DeepSeek 网页版）：说需求 → 得到一个 HTML 文件 → 浏览器打开即用。零安装，适合 90% 的教师场景；
 2. **轻量 IDE / Agent 客户端**：能读你整个文件夹、连续修改多个文件、边改边预览；
-3. **专业 IDE + 编码智能体**（Claude Code、Cline、Qoder 等）：面向「作品级」项目，能跑命令、装依赖、接版本管理。
+3. **专业 IDE + 编码智能体**（Claude Code、Qoder、Trae 等）：面向「作品级」项目，能跑命令、装依赖、接版本管理。上图为 Claude Code（终端形态）与 Trae（编辑器形态）——两种形态都很常用。
 
-![Cline 编辑器界面](/images/lessons/ide-cline.webp)
+![Claude Code 终端：专业 IDE + 编码智能体形态](/images/lessons/ide-cline.webp)
 
-![编辑器中的代码迭代](/images/lessons/ide-editor.webp)
+![Trae 编辑器：边改代码边预览](/images/lessons/ide-editor.webp)
 
 ## 新手建议的路径
 
