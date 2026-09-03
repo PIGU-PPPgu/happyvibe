@@ -26,6 +26,12 @@ status: ready
 
 想做学科网站的老师，还有一套现成骨架可领：**[site-templates.zip](/materials/site-templates.zip)**——语文（水墨书香）/ 数学（理性蓝）/ 英语（活力橙绿）/ 科学（实验绿）各一套，单文件、标注了所有要改的位置，配合[任务一](/modules/software/task-subject-website/)使用。
 
+## 加餐 2：教师工作台模拟数据包
+
+跟着[任务二 · 打造教师工作台](/modules/software/task-workbench/)练手的老师：**[workbench-data.zip](/materials/workbench-data.zip)** 内含 10 位化名学生 + 待办清单 + 课表 + 作业记录——全部虚构，扫码即得，可直接投屏演示：
+
+![扫码领工作台模拟数据](/materials/qr/workbench.png)
+
 ## 使用场景
 
 1. **老师自学**：点下面的「下载」或扫码，解压后拖进 WorkBuddy；
