@@ -81,6 +81,8 @@ status: ready
 - [ ] 打开首页 3 秒内能回答「我今天干什么」
 - [ ] 设成了浏览器主页并连用一周
 
+搭好之后的问题（数据存哪/手机怎么用/要不要服务器）→ [《搭好之后》FAQ](/modules/software/task-workbench-data/)
+
 ---
 ---
 
