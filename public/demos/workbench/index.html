@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>教师智能工作台 · MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">教师智能工作台</div>
+      <div class="brand-sub">吴老师 · 初中数学</div>
+
+      <div class="nav-sep"></div>
+      <nav id="nav">
+        <a class="nav-item active" data-view="home">首页 · 今日工作台</a>
+        <a class="nav-item" data-view="teaching">教学中心</a>
+        <a class="nav-item" data-view="lesson-plan">AI 备课</a>
+        <a class="nav-item" data-view="students">学生中心</a>
+        <a class="nav-item" data-view="homework">作业中心</a>
+        <a class="nav-item" data-view="ai">AI 助手</a>
+      </nav>
+
+      <div class="nav-spacer"></div>
+      <div class="nav-bottom-sep"></div>
+      <a class="nav-item muted" data-view="profile">个人设置</a>
+      <a class="nav-item muted" data-view="help">帮助与反馈</a>
+    </aside>
+
+    <!-- Content -->
+    <main class="content" id="content"><!-- views rendered by app.js --></main>
+  </div>
+
+  <!-- Floating action button -->
+  <button class="fab" id="fab" title="快速创建">+</button>
+  <div class="fab-menu" id="fabMenu">
+    <button data-action="备课">AI 备课</button>
+    <button data-action="布置作业">布置作业</button>
+    <button data-action="写通知">写班级通知</button>
+    <button data-action="提问">问 AI 助手</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
