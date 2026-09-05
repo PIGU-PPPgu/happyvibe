@@ -1,7 +1,7 @@
 ---
 title: 任务四：期末材料大生产（评语 + 素质手册 + 家长会）
 module: software
-order: 17
+order: 19
 description: 期末季三大件流水线：45 份评语、素质发展手册、家长会材料——批量、六要素、隐私红线全流程，附真实成品。
 source: 任务式教程（评语页有真实成品）
 status: ready
