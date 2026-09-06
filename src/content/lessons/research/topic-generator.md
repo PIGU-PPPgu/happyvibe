@@ -5,6 +5,7 @@ order: 1
 description: EDU RESEARCH WORKBENCH：内置市、区级申报书模板，Agent 组队写课题，联网找资料，一键导出 Word。
 source: 培训 PPT S57
 status: ready
+minutes: 20
 ---
 
 > **一句话结论：课题申报最耗人的是格式和资料收集——让 Agent 组队按模板推进，你只负责选题和学术判断。**

@@ -48,6 +48,7 @@ const readyCount = lessons.filter((l) => l.data.status === 'ready').length;
           title={l.data.title}
           description={l.data.description}
           status={l.data.status}
+          minutes={l.data.minutes}
         />
       ))}
     </div>

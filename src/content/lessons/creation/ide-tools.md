@@ -5,6 +5,7 @@ order: 3
 description: 从网页对话框到专业 IDE，工具按「敢折腾程度」分三档。零基础从对话框开始就够了。
 source: 培训 PPT S16
 status: ready
+minutes: 12
 ---
 
 > **一句话结论：新手用网页对话框（生成单文件 HTML）就够；想管多个文件、连续迭代，再上 IDE 工具。**

@@ -5,6 +5,7 @@ order: 4
 description: 把课文、章节、单元整理成结构化思维导图，配合 Mermaid 语法可以直接生成可编辑的图。
 source: 培训 PPT S10-S11、S55
 status: ready
+minutes: 12
 ---
 
 > **一句话结论：让 AI 先「拆结构」，再由 Mermaid 之类工具「画出来」——两分钟得到一张可编辑的单元思维导图。**

@@ -5,6 +5,7 @@ order: 1
 description: 把教材、教案、班务资料交给 Obsidian 管，让 Agent 在你的知识库上读写——资料不再散落各处。
 source: 培训 PPT S43、S50
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：Obsidian 管你的资料，Agent 管你的流程，两者接起来，就是「个人 / 学科 AI 知识库」。**

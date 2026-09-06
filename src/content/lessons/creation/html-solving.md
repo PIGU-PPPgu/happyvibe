@@ -5,6 +5,7 @@ order: 7
 description: 把一道中考题变成可交互的解析页面、把随机吐槽做成抽签系统——单文件 HTML 是教师 Vibe Coding 的最佳起点。
 source: 培训 PPT S19、S22-S24
 status: ready
+minutes: 20
 ---
 
 > **一句话结论：把「一道题、一个流程、一个小工具」做成单文件 HTML，是见效最快、风险最低的 Vibe Coding 练手方式。**

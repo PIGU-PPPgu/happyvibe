@@ -5,6 +5,7 @@ order: 4
 description: 8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。
 source: 培训 PPT S36、S38-S40
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：只推一款选 WorkBuddy；教研科研选 Kimi Work；自动化与信息中心选 QoderWork；OpenClaw 仅限 IT 隔离部署。**

@@ -3,16 +3,19 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TerminalWindow from '../components/TerminalWindow.astro';
 import { PATH_STATIONS } from '../data/path';
+import PreTest from '../components/PreTest.astro';
 import { withBase } from '../lib/urls';
 
 // 校验路线图里的课程 ID 都真实存在
 const lessons = await getCollection('lessons');
+const minMap = new Map(lessons.map(l => [l.data.module + '/' + l.id.split('/').pop(), l.data.minutes ?? 0]));
 const validIds = new Set(lessons.map((l) => `${l.data.module}/${l.id.split('/').pop()}`));
 const stations = PATH_STATIONS.map((s) => ({
   ...s,
   lessons: s.lessons.map((l) => ({
     ...l,
     href: withBase(`/modules/${l.id}/`),
+    min: minMap.get(l.id) ?? 0,
     missing: !validIds.has(l.id),
   })),
 }));
@@ -30,6 +33,8 @@ const totalStations = stations.length;
       </p>
     </TerminalWindow>
 
+    <PreTest />
+
     <ol class="stations">
       {stations.map((s, i) => (
         <li class="station" data-station={s.code}>
@@ -39,13 +44,19 @@ const totalStations = stations.length;
           <div class="st-body card">
             <header class="st-head">
               <h2 class="st-title">{s.title}</h2>
-              <span class="st-progress mono" data-station-pct={s.code}></span>
+              <span class="st-progress mono" data-station-pct={s.code}></span><span class="st-min mono">约 {s.lessons.reduce((a: number, l: any) => a + l.min, 0)} 分钟</span>
             </header>
             <div class="st-stages">
               <div class="stage now"><span class="sg-label">现在的你</span><span class="sg-text">{s.now}</span></div>
               <div class="stage doit"><span class="sg-label">带你做</span><span class="sg-text">{s.do}</span></div>
               <div class="stage gain"><span class="sg-label">你最终能获得</span><span class="sg-text">{s.gain}</span></div>
             </div>
+            {s.artifact && (
+              <div class="st-artifact">
+                <p class="sa-title mono">// 本站毕业作品：{s.artifact.name}</p>
+                <ul>{s.artifact.criteria.map((c) => <li>{c}</li>)}</ul>
+              </div>
+            )}
             <ul class="st-lessons">
               {s.lessons.map((l) => (
                 <li>
@@ -121,6 +132,10 @@ const totalStations = stations.length;
   .stage.doit .sg-label { color: var(--purple-soft); }
   .stage.gain .sg-label { color: var(--gold); }
   .sg-text { font-size: 14px; line-height: 1.6; color: var(--text); display: block; }
+  .st-artifact { margin: 12px 0; padding: 12px 16px; border: 1px dashed var(--line-gold); border-radius: 10px; background: rgba(254, 179, 0, .06); }
+  .st-artifact .sa-title { font-size: 12px; color: var(--gold); margin: 0 0 8px; letter-spacing: .05em; }
+  .st-artifact ul { margin: 0; padding-left: 1.2em; }
+  .st-artifact li { font-size: 13px; line-height: 1.9; color: var(--text-muted); }
   .st-lessons { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   .st-link {
     display: inline-flex;

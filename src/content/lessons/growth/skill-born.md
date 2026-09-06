@@ -5,6 +5,7 @@ order: 5
 description: 用本站的真实案例，手把手带你走完 Skill 形成的四步循环——你会发现：你已经无数次「做过」这件事，只差把它写下来。
 source: 本站 skills/tutorial-visuals/SKILL.md 的真实诞生过程
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：Skill 不是什么高科技——把「你重复做的事 + 做好的标准」写成一份 AI 能执行的说明书，就是 Skill。本站的教程配图 Skill，就是这样诞生的。**

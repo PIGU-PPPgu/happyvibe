@@ -5,6 +5,7 @@ order: 1
 description: Vibe Coding = 用自然语言让 AI 把想法变成能用的网页和小工具。门槛只剩一条：把你想要的东西说清楚。
 source: 培训 PPT S12-S14、S25、S73
 status: ready
+minutes: 10
 ---
 
 > **一句话结论：只要会「动嘴」（把需求说清楚），就等于会 Vibe Coding——代码是 AI 写的，判断是你的。**

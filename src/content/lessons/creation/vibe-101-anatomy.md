@@ -5,6 +5,7 @@ order: 2
 description: 深入 Vibe Coding 的地基课。用我们自己的一个真实课件页，把「代码」和「页面」摆在一起对照——看完你就知道 AI 写的到底是什么，以及该让它改哪里。
 source: 本站真实课件页解剖 ／ 参考 Datawhale easy-vibe 并本土化重写
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：网页 = HTML（骨架，内容是什么）+ CSS（皮肤，长什么样）+ JS（动作，能做什么）。你不需要会写——只需要看得懂「哪段管哪块」，然后让 AI 去改。**

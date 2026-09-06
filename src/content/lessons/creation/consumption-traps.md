@@ -5,6 +5,7 @@ order: 4
 description: 朋友圈和小红书上卖 ¥19.9~¥140 的「AI 教师工具」，你自己动嘴就能让 AI 做。破解口诀：输出 html 版本给我就行。
 source: 培训 PPT S17-S19
 status: ready
+minutes: 12
 ---
 
 > **一句话结论：那些卖几百块的「教师专属 AI 工具」，本质上就是你一句话能让 AI 做出来的 HTML 页面。口诀：「输出 html 版本给我就行」。**

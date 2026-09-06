@@ -5,9 +5,10 @@ order: 1
 description: 手把手系列课程地图 + 视频课 + 开源资料。零基础起步，每一课只教一件事，学完你就是科组里最会用 AI 的人。
 source: 实机操作记录（v5.4.5）／ WorkBuddy 蓝皮书 ／ 官方文档
 status: ready
+minutes: 5
 ---
 
-> **一句话结论：跟着「手把手九课」一路做下来，你就掌握了 WorkBuddy——也就掌握了所有桌面 AI Agent 的用法。其他平台都是同样的道理。**
+> **一句话结论：跟着「手把手十课」一路做下来，你就掌握了 WorkBuddy——也就掌握了所有桌面 AI Agent 的用法。其他平台都是同样的道理。**
 
 ## 这个模块为谁而设
 
@@ -18,16 +19,17 @@ status: ready
 | 课 | 你将学会 | 时间 |
 |---|---|---|
 | [第 1 课 · 认识界面](/modules/software/wb-01-start/) | 打开 WorkBuddy，认全每一个按钮 | 10 分钟 |
-| [第 2 课 · 第一次对话](/modules/software/wb-02-first-chat/) | 三句话框架 + 六要素任务说明 + 3 个照抄任务 | 10 分钟 |
-| [第 3 课 · 第一次干活](/modules/software/wb-03-real-work/) | 喂 Excel、下任务、验收、纠错、追加 | 15 分钟 |
-| [第 4 课 · 换大脑与省钱](/modules/software/wb-04-brain-credits/) | 选模型、看倍率、管好积分和权限 | 10 分钟 |
-| [第 5 课 · 配人手与自动化](/modules/software/wb-05-market/) | 装专家、教技能、连接器、定时任务 | 15 分钟 |
-| [第 6 课 · 三个痛点任务](/modules/software/wb-06-office/) | 批量合并 / 跨文件提炼 / 周报流水线 | 30 分钟 |
-| [第 7 课 · 连接器与手机派单](/modules/software/wb-07-connectors/) | 不在电脑前也能干活 | 15 分钟 |
-| [第 8 课 · 自动化实战](/modules/software/wb-08-automation/) | 晨报 / 周报 / 条件触发三个真实场景 | 20 分钟 |
-| [第 9 课 · 排错手册](/modules/software/wb-09-troubleshooting/) | 卡住了怎么办：万能三招 + 10 种情况 | 随时查 |
+| [第 2 课 · 第一次对话](/modules/software/wb-02-first-chat/) | 三句话框架 + 3 个照抄任务 | 10 分钟 |
+| [第 3 课 · 任务说明六要素](/modules/software/wb-02b-six/) | 让 AI 干活一次做对（约束/输出/验收） | 15 分钟 |
+| [第 4 课 · 第一次干活](/modules/software/wb-03-real-work/) | 喂 Excel、下任务、验收、纠错、追加 | 15 分钟 |
+| [第 5 课 · 换大脑与省钱](/modules/software/wb-04-brain-credits/) | 选模型、看倍率、管好积分和权限 | 10 分钟 |
+| [第 6 课 · 配人手](/modules/software/wb-05-market/) | 装专家、教技能、连接器、定时任务 | 15 分钟 |
+| [第 7 课 · 三个痛点任务](/modules/software/wb-06-office/) | 批量合并 / 跨文件提炼 / 周报流水线 | 30 分钟 |
+| [第 8 课 · 连接器与手机派单](/modules/software/wb-07-connectors/) | 不在电脑前也能干活 | 15 分钟 |
+| [第 9 课 · 自动化实战](/modules/software/wb-08-automation/) | 晨报 / 周报 / 条件触发三个真实场景 | 20 分钟 |
+| [第 10 课 · 排错手册](/modules/software/wb-09-troubleshooting/) | 卡住了怎么办：万能三招 + 10 种情况 | 随时查 |
 
-学完九课，挑任务实战：[任务一 · 学科主题网站](/modules/software/task-subject-website/) → [任务二 · 教师工作台](/modules/software/task-workbench/) → [任务三 · 课堂三件套](/modules/software/task-classroom-kit/) → [任务四 · 期末材料大生产](/modules/software/task-final-term/)。最后读 [会用 WorkBuddy = 会用所有桌面 Agent](/modules/software/agent-transfer/)。
+学完十课，挑任务实战：[任务一 · 学科主题网站](/modules/software/task-subject-website/) → [任务二 · 教师工作台](/modules/software/task-workbench/) → [任务三 · 课堂三件套](/modules/software/task-classroom-kit/) → [任务四 · 期末材料大生产](/modules/software/task-final-term/)。最后读 [会用 WorkBuddy = 会用所有桌面 Agent](/modules/software/agent-transfer/)。
 
 ## 界面先睹为快
 

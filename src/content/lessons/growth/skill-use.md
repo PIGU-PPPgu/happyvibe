@@ -5,6 +5,7 @@ order: 6
 description: 固化好的 SKILL.md 怎么用？WorkBuddy 里启用、搬到 Claude Code/ZCode/Trae——技能文件是纯文本，复制粘贴就行迁移。
 source: 本站 skills/tutorial-visuals/SKILL.md 实践 ／ 各 Agent 技能机制通用原理
 status: ready
+minutes: 12
 ---
 
 > **一句话结论：SKILL.md 是纯文本文件，天下通用。WorkBuddy 里启用的技能，原样复制到 Claude Code、ZCode、Trae 的技能目录，照样工作——这就是「会用一个 = 会用所有」的终极证明。**

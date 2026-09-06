@@ -1,10 +1,11 @@
 ---
 title: 第 7 课 · 连接器与手机派单：不在电脑前也能干活
 module: software
-order: 10
+order: 9
 description: 手把手系列。给 WorkBuddy 接上外部服务、扫码绑定小程序——出门在外发一句话，回办公室活已经干完。
 source: 实机操作（v5.4.5）
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：电脑上的 WorkBuddy 是「大本营」，手机小程序是「遥控器」。连上之后，你在通勤路上派个活，回到办公室它已经做完了。**

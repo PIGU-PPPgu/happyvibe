@@ -5,6 +5,7 @@ order: 2
 description: Agent 不是工具，是可以积累的数字同事——养得越久，越懂你。五个让你「终身适用」的理由。
 source: 培训 PPT S41、S58
 status: ready
+minutes: 10
 ---
 
 > **一句话结论：工具用完就走，Agent 越养越懂你。把固定模板和流程训练成 Skill，一次投入，终身适用。**

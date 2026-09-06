@@ -5,6 +5,7 @@ order: 1
 description: 让 Agent 按你的教学流程产出完整备课包——知识点、视频、分层练习、课程流程、教学建议，一次生成。
 source: 培训 PPT S47-S48
 status: ready
+minutes: 20
 ---
 
 > **一句话结论：不要让 AI「帮我写个教案」，要让它按你的备课 SOP 产出一整套备课包——先做 MVP，再逐步个性化。**

@@ -9,8 +9,9 @@ interface Props {
   title: string;
   description: string;
   status: 'draft' | 'ready';
+  minutes?: number;
 }
-const { moduleSlug, slug, order, title, description, status } = Astro.props;
+const { moduleSlug, slug, order, title, description, status, minutes } = Astro.props;
 const href = withBase(`/modules/${moduleSlug}/${slug}/`);
 ---
 <a class="lesson-card card" href={href} data-lesson-card data-lesson-id={`${moduleSlug}/${slug}`}>
@@ -19,6 +20,7 @@ const href = withBase(`/modules/${moduleSlug}/${slug}/`);
     <span class="lesson-title">
       {title}
       {status === 'draft' && <PixelBadge variant="draft" />}
+      {minutes && <span class="lesson-min mono">约 {minutes} 分钟</span>}
     </span>
     <span class="lesson-desc">{description}</span>
   </span>
@@ -57,6 +59,7 @@ const href = withBase(`/modules/${moduleSlug}/${slug}/`);
     color: var(--text-muted);
     line-height: 1.65;
   }
+  .lesson-min { font-size: 11px; color: var(--text-faint); background: var(--bg-panel); border: 1px solid var(--line); padding: 1px 7px; border-radius: 4px; }
   .lesson-done {
     margin-left: auto;
     color: var(--gold);
@@ -64,7 +67,8 @@ const href = withBase(`/modules/${moduleSlug}/${slug}/`);
     font-weight: 700;
     transition: opacity 0.2s ease;
   }
-  .lesson-card.is-done .lesson-done { opacity: 1; }
+  .lesson-card.is-done .lesson-min { font-size: 11px; color: var(--text-faint); background: var(--bg-panel); border: 1px solid var(--line); padding: 1px 7px; border-radius: 4px; }
+  .lesson-done { opacity: 1; }
   .lesson-card.is-done .lesson-title { color: var(--gold-soft); }
 </style>
 

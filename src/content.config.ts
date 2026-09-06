@@ -23,6 +23,7 @@ const lessons = defineCollection({
     description: z.string(),
     source: z.string(),
     status: z.enum(['draft', 'ready']).default('draft'),
+    minutes: z.number().optional(),
   }),
 });
 

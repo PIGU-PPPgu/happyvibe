@@ -5,6 +5,7 @@ order: 3
 description: Agent = 工作角色 + 可替换的大脑 + 技能 + 工具 + 记忆。拆开一只电子助手，看清每个部位干什么。
 source: 培训 PPT S37
 status: ready
+minutes: 12
 ---
 
 > **一句话结论：桌面 Agent 的五件套——工作角色、大脑、Skill、工具、记忆。大脑可以换，技能可以教，记忆越攒越厚。**

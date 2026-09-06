@@ -5,6 +5,7 @@ order: 3
 description: 一个判断标准就够了：大量重复劳动，或有固定流程规范的事，都建议交给 AI。
 source: 培训 PPT S5
 status: ready
+minutes: 8
 ---
 
 > **一句话结论：大量重复劳动或有固定流程规范的事 → 交给 AI；需要教育判断、情感连接的事 → 留给自己。**

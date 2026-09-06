@@ -1,0 +1,56 @@
+---
+/** 路线图入口前测：5 题判断先备知识，给分流入站建议 */
+---
+<details class="pretest" id="pretest">
+  <summary class="mono">▸ 先做个 1 分钟小测——看看你该从哪站开始</summary>
+  <div class="pt-body">
+    <p class="pt-q" data-q="0">1. 跟 AI 要东西时，把「你是谁+做什么+有什么要求」写全，产出会更好？</p>
+    <div class="pt-opts" data-o="0"><button data-v="1">对</button><button data-v="0">差不多就行</button></div>
+    <p class="pt-q" data-q="1">2. 模型后面的「0.06x / 1.62x」数字是价格倍率，不是能力分数？</p>
+    <div class="pt-opts" data-o="1"><button data-v="1">对</button><button data-v="0">数字越大越强</button></div>
+    <p class="pt-q" data-q="2">3. AI 生成的成绩统计，也应该自己抽查一两个数字？</p>
+    <div class="pt-opts" data-o="2"><button data-v="1">对</button><button data-v="0">AI 不会算错</button></div>
+    <p class="pt-q" data-q="3">4. 「Agent」和普通聊天 AI 的区别是：Agent 能替你执行多步任务？</p>
+    <div class="pt-opts" data-o="3"><button data-v="1">对</button><button data-v="0">没区别</button></div>
+    <p class="pt-q" data-q="4">5. 让 AI 干活时写清楚「不许做什么」，比不写更稳？</p>
+    <div class="pt-opts" data-o="4"><button data-v="1">对</button><button data-v="0">无所谓</button></div>
+    <p class="pt-result" id="pt-result"></p>
+  </div>
+</details>
+
+<style>
+  .pretest { border: 1px dashed var(--line-gold); border-radius: 12px; background: rgba(254,179,0,.05); margin-top: 24px; }
+  .pretest summary { cursor: pointer; padding: 14px 18px; font-size: 14px; color: var(--gold-soft); }
+  .pt-body { padding: 4px 20px 18px; }
+  .pt-q { font-size: 14.5px; margin: 12px 0 6px; }
+  .pt-opts button { margin-right: 10px; padding: 6px 18px; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--bg-panel); color: var(--text); font-size: 13.5px; cursor: pointer; }
+  .pt-opts button.picked { border-color: var(--gold); color: var(--gold-soft); }
+  .pt-opts button.right { background: rgba(126,216,138,.15); border-color: #7ed88a; color: #7ed88a; }
+  .pt-opts button.wrong { background: rgba(226,98,98,.12); border-color: #e26262; color: #e26262; }
+  .pt-result { margin-top: 16px; font-size: 14.5px; line-height: 1.8; color: var(--gold-soft); display: none; }
+  .pt-result.show { display: block; }
+</style>
+
+<script>
+  const answers = [1,1,1,1,1];
+  const picked: Record<number, number> = {};
+  document.querySelectorAll<HTMLElement>('.pt-opts').forEach((box) => {
+    const qi = Number(box.dataset.o);
+    box.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+      box.querySelectorAll('button').forEach((x) => x.className = '');
+      const v = Number(b.dataset.v);
+      b.className = v === answers[qi] ? 'right' : 'wrong';
+      picked[qi] = v === answers[qi] ? 1 : 0;
+      if (Object.keys(picked).length === 5) {
+        const score = Object.values(picked).reduce((a, b) => a + b, 0);
+        const el = document.getElementById('pt-result')!;
+        el.className = 'pt-result show';
+        el.innerHTML = score <= 2
+          ? `<b>答对 ${score}/5</b> —— 别慌，正合适从第 1 站开始，前两站就是讲这些的。`
+          : score <= 4
+          ? `<b>答对 ${score}/5</b> —— 有底子！第 1 站可以快速过，重点从第 2 站（教学提效）开始。`
+          : `<b>答对 5/5</b> —— 你已经会用了，直接去第 5 站（Vibe Coding）或任务库挑活干。`;
+      }
+    }));
+  });
+</script>

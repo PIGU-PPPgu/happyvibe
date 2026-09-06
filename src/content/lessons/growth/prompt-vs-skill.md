@@ -5,6 +5,7 @@ order: 4
 description: Prompt 是一次性的指令，Skill 是可复用的技能包。你的教学经验、班级管理经验，都是非常宝贵的 Skill。
 source: 培训 PPT S25-S29
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：Prompt 用一次就扔，Skill 教一次终身受用。把你的经验封装成 Skill，等于给每个 AI 装上「你的打法」。**

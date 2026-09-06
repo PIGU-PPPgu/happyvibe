@@ -5,6 +5,7 @@ order: 1
 description: 普通对话式 AI 只负责回答；Agent 会拆解任务、调用工具、自动流转，把一件事从头做到尾。
 source: 培训 PPT S42
 status: ready
+minutes: 10
 ---
 
 > **一句话结论：Agent = 从「能回答」走向「能帮你做流程」。你交代的是一件事，它交付的是一个结果。**

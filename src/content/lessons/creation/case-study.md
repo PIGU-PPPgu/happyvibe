@@ -5,6 +5,7 @@ order: 8
 description: 两个真实案例：让 AI 按你的设计规范自动产出网页（Notion 风 Skill 固化），以及飞象老师的经验教训。
 source: 培训 PPT S15、S30
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：把你的审美和规范固化成 Skill 之后，AI 每次产出都像「你亲手做的」——这才是复利的开始。**

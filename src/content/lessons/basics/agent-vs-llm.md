@@ -5,6 +5,7 @@ order: 5
 description: LLM 是「脑子」，Agent 是「完整的人」。搞混这两个概念，是很多老师选错工具的根源。
 source: 培训 PPT S34
 status: ready
+minutes: 8
 ---
 
 > **一句话结论：LLM 模型 = 脑子；Agent = 一个完整的人（有全部五官、能说会道、还会执行）。**

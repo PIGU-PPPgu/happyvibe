@@ -1,10 +1,11 @@
 ---
 title: 第 5 课 · 配人手：专家、技能、连接器与自动化
 module: software
-order: 6
+order: 7
 description: 手把手系列。逛「数字员工市场」装教育专家，把你的固定流程教成技能，再让 Agent 每天定时替你干活。
 source: 实机操作记录（v5.4.5）
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：专家=配个懂行的人手，技能=把你的流程教给它，自动化=让它到点自己干。三件配齐，WorkBuddy 就从工具变成团队。**

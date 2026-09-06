@@ -5,6 +5,7 @@ order: 6
 description: 没有全能冠军，只有分工不同。做设计找 Kimi，写代码找 GLM，做视频找 MiniMax，全能型选 ChatGPT / Claude。
 source: 培训 PPT S35
 status: ready
+minutes: 10
 ---
 
 > **一句话结论：模型没有全能冠军。按任务类型选脑子，比死磕某一个「最强模型」重要得多。**

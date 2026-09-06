@@ -5,6 +5,7 @@ order: 5
 description: 一个 OpenClaw Skill：操作浏览器登录飞象平台，自动完成学情分析、智能组卷和出题。
 source: 培训 PPT S49
 status: ready
+minutes: 15
 ---
 
 > **一句话结论：把「登录平台 → 点选班级 → 导出学情 → 组卷出题」这套固定流程写成 Skill，以后一句话就全自动。**

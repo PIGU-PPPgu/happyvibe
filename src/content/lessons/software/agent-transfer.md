@@ -5,6 +5,7 @@ order: 20
 description: 学完五课不用再学别的软件。Trae、DeepSeek Harness、各类 Coding Agent——界面不同，骨子里是同一台机器。
 source: 培训方法论
 status: ready
+minutes: 10
 ---
 
 > **一句话结论：所有桌面级 Agent 都是同一台机器的不同外壳。你在 WorkBuddy 练的每个动作，换个软件都原样成立——顶多找 30 秒按钮在哪。**
