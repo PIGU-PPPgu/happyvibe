@@ -54,10 +54,16 @@ const weeks = [
       <p class="kicker mono">// CHALLENGE · 每天只需 15 分钟</p>
       <h1>21 天 AI 教学挑战</h1>
       <p class="sub text-muted">
-        规则简单：每天照着当天的卡做 15 分钟，做完在教研群打卡（截图 + 一句话）。
+        规则简单：每天照着当天的卡做 15 分钟。**先自己悄悄练**——愿意分享再到群里晒，不愿意就一直安静学，没人催你。
         坚持 21 天，你会带走：<b style="color:var(--gold-soft)">一个自己做的学科网页、两三个课堂神器、一套自己的话术</b>。
       </p>
     </TerminalWindow>
+
+    <a class="ch-start btn btn-gold" href={days[0].link ? withBase(days[0].link) : '#'} onclick="document.querySelector('[data-day=\'1\']')?.scrollIntoView({behavior:'smooth'});return false;">
+      从 Day 1 开始 →（先自己悄悄练）
+    </a>
+
+    <p class="ch-stat mono" data-ch-stat>加载中…</p>
 
     {weeks.map((wk) => (
       <section class="week">
@@ -73,7 +79,8 @@ const weeks = [
                 <span class="d-theme">{d.theme}</span>
               </div>
               <p class="d-task">{d.task}</p>
-              {d.linkText && <span class="d-link mono">{d.linkText} →</span>}
+              {d.linkText && <span class="d-link mono">{d.linkText} →</span>
+              <button class="d-done mono" data-day={d.n} onclick="toggleDay(this)">○ 完成</button>}
             </a>
           ))}
         </div>
@@ -83,13 +90,39 @@ const weeks = [
     <section class="rules card">
       <h2>打卡 & 收录规则</h2>
       <ul>
-        <li><b>打卡格式</b>：Day N + 截图 + 一句话（做了什么/卡在哪）</li>
+        <li><b>打卡（自愿）</b>：想分享就发 Day N + 截图 + 一句话；不想发，自己在下面点「完成」一样算数</li>
         <li><b>断了怎么办</b>：断一天补一天，别从头再来——持续比完美重要</li>
-        <li><b>作品收录</b>：Day 20 投递的作品经筛选后进入<a href={withBase('/modules/creation/task-library/')}>任务库</a>，<b>署作者名字</b>，全集团老师都能用</li>
+        <li><b>作品投递（自愿）</b>：Day 20 想投就投，投了的作品进入<a href={withBase('/modules/creation/task-library/')}>任务库</a>，<b>署作者名字</b>，全集团老师都能用</li>
         <li><b>卡住了</b>：每课底部有「复制求助话术」按钮，粘贴到群里就有人救</li>
       </ul>
     </section>
   </div>
+<script>
+  const KEY = 'hv-challenge-days';
+  const get = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
+  const set = (m) => localStorage.setItem(KEY, JSON.stringify(m));
+  function toggleDay(btn) {
+    const day = btn.getAttribute('data-day');
+    const m = get();
+    m[day] = !m[day];
+    set(m);
+    paint();
+  }
+  function paint() {
+    const m = get();
+    document.querySelectorAll('[data-day]').forEach(b => {
+      const d = b.getAttribute('data-day');
+      const on = !!m[d];
+      b.textContent = on ? '✓ 已完成' : '○ 完成';
+      b.classList.toggle('done', on);
+      b.closest('.day')?.classList.toggle('is-done', on);
+    });
+    const n = Object.values(m).filter(Boolean).length;
+    const stat = document.querySelector('[data-ch-stat]');
+    if (stat) stat.textContent = n ? `已坚持 ${n} / 21 天 —— 断一天补一天，别从头再来` : '点下面的 Day 1 开始第一天';
+  }
+  paint();
+</script>
 </BaseLayout>
 
 <style>
@@ -112,4 +145,11 @@ const weeks = [
   .rules h2 { margin: 0 0 10px; font-size: 19px; color: var(--gold-soft); }
   .rules ul { margin: 0; padding-left: 1.3em; }
   .rules li { margin: .4em 0; font-size: 14.5px; }
+.ch-start { display: block; width: fit-content; margin: 0 auto 8px; font-size: 16px; padding: 13px 34px; }
+  .ch-stat { text-align: center; color: var(--gold-soft); margin: 6px 0 0; font-size: 14px; }
+  .d-done { margin-top: 6px; align-self: flex-start; font-size: 12px; padding: 3px 10px; border-radius: 4px;
+    border: 1px solid var(--line-strong); background: var(--bg-panel-2); color: var(--text-muted); cursor: pointer; }
+  .d-done.done { background: linear-gradient(135deg, var(--gold-soft), var(--gold)); border-color: transparent; color: #2a1c00; font-weight: 700; }
+  .day.is-done { border-color: var(--line-gold); }
+  .day.is-done .d-task { opacity: .65; text-decoration: line-through; }
 </style>

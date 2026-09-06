@@ -62,4 +62,4 @@ status: ready
 - [ ] 遇到卡壳能先想到万能三招
 - [ ] 把这一页存进了自己的备忘录
 
-六课 + 进阶三课全部完成！接下来是实战：[任务一 · 学科主题网站](/modules/software/task-subject-website/) → [任务二 · 教师工作台](/modules/software/task-workbench/) → [任务三 · 课堂三件套](/modules/software/task-classroom-kit/)
+九课全部完成！接下来是实战：[任务一 · 学科主题网站](/modules/software/task-subject-website/) → [任务二 · 教师工作台](/modules/software/task-workbench/) → [任务三 · 课堂三件套](/modules/software/task-classroom-kit/)

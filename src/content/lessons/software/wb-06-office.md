@@ -142,4 +142,4 @@ Agent 干活时屏幕上会发生什么（三景对照）：
 - [ ] 任务 C 教过一次固定格式（感受过「一句话复用」）
 - [ ] 能说出三个任务分别对应 Agent 的哪个不可替代能力：批量、跨文件、记忆+自动化
 
-**毕业！** 接下来去 [任务一 · 打造学科主题网站](/modules/software/task-subject-website/) 实战（那里你会用上 Vibe Coding），最后读 [会用 WorkBuddy = 会用所有桌面 Agent](/modules/software/agent-transfer/)。
+**主线到此！** 第 7-9 课是进阶选修，实战任务随时可以开始：接着去 [任务一 · 打造学科主题网站](/modules/software/task-subject-website/) 实战（那里你会用上 Vibe Coding），最后读 [会用 WorkBuddy = 会用所有桌面 Agent](/modules/software/agent-transfer/)。

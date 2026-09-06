@@ -30,7 +30,7 @@ status: ready
 **② easy-vibe**（[datawhalechina/easy-vibe](https://datawhalechina.github.io/easy-vibe/zh-cn/)）
 Datawhale 开源 vibe coding 教程，偏开发向。适合：想往「做出作品」走的老师。
 
-**③ 本站手把手系列**（[WorkBuddy 六课](/modules/software/workbuddy/)）
+**③ 本站手把手系列**（[WorkBuddy 九课](/modules/software/workbuddy/)）
 教师场景定制、按键级傻瓜式。适合：零基础起步。
 
 **④ 官方文档**

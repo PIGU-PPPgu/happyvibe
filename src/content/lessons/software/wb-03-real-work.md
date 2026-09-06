@@ -3,7 +3,7 @@ title: 第 3 课 · 第一次干活：让 AI 处理一份真实成绩表
 module: software
 order: 4
 description: 手把手系列。从建一个 Excel 到让 Agent 统计、排序、生成报告——含安全边界、验收清单和三个追问模板。
-source: 实机操作记录（v5.4.5）／ 参照 WorkBuddy 蓝皮书颗粒度
+source: 实机操作记录（v5.4.5）／ 步骤细到每个按钮
 status: ready
 ---
 
