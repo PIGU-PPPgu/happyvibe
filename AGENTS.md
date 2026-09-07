@@ -5,15 +5,19 @@
 ## 给 AI 助手的必读规则
 
 1. **做教程配图 / 录操作 GIF / 标注截图 / 发布更新** → 先读 `skills/tutorial-visuals/SKILL.md`，严格按其中流水线与视觉规范执行
-2. 课程内容在 `src/content/lessons/<模块>/<课>.md`，规范见 README「怎么加一节新课」
-3. 所有视觉产出遵循：傻瓜式步骤（精确到按钮）、图文并茂、无 emoji、大字号、隐私安全（真实学生信息不上线）
-4. **文风红线（AI-isms 清单）**——以下模式一律禁止，出现即重写：
+2. **思维导图 / 架构图 / 流程图 / 路线图一律用 archify**（`skills/archify/`，源自 github.com/tt-a1i/archify，MIT）：
+   - 流程：按 `skills/archify/SKILL.md` 写类型化 JSON → `node skills/archify/bin/archify.mjs validate <type> <json> --quality showcase` 全绿 → `deliver <type> <json> <输出.html> --quality showcase`
+   - 产物是单文件交互 HTML（动画 trace / 搜索 / 聚焦 / 演示模式 F），放 `public/interactives/`，页面用 iframe 嵌入并配「全屏打开」链接；引用路径去掉 `.html` 后缀（Pages 会 308 跳转）
+   - 不再手绘或截图静态导图 PNG；`meta.locale` 用 `zh-CN`，用户要「动起来」时设 `meta.animation: "trace"`
+3. 课程内容在 `src/content/lessons/<模块>/<课>.md`，规范见 README「怎么加一节新课」
+4. 所有视觉产出遵循：傻瓜式步骤（精确到按钮）、图文并茂、无 emoji、大字号、隐私安全（真实学生信息不上线）
+5. **文风红线（AI-isms 清单）**——以下模式一律禁止，出现即重写：
    - 按钮/导航/标题后加解释性括号（如「比赛专区（报名截止）」→ 只写「比赛专区」）
    - 填充词：扫码即得 / 一键直达 / 今天学今天用 / 轻松搞定 / 一看就会
    - 替读者下结论（「这就是满分答案」「堪称完美」）——事实说完就停
    - 三段式排比、强行升华的结尾、「值得注意的是」开头
    - 解释只出现在正文段落里；按钮/标题/导航/徽章 = 干净的名字
-5. 每次内容改动收尾必须：`npm run build` → `npx wrangler pages deploy dist --project-name=happyvibe`（带 CF 环境变量）→ curl 线上 URL 验证 → git commit
+6. 每次内容改动收尾必须：`npm run build` → `npx wrangler pages deploy dist --project-name=happyvibe`（带 CF 环境变量）→ curl 线上 URL 验证 → git commit
 
 ## 关键脚本
 

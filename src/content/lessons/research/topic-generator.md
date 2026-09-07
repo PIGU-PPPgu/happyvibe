@@ -25,7 +25,9 @@ minutes: 20
 
 ## 技术路线示例
 
-![课题技术路线](/images/lessons/topic-roadmap.webp)
+<iframe src="/interactives/topic-roadmap" title="课题技术路线图" loading="lazy" style="width:100%;aspect-ratio:1180/760;border:1px solid var(--line);border-radius:12px;background:var(--bg-panel)"></iframe>
+
+[全屏打开 →](/interactives/topic-roadmap)
 
 培训展示的一份真实技术路线图（教育智能体方向）：
 

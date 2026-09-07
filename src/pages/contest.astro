@@ -44,7 +44,8 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
     <!-- 四赛道 -->
     <section class="ct-card">
       <h2>四条赛道怎么选</h2>
-      <img class="track-map" src="/images/contest/track-map.png" alt="四条赛道思维导图">
+      <iframe class="track-frame" src="/interactives/contest-tracks" title="四条赛道选择图" loading="lazy"></iframe>
+      <p class="track-full"><a href="/interactives/contest-tracks" target="_blank" rel="noopener">全屏打开 →</a> <span class="mono text-muted">投屏时按 F 进演示模式</span></p>
       <table>
         <tr><th>赛道</th><th>一句话定位</th><th>适合谁</th><th>站内直接对应</th></tr>
         <tr>
@@ -273,5 +274,8 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   .case-body a { color: var(--gold); }
   .ideas { margin-top: 10px; padding: 12px 16px; background: var(--bg-panel); border-radius: 8px; font-size: 13px; line-height: 1.9; color: var(--text-muted); }
   .ideas b { color: var(--text); }
-  .track-map { width: 100%; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--line); }
+  .track-frame { width: 100%; aspect-ratio: 1180 / 760; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; background: var(--bg-panel); }
+  .track-full { margin: 0 0 16px; font-size: 13px; }
+  .track-full a { color: var(--gold-soft); border-bottom: 1px dashed var(--line-gold); }
+  @media (max-width: 700px) { .track-frame { aspect-ratio: auto; height: 520px; } }
 </style>
