@@ -1,0 +1,245 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import { withBase } from '../lib/urls';
+
+const SEGMENTS = [
+  { id: 's1', time: '00:00-10', name: '开场' },
+  { id: 's2', time: '10-20', name: '炫技' },
+  { id: 's3', time: '20-35', name: '装软件' },
+  { id: 's4', time: '35-60', name: '跑通第一单' },
+  { id: 's5', time: '60-75', name: '休息领材料' },
+  { id: 's6', time: '75-105', name: '实操做出作品' },
+  { id: 's7', time: '105-115', name: '作品墙' },
+  { id: 's8', time: '115-120', name: '收尾' },
+];
+---
+<BaseLayout title="授课脚本" description="周五两小时培训的逐环节脚本：每步说什么、投屏点什么、老师做什么、卡点怎么救、启发点在哪。">
+  <div class="container sc-page">
+    <TerminalWindow title="happyvibe workshop script">
+      <p class="kicker mono">// SCRIPT · 照着这页就能上课</p>
+      <h1 class="title">两小时授课脚本</h1>
+      <p class="sub text-muted">
+        每个环节四件事：<b style="color:var(--gold-soft)">开口说</b>（可以直接念）、<b style="color:var(--gold-soft)">投屏做</b>（精确到点哪里）、
+        <b style="color:var(--gold-soft)">老师做</b>（他们此刻的手）、<b style="color:var(--gold-soft)">卡点救场</b>。
+        标了 <span class="spark mono">启发点</span> 的地方是这节课真正要砸下去的时刻，别跳过。
+      </p>
+    </TerminalWindow>
+
+    <nav class="seg-bar">
+      {SEGMENTS.map((s) => (
+        <a class="seg-chip mono" href={`#${s.id}`}>{s.time} {s.name}</a>
+      ))}
+      <a class="seg-chip mono" href="#prep">课前准备</a>
+      <a class="seg-chip mono" href="#qa">提问应答</a>
+    </nav>
+
+    <!-- 课前准备 -->
+    <section class="seg card" id="prep">
+      <h2>课前准备</h2>
+      <h3>前一天</h3>
+      <ul>
+        <li>建好答疑群，群公告放网站地址 + 一句话：「明天带上电脑和充电器，手机也行。」</li>
+        <li>自己把 8 个环节的页面全部点开一遍，确认每个链接都能打开。</li>
+        <li>打印这页（或平板开着），上课时放讲台。</li>
+      </ul>
+      <h3>当天提前 30 分钟</h3>
+      <ul>
+        <li>投屏试一次：首页、任务库炫技区、第 1 课、第 3 课、材料包页，五个页面挨个点开再关掉。</li>
+        <li>数一下现场网络：让两位老师同时打开一个视频页面，能播就够用。</li>
+        <li>准备一个备用热点（手机开给 3-4 人共用）。</li>
+      </ul>
+    </section>
+
+    <!-- 00:00-10 开场 -->
+    <section class="seg card" id="s1">
+      <header class="seg-head"><span class="seg-time mono">00:00-10</span><h2>开场</h2></header>
+      <h3>开口说</h3>
+      <ul>
+        <li>「我是谁：一线老师，班主任，和你们一样每天备课上课收材料。」</li>
+        <li>「今天两小时，每个人手里会多一个<b>自己做的</b>网页或课堂工具。不用会代码，不用装很多软件。」</li>
+        <li>三句定位，语速放慢：「<b>智能体谁都会调，一句话出课件的工具也一大把——那些都不是今天的重点。</b>今天练的是你自己跟 AI 把想法做成东西的过程：话怎么说、活怎么验。<b>做完之后，AI 是在幕后替你干活的，不是在讲台上表演的。</b>」</li>
+      </ul>
+      <h3>投屏做</h3>
+      <ul>
+        <li>打开首页。指着右上角「教程」按钮点一下，快进看完 8 步（30 秒），说：「忘了怎么用，随时点这里再看一遍。」</li>
+        <li>把网站地址发到群里，同时投屏二维码。</li>
+      </ul>
+      <h3>老师做</h3>
+      <ul><li>扫码进群，手机或电脑打开网站。</li></ul>
+      <h3>卡点救场</h3>
+      <ul><li>没人扫码：直接把短网址打在投屏上，念两遍。</li></ul>
+      <p class="spark-line"><span class="spark mono">启发点</span> 老师第一次意识到「这是个自习室，不用记笔记，随时回来查」——注意力就从抄笔记转到动手上了。</p>
+    </section>
+
+    <!-- 10-20 炫技 -->
+    <section class="seg card" id="s2">
+      <header class="seg-head"><span class="seg-time mono">10-20</span><h2>炫技</h2></header>
+      <h3>开口说</h3>
+      <ul>
+        <li>「先看点好玩的。下面这三样东西，都是一句话让 AI 做出来的——散场之前，你也能做一个自己的。」</li>
+      </ul>
+      <h3>投屏做</h3>
+      <ul>
+        <li>打开<a href={withBase('/modules/creation/task-library/')}>任务库</a>炫技演示区。</li>
+        <li>太阳系：拖一下轨道，转给学生看。</li>
+        <li>钢琴：点两个键出声。</li>
+        <li><a href={withBase('/demos/textbook/')}>课本可视化</a>：打开《秋天》，点一下朗读，让它读两句。</li>
+      </ul>
+      <h3>老师做</h3>
+      <ul><li>自己手机打开玩同一个页面。鼓励邻座互相看。</li></ul>
+      <h3>收口话术（第 19 分钟必须说）</h3>
+      <ul>
+        <li>「这些东西背后只有一件事：<b>把话说清楚</b>。接下来两小时，就教这一件事。先装软件。」</li>
+      </ul>
+      <p class="spark-line"><span class="spark mono">启发点</span> 亲眼看到 + 亲手玩到，才会冒出「我行不行」的念头——这个念头就是后面 100 分钟的燃料。别在这里超时，好戏在后头。</p>
+    </section>
+
+    <!-- 20-35 装软件 -->
+    <section class="seg card" id="s3">
+      <header class="seg-head"><span class="seg-time mono">20-35</span><h2>装软件</h2></header>
+      <h3>开口说</h3>
+      <ul>
+        <li>「全场唯一要装的软件，三分钟。装不上别慌，跟邻座拼一台，课后用排错手册自救——绝不能让装软件吃掉这节课。」</li>
+      </ul>
+      <h3>投屏做</h3>
+      <ul>
+        <li>打开<a href={withBase('/modules/software/wb-01-start/')}>第 1 课</a>，从「三分钟装好」开始，一步一等。</li>
+        <li>每走一步，问一句「装到这一步的举手」——<b>80% 的人举手才走下一步</b>。</li>
+      </ul>
+      <h3>老师做</h3>
+      <ul><li>装 WorkBuddy，注册登录。</li></ul>
+      <h3>卡点救场</h3>
+      <ul>
+        <li>积分不够 / 提示收费：投屏「换大脑」，30 秒切到免费档模型。</li>
+        <li>网络卡：3-4 人一组共用一台设备，轮流操作。</li>
+        <li>个别装不上：指给他<a href={withBase('/modules/software/wb-09-troubleshooting/')}>排错手册</a>，课后再战。</li>
+      </ul>
+      <p class="spark-line"><span class="spark mono">启发点</span> 这是全场第一个「我也装上了」时刻。多夸跟上的老师，语气回报进展：「右边三排全装好了。」</p>
+    </section>
+
+    <!-- 35-60 跑通第一单 -->
+    <section class="seg card" id="s4">
+      <header class="seg-head"><span class="seg-time mono">35-60</span><h2>跑通第一单</h2></header>
+      <h3>开口说</h3>
+      <ul>
+        <li>「现在干一件真活：把一份成绩表交给 AI 统计。话术屏幕上有，一个字一个字抄就行。抄完之后，我们一起验。」</li>
+      </ul>
+      <h3>投屏做</h3>
+      <ul>
+        <li>打开<a href={withBase('/modules/software/wb-03-real-work/')}>第 3 课</a>。</li>
+        <li>第一步：领那份模拟成绩表（页面里有），发到群。</li>
+        <li>第二步：话术投屏，放着别动，让大家抄。</li>
+        <li>第三步：等 AI 出结果（1-3 分钟），这段时间走下去看谁卡住。</li>
+        <li>第四步：回到讲台，<b>当场验收</b>——抽一个班平场分，让老师自己拿计算器或心算核对一个数。</li>
+      </ul>
+      <h3>老师做</h3>
+      <ul><li>抄话术 → 发给 AI → 拿到统计结果 → 跟着验收。</li></ul>
+      <h3>卡点救场</h3>
+      <ul>
+        <li>AI 答非所问：多半是话术抄漏了一段，对照屏幕逐行检查。</li>
+        <li>数字对不上：正好——借题发挥，见下面的启发点。</li>
+      </ul>
+      <p class="spark-line"><span class="spark mono">启发点</span> 全场最重要的一问，出结果后立刻问：「<b>刚才这三分钟，替代了你平时多久的手工活？</b>」然后闭嘴，静默三秒，让他们自己算。有人报数就重复他的数。数字对不上也别说错——就说「所以每一步都要抽查，AI 负责干活，事实层永远在老师」。</p>
+    </section>
+
+    <!-- 60-75 休息 -->
+    <section class="seg card" id="s5">
+      <header class="seg-head"><span class="seg-time mono">60-75</span><h2>休息 · 领材料</h2></header>
+      <h3>投屏做</h3>
+      <ul>
+        <li>打开<a href={withBase('/modules/creation/material-packs/')}>材料包页</a>，让大家扫自己学科的二维码。</li>
+        <li>一句话说明：「包里有话术模板、示意图素材、音频任务——回校想练哪个学科，从这儿开始。」</li>
+      </ul>
+      <h3>老师做</h3>
+      <ul><li>休息、扫码、互看别科有什么。</li></ul>
+    </section>
+
+    <!-- 75-105 实操 -->
+    <section class="seg card" id="s6">
+      <header class="seg-head"><span class="seg-time mono">75-105</span><h2>实操 · 做出第一个作品</h2></header>
+      <h3>开口说</h3>
+      <ul>
+        <li>「接下来半小时，每人做一个能明天就用的东西。两条线自己选：<b>零基础走点名器</b>，课上就能用；<b>想进一步走学科网站</b>，做出你自己的主页。」</li>
+      </ul>
+      <h3>投屏做</h3>
+      <ul>
+        <li>A 线投屏入口：<a href={withBase('/modules/software/task-classroom-kit/')}>任务三 · 课堂三件套</a>，做随机点名器。</li>
+        <li>B 线投屏入口：<a href={withBase('/modules/software/task-subject-website/')}>任务一 · 学科网站</a>。</li>
+        <li>两条线的页面都打开切换一次给大家看，然后<b>离开讲台下去巡场</b>。</li>
+      </ul>
+      <h3>巡场节奏</h3>
+      <ul>
+        <li>每 10 分钟回讲台报一次进度：「已经有 X 位老师做出来了。」制造同行压力，用作品数不用批评。</li>
+        <li>卡住的优先救「就差一步」的，完全跟不上的转去 A 线或拼组。</li>
+      </ul>
+      <h3>卡点救场</h3>
+      <ul>
+        <li>做完没事干的：指到任务库自选任务，或请他当小助教帮邻座。</li>
+        <li>质疑「AI 不靠谱」：认同 + 转化——「所以第 1 课就教了三问决策图：什么事给 AI、什么事留给自己。别辩论，给框架。」</li>
+      </ul>
+      <p class="spark-line"><span class="spark mono">启发点</span> 有人做出来的那一刻，周围会自发鼓掌——让他们鼓，别打断。这是「原来我真做得到」的实锤时刻，比你说一百句都有用。</p>
+    </section>
+
+    <!-- 105-115 作品墙 -->
+    <section class="seg card" id="s7">
+      <header class="seg-head"><span class="seg-time mono">105-115</span><h2>作品墙</h2></header>
+      <h3>开口说</h3>
+      <ul>
+        <li>「把自己作品的截图发到群里，发一句话说明：给谁用的、解决什么。」</li>
+      </ul>
+      <h3>投屏做</h3>
+      <ul>
+        <li>打开群相册投屏，轮播点评 2-3 个。点评框架：<b>一个好细节 + 一个别人能搬走的点</b>。</li>
+        <li>结尾一句：「打磨成熟的作品可以署名收进站里任务库，全集团老师都能用——这是教学影响力。」</li>
+      </ul>
+      <h3>老师做</h3>
+      <ul><li>发截图、看别人的、互评。</li></ul>
+    </section>
+
+    <!-- 115-120 收尾 -->
+    <section class="seg card" id="s8">
+      <header class="seg-head"><span class="seg-time mono">115-120</span><h2>收尾</h2></header>
+      <h3>开口说</h3>
+      <ul>
+        <li>指路：「回去怎么学——两条：<a href={withBase('/path/')}>路线图</a>七站，从头走；没时间的跟<a href={withBase('/challenge/')}>21 天挑战</a>，每天 15 分钟。都在站里，右上角『教程』随时回看。」</li>
+        <li>比赛钩子：「提一句：<a href={withBase('/contest/')}>中国教育技术协会的比赛</a>，10 月 15 号报名截止。智能体赛道的关键词——Skill、知识库、多智能体——跟站里成长模块一一对应，那是我们的主场。参不参加没关系，今天做的东西就是起跑线。」</li>
+        <li>最后一句（建议原话）：「AI 不会取代老师，但会用 AI 的老师，把不会用的老师的时间抢过来了。群里见。」</li>
+      </ul>
+    </section>
+
+    <!-- 提问应答 -->
+    <section class="seg card" id="qa">
+      <h2>高频提问 · 应答</h2>
+      <ul>
+        <li><b>「为什么不直接用飞象老师？」</b>——赶时间交差它是好工具。但它替你做了，话术和过程留在平台里。我们把能力长在你身上：先学会跟 AI 协作，以后用什么工具都顺手。</li>
+        <li><b>「AI 会不会取代老师？」</b>——取代不了判断和感情，取代的是重复劳动。判断留给自己，这站里每一课都是这么教的。</li>
+        <li><b>「我年纪大 / 学不会。」</b>——这站的课写到点哪个按钮，照着点就行。21 天挑战每天 15 分钟，做完三天你就知道适不适合自己。</li>
+        <li><b>「做的东西学生考试用不上。」</b>——对，课堂是应试的，AI 的价值不在台前表演。它在幕后：你备课、出卷、统计、写材料省下来的每个小时，都是还给学生的。</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .sc-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 24px; max-width: 860px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .sub { margin: 0; line-height: 1.9; }
+  .seg-bar { display: flex; gap: 8px; flex-wrap: wrap; position: sticky; top: calc(var(--header-h) + 8px); z-index: 20;
+    padding: 10px; background: rgba(21,14,34,.9); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid var(--line); }
+  .seg-chip { flex-shrink: 0; padding: 7px 13px; border-radius: 8px; border: 1px solid var(--line-strong);
+    background: var(--bg-panel); color: var(--text-muted); font-size: 12.5px; }
+  .seg-chip:hover { border-color: var(--gold); color: var(--text); text-decoration: none; }
+  .seg { padding: 24px 26px; scroll-margin-top: calc(var(--header-h) + 70px); }
+  .seg-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .seg-time { font-size: 13px; color: var(--gold); background: rgba(254,179,0,.1); border: 1px solid var(--line-gold); border-radius: 6px; padding: 2px 9px; }
+  .seg h2 { font-size: 21px; margin: 0; }
+  .seg h3 { font-size: 14px; color: var(--gold-soft); margin: 18px 0 8px; letter-spacing: .05em; }
+  .seg ul { padding-left: 1.3em; font-size: 14.5px; line-height: 2; margin: 0; }
+  .seg li { margin: .2em 0; }
+  .seg a { color: var(--gold); }
+  .seg b { color: var(--text); }
+  .spark { font-size: 11.5px; color: #2a1c00; background: linear-gradient(135deg, var(--gold-soft), var(--gold)); border-radius: 4px; padding: 1px 8px; font-weight: 700; }
+  .spark-line { margin: 18px 0 0; padding: 12px 16px; background: rgba(254,179,0,.06); border: 1px dashed var(--line-gold); border-radius: 10px; font-size: 14px; line-height: 1.9; color: var(--text-muted); }
+</style>
