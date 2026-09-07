@@ -1,0 +1,78 @@
+---
+/**
+ * 工具箱侧栏分类卡组（竖向堆叠，与首页 ModuleCarousel 同族交互的竖版）
+ * 上下拖动甩动 · 弹簧回弹 · 悬停侧卡直接切换 · 点卡片选中
+ * 选中状态由页面脚本驱动（data-rstage / data-rcard / data-rprev / data-rnext）
+ */
+interface RailCard {
+  key: string;
+  code: string;
+  label: string;
+  icon: string;
+  desc: string;
+  accent: string;
+  count: number;
+}
+
+interface Props {
+  cards: RailCard[];
+}
+
+const { cards } = Astro.props;
+---
+
+<div class="rail">
+  <div class="r-stage" data-rstage tabindex="0" aria-label="工具分类，上下拖动或点卡片切换">
+    {cards.map((c) => (
+      <button class="rcard" type="button" data-rcard data-key={c.key} style={`--accent:${c.accent}`}>
+        <span class="rc-top">
+          <span class="rc-icon mono" aria-hidden="true">{c.icon}</span>
+          <span class="rc-count mono">{c.count}</span>
+        </span>
+        <span class="rc-title">{c.label}</span>
+        <span class="rc-desc">{c.desc}</span>
+      </button>
+    ))}
+  </div>
+  <div class="r-arrows">
+    <button class="arrow" type="button" data-rprev aria-label="上一个分类">↑</button>
+    <button class="arrow" type="button" data-rnext aria-label="下一个分类">↓</button>
+  </div>
+</div>
+
+<style>
+  .rail { display: flex; flex-direction: column; gap: 12px; }
+  .r-stage {
+    position: relative; height: 316px; overflow: hidden;
+    touch-action: pan-x; user-select: none; outline: none;
+  }
+  .r-stage:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 14px; }
+  .rcard {
+    position: absolute; inset-inline: 0; top: 0; height: 116px;
+    display: flex; flex-direction: column; gap: 3px; padding: 13px 16px;
+    border-radius: 14px; cursor: pointer; text-align: left; will-change: transform;
+    font-family: var(--sans); color: var(--text);
+    background: linear-gradient(160deg, var(--bg-panel-2), var(--bg-inset));
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, .35);
+  }
+  .rcard.is-front {
+    border-color: var(--accent);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 30%, transparent), 0 10px 30px rgba(0, 0, 0, .4);
+  }
+  .rc-top { display: flex; justify-content: space-between; align-items: center; }
+  .rc-icon { font-size: 20px; color: var(--accent); }
+  .rc-count {
+    font-size: 12px; color: var(--text-faint); background: var(--bg-deep);
+    border: 1px solid var(--line); border-radius: 4px; padding: 0 7px;
+  }
+  .rc-title { font-size: 17.5px; font-weight: 700; }
+  .rc-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; overflow: hidden; }
+  .r-arrows { display: flex; gap: 8px; }
+  .arrow {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-strong);
+    background: var(--bg-panel); color: var(--text); font-size: 16px; cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .arrow:hover { border-color: var(--line-gold); color: var(--gold); }
+</style>
