@@ -33,6 +33,9 @@ const isActive = (href: string, anchor?: boolean) => {
     </nav>
 
     <div class="header-actions">
+      <button class="tour-trigger" type="button" data-tour-start aria-label="重看新手教程" title="新手教程">
+        <span aria-hidden="true">?</span> <span class="tt-label">教程</span>
+      </button>
       <button class="search-trigger" type="button" data-search-open aria-label="搜索课程内容">
         <span aria-hidden="true">⌕</span> 搜索 <kbd class="kbd">⌘K</kbd>
       </button>
@@ -107,6 +110,20 @@ const isActive = (href: string, anchor?: boolean) => {
   .nav-link.active { color: var(--gold-soft); background: rgba(254, 179, 0, 0.1); }
   .nav-code { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-right: 5px; }
   .nav-link.active .nav-code { color: var(--gold); }
+  .tour-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    background: var(--bg-panel);
+    color: var(--text-muted);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .tour-trigger:hover { border-color: var(--line-gold); color: var(--text); }
   .header-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; }
   .search-trigger {
     display: inline-flex;
@@ -177,11 +194,25 @@ const isActive = (href: string, anchor?: boolean) => {
     .search-trigger .kbd { display: none; }
     .search-trigger { padding: 6px 10px; }
     .logo-cn { display: none; }
+    .tour-trigger { padding: 6px 9px; }
+    .tour-trigger .tt-label { display: none; }
   }
 </style>
 
 <script>
   import { countDone, getLessonIndex, onProgress } from '../lib/progress';
+
+  // 「新手教程」重看：首页直接重开，其他页跳回首页自动开始（含页脚入口）
+  document.querySelectorAll<HTMLButtonElement>('[data-tour-start]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (location.pathname === '/') {
+        window.dispatchEvent(new CustomEvent('hv-tour:start'));
+      } else {
+        try { sessionStorage.setItem('hv-tour-run', '1'); } catch {}
+        location.href = '/';
+      }
+    });
+  });
 
   const toggle = document.querySelector('[data-menu-toggle]') as HTMLButtonElement | null;
   const mobileNav = document.getElementById('mobile-nav');

@@ -220,10 +220,11 @@ const total = (await getCollection('lessons')).length;
   addEventListener('scroll', () => { if (active) place(); }, { passive: true });
   addEventListener('resize', () => { if (active) place(); });
 
-  // 启动：首次访问自动开始；带重看标记（页脚「新手教程」进入）强制开始
+  // 启动：首次访问自动开始；带重看标记（页脚/头栏「新手教程」进入）强制开始；头栏在首页可原地重开
   let force = false;
   try { force = sessionStorage.getItem(RUN_FLAG) === '1'; sessionStorage.removeItem(RUN_FLAG); } catch {}
   let seen = false;
   try { seen = !!localStorage.getItem(DONE_KEY); } catch {}
   if (force || !seen) window.setTimeout(start, 700);
+  addEventListener('hv-tour:start', () => start());
 </script>

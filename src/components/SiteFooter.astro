@@ -61,13 +61,3 @@ const year = new Date().getFullYear();
     color: var(--text-faint);
   }
 </style>
-
-<script>
-  // 页脚「新手教程」：回首页重看引导
-  document.querySelectorAll<HTMLButtonElement>('[data-tour-start]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      try { sessionStorage.setItem('hv-tour-run', '1'); } catch {}
-      location.href = '/';
-    });
-  });
-</script>
