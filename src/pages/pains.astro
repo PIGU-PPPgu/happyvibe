@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import { withBase } from '../lib/urls';
+
+interface Pain {
+  text: string;
+  fix: string;
+  href: string;
+  effect: string;
+}
+
+interface Group {
+  id: string;
+  title: string;
+  nature: string;
+  pains: Pain[];
+}
+
+const GROUPS: Group[] = [
+  {
+    id: 'tables',
+    title: '重复的表格活',
+    nature: '每个月都在做，每次格式都一样',
+    pains: [
+      {
+        text: '月考后几百份答题卡的错题统计，占掉整整两个晚上',
+        fix: '月考分析实战',
+        href: '/modules/edu-data/exam-analysis-task/',
+        effect: 'AI 出排序和错因报告，你只挑要讲的题',
+      },
+      {
+        text: '六个班的成绩表，格式不一，合并一次一晚上',
+        fix: '三个痛点任务',
+        href: '/modules/software/wb-06-office/',
+        effect: '一晚上的合并活变 10 分钟核对',
+      },
+      {
+        text: '排座位：谁近视、谁好动、谁要成绩互补，改一版全班挪',
+        fix: '排座课 + SEAT OS',
+        href: '/modules/class-management/seat-planner/',
+        effect: '规则你说了算，草案自动生成',
+      },
+      {
+        text: '收没收到作业、考勤、请假，全靠脑子记和小本本',
+        fix: '万事留痕',
+        href: '/modules/class-management/trace-desk/',
+        effect: '一屏看清班务，过程自动留档',
+      },
+    ],
+  },
+  {
+    id: 'words',
+    title: '大批量的文字活',
+    nature: '到点就来，一份一份磨',
+    pains: [
+      {
+        text: '期末 45 份评语 + 素质发展手册 + 家长会材料三座大山',
+        fix: '期末三大件流水线',
+        href: '/modules/software/task-final-term/',
+        effect: '批量生成 + 事实你填，流程全在课里',
+      },
+      {
+        text: '30 篇周记读完只想说「都挺好」，共性抓不出来',
+        fix: '三个痛点任务',
+        href: '/modules/software/wb-06-office/',
+        effect: 'AI 提炼共性，你负责判断和面谈',
+      },
+      {
+        text: '家长会要展示班级数据，只会截表格发家长',
+        fix: '任务库 · 数据大屏',
+        href: '/modules/creation/task-library/',
+        effect: '一句话出数字滚动和图表动画页',
+      },
+    ],
+  },
+  {
+    id: 'docs',
+    title: '格式规范的文书活',
+    nature: '内容不难，格式和资料耗人',
+    pains: [
+      {
+        text: '课题申报书：对着往年文件抠格式，文献综述没头绪',
+        fix: '课题生成器 + 文献矩阵',
+        href: '/modules/research/topic-generator/',
+        effect: '五天出一份骨架完整的申报书',
+      },
+      {
+        text: '教案、课件、分层练习，每课都要备三套材料',
+        fix: 'AI 辅助备课',
+        href: '/modules/teaching/lesson-prep/',
+        effect: '一次生成备课包，你改成自己的',
+      },
+      {
+        text: '出单元卷：双向细目表、三档难度、答案排版',
+        fix: '命题实战',
+        href: '/modules/teaching/exam-paper-task/',
+        effect: '做完手里有一份 19 题的完整卷',
+      },
+    ],
+  },
+  {
+    id: 'sudden',
+    title: '突发与沟通活',
+    nature: '最急的活，最不能出错的话',
+    pains: [
+      {
+        text: '学生出事当晚：群发告知、个别沟通、台账留痕、一周跟进，四份材料等你写',
+        fix: '留痕深度实战',
+        href: '/modules/class-management/trace-desk/',
+        effect: '一段话术生成四份材料，事实你出措辞它出',
+      },
+      {
+        text: '家长问学习建议，十个老师十个口径',
+        fix: '教师智能体',
+        href: '/modules/growth/teacher-agent/',
+        effect: '喂你的班情和口径，按你的话回答',
+      },
+      {
+        text: '班主任一个人当三个人用，晨报周报月报连轴转',
+        fix: '副班主任',
+        href: '/modules/class-management/co-teacher/',
+        effect: '设一次，跑一学期',
+      },
+    ],
+  },
+  {
+    id: 'make',
+    title: '想给学生做点东西',
+    nature: '有想法，卡在不会技术',
+    pains: [
+      {
+        text: '课文只有静态插图，低年级注意力撑不过三分钟',
+        fix: '课本可视化',
+        href: '/demos/textbook/',
+        effect: '教材页 + 朗读 + 动画，1-9 年级有样板',
+      },
+      {
+        text: '想要随机点名器、积分板、抢答页，不知道从哪弄',
+        fix: '课堂三件套',
+        href: '/modules/software/task-classroom-kit/',
+        effect: '三句话换三个工具，明天就能用',
+      },
+      {
+        text: '想给自己的学科做个主页，放资料放链接',
+        fix: '任务一 · 学科网站',
+        href: '/modules/software/task-subject-website/',
+        effect: '从模板到上线，每步有截图',
+      },
+    ],
+  },
+];
+---
+<BaseLayout title="痛点对号入座" description="老师每天被什么折磨：成绩统计、期末评语、课题申报、突发沟通、想给学生做东西——每个痛点都有一条现成的路。">
+  <div class="container pains-page">
+    <TerminalWindow title="happyvibe pain-mapping">
+      <p class="kicker mono">// PAIN FIRST · 先认痛点，再谈 AI</p>
+      <h1 class="title">你每天被什么折磨</h1>
+      <p class="sub text-muted">
+        培训从这页开始：被哪条折磨过的，举个手。<br>
+        每条痛点右边就是站里的现成解法——<b style="color:var(--gold-soft)">今天不学概念，只解决你举手的那件事</b>。
+      </p>
+    </TerminalWindow>
+
+    <div class="ask card">
+      <h2>交给 AI 前的三问</h2>
+      <p>拿你举手的那件事，过一遍这三问：</p>
+      <ol>
+        <li><b>大量重复？</b>——每学期都做、每次格式都一样。</li>
+        <li><b>有固定流程？</b>——有模板、有套路、有章可循。</li>
+        <li><b>要当面的人情？</b>——要你的判断、你的分寸、你的眼睛看着眼睛。</li>
+      </ol>
+      <p>前两问「是」、第三问「否」的活，交出去；第三问「是」的活，永远留给自己。<a href={withBase('/modules/basics/when-to-use/')}>这三问的来龙去脉</a>。</p>
+    </div>
+
+    {GROUPS.map((g) => (
+      <section class="grp card">
+        <header class="grp-head">
+          <h2>{g.title}</h2>
+          <span class="grp-nature text-muted">{g.nature}</span>
+        </header>
+        <ul class="pain-list">
+          {g.pains.map((p) => (
+            <li class="pain">
+              <p class="p-text">{p.text}</p>
+              <div class="p-fix">
+                <a class="p-link" href={withBase(p.href)}>{p.fix} →</a>
+                <span class="p-effect text-muted">{p.effect}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <div class="more card">
+      <h2>你的痛点不在这里</h2>
+      <p>去<a href={withBase('/modules/creation/task-library/')}>任务库</a>按目标找——不按软件找，按你想解决的事找。还没有的，每课底部有「复制求助话术」，发到群里一起想办法。</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pains-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 22px; max-width: 860px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .sub { margin: 0; line-height: 1.9; }
+  .ask { padding: 22px 26px; border-color: var(--line-gold); background: rgba(254,179,0,.04); }
+  .ask h2, .grp h2, .more h2 { font-size: 19px; color: var(--gold-soft); margin: 0 0 10px; }
+  .ask ol { padding-left: 1.4em; margin: 8px 0; font-size: 15px; line-height: 2.1; }
+  .ask p, .more p { margin: 4px 0; font-size: 14.5px; line-height: 1.9; }
+  .ask a, .more a { color: var(--gold); }
+  .grp { padding: 22px 26px; }
+  .grp-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .grp-nature { font-size: 13px; }
+  .pain-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  .pain { padding: 14px 0; border-bottom: 1px dashed var(--line); }
+  .pain:last-child { border-bottom: 0; }
+  .p-text { margin: 0 0 8px; font-size: 15.5px; line-height: 1.8; }
+  .p-fix { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .p-link { color: var(--gold-soft); font-weight: 600; border-bottom: 1px dashed var(--line-gold); font-size: 14.5px; }
+  .p-link:hover { color: var(--gold); }
+  .p-effect { font-size: 13px; }
+  .more { padding: 22px 26px; }
+</style>
