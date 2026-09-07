@@ -1,8 +1,8 @@
 ---
 /**
- * 工具箱侧栏分类卡组（竖向堆叠，与首页 ModuleCarousel 同族交互的竖版）
- * 上下拖动甩动 · 弹簧回弹 · 悬停侧卡直接切换 · 点卡片选中
- * 选中状态由页面脚本驱动（data-rstage / data-rcard / data-rprev / data-rnext）
+ * 工具箱侧栏分类卡组（首页 ModuleCarousel 同款堆叠滑卡的竖版）
+ * 上下拖动甩动 · 弹簧回弹 · 缩放层级 · 圆点跳转 · 点卡片选中
+ * 卡片 pointer-events:none（拖拽在舞台层统一处理），点击由页面脚本按坐标命中分发
  */
 interface RailCard {
   key: string;
@@ -34,8 +34,13 @@ const { cards } = Astro.props;
       </button>
     ))}
   </div>
-  <div class="r-arrows">
+  <div class="r-controls">
     <button class="arrow" type="button" data-rprev aria-label="上一个分类">↑</button>
+    <div class="dots" data-rdots>
+      {cards.map((c, i) => (
+        <button class="dot" type="button" data-rdot={i} aria-label={`跳到 ${c.label}`}></button>
+      ))}
+    </div>
     <button class="arrow" type="button" data-rnext aria-label="下一个分类">↓</button>
   </div>
 </div>
@@ -43,39 +48,44 @@ const { cards } = Astro.props;
 <style>
   .rail { display: flex; flex-direction: column; gap: 12px; }
   .r-stage {
-    position: relative; height: 636px; overflow: hidden;
-    touch-action: pan-x; user-select: none; outline: none;
+    position: relative; height: 340px; overflow: hidden;
+    touch-action: pan-x; user-select: none; outline: none; cursor: grab;
   }
+  .r-stage:active { cursor: grabbing; }
   .r-stage:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 14px; }
   .rcard {
-    position: absolute; inset-inline: 0; top: 0; height: 88px;
-    display: flex; flex-direction: column; gap: 2px; padding: 12px 15px;
-    border-radius: 14px; cursor: pointer; text-align: left; will-change: transform;
-    font-family: var(--sans); color: var(--text); opacity: .85;
+    position: absolute; inset-inline: 0; top: 0; height: 116px;
+    display: flex; flex-direction: column; gap: 3px; padding: 13px 16px;
+    border-radius: 14px; text-align: left; will-change: transform;
+    pointer-events: none; cursor: pointer;
+    font-family: var(--sans); color: var(--text);
     background: linear-gradient(160deg, var(--bg-panel-2), var(--bg-inset));
     border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
     box-shadow: 0 8px 26px rgba(0, 0, 0, .35);
-    transition: translate .15s ease, border-color .15s ease, opacity .15s ease, scale .2s ease;
   }
-  .r-stage.snap .rcard { transition: transform .28s cubic-bezier(.2, .8, .3, 1); }
-  .rcard:hover { opacity: 1; translate: -5px 0; }
   .rcard.is-front {
-    opacity: 1; scale: 1.02; border-color: var(--accent);
+    border-color: var(--accent);
     box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 30%, transparent), 0 10px 30px rgba(0, 0, 0, .4);
   }
   .rc-top { display: flex; justify-content: space-between; align-items: center; }
-  .rc-icon { font-size: 17px; color: var(--accent); }
+  .rc-icon { font-size: 19px; color: var(--accent); }
   .rc-count {
     font-size: 12px; color: var(--text-faint); background: var(--bg-deep);
     border: 1px solid var(--line); border-radius: 4px; padding: 0 7px;
   }
-  .rc-title { font-size: 16.5px; font-weight: 700; }
-  .rc-desc { font-size: 12px; color: var(--text-muted); line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .r-arrows { display: flex; gap: 8px; }
+  .rc-title { font-size: 17px; font-weight: 700; }
+  .rc-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; overflow: hidden; }
+  .r-controls { display: flex; align-items: center; justify-content: center; gap: 14px; }
   .arrow {
     width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-strong);
     background: var(--bg-panel); color: var(--text); font-size: 16px; cursor: pointer;
     transition: border-color .2s, color .2s;
   }
   .arrow:hover { border-color: var(--line-gold); color: var(--gold); }
+  .dots { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 2px; border: 0; padding: 0; cursor: pointer;
+    background: var(--line-strong); transition: all .25s;
+  }
+  .dot.active { background: var(--gold); width: 20px; }
 </style>

@@ -143,86 +143,136 @@ const railCards = [
   const chips = [...bar.querySelectorAll<HTMLButtonElement>('.cat-chip')];
   const details = [...document.querySelectorAll<HTMLElement>('[data-detail]')];
 
-  // ---- 左侧卡组（固定位置列表 + 拖拽橡皮筋 + 选中弹起）----
+  // ---- 左侧卡组（首页同款堆叠滑卡：拖拽甩动/弹簧回弹/圆点；点击=坐标命中，立即筛选）----
   const railStage = document.querySelector<HTMLElement>('[data-rstage]');
   const railCards = railStage ? [...railStage.querySelectorAll<HTMLButtonElement>('[data-rcard]')] : [];
   const railTotal = railCards.length;
   const railKeys = railCards.map((c) => c.dataset.key!);
-  let progress = 0; // 当前选中下标（0..railTotal-1，卡片不重排）
-  let dragY = 0;    // 拖拽时的整列视觉偏移（橡皮筋，松手回弹）
+  const railDots = railStage ? [...railStage.parentElement!.querySelectorAll<HTMLButtonElement>('[data-rdot]')] : [];
+  let progress = 0;
+  let raf = 0;
   let fromRail = false;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const wrapIdx = (i: number) => ((Math.round(i) % railTotal) + railTotal) % railTotal;
+  const offsetOf = (i: number) => {
+    let o = (i - progress) % railTotal;
+    if (o > railTotal / 2) o -= railTotal;
+    if (o < -railTotal / 2) o += railTotal;
+    return o;
+  };
 
   function renderRail() {
-    const y = 92; // 卡高 88 + 4px 缝，7 张全量可见、全量可点
+    const y = 58, x = 16, shrink = .06;
     railCards.forEach((card, i) => {
-      card.style.transform = `translateY(${i * y + dragY}px)`;
-      card.classList.toggle('is-front', wrapIdx(progress) === i);
+      const o = offsetOf(i);
+      const ao = Math.abs(o);
+      card.style.transform = `translateY(${o * y}px) translateX(${-ao * x}px) scale(${1 - ao * shrink})`;
+      card.style.opacity = String(Math.max(.3, Math.min(1, 1.1 - ao * .3)));
+      card.style.zIndex = String(100 - Math.round(ao * 10));
+      card.classList.toggle('is-front', ao < .5);
     });
+    const front = wrapIdx(progress);
+    railDots.forEach((d, i) => d.classList.toggle('active', i === front));
   }
 
-  // 选中并切视图：状态立即生效（筛选取决于点击，不取决于动画）
-  function select(key: string) {
+  function setProgress(p: number) { progress = p; renderRail(); }
+
+  // 选中并切视图：状态立即生效（筛选取决于点击，不取决于动画），弹簧只是视觉
+  function select(key: string, springTarget?: number) {
     const idx = railKeys.indexOf(key);
-    if (idx >= 0) progress = idx;
+    if (idx < 0) return;
     fromRail = true;
     show(key);
     fromRail = false;
-    renderRail();
+    if (springTarget !== undefined) springTo(springTarget);
+    else { progress = idx; renderRail(); }
   }
 
-  function snapBack() {
-    if (!railStage || reduced) { dragY = 0; renderRail(); return; }
-    railStage.classList.add('snap');
-    dragY = 0;
-    renderRail();
-    window.setTimeout(() => railStage?.classList.remove('snap'), 320);
+  const springToKey = (i: number) =>
+    select(railKeys[wrapIdx(i)], i + Math.round((progress - i) / railTotal) * railTotal);
+
+  function springTo(target: number) {
+    if (reduced) { setProgress(target); return; }
+    cancelAnimationFrame(raf);
+    let pos = progress, v = 0, last = performance.now();
+    const k = 210, damp = 30;
+    const step = (now: number) => {
+      // 按真实时钟追赶：帧率被节流也能按时完成
+      let dtTotal = Math.min(.25, (now - last) / 1000); last = now;
+      while (dtTotal > 1e-4) {
+        const dt = Math.min(.032, dtTotal); dtTotal -= dt;
+        v += (-k * (pos - target) - damp * v) * dt;
+        pos += v * dt;
+      }
+      setProgress(pos);
+      if (Math.abs(pos - target) > .001 || Math.abs(v) > .001) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+
+  // 坐标命中：点在了哪张卡的可见区域（取离前卡最近=层级最高者）
+  function cardAt(px: number, py: number): number {
+    let best = -1, bestAo = 1e9;
+    railCards.forEach((card, i) => {
+      const r = card.getBoundingClientRect();
+      if (px >= r.left && px <= r.right && py >= r.top && py <= r.bottom) {
+        const ao = Math.abs(offsetOf(i));
+        if (ao < bestAo) { bestAo = ao; best = i; }
+      }
+    });
+    return best;
   }
 
   if (railStage) {
-    // 拖拽：整列跟手（带阻尼），松手回弹并按甩动方向换选中
-    let startY = 0, lastY = 0, lastT = 0, vel = 0, down = false, moved = 0;
+    // 拖拽 + 轻点（move/up 挂 window）
+    let startY = 0, startP = 0, lastY = 0, lastT = 0, vel = 0, down = false, moved = 0;
     const onMove = (e: PointerEvent) => {
       if (!down) return;
       moved = Math.max(moved, Math.abs(e.clientY - startY));
       const now = performance.now();
       vel = (lastY - e.clientY) / Math.max(1, now - lastT) * 1000;
       lastY = e.clientY; lastT = now;
-      dragY = Math.max(-64, Math.min(64, (e.clientY - startY) * .35));
-      renderRail();
+      setProgress(startP + (startY - e.clientY) / 90);
     };
     const onUp = (e: PointerEvent) => {
       if (!down) return;
       down = false;
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
-      if (moved < 8) { snapBack(); return; } // 视为点击，交给 click 处理
+      if (moved < 8) {
+        const hit = cardAt(e.clientX, e.clientY);
+        if (hit >= 0) springToKey(hit);
+        return;
+      }
       let shift = Math.round((startY - e.clientY) / 140 + vel / 600);
       shift = Math.max(-3, Math.min(3, shift));
-      select(railKeys[wrapIdx(progress + shift)]);
-      snapBack();
+      springToKey(Math.round(startP) + shift);
     };
     railStage.addEventListener('pointerdown', (e) => {
-      down = true; moved = 0; startY = lastY = e.clientY; lastT = performance.now(); vel = 0;
+      down = true; moved = 0; startY = lastY = e.clientY; startP = progress;
+      lastT = performance.now(); vel = 0;
+      cancelAnimationFrame(raf);
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
     });
-
-    // 点卡片 = 选中（不做悬停自动切换——悬停换位会让点击落错卡）
-    railCards.forEach((card, i) => card.addEventListener('click', () => {
+    // 兜底：pointerup 未命中时，原生 click 再路由一次（幂等）
+    railStage.addEventListener('click', (e) => {
       if (moved >= 8) return;
-      select(railKeys[i]);
-    }));
+      const hit = cardAt(e.clientX, e.clientY);
+      if (hit >= 0) springToKey(hit);
+    });
 
-    // 按钮 & 键盘
-    const stepSelect = (delta: number) => select(railKeys[wrapIdx(progress + delta)]);
-    document.querySelector('[data-rprev]')?.addEventListener('click', () => stepSelect(-1));
-    document.querySelector('[data-rnext]')?.addEventListener('click', () => stepSelect(1));
+    // 键盘用户：按钮聚焦后 Enter 仍走原生 click
+    railCards.forEach((card, i) => card.addEventListener('click', () => springToKey(i)));
+
+    // 箭头 & 圆点 & 键盘
+    document.querySelector('[data-rprev]')?.addEventListener('click', () => springToKey(Math.round(progress) - 1));
+    document.querySelector('[data-rnext]')?.addEventListener('click', () => springToKey(Math.round(progress) + 1));
+    railDots.forEach((d, i) => d.addEventListener('click', () => springToKey(i)));
     railStage.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowUp') { e.preventDefault(); stepSelect(-1); }
-      if (e.key === 'ArrowDown') { e.preventDefault(); stepSelect(1); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); springToKey(Math.round(progress) - 1); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); springToKey(Math.round(progress) + 1); }
     });
     renderRail();
   }
