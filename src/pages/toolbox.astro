@@ -2,44 +2,40 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TerminalWindow from '../components/TerminalWindow.astro';
+import ToolCarousel from '../components/ToolCarousel.astro';
+import { TOOLBOX_CATS } from '../data/toolbox';
 
 const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
 
-const CATS = [
-  { key: 'class', label: '班级管理', icon: '▦', desc: '班主任工具 + 留痕 + 排座' },
-  { key: 'teaching', label: '教学', icon: '▶', desc: '课件 + 中考题 + 上课提醒' },
-  { key: 'agent', label: 'Agent / 知识库', icon: '◇', desc: 'Obsidian + WorkBuddy' },
-  { key: 'skill', label: 'Skill / 脚本', icon: '◈', desc: '画图 + 飞象 + Mermaid' },
-  { key: 'creation', label: '创作辅助', icon: '</>', desc: '网页工具 + 练习册 + 课件' },
-  { key: 'design', label: '设计美学', icon: '✦', desc: '配色 + 图标 + 站酷 + shadcn' },
-  { key: 'learn', label: '进阶学习', icon: '»', desc: 'easy-vibe + MDN + Dify' },
-] as const;
+// 空分类不出卡片；补进工具后自动出现
+const cats = TOOLBOX_CATS
+  .map((c) => ({ ...c, items: tools.filter((t) => t.data.category === c.key) }))
+  .filter((c) => c.items.length > 0);
 ---
 <BaseLayout title="工具箱" description="班主任工具、教学工具、Skill 脚本、设计资源——按分类浏览">
   <div class="container toolbox-page">
     <TerminalWindow title="happyvibe toolbox">
-      <p class="kicker mono">// TOOLBOX · {tools.length} 个工具 · {CATS.length} 个分类</p>
+      <p class="kicker mono">// TOOLBOX · {tools.length} 个工具 · {cats.length} 个分类</p>
       <h1 class="tb-title">工具箱</h1>
       <p class="tb-sub text-muted">
         原则不变：<strong>大量重复、有固定流程的活才交给工具</strong>；涉及学生信息的界面分享前请脱敏。
       </p>
     </TerminalWindow>
 
+    <ToolCarousel cats={cats} />
+
     <!-- 分类导航 -->
     <nav class="cat-bar" id="cat-bar">
-      {CATS.map((c) => {
-        const n = tools.filter((t) => t.data.category === c.key).length;
-        return (
-          <button class="cat-chip" data-cat={c.key} type="button">
-            <span class="mono" aria-hidden="true">{c.icon}</span> {c.label} <span class="cat-n mono">{n}</span>
-          </button>
-        );
-      })}
+      {cats.map((c) => (
+        <button class="cat-chip" data-cat={c.key} type="button">
+          <span class="mono" aria-hidden="true">{c.icon}</span> {c.label} <span class="cat-n mono">{c.items.length}</span>
+        </button>
+      ))}
     </nav>
 
     <!-- 分类详情（按需显示） -->
-    {CATS.map((c) => {
-      const items = tools.filter((t) => t.data.category === c.key);
+    {cats.map((c) => {
+      const items = c.items;
       return (
         <section class="cat-detail" data-detail={c.key} hidden>
           <h2 class="cd-title"><span class="mono" aria-hidden="true">{c.icon}</span> {c.label} <span class="cd-count mono">{items.length} 个</span></h2>
@@ -65,19 +61,16 @@ const CATS = [
 
     <!-- 默认总览：卡片网格（首页三种学法同款样式） -->
     <div class="cat-overview" data-overview>
-      {CATS.map((c) => {
-        const items = tools.filter((t) => t.data.category === c.key);
-        return (
-          <button class="cat-card card" data-cat={c.key} type="button">
-            <div class="cc-top">
-              <span class="cc-icon mono" aria-hidden="true">{c.icon}</span>
-              <span class="cc-count mono">{items.length} 个</span>
-            </div>
-            <h3 class="cc-title">{c.label}</h3>
-            <p class="cc-desc">{c.desc}</p>
-          </button>
-        );
-      })}
+      {cats.map((c) => (
+        <button class="cat-card card" data-cat={c.key} type="button">
+          <div class="cc-top">
+            <span class="cc-icon mono" aria-hidden="true">{c.icon}</span>
+            <span class="cc-count mono">{c.items.length} 个</span>
+          </div>
+          <h3 class="cc-title">{c.label}</h3>
+          <p class="cc-desc">{c.desc}</p>
+        </button>
+      ))}
     </div>
   </div>
 </BaseLayout>
@@ -140,22 +133,32 @@ const CATS = [
     else history.replaceState(null, '', location.pathname);
   }
 
-  chips.forEach((c) => c.addEventListener('click', () => show(c.dataset.cat === chips.find((x) => x.classList.contains('on'))?.dataset.cat ? null : c.dataset.cat ?? null)));
-  document.querySelectorAll('[data-cat][data-detail]') // no-op selector guard
+  // 芯片：点击切换分类，再点同一个 = 返回总览
+  chips.forEach((c) => c.addEventListener('click', () => {
+    const target = c.dataset.cat ?? null;
+    const current = chips.find((x) => x.classList.contains('on'))?.dataset.cat ?? null;
+    show(target === current ? null : target);
+  }));
 
-  // 总览行点击 → 进入对应分类
+  // 总览卡片点击 → 进入对应分类
   document.querySelectorAll<HTMLButtonElement>('.cat-card').forEach((b) => {
     b.addEventListener('click', () => {
       show(b.dataset.cat ?? null);
       bar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
   });
-  // 芯片再点一次 = 返回
-  chips.forEach((c) => c.addEventListener('click', () => {
-    if (c.classList.contains('on')) show(null);
-  }));
 
   // 初始 hash
   const h = location.hash.slice(1);
   if (h && details.some((d) => d.dataset.detail === h)) show(h);
+
+  // 轮播「进入分类」走 hash 跳转；hash 变化时切视图并滚到分类区
+  window.addEventListener('hashchange', () => {
+    const key = location.hash.slice(1);
+    if (!key) { show(null); return; }
+    if (details.some((d) => d.dataset.detail === key)) {
+      show(key);
+      bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 </script>
