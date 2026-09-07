@@ -16,6 +16,7 @@ const year = new Date().getFullYear();
       <a href={withBase('/challenge/')}>21 天挑战</a>
       <a href={withBase('/facilitator/')}>培训者工具包</a>
       <a href={withBase('/about/')}>关于本站</a>
+      <button class="footer-tour" type="button" data-tour-start>新手教程</button>
     </nav>
   </div>
   <div class="container footer-meta mono">
@@ -41,6 +42,13 @@ const year = new Date().getFullYear();
   .footer-slogan { margin: 0 0 4px; color: var(--text); }
   .footer-note { margin: 0; font-size: 13px; }
   .footer-nav { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  .footer-nav a { color: var(--text-muted); }
+  .footer-tour {
+    background: none; border: 0; padding: 0; cursor: pointer; text-align: left;
+    color: var(--text-muted); font-size: 14px; font-family: var(--sans);
+    border-bottom: 1px dashed var(--line);
+  }
+  .footer-tour:hover { color: var(--gold-soft); }
   .footer-meta {
     display: flex;
     flex-wrap: wrap;
@@ -53,3 +61,13 @@ const year = new Date().getFullYear();
     color: var(--text-faint);
   }
 </style>
+
+<script>
+  // 页脚「新手教程」：回首页重看引导
+  document.querySelectorAll<HTMLButtonElement>('[data-tour-start]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      try { sessionStorage.setItem('hv-tour-run', '1'); } catch {}
+      location.href = '/';
+    });
+  });
+</script>

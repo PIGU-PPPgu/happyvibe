@@ -1,0 +1,229 @@
+---
+/**
+ * 首页新手引导（零依赖原生实现）
+ * 首次进入自动开始；可跳过；完成后记入 localStorage 不再打扰；页脚「新手教程」可重看
+ * 聚光灯 + 气泡：Esc 关闭 · 左右键翻页 · 目标不可见时自动跳过该步
+ */
+import { getCollection } from 'astro:content';
+import { withBase } from '../lib/urls';
+
+const total = (await getCollection('lessons')).length;
+---
+
+<div class="tour" data-tour hidden aria-role="dialog" aria-label="新手教程" data-total={total}>
+  <div class="tour-hole" data-tour-hole></div>
+  <div class="tour-tip" data-tour-tip role="dialog" aria-modal="false">
+    <p class="tt-kicker mono">// ONBOARDING · <span data-tour-pos>1 / 8</span></p>
+    <h3 class="tt-title" data-tour-title></h3>
+    <p class="tt-body" data-tour-body></p>
+    <div class="tt-actions">
+      <button class="tt-skip" type="button" data-tour-skip>跳过教程</button>
+      <div class="tt-nav">
+        <button class="tt-btn ghost" type="button" data-tour-prev>上一步</button>
+        <button class="tt-btn gold" type="button" data-tour-next>下一步</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tour { position: fixed; inset: 0; z-index: 300; }
+  .tour[hidden] { display: none; }
+  .tour-hole {
+    position: absolute; border-radius: 12px;
+    box-shadow: 0 0 0 9999px rgba(8, 4, 18, .78);
+    transition: top .3s ease, left .3s ease, width .3s ease, height .3s ease;
+    pointer-events: none;
+  }
+  .tour-hole.center {
+    top: 50% !important; left: 50% !important; width: 0 !important; height: 0 !important;
+    border-radius: 50%;
+  }
+  .tour-tip {
+    position: absolute; max-width: 380px; width: calc(100vw - 32px);
+    background: linear-gradient(160deg, var(--bg-panel-2), var(--bg-inset));
+    border: 1px solid var(--line-gold); border-radius: 14px;
+    padding: 18px 20px 16px; box-shadow: 0 18px 50px rgba(0, 0, 0, .55), 0 0 30px rgba(254, 179, 0, .08);
+    transition: top .3s ease, left .3s ease;
+  }
+  .tt-kicker { margin: 0 0 6px; font-size: 12px; color: var(--gold); letter-spacing: .08em; }
+  .tt-title { margin: 0 0 8px; font-size: 19px; }
+  .tt-body { margin: 0 0 14px; font-size: 14.5px; line-height: 1.75; color: var(--text-muted); }
+  .tt-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .tt-skip {
+    background: none; border: 0; padding: 6px 4px; cursor: pointer;
+    color: var(--text-faint); font-size: 13px; font-family: var(--sans);
+    border-bottom: 1px dashed var(--line); 
+  }
+  .tt-skip:hover { color: var(--text-muted); }
+  .tt-nav { display: flex; gap: 8px; }
+  .tt-btn { padding: 8px 18px; border-radius: 8px; font-size: 14px; cursor: pointer; font-family: var(--sans); }
+  .tt-btn.ghost { background: var(--bg-panel); color: var(--text); border: 1px solid var(--line-strong); }
+  .tt-btn.ghost:hover { border-color: var(--line-gold); }
+  .tt-btn.gold { background: linear-gradient(135deg, var(--gold-soft), var(--gold)); color: #2a1c00; border: 0; font-weight: 700; }
+  .tt-btn.gold:hover { filter: brightness(1.05); }
+  .tour-tip.bottom-sheet {
+    left: 16px !important; right: 16px; top: auto !important; bottom: 16px; max-width: none;
+  }
+</style>
+
+<script>
+  const DONE_KEY = 'hv-tour:v1';
+  const RUN_FLAG = 'hv-tour-run';
+
+  const root = document.querySelector<HTMLElement>('[data-tour]')!;
+  const hole = root.querySelector<HTMLElement>('[data-tour-hole]')!;
+  const tip = root.querySelector<HTMLElement>('[data-tour-tip]')!;
+  const posEl = root.querySelector<HTMLElement>('[data-tour-pos]')!;
+  const titleEl = root.querySelector<HTMLElement>('[data-tour-title]')!;
+  const bodyEl = root.querySelector<HTMLElement>('[data-tour-body]')!;
+  const nextBtn = root.querySelector<HTMLButtonElement>('[data-tour-next]')!;
+  const prevBtn = root.querySelector<HTMLButtonElement>('[data-tour-prev]')!;
+
+  interface Step {
+    center?: boolean;
+    sel?: string;
+    mobileSel?: string;
+    title: string;
+    body: string;
+    cta?: { label: string; href: string };
+  }
+
+  const steps: Step[] = [
+    { center: true, title: '新手教程', body: '这是集团教师 AI 学习站：{N} 节课、学习路线图、工具箱、比赛专区。花一分钟认全它们的位置。' },
+    { sel: '.hero-cta .btn-gold', title: '从这里开始', body: '零基础点「开始学习」，进 WorkBuddy 第 1 课：手把手装软件、发出第一句话。' },
+    { sel: '.start-here .sh-title', title: '三种学法', body: '不知道先学什么，就在这里选一个：直接上手工具、按目标挑任务、或跟路线图系统学。' },
+    { sel: '#modules .sec-title', title: '全部课程模块', body: '{N} 节课按模块分好。拖动卡片翻页，点「进入」看模块里的课。' },
+    { sel: '.main-nav', mobileSel: '.menu-toggle', title: '顶部导航', body: '课程模块、学习路线图、比赛专区、工具箱，随时从这里过去。' },
+    { sel: '.search-trigger', title: '全站搜索', body: '想不起某个功能在哪，点这里或按 ⌘K，像查字典一样搜全站。' },
+    { sel: '.progress-chip', title: '进度记在本地', body: '每课底部有「标记已学」，这里显示总进度。进度记在你自己的浏览器里，不用注册，换设备不跟随。' },
+    { center: true, title: '认全了', body: '三个去处：开始第 1 课、看七站路线图、去比赛专区。', cta: { label: '开始第 1 课', href: '/modules/software/wb-01-start/' } },
+  ];
+
+  const total = Number(root.dataset.total || '0');
+  const fill = (s: string) => s.replace('{N}', String(total));
+  let idx = 0;
+  let active = false;
+
+  function targetOf(step: Step): HTMLElement | null {
+    if (step.center) return null;
+    const cands = [step.sel, step.mobileSel].filter(Boolean) as string[];
+    for (const sel of cands) {
+      const el = document.querySelector<HTMLElement>(sel);
+      if (el && el.getBoundingClientRect().width > 0 && getComputedStyle(el).display !== 'none') return el;
+    }
+    return null;
+  }
+
+  function place() {
+    const step = steps[idx];
+    const target = targetOf(step);
+    if (step.center || !target) {
+      hole.classList.add('center');
+      hole.style.top = '50%'; hole.style.left = '50%'; hole.style.width = '0'; hole.style.height = '0';
+    } else {
+      hole.classList.remove('center');
+      const r = target.getBoundingClientRect();
+      const pad = 8;
+      hole.style.top = `${r.top - pad}px`;
+      hole.style.left = `${r.left - pad}px`;
+      hole.style.width = `${r.width + pad * 2}px`;
+      hole.style.height = `${r.height + pad * 2}px`;
+    }
+    // 气泡位置
+    tip.classList.remove('bottom-sheet');
+    if (step.center || !target) {
+      // 居中卡
+      tip.style.left = '50%';
+      tip.style.top = '38%';
+      tip.style.transform = 'translate(-50%, -50%)';
+    } else {
+      tip.style.transform = 'none';
+      const r = target.getBoundingClientRect();
+      const vw = innerWidth, vh = innerHeight;
+      const below = r.bottom + 16;
+      const estimate = 210;
+      if (vw < 640) {
+        tip.classList.add('bottom-sheet');
+        tip.style.left = '16px'; tip.style.top = 'auto';
+      } else {
+        let left = Math.max(16, Math.min(r.left, vw - 396));
+        let top: number;
+        if (below + estimate < vh) top = below;
+        else top = Math.max(16, r.top - estimate - 16);
+        tip.style.left = `${left}px`; tip.style.top = `${top}px`;
+      }
+    }
+  }
+
+  function render() {
+    const step = steps[idx];
+    posEl.textContent = `${idx + 1} / ${steps.length}`;
+    titleEl.textContent = step.title;
+    bodyEl.textContent = fill(step.body);
+    prevBtn.hidden = idx === 0;
+    nextBtn.textContent = step.cta ? step.cta.label : idx === steps.length - 1 ? '完成' : '下一步';
+    if (step.cta) {
+      nextBtn.dataset.ctaHref = step.cta.href;
+    } else {
+      delete nextBtn.dataset.ctaHref;
+    }
+    place();
+  }
+
+  function go(n: number) {
+    const dir = n >= idx ? 1 : -1;
+    idx = Math.max(0, Math.min(steps.length - 1, n));
+    const step = steps[idx];
+    const target = targetOf(step);
+    if (!step.center && !target) {
+      // 目标不可见（如新用户无进度记录），沿导航方向跳过该步
+      go(idx + dir);
+      return;
+    }
+    if (target) target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    window.setTimeout(place, 420);
+    render();
+  }
+
+  function start() {
+    if (active) return;
+    active = true;
+    idx = 0;
+    root.hidden = false;
+    render();
+    nextBtn.focus();
+  }
+
+  function stop(done: boolean) {
+    active = false;
+    root.hidden = true;
+    try {
+      if (done) localStorage.setItem(DONE_KEY, 'done');
+    } catch {}
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const href = nextBtn.dataset.ctaHref;
+    if (href) { stop(true); location.href = href; return; }
+    if (idx === steps.length - 1) stop(true);
+    else go(idx + 1);
+  });
+  prevBtn.addEventListener('click', () => go(idx - 1));
+  root.querySelector('[data-tour-skip]')?.addEventListener('click', () => stop(true));
+  document.addEventListener('keydown', (e) => {
+    if (!active) return;
+    if (e.key === 'Escape') stop(true);
+    if (e.key === 'ArrowRight') go(idx + 1);
+    if (e.key === 'ArrowLeft') go(idx - 1);
+  });
+  addEventListener('scroll', () => { if (active) place(); }, { passive: true });
+  addEventListener('resize', () => { if (active) place(); });
+
+  // 启动：首次访问自动开始；带重看标记（页脚「新手教程」进入）强制开始
+  let force = false;
+  try { force = sessionStorage.getItem(RUN_FLAG) === '1'; sessionStorage.removeItem(RUN_FLAG); } catch {}
+  let seen = false;
+  try { seen = !!localStorage.getItem(DONE_KEY); } catch {}
+  if (force || !seen) window.setTimeout(start, 700);
+</script>

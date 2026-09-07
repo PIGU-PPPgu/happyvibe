@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import TerminalWindow from '../components/TerminalWindow.astro';
 import TypeWriter from '../components/TypeWriter.astro';
 import ModuleCarousel from '../components/ModuleCarousel.astro';
+import OnboardingTour from '../components/OnboardingTour.astro';
 import { withBase } from '../lib/urls';
 
 const lessons = await getCollection('lessons');
@@ -71,6 +72,8 @@ const heroLines = [
       <a class="btn btn-gold" href={withBase('/path/')} data-continue-btn hidden>去上课 →</a>
     </div>
   </section>
+
+  <OnboardingTour />
 </BaseLayout>
 
 <style>
