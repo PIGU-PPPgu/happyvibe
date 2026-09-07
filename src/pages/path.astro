@@ -33,6 +33,11 @@ const totalStations = stations.length;
       </p>
     </TerminalWindow>
 
+    <div class="path-map-embed">
+      <iframe class="path-frame" src="/interactives/path-map" title="七站路线图" loading="lazy"></iframe>
+      <p class="path-full"><a href="/interactives/path-map" target="_blank" rel="noopener">全屏打开 →</a> <span class="mono text-muted">投屏时按 F 进演示模式</span></p>
+    </div>
+
     <PreTest />
 
     <ol class="stations">
@@ -88,6 +93,11 @@ const totalStations = stations.length;
   .path-kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
   .path-title { margin: 0 0 10px; font-size: clamp(24px, 4vw, 36px); }
   .path-sub { margin: 0; max-width: 620px; }
+  .path-map-embed { margin-top: 24px; }
+  .path-frame { width: 100%; aspect-ratio: 880 / 620; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-panel); }
+  .path-full { margin: 8px 0 0; font-size: 13px; }
+  .path-full a { color: var(--gold-soft); border-bottom: 1px dashed var(--line-gold); }
+  @media (max-width: 700px) { .path-frame { aspect-ratio: auto; height: 520px; } }
   .path-finish {
     margin-top: 36px; padding: 24px 28px;
     display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
