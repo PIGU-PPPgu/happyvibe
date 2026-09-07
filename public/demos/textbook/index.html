@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>课本可视化 · 样板集</title>
+<style>
+  :root { --bg:#150e22; --panel:#1e1433; --text:#f2ecf8; --muted:#a99cc0;
+    --gold:#feb300; --gold-soft:#ffd34d; --purple:#a63d97; --purple-soft:#c98fbf;
+    --line:rgba(180,130,210,.25); --green:#7ed88a; }
+  * { margin:0; box-sizing:border-box; }
+  body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text);
+    background-image:linear-gradient(rgba(166,61,151,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(166,61,151,.04) 1px,transparent 1px);
+    background-size:36px 36px; padding:36px 18px; }
+  .wrap { max-width:1000px; margin:0 auto; }
+  .tag { font-family:ui-monospace,monospace; font-size:12px; color:var(--gold); letter-spacing:.2em; }
+  h1 { font-size:clamp(24px,4vw,38px); margin:8px 0 6px; }
+  .sub { color:var(--muted); font-size:14px; line-height:1.8; margin-bottom:30px; }
+  .lesson { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px 26px; margin-bottom:26px; }
+  .lesson h2 { font-size:20px; color:var(--gold-soft); margin-bottom:4px; }
+  .lesson .meta { font-size:12px; color:var(--muted); margin-bottom:14px; font-family:ui-monospace,monospace; }
+  .lesson .desc { font-size:14px; color:var(--text); line-height:1.8; margin-bottom:14px; }
+  .imgrow { display:flex; gap:10px; overflow-x:auto; padding-bottom:8px; margin-bottom:14px; }
+  .imgrow img { height:220px; border-radius:8px; border:1px solid var(--line); }
+  .player { display:flex; align-items:center; gap:12px; background:#0f0a19; border:1px solid var(--gold);
+    border-radius:10px; padding:10px 16px; margin-bottom:10px; }
+  .player span { font-size:13px; color:var(--gold-soft); white-space:nowrap; }
+  audio { flex:1; height:36px; }
+  .inter { background:rgba(166,61,151,.12); border:1px dashed var(--purple-soft); border-radius:10px; padding:14px 18px; margin-top:12px; }
+  .inter h4 { font-size:13px; color:var(--purple-soft); margin-bottom:8px; }
+  .inter p { font-size:13.5px; line-height:1.8; color:var(--text); }
+  footer { text-align:center; font-size:12px; color:#6f6390; margin-top:34px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="tag">TEXTBOOK → WEB</p>
+  <h1>课本可视化 · 样板集</h1>
+  <p class="sub">从 PDF 教材页 → 网页课件：左边原页、配音朗读、交互演示。<br>教材来源：<b style="color:var(--gold-soft)">国家统编/人教版</b>（ChinaTextbook 开源仓库）——告诉老师用了什么教材、哪一课、第几页。</p>
+
+  <!-- 一年级语文《秋天》 -->
+  <div class="lesson">
+    <h2>一年级语文 · 《秋天》</h2>
+    <p class="meta">统编版语文一年级上册 · 第 56-58 页 · 课文单元第 1 课</p>
+    <div class="imgrow">
+      <img src="pages/yw1-qiutian-059.webp" alt="教材P56"><img src="pages/yw1-qiutian-060.webp" alt="教材P57"><img src="pages/yw1-qiutian-061.webp" alt="教材P58">
+    </div>
+    <div class="player"><span>📖 课文朗读</span><audio controls preload="none" src="audio/qiutian.mp3"></audio></div>
+    <div class="inter">
+      <h4>◈ 交互玩法（学生点着学）</h4>
+      <p>① 逐句跟读：点哪句读哪句（音频已切段）；②「一片片」「一群」量词点读讲解；③ 拖动大雁排成「人」字和「一」字的动画演示</p>
+    </div>
+  </div>
+
+  <!-- 一年级数学《认识钟表》 -->
+  <div class="lesson">
+    <h2>一年级数学 · 《认识钟表》</h2>
+    <p class="meta">人教版数学一年级上册 · 第 84-86 页 · 第 7 单元</p>
+    <div class="imgrow">
+      <img src="pages/sx1-zhongbiao-089.webp" alt="教材P84"><img src="pages/sx1-zhongbiao-090.webp" alt="教材P85"><img src="pages/sx1-zhongbiao-091.webp" alt="教材P86">
+    </div>
+    <div class="player"><span>📖 概念朗读</span><audio controls preload="none" src="audio/zhongbiao.mp3"></audio></div>
+    <div class="inter">
+      <h4>◈ 交互玩法</h4>
+      <p>① 拖动时针分针，表盘实时显示时刻；②「你说我拨」游戏：语音报时学生拨；③ 生活连线：起床 7 时 / 午饭 12 时</p>
+    </div>
+  </div>
+
+  <!-- 七年级语文《济南的冬天》 -->
+  <div class="lesson">
+    <h2>七年级语文 · 《济南的冬天》（节选）</h2>
+    <p class="meta">统编版语文七年级上册 · 第 5-7 页 · 第 1 单元第 2 课 · 老舍</p>
+    <div class="imgrow">
+      <img src="pages/yw7-jinan-013.webp" alt="教材P5"><img src="pages/yw7-jinan-014.webp" alt="教材P6"><img src="pages/yw7-jinan-015.webp" alt="教材P7">
+    </div>
+    <div class="player"><span>📖 精段朗读</span><audio controls preload="none" src="audio/jinan.mp3"></audio></div>
+    <div class="inter">
+      <h4>◈ 交互玩法</h4>
+      <p>① 对比朗读：北平的风 vs 济南的温晴——切换两种背景音；② 词句点击批注：「响晴」「设若」的语境解释；③ 写法探秘：找出全文的比喻句做成卡片墙</p>
+    </div>
+  </div>
+
+  <!-- 八年级物理《声音的产生与传播》 -->
+  <div class="lesson">
+    <h2>八年级物理 · 《声音的产生与传播》</h2>
+    <p class="meta">人教版物理八年级上册 · 第 14-16 页 · 第 2 章第 1 节</p>
+    <div class="imgrow">
+      <img src="pages/wl8-shengyin-050.webp" alt="教材P14"><img src="pages/wl8-shengyin-051.webp" alt="教材P15"><img src="pages/wl8-shengyin-052.webp" alt="教材P16">
+    </div>
+    <div class="player"><span>📖 核心概念</span><audio controls preload="none" src="audio/shengyin.mp3"></audio></div>
+    <div class="inter">
+      <h4>◈ 交互玩法</h4>
+      <p>① 音叉振动模拟：滑块调频率，看波形变化；② 真空铃实验动画：抽气→声音变小；③ 传声介质连线：固体/液体/气体各举一例</p>
+    </div>
+  </div>
+
+  <footer>样板 4 课（小学 2 + 初中 2）· 教材页仅用于教学演示 · <a href="/" style="color:var(--gold)">返回学园</a></footer>
+</div>
+</body>
+</html>
