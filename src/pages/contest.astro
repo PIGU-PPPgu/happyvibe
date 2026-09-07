@@ -14,14 +14,14 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
       <p class="kicker mono">// CONTEST · 中国教育技术协会「AI+教育」创新应用技能大赛</p>
       <h1 class="title">比赛专区：做完就报名</h1>
       <p class="sub text-muted">
-        基础教育组 4 条赛道 · 免费 · <b style="color:var(--gold-soft)">报名截止 10 月 15 日（还剩 {days} 天）</b><br>
+        基础教育组 4 条赛道 · 免费 · 报名截止 <b style="color:var(--gold-soft)">10 月 15 日</b>（剩 {days} 天）<br>
         预赛 10.16-10.31（50% 进决赛）· 颁奖 11.12 无锡年会
       </p>
     </TerminalWindow>
 
     <!-- 官网入口 -->
     <section class="ct-card">
-      <h2>官方入口（扫码直达）</h2>
+      <h2>官方入口</h2>
       <div class="qr-row">
         <div class="qr-box">
           <img src="/images/contest/qr-official.png" alt="大赛官网二维码">
@@ -35,9 +35,9 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
         </div>
       </div>
       <div class="shots">
-        <div><img src="/images/contest/contest-home.webp" alt="官网首页"><p>大赛官网首页（报名入口在右上）</p></div>
-        <div><img src="/images/contest/contest-tracks.webp" alt="赛道详情页"><p>赛道详情页：点左侧标签看各赛道要求</p></div>
-        <div><img src="/images/contest/contest-signup.webp" alt="报名流程"><p>官方报名流程指引（PDF 可下载）</p></div>
+        <div><img src="/images/contest/contest-home.webp" alt="官网首页"><p>大赛官网首页 · 右上角报名</p></div>
+        <div><img src="/images/contest/contest-tracks.webp" alt="赛道详情页"><p>赛道详情页 · 左侧标签切换</p></div>
+        <div><img src="/images/contest/contest-signup.webp" alt="报名流程"><p>官方报名流程指引 PDF</p></div>
       </div>
     </section>
 
@@ -65,7 +65,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
           <td><a href={withBase('/modules/creation/task-library/')}>任务库 PBL 话术</a> · <a href={withBase('/modules/growth/innovation/')}>创意工坊 30 点子</a></td>
         </tr>
         <tr>
-          <td><b>④ 教育智能体构建</b><br><span class="badge-hot">主推</span></td>
+          <td><b>④ 教育智能体构建</b><br><span class="badge-hot">主场</span></td>
           <td>自主创编智能体：提示词 / <b>Skill 开发</b> / 工作流 / 知识库 / 数据库 / <b>多智能体协同</b></td>
           <td>学过站内 Skill 课的所有人</td>
           <td><a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a> · <a href={withBase('/modules/growth/skill-born/')}>Skill 三课</a> · <a href={withBase('/modules/software/task-workbench/')}>工作台（数据库互联）</a></td>

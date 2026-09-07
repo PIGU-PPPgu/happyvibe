@@ -1,5 +1,5 @@
 ---
-title: 学科材料包：15 科打包下载（扫码即得）
+title: 学科材料包：15 科打包下载
 module: creation
 order: 10
 description: 每个学科一个材料包：知识点文字 + 学科示意图/动画 + 朗读音频 + 现成任务话术。下载解压拖进 WorkBuddy 就能开工。
@@ -8,7 +8,7 @@ status: ready
 minutes: 8
 ---
 
-> **一句话结论：培训现场最怕「老师没带材料」。这个页面把 15 个学科的开始材料全部备齐——扫码即得，解压拖进 WorkBuddy，直接开工。**
+> **一句话结论：培训现场最怕「老师没带材料」。这个页面把 15 个学科的开始材料全部备齐——解压拖进 WorkBuddy，直接开工。**
 
 ## 每个包里有什么
 
@@ -29,7 +29,7 @@ minutes: 8
 
 ## 加餐 2：教师工作台模拟数据包
 
-跟着[任务二 · 打造教师工作台](/modules/software/task-workbench/)练手的老师：**[workbench-data.zip](/materials/workbench-data.zip)** 内含 10 位化名学生 + 待办清单 + 课表 + 作业记录——全部虚构，扫码即得，可直接投屏演示：
+跟着[任务二 · 打造教师工作台](/modules/software/task-workbench/)练手的老师：**[workbench-data.zip](/materials/workbench-data.zip)** 内含 10 位化名学生 + 待办清单 + 课表 + 作业记录——全部虚构，可投屏演示：
 
 ![扫码领工作台模拟数据](/materials/qr/workbench.png)
 
