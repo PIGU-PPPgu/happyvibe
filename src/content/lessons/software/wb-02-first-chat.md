@@ -2,7 +2,7 @@
 title: 第 2 课 · 第一次对话：从「会打字」到「会下需求」
 module: software
 order: 3
-description: 手把手系列。三句话框架 + 任务说明六要素 + 3 个可以照抄的任务。这一课学完，你对 AI 说的每句话都值钱。
+description: 手把手系列。三句话框架 + 任务说明六要素 + 3 个可以照抄的任务。
 source: 实机操作记录（v5.4.5）／ 参照 WorkBuddy 蓝皮书颗粒度
 status: ready
 minutes: 10

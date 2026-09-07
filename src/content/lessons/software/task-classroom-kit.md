@@ -2,7 +2,7 @@
 title: 任务三：一周课堂三件套（点名器 + 积分板 + 抢答页）
 module: software
 order: 18
-description: 三句话换三个课堂神器，周一点名、周三积分、周五抢答——本站有全部可交互成品，做完直接投屏用。
+description: 三句话换三个课堂工具，周一点名、周三积分、周五抢答——本站有全部可交互成品，做完直接投屏用。
 source: 任务式教程（成品全部真实可玩）
 status: ready
 minutes: 45

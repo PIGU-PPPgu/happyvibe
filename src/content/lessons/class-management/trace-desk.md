@@ -2,7 +2,7 @@
 title: 万事留痕 Trace Desk：班主任工作台
 module: class-management
 order: 3
-description: 一屏看清班务状态，AI 一键风控、考勤、请假，6 套 SOP 一键成报告——专为班主任做的小程序。
+description: 一屏看清班务状态，AI 风控、考勤、请假，6 套 SOP 自动成报告——专为班主任做的小程序。
 source: 培训 PPT S60-S63、S67
 status: ready
 minutes: 15

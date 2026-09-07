@@ -2,7 +2,7 @@
 title: WorkBuddy 总览：这一模块怎么学
 module: software
 order: 1
-description: 手把手系列课程地图 + 视频课 + 开源资料。零基础起步，每一课只教一件事，学完你就是科组里最会用 AI 的人。
+description: 手把手系列课程地图 + 视频课 + 开源资料。零基础起步，每一课只教一件事，
 source: 实机操作记录（v5.4.5）／ WorkBuddy 蓝皮书 ／ 官方文档
 status: ready
 minutes: 5
