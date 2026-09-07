@@ -107,6 +107,7 @@ const railCards = [
   .tb-rail { position: sticky; top: calc(var(--header-h) + 16px); }
 
   .cat-detail { display: flex; flex-direction: column; gap: 16px; }
+  .cat-detail[hidden] { display: none; } /* 必须：否则 display:flex 覆盖 hidden，八个分类全铺开、筛选看起来失效 */
   .cd-title { margin: 0; font-size: 22px; display: flex; align-items: center; gap: 10px; }
   .cd-count { font-size: 14px; color: var(--text-faint); }
 
@@ -207,6 +208,12 @@ const railCards = [
       }
       setProgress(pos);
       if (Math.abs(pos - target) > .001 || Math.abs(v) > .001) raf = requestAnimationFrame(step);
+      else {
+        // 保险：弹簧停稳后按最终位置再同步一次视图（幂等）
+        fromRail = true;
+        show(railKeys[wrapIdx(target)]);
+        fromRail = false;
+      }
     };
     raf = requestAnimationFrame(step);
   }
@@ -278,6 +285,8 @@ const railCards = [
   }
 
   // ---- 视图切换（卡组 / 芯片 / hash 共用）----
+  let bootDone = false; // 初始 hash 恢复时不滚动
+
   function show(key: string) {
     const k = !key || key === 'all' ? 'all' : key;
     chips.forEach((c) => c.classList.toggle('on', c.dataset.cat === k));
@@ -291,6 +300,17 @@ const railCards = [
         renderRail();
       }
     }
+    // 关键：切分类后把新内容滚到可见处——否则页面停在旧滚动位置，看起来像"没反应"
+    if (bootDone) {
+      const sec = document.querySelector<HTMLElement>(`[data-detail="${k}"]`);
+      const head = sec?.querySelector<HTMLElement>('.cd-title');
+      if (head) {
+        const r = head.getBoundingClientRect();
+        if (r.top < 0 || r.top > innerHeight - 80) {
+          head.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
   }
 
   chips.forEach((c) => c.addEventListener('click', () => {
@@ -302,6 +322,7 @@ const railCards = [
   // 初始 hash
   const h = location.hash.slice(1);
   if (h && details.some((d) => d.dataset.detail === h)) show(h);
+  window.setTimeout(() => { bootDone = true; }, 800);
 
   // hash 变化时切视图
   window.addEventListener('hashchange', () => {

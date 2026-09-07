@@ -43,6 +43,7 @@ const { cards } = Astro.props;
     </div>
     <button class="arrow" type="button" data-rnext aria-label="下一个分类">↓</button>
   </div>
+  <p class="r-ver mono">// v4</p>
 </div>
 
 <style>
@@ -88,4 +89,5 @@ const { cards } = Astro.props;
     background: var(--line-strong); transition: all .25s;
   }
   .dot.active { background: var(--gold); width: 20px; }
+  .r-ver { margin: 2px 0 0; text-align: center; font-size: 10px; color: var(--text-faint); opacity: .6; }
 </style>
