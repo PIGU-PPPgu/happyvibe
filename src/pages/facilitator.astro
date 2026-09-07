@@ -11,6 +11,16 @@ import { withBase } from '../lib/urls';
       <p class="sub text-muted">去别的学校分享时，这个网站就是你的讲义 + 实验环境。这一页只给培训者看——投屏时别打开它。</p>
     </TerminalWindow>
 
+    <section class="card opener">
+      <h2>开场定位 · 先讲透这三句</h2>
+      <ol>
+        <li><b>作品不是门槛。</b>调一个智能体、用飞象老师这样一句话出页面的工具，谁都做得出图文并茂的东西。</li>
+        <li><b>值钱的是过程。</b>老师亲自跟 AI 把一个想法磨成作品——话术怎么写、结果怎么验、课堂数据怎么留。这个过程带得走，变成日常能力。</li>
+        <li><b>AI 在幕后。</b>没有人靠打开一个 HTML 上课；真实课堂是应试的、教材是纸的。AI 的位置是替你把备课、出卷、班务这些重复的活在幕后干掉。</li>
+      </ol>
+      <p>讲完再进流程。有老师问「为什么不直接用飞象老师」：赶时间交差它是好工具，但它替你做了，能力留在平台；我们要把能力长在老师自己身上——先学会协作，以后用什么工具都顺手。</p>
+    </section>
+
     <section>
       <h2>两小时工作坊 · 分钟级流程</h2>
       <table>
@@ -69,6 +79,9 @@ import { withBase } from '../lib/urls';
   td:first-child { font-family: var(--mono); white-space: nowrap; color: var(--purple-soft); }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
   .card { padding: 18px 20px; }
+  .opener ol { padding-left: 1.4em; margin: 0 0 10px; }
+  .opener li { margin: .3em 0; }
+  .opener p { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.9; }
   .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--text); }
   .card p { margin: 0; font-size: 14px; color: var(--text-muted); }
   ul { padding-left: 1.3em; }

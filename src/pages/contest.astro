@@ -6,6 +6,17 @@ import { withBase } from '../lib/urls';
 const D1 = new Date('2026-10-15');
 const NOW = new Date();
 const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
+
+const TABS = [
+  { key: 'overview', label: '总览' },
+  { key: 't1', label: '赛道①' },
+  { key: 't2', label: '赛道②' },
+  { key: 't3', label: '赛道③' },
+  { key: 't4', label: '赛道④' },
+  { key: 'materials', label: '材料与话术' },
+  { key: 'strategy', label: '怎么赢' },
+  { key: 'schedule', label: '行动表' },
+] as const;
 ---
 <BaseLayout title="比赛专区" description="中国教育技术协会 AI+教育创新应用技能大赛：四条赛道对照、站内任务映射、参赛三件套话术、倒计时——带老师们直接去参赛。">
   <div class="container ct-page">
@@ -19,212 +30,289 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
       </p>
     </TerminalWindow>
 
-    <!-- 官网入口 -->
-    <section class="ct-card">
-      <h2>官方入口</h2>
-      <div class="qr-row">
-        <div class="qr-box">
-          <img src="/images/contest/qr-official.png" alt="大赛官网二维码">
-          <p>大赛官网<br><b>报名 · 提交材料</b></p>
-          <a class="btn btn-gold" href="http://aiedu.caet.org.cn/" target="_blank" rel="noopener">aiedu.caet.org.cn →</a>
+    <!-- Tab 导航（投屏培训时点着讲） -->
+    <nav class="ct-tabs" id="ct-tabs">
+      {TABS.map((t) => (
+        <button class="ct-chip" data-tab={t.key} type="button">{t.label}</button>
+      ))}
+    </nav>
+
+    <!-- 总览 -->
+    <section class="tab-sec" data-sec="overview">
+      <div class="ct-card">
+        <h2>官方入口</h2>
+        <div class="qr-row">
+          <div class="qr-box">
+            <img src="/images/contest/qr-official.png" alt="大赛官网二维码">
+            <p>大赛官网<br><b>报名 · 提交材料</b></p>
+            <a class="btn btn-gold" href="http://aiedu.caet.org.cn/" target="_blank" rel="noopener">aiedu.caet.org.cn →</a>
+          </div>
+          <div class="qr-box">
+            <img src="/images/contest/qr-notice.png" alt="协会通知二维码">
+            <p>协会正式通知<br><b>全文 · 材料清单原文</b></p>
+            <a class="btn btn-ghost" href="https://www.caet.org.cn/site/content/1279.html" target="_blank" rel="noopener">查看通知 →</a>
+          </div>
         </div>
-        <div class="qr-box">
-          <img src="/images/contest/qr-notice.png" alt="协会通知二维码">
-          <p>协会正式通知<br><b>全文 · 材料清单原文</b></p>
-          <a class="btn btn-ghost" href="https://www.caet.org.cn/site/content/1279.html" target="_blank" rel="noopener">查看通知 →</a>
+        <div class="shots">
+          <div><img src="/images/contest/contest-home.webp" alt="官网首页"><p>大赛官网首页 · 右上角报名</p></div>
+          <div><img src="/images/contest/contest-tracks.webp" alt="赛道详情页"><p>赛道详情页 · 左侧标签切换</p></div>
+          <div><img src="/images/contest/contest-signup.webp" alt="报名流程"><p>官方报名流程指引 PDF</p></div>
         </div>
       </div>
-      <div class="shots">
-        <div><img src="/images/contest/contest-home.webp" alt="官网首页"><p>大赛官网首页 · 右上角报名</p></div>
-        <div><img src="/images/contest/contest-tracks.webp" alt="赛道详情页"><p>赛道详情页 · 左侧标签切换</p></div>
-        <div><img src="/images/contest/contest-signup.webp" alt="报名流程"><p>官方报名流程指引 PDF</p></div>
+
+      <div class="ct-card">
+        <h2>四条赛道怎么选</h2>
+        <iframe class="track-frame" src="/interactives/contest-tracks" title="四条赛道选择图" loading="lazy"></iframe>
+        <p class="track-full"><a href="/interactives/contest-tracks" target="_blank" rel="noopener">全屏打开 →</a> <span class="mono text-muted">投屏时按 F 进演示模式</span></p>
+        <table>
+          <tr><th>赛道</th><th>一句话定位</th><th>适合谁</th><th>站内直接对应</th></tr>
+          <tr>
+            <td><b>① AI+教学创新</b><br><span class="mono small">以「智」助教</span></td>
+            <td>某一学科某一课，AI 用于教学设计 / 课堂实施 / 作业讲评 / 试卷讲评 / 作文讲评 / 复习</td>
+            <td>所有学科老师</td>
+            <td><a href={withBase('/modules/teaching/exam-paper-task/')}>命题实战</a> · <a href={withBase('/demos/textbook/')}>课本可视化</a> · <a href={withBase('/modules/edu-data/exam-analysis-task/')}>月考分析</a></td>
+          </tr>
+          <tr>
+            <td><b>② AI+学习与资源</b><br><span class="mono small">以「智」助学</span></td>
+            <td>个性化学习 / 探究学习 / 智能学伴 / 学习资源供给</td>
+            <td>想给学生做东西的老师</td>
+            <td><a href={withBase('/demos/textbook/')}>课本可视化样板</a> · <a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a> · <a href={withBase('/modules/creation/material-packs/')}>15 科材料包</a></td>
+          </tr>
+          <tr>
+            <td><b>③ AI+课程建设</b></td>
+            <td>校本课程 / 跨学科主题学习 / AI 教育课程体系</td>
+            <td>教研组 / 有课程开发经验</td>
+            <td><a href={withBase('/modules/creation/task-library/')}>任务库 PBL 话术</a> · <a href={withBase('/modules/growth/innovation/')}>创意工坊 30 点子</a></td>
+          </tr>
+          <tr>
+            <td><b>④ 教育智能体构建</b><br><span class="badge-hot">主场</span></td>
+            <td>自主创编智能体：提示词 / <b>Skill 开发</b> / 工作流 / 知识库 / 数据库 / <b>多智能体协同</b></td>
+            <td>学过站内 Skill 课的所有人</td>
+            <td><a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a> · <a href={withBase('/modules/growth/skill-born/')}>Skill 三课</a> · <a href={withBase('/modules/software/task-workbench/')}>工作台</a></td>
+          </tr>
+        </table>
+        <p class="hint">④ 号赛道的技术关键词与站内成长模块一一对应——<b>这是我们的主场</b>。①号赛道门槛最低、最适合全员参与。</p>
+        <p class="hint">点上面的 <b>赛道①-④</b> 标签，看每条赛道的真实教学案例和更多思路。</p>
       </div>
     </section>
 
-    <!-- 四赛道 -->
-    <section class="ct-card">
-      <h2>四条赛道怎么选</h2>
-      <iframe class="track-frame" src="/interactives/contest-tracks" title="四条赛道选择图" loading="lazy"></iframe>
-      <p class="track-full"><a href="/interactives/contest-tracks" target="_blank" rel="noopener">全屏打开 →</a> <span class="mono text-muted">投屏时按 F 进演示模式</span></p>
-      <table>
-        <tr><th>赛道</th><th>一句话定位</th><th>适合谁</th><th>站内直接对应</th></tr>
-        <tr>
-          <td><b>① AI+教学创新</b><br><span class="mono small">以「智」助教</span></td>
-          <td>某一学科某一课，AI 用于教学设计 / 课堂实施 / 作业讲评 / 试卷讲评 / 作文讲评 / 复习</td>
-          <td>所有学科老师</td>
-          <td><a href={withBase('/modules/teaching/exam-paper-task/')}>命题实战</a> · <a href={withBase('/demos/textbook/')}>课本可视化</a> · <a href={withBase('/modules/edu-data/exam-analysis-task/')}>月考分析</a></td>
-        </tr>
-        <tr>
-          <td><b>② AI+学习与资源</b><br><span class="mono small">以「智」助学</span></td>
-          <td>个性化学习 / 探究学习 / 智能学伴 / 学习资源供给</td>
-          <td>想给学生做东西的老师</td>
-          <td><a href={withBase('/demos/textbook/')}>课本可视化样板</a> · <a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a> · <a href={withBase('/modules/creation/material-packs/')}>15 科材料包</a></td>
-        </tr>
-        <tr>
-          <td><b>③ AI+课程建设</b></td>
-          <td>校本课程 / 跨学科主题学习 / AI 教育课程体系</td>
-          <td>教研组 / 有课程开发经验</td>
-          <td><a href={withBase('/modules/creation/task-library/')}>任务库 PBL 话术</a> · <a href={withBase('/modules/growth/innovation/')}>创意工坊 30 点子</a></td>
-        </tr>
-        <tr>
-          <td><b>④ 教育智能体构建</b><br><span class="badge-hot">主场</span></td>
-          <td>自主创编智能体：提示词 / <b>Skill 开发</b> / 工作流 / 知识库 / 数据库 / <b>多智能体协同</b></td>
-          <td>学过站内 Skill 课的所有人</td>
-          <td><a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a> · <a href={withBase('/modules/growth/skill-born/')}>Skill 三课</a> · <a href={withBase('/modules/software/task-workbench/')}>工作台（数据库互联）</a></td>
-        </tr>
-      </table>
-      <p class="hint">④ 号赛道的技术关键词（提示词设计 / Skill 开发 / 知识库 / 多智能体）与站内成长模块一一对应——<b>这是我们的主场</b>。①号赛道门槛最低、最适合全员参与。</p>
-    </section>
-
-    <!-- 材料清单 -->
-    <section class="ct-card">
-      <h2>参赛要交什么</h2>
-      <div class="mat-grid">
-        <div class="mat"><h3>1 · 申报书 + 承诺书</h3><p>官网系统填报后自动生成 → 签字 → <b>学校盖章</b>（PDF 扫描件）</p></div>
-        <div class="mat"><h3>2 · 作品介绍文档</h3><p>PDF：名称 + 3-5 个关键词 + 概要 + 教育痛点 + 技术创新点 + 落地场景 + 应用成效</p></div>
-        <div class="mat hot"><h3>3 · 演示视频 ★</h3><p>≤10 分钟 ≤500MB：<b>概述≤2min + 核心场景演示≤6min + 效果总结≤2min</b>（录屏/实拍/解说合成均可）</p></div>
-        <div class="mat"><h3>4 · 支撑材料（选填）</h3><p>操作手册 / 试点案例 / 教学实践记录（≤100MB）——<b>评审加分项，建议交</b></p></div>
+    <!-- 赛道① -->
+    <section class="tab-sec" data-sec="t1" hidden>
+      <div class="ct-card">
+        <h2>赛道① AI+教学创新 <span class="mono small">以「智」助教 · 门槛最低</span></h2>
+        <table>
+          <tr><th>定位</th><td>某一学科某一课，AI 用于教学设计 / 课堂实施 / 作业讲评 / 试卷讲评 / 作文讲评 / 复习</td></tr>
+          <tr><th>适合谁</th><td>所有学科老师，培训完即可开投</td></tr>
+          <tr><th>站内入口</th><td><a href={withBase('/modules/teaching/exam-paper-task/')}>命题实战</a> · <a href={withBase('/demos/textbook/')}>课本可视化</a> · <a href={withBase('/modules/edu-data/exam-analysis-task/')}>月考分析</a></td></tr>
+        </table>
+        <div class="case">
+          <div class="case-head t1"><h3>案例《AI 试卷讲评系统》</h3><span>初中数学</span></div>
+          <div class="case-body">
+            <p><b>痛点</b>：每次月考后 300 份卷子的错题统计占两个晚上，讲评课全凭感觉挑题。</p>
+            <p><b>作品</b>：AI 分析答题卡数据 → 自动生成错误率排序 → 讲评课优先讲 Top5 错题 → 配变式训练 → 学生个体错因报告。</p>
+            <p><b>怎么做</b>：<a href={withBase('/modules/teaching/exam-paper-task/')}>命题实战</a>出卷 → 考后走<a href={withBase('/modules/edu-data/exam-analysis-task/')}>月考分析</a>话术 → 讲评课用<a href={withBase('/modules/teaching/html-concepts/')}>交互页面</a>演示错题。</p>
+            <div class="ideas"><b>更多思路</b>：作文讲评（AI 批注 + 范文对比墙）· 复习导图（学生自画 → AI 补漏 → 差异对照）· 课堂实录 AI 反思（录音转写 → 教学行为分析）· 分层作业自动推送</div>
+          </div>
+        </div>
       </div>
-      <p class="hint">评审五维度：<b>场景适配 · 技术规范 · 创新优化 · 实施显著 · 推广适配</b>——「真实课堂用过」和「别人也能拿去用」是拉分关键。</p>
     </section>
 
-    <!-- 三件套话术 -->
-    <section class="ct-card">
-      <h2>参赛三件套 · 生成话术（复制给 AI）</h2>
+    <!-- 赛道② -->
+    <section class="tab-sec" data-sec="t2" hidden>
+      <div class="ct-card">
+        <h2>赛道② AI+学习与资源 <span class="mono small">以「智」助学</span></h2>
+        <table>
+          <tr><th>定位</th><td>个性化学习 / 探究学习 / 智能学伴 / 学习资源供给</td></tr>
+          <tr><th>适合谁</th><td>想给学生做东西的老师</td></tr>
+          <tr><th>站内入口</th><td><a href={withBase('/demos/textbook/')}>课本可视化样板</a> · <a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a> · <a href={withBase('/modules/creation/material-packs/')}>15 科材料包</a></td></tr>
+        </table>
+        <div class="case">
+          <div class="case-head t2"><h3>案例《课本可视化》</h3><span>小学语文</span></div>
+          <div class="case-body">
+            <p><b>痛点</b>：一年级课文《秋天》只有静态插图，低龄学生注意力撑不过三分钟。</p>
+            <p><b>作品</b>：<a href={withBase('/demos/textbook/')}>课本可视化样板</a>——教材页 + 朗读音频 + 大雁排字动画 + 跟读练习。</p>
+            <p><b>怎么做</b>：从<a href={withBase('/textbooks/')}>教材索引</a>领 PDF → 截课文页发给 AI → 走<a href={withBase('/modules/creation/subject-task/')}>七步迭代法</a> → 生成配音用 TTS。</p>
+            <div class="ideas"><b>更多思路</b>：智能学伴（答疑机器人只按你的教学法回答）· 探究学习页（学生先猜再验证的交互实验）· 个性化阅读推荐（按阅读水平推送不同版本）· 错题本自动生成（AI 归因 + 同类题推送）</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <div class="prompt"><span class="p-tag">话术 A</span><b>生成作品介绍文档</b>
-        <pre>请按以下结构生成我的参赛作品介绍文档（PDF 格式，800 字内）：
+    <!-- 赛道③ -->
+    <section class="tab-sec" data-sec="t3" hidden>
+      <div class="ct-card">
+        <h2>赛道③ AI+课程建设</h2>
+        <table>
+          <tr><th>定位</th><td>校本课程 / 跨学科主题学习 / AI 教育课程体系</td></tr>
+          <tr><th>适合谁</th><td>教研组 / 有课程开发经验</td></tr>
+          <tr><th>站内入口</th><td><a href={withBase('/modules/creation/task-library/')}>任务库 PBL 话术</a> · <a href={withBase('/modules/growth/innovation/')}>创意工坊 30 点子</a></td></tr>
+        </table>
+        <div class="case">
+          <div class="case-head t3"><h3>案例《AI 素养校本课程》</h3><span>跨学科</span></div>
+          <div class="case-body">
+            <p><b>痛点</b>：学校要求开 AI 通识课但没有教材，零散课件拼不成体系。</p>
+            <p><b>作品</b>：8 课时 AI 素养课纲 + 每课时课件/教案/学生手册 + 教学实践一学期记录。</p>
+            <p><b>怎么做</b>：用<a href={withBase('/modules/growth/ai-learning/')}>素养四层次</a>定目标 → <a href={withBase('/modules/growth/innovation/')}>创意工坊 30 点子</a>选学生活动 → 每课时走七步法。</p>
+            <div class="ideas"><b>更多思路</b>：跨学科 PBL（AI+地理的「校园微气候」项目）· 地方文化课程（AI 助力非遗数字化）· 学科拓展课（数学建模 + AI 工具）· 德育课程（AI 情境判定 + 后果模拟）</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 赛道④ -->
+    <section class="tab-sec" data-sec="t4" hidden>
+      <div class="ct-card">
+        <h2>赛道④ 教育智能体构建 <span class="badge-hot">我们的主场</span></h2>
+        <table>
+          <tr><th>定位</th><td>自主创编智能体：提示词 / <b>Skill 开发</b> / 工作流 / 知识库 / 数据库 / <b>多智能体协同</b></td></tr>
+          <tr><th>适合谁</th><td>学过站内 Skill 课的所有人</td></tr>
+          <tr><th>站内入口</th><td><a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a> · <a href={withBase('/modules/growth/skill-born/')}>Skill 三课</a> · <a href={withBase('/modules/software/task-workbench/')}>工作台</a></td></tr>
+        </table>
+        <div class="case">
+          <div class="case-head t4"><h3>案例《学科助教智能体》</h3><span>我们的主场</span></div>
+          <div class="case-body">
+            <p><b>痛点</b>：学生课后问问题找不到人，家长问学习建议口径不统一。</p>
+            <p><b>作品</b>：<a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a>——装专家 + 喂你的教学资料和班情 + 教你的表达习惯 → 学生问它按你的口径答，你审核后放行。</p>
+            <p><b>怎么做</b>：WorkBuddy 装教育专家 → 喂「基本情况」话术 → <a href={withBase('/modules/growth/skill-born/')}>固化成 Skill</a> → <a href={withBase('/modules/software/task-cloud/')}>数据上云</a>（对应赛道「数据库互联」关键词）→ 多个智能体分工（对应「多智能体协同」）。</p>
+            <div class="ideas"><b>更多思路</b>：备课智能体（输入课标自动出三版教学设计）· 家校沟通智能体（按你的风格写家长信）· 班务管理智能体（<a href={withBase('/modules/class-management/co-teacher/')}>副班主任</a>）· 教研协作多智能体（一个查文献 + 一个写综述 + 一个审格式）· 学情预警智能体（成绩连续下滑自动提醒）</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 材料与话术 -->
+    <section class="tab-sec" data-sec="materials" hidden>
+      <div class="ct-card">
+        <h2>参赛要交什么</h2>
+        <div class="mat-grid">
+          <div class="mat"><h3>1 · 申报书 + 承诺书</h3><p>官网系统填报后自动生成 → 签字 → <b>学校盖章</b>（PDF 扫描件）</p></div>
+          <div class="mat"><h3>2 · 作品介绍文档</h3><p>PDF：名称 + 3-5 个关键词 + 概要 + 教育痛点 + 技术创新点 + 落地场景 + 应用成效</p></div>
+          <div class="mat hot"><h3>3 · 演示视频 ★</h3><p>≤10 分钟 ≤500MB：<b>概述≤2min + 核心场景演示≤6min + 效果总结≤2min</b>（录屏/实拍/解说合成均可）</p></div>
+          <div class="mat"><h3>4 · 支撑材料（选填）</h3><p>操作手册 / 试点案例 / 教学实践记录（≤100MB）——<b>评审加分项，建议交</b></p></div>
+        </div>
+        <p class="hint">评审五维度：<b>场景适配 · 技术规范 · 创新优化 · 实施显著 · 推广适配</b>——「真实课堂用过」和「别人也能拿去用」是拉分关键。</p>
+      </div>
+
+      <div class="ct-card">
+        <h2>参赛三件套 · 生成话术（复制给 AI）</h2>
+        <div class="prompt"><span class="p-tag">话术 A</span><b>生成作品介绍文档</b>
+          <pre>请按以下结构生成我的参赛作品介绍文档（PDF 格式，800 字内）：
 【作品名称】（帮我起一个，体现学科+AI+场景）
 【关键词】3-5 个
 【解决的教育痛点】（我描述我的真实痛点：____）
 【技术创新点】基于我使用的 AI 工具和搭建方式（____）
 【落地场景】哪个年级哪个学科哪个环节在用
 【应用成效】用数据说话：省了多少时间 / 学生反馈 / 使用频次</pre>
-      </div>
-
-      <div class="prompt"><span class="p-tag">话术 B</span><b>生成演示视频分镜脚本（按官方 2+6+2 结构）</b>
-        <pre>请为我的参赛作品生成一个 10 分钟演示视频的分镜脚本：
+        </div>
+        <div class="prompt"><span class="p-tag">话术 B</span><b>生成演示视频分镜脚本（按官方 2+6+2 结构）</b>
+          <pre>请为我的参赛作品生成一个 10 分钟演示视频的分镜脚本：
 严格按官方分段规范：
 · 概述（≤2 分钟）：作品是什么、解决什么痛点、给谁用
 · 核心场景演示（≤6 分钟）：分 3 个场景，每个场景「先真实场景→再 AI 操作→最后效果」
 · 效果总结（≤2 分钟）：应用成效数据 + 推广可行性
 每个分镜标注：画面内容 / 解说词 / 时长 / 录制方式（录屏 or 实拍）
 我的作品信息：____</pre>
-      </div>
-
-      <div class="prompt"><span class="p-tag">话术 C</span><b>生成支撑材料（操作手册）</b>
-        <pre>请为我的参赛作品生成一份《操作手册》（支撑材料用，PDF）：
+        </div>
+        <div class="prompt"><span class="p-tag">话术 C</span><b>生成支撑材料（操作手册）</b>
+          <pre>请为我的参赛作品生成一份《操作手册》（支撑材料用，PDF）：
 面向「完全没用过这个工具的老师」，傻瓜式步骤 + 每步截图占位标注，
 让评审看到：这个作品别人拿到手真的能用（推广适配性维度）。
 我的作品功能：____</pre>
-      </div>
-    </section>
-
-
-    <!-- 教学案例 -->
-    <section class="ct-card">
-      <h2>每条赛道怎么做：真实教学案例 + 更多思路</h2>
-
-      <div class="case">
-        <div class="case-head t1"><h3>赛道① AI+教学创新 · 案例《AI 试卷讲评系统》</h3><span>初中数学</span></div>
-        <div class="case-body">
-          <p><b>痛点</b>：每次月考后 300 份卷子的错题统计占两个晚上，讲评课全凭感觉挑题。</p>
-          <p><b>作品</b>：AI 分析答题卡数据 → 自动生成错误率排序 → 讲评课优先讲 Top5 错题 → 配变式训练 → 学生个体错因报告。</p>
-          <p><b>怎么做</b>：<a href={withBase('/modules/teaching/exam-paper-task/')}>命题实战</a>出卷 → 考后走<a href={withBase('/modules/edu-data/exam-analysis-task/')}>月考分析</a>话术 → 讲评课用<a href={withBase('/modules/teaching/html-concepts/')}>交互页面</a>演示错题。</p>
-          <div class="ideas"><b>更多思路</b>：作文讲评（AI 批注 + 范文对比墙）· 复习导图（学生自画 → AI 补漏 → 差异对照）· 课堂实录 AI 反思（录音转写 → 教学行为分析）· 分层作业自动推送</div>
-        </div>
-      </div>
-
-      <div class="case">
-        <div class="case-head t2"><h3>赛道② AI+学习与资源 · 案例《课本可视化》</h3><span>小学语文</span></div>
-        <div class="case-body">
-          <p><b>痛点</b>：一年级课文《秋天》只有静态插图，低龄学生注意力撑不过三分钟。</p>
-          <p><b>作品</b>：<a href={withBase('/demos/textbook/')}>课本可视化样板</a>——教材页 + 朗读音频 + 大雁排字动画 + 跟读练习。</p>
-          <p><b>怎么做</b>：从<a href={withBase('/textbooks/')}>教材索引</a>领 PDF → 截课文页发给 AI → 走<a href={withBase('/modules/creation/subject-task/')}>七步迭代法</a> → 生成配音用 TTS。</p>
-          <div class="ideas"><b>更多思路</b>：智能学伴（答疑机器人只按你的教学法回答）· 探究学习页（学生先猜再验证的交互实验）· 个性化阅读推荐（按阅读水平推送不同版本）· 错题本自动生成（AI 归因 + 同类题推送）</div>
-        </div>
-      </div>
-
-      <div class="case">
-        <div class="case-head t3"><h3>赛道③ AI+课程建设 · 案例《AI 素养校本课程》</h3><span>跨学科</span></div>
-        <div class="case-body">
-          <p><b>痛点</b>：学校要求开 AI 通识课但没有教材，零散课件拼不成体系。</p>
-          <p><b>作品</b>：8 课时 AI 素养课纲 + 每课时课件/教案/学生手册 + 教学实践一学期记录。</p>
-          <p><b>怎么做</b>：用<a href={withBase('/modules/growth/ai-learning/')}>素养四层次</a>定目标 → <a href={withBase('/modules/growth/innovation/')}>创意工坊 30 点子</a>选学生活动 → 每课时走七步法。</p>
-          <div class="ideas"><b>更多思路</b>：跨学科 PBL（AI+地理的「校园微气候」项目）· 地方文化课程（AI 助力非遗数字化）· 学科拓展课（数学建模 + AI 工具）· 德育课程（AI 情境判定 + 后果模拟）</div>
-        </div>
-      </div>
-
-      <div class="case">
-        <div class="case-head t4"><h3>赛道④ 教育智能体 · 案例《学科助教智能体》</h3><span>我们的主场</span></div>
-        <div class="case-body">
-          <p><b>痛点</b>：学生课后问问题找不到人，家长问学习建议口径不统一。</p>
-          <p><b>作品</b>：<a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a>——装专家 + 喂你的教学资料和班情 + 教你的表达习惯 → 学生问它按你的口径答，你审核后放行。</p>
-          <p><b>怎么做</b>：WorkBuddy 装教育专家 → 喂「基本情况」话术 → <a href={withBase('/modules/growth/skill-born/')}>固化成 Skill</a> → <a href={withBase('/modules/software/task-cloud/')}>数据上云</a>（对应赛道「数据库互联」关键词）→ 多个智能体分工（对应「多智能体协同」）。</p>
-          <div class="ideas"><b>更多思路</b>：备课智能体（输入课标自动出三版教学设计）· 家校沟通智能体（按你的风格写家长信）· 班务管理智能体（<a href={withBase('/modules/class-management/co-teacher/')}>副班主任</a>）· 教研协作多智能体（一个查文献 + 一个写综述 + 一个审格式）· 学情预警智能体（成绩连续下滑自动提醒）</div>
         </div>
       </div>
     </section>
 
-    <!-- 制胜策略 -->
-    <section class="ct-card win">
-      <h2>怎么拿下比赛</h2>
-      <p class="lead">对手拼技术，我们拼<b style="color:var(--gold-soft)">「真实 + 完整 + 可推广」</b>——评审五维度里，技术只是其中一项。</p>
-      <table>
-        <tr><th>维度</th><th>对手的打法</th><th>我们的差异化打法</th></tr>
-        <tr><td><b>场景适配</b></td><td>「通用 AI 教学助手」大而空</td><td>钉死一个真实痛点：「初二数学几何证明题错误率高出年级 12%」——具体到班、到题、到人</td></tr>
-        <tr><td><b>实施显著</b></td><td>做出来没在课堂用过</td><td>赛前至少真实课堂用 3 次，留数据：使用前后错误率对比、学生反馈截图、使用频次</td></tr>
-        <tr><td><b>创新优化</b></td><td>堆功能炫技</td><td>「Skill 固化 + 知识库 + 多智能体协同」三选二讲透原理——评审看的是方法论不是功能数量</td></tr>
-        <tr><td><b>推广适配</b></td><td>离开作者就跑不了</td><td>附操作手册 + Skill 文件可分享——「任何老师拿到 10 分钟能上手」写进文档</td></tr>
-        <tr><td><b>技术规范</b></td><td>—</td><td>明确标注使用的 AI 工具平台（官方要求！作品简介中必须写）</td></tr>
-      </table>
-      <div class="strat">
-        <h3>三条铁律</h3>
-        <ol>
-          <li><b>一个作品只解决一个真实痛点</b>——评委记住的不是功能清单，是那个「错误率降了 8%」的数字</li>
-          <li><b>没有课堂数据的故事不要讲</b>——所有「应用成效」必须有截图/数据/学生反馈支撑</li>
-          <li><b>把「别人也能用」做成证据</b>——操作手册 + 可分享的 Skill 文件</li>
-        </ol>
+    <!-- 怎么赢 -->
+    <section class="tab-sec" data-sec="strategy" hidden>
+      <div class="ct-card win">
+        <h2>为什么是你</h2>
+        <p class="lead">
+          作品本身不是门槛——调一个智能体、或者用飞象老师这样一句话出页面的工具，谁都做得出图文并茂的东西。
+          评审和我们真正看的，是<b style="color:var(--gold-soft)">老师亲自跟 AI 把一个想法磨成作品的过程</b>：话术怎么写、结果怎么验、课堂数据怎么留。
+        </p>
+        <p class="lead">
+          这个过程才是要带走的东西。比赛结束，它变成你备课、出卷、做班务的日常能力——
+          <b style="color:var(--gold-soft)">AI 不在课堂台前表演十分钟，在幕后替你把重复的活干了</b>。
+          这也是本站教 Vibe Coding 而不是只发工具的原因。
+        </p>
+        <div class="strat">
+          <h3>关于飞象老师</h3>
+          <p>赶时间交差，它是个好工具，站内也有对应课程。但它替你把活做了——话术、迭代、验收都留在平台里，能力没长在你身上。比赛要交的过程材料，和你要带走的手艺，都来自亲手做一遍。先在这里学会跟 AI 协作，以后用什么工具都顺手。</p>
+        </div>
       </div>
-      <div class="strat purple">
-        <h3>团队打法</h3>
-        <p>一个教研组 5 个人：2 人投赛道④（智能体，各自做一个）、2 人投赛道①（教学创新，同课不同环节）、1 人投赛道②（资源）。共享同一个学科的同一个数据底座——数据一次采集，五个作品复用，但每个作品切入点不同（不违反唯一性）。</p>
+
+      <div class="ct-card">
+        <h2>怎么拿下比赛</h2>
+        <p class="lead">对手拼技术，我们拼<b style="color:var(--gold-soft)">「真实 + 完整 + 可推广」</b>——评审五维度里，技术只是其中一项。</p>
+        <table>
+          <tr><th>维度</th><th>对手的打法</th><th>我们的差异化打法</th></tr>
+          <tr><td><b>场景适配</b></td><td>「通用 AI 教学助手」大而空</td><td>钉死一个真实痛点：「初二数学几何证明题错误率高出年级 12%」——具体到班、到题、到人</td></tr>
+          <tr><td><b>实施显著</b></td><td>做出来没在课堂用过</td><td>赛前至少真实课堂用 3 次，留数据：使用前后错误率对比、学生反馈截图、使用频次</td></tr>
+          <tr><td><b>创新优化</b></td><td>堆功能炫技</td><td>「Skill 固化 + 知识库 + 多智能体协同」三选二讲透原理——评审看的是方法论不是功能数量</td></tr>
+          <tr><td><b>推广适配</b></td><td>离开作者就跑不了</td><td>附操作手册 + Skill 文件可分享——「任何老师拿到 10 分钟能上手」写进文档</td></tr>
+          <tr><td><b>技术规范</b></td><td>—</td><td>明确标注使用的 AI 工具平台（官方要求！作品简介中必须写）</td></tr>
+        </table>
+        <div class="strat">
+          <h3>三条铁律</h3>
+          <ol>
+            <li><b>一个作品只解决一个真实痛点</b>——评委记住的不是功能清单，是那个「错误率降了 8%」的数字</li>
+            <li><b>没有课堂数据的故事不要讲</b>——所有「应用成效」必须有截图/数据/学生反馈支撑</li>
+            <li><b>把「别人也能用」做成证据</b>——操作手册 + 可分享的 Skill 文件</li>
+          </ol>
+        </div>
+        <div class="strat purple">
+          <h3>团队打法</h3>
+          <p>一个教研组 5 个人：2 人投赛道④（智能体，各自做一个）、2 人投赛道①（教学创新，同课不同环节）、1 人投赛道②（资源）。共享同一个学科的同一个数据底座——数据一次采集，五个作品复用，但每个作品切入点不同（不违反唯一性）。</p>
+        </div>
       </div>
     </section>
 
-    <!-- 时间表 -->
-    <section class="ct-card">
-      <h2>倒计时行动表</h2>
-      <table>
-        <tr><th>节点</th><th>做什么</th></tr>
-        <tr><td class="mono">本周五（培训日）</td><td>选定赛道 + 选定真实痛点 + 作品 MVP 开工 + 答疑群建立</td></tr>
-        <tr><td class="mono">第一周</td><td>作品核心功能完成 → <b>在真实课堂用第 1 次</b>（留数据）</td></tr>
-        <tr><td class="mono">第二周</td><td>课堂用第 2-3 次 + 采集前后对比数据 + 学生反馈</td></tr>
-        <tr><td class="mono">第三周</td><td>生成三件套（话术 A/B/C）→ 录视频 → 内部互审</td></tr>
-        <tr><td class="mono">10 月 8-14 日</td><td>官网注册报名 → 上传材料 → <b>学校盖章</b>（别拖到最后一天！）</td></tr>
-      </table>
-    </section>
+    <!-- 行动表 -->
+    <section class="tab-sec" data-sec="schedule" hidden>
+      <div class="ct-card">
+        <h2>倒计时行动表</h2>
+        <table>
+          <tr><th>节点</th><th>做什么</th></tr>
+          <tr><td class="mono">本周五（培训日）</td><td>选定赛道 + 选定真实痛点 + 作品 MVP 开工 + 答疑群建立</td></tr>
+          <tr><td class="mono">第一周</td><td>作品核心功能完成 → <b>在真实课堂用第 1 次</b>（留数据）</td></tr>
+          <tr><td class="mono">第二周</td><td>课堂用第 2-3 次 + 采集前后对比数据 + 学生反馈</td></tr>
+          <tr><td class="mono">第三周</td><td>生成三件套（话术 A/B/C）→ 录视频 → 内部互审</td></tr>
+          <tr><td class="mono">10 月 8-14 日</td><td>官网注册报名 → 上传材料 → <b>学校盖章</b>（别拖到最后一天！）</td></tr>
+        </table>
+      </div>
 
-    <!-- 联系方式 -->
-    <section class="ct-card">
-      <h2>官方联系</h2>
-      <ul>
-        <li>基础教育总联系人：谢老师 19355985297</li>
-        <li>AI+教学：<span class="mono">Caet_AI01@163.com</span> ｜ 智能体：<span class="mono">Caet_AI02@163.com</span> ｜ 课程：<span class="mono">Caet_AI03@163.com</span> ｜ 学习资源：<span class="mono">Caet_AI04@163.com</span></li>
-        <li>赛道官方答疑 QQ 群：教学创新 665279497 ｜ 智能体 732993748</li>
-      </ul>
+      <div class="ct-card">
+        <h2>官方联系</h2>
+        <ul>
+          <li>基础教育总联系人：谢老师 19355985297</li>
+          <li>AI+教学：<span class="mono">Caet_AI01@163.com</span> ｜ 智能体：<span class="mono">Caet_AI02@163.com</span> ｜ 课程：<span class="mono">Caet_AI03@163.com</span> ｜ 学习资源：<span class="mono">Caet_AI04@163.com</span></li>
+          <li>赛道官方答疑 QQ 群：教学创新 665279497 ｜ 智能体 732993748</li>
+        </ul>
+      </div>
     </section>
-
   </div>
 </BaseLayout>
 
 <style>
-  .ct-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 28px; max-width: 980px; }
+  .ct-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 24px; max-width: 980px; }
   .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
   .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
   .sub { margin: 0; line-height: 1.9; }
+
+  .ct-tabs { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto;
+    position: sticky; top: calc(var(--header-h) + 8px); z-index: 20;
+    padding: 10px; background: rgba(21,14,34,.9); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid var(--line); }
+  .ct-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px;
+    border: 1px solid var(--line-strong); background: var(--bg-panel); color: var(--text-muted);
+    font-size: 13.5px; cursor: pointer; font-family: var(--sans); }
+  .ct-chip:hover { border-color: var(--gold); color: var(--text); }
+  .ct-chip.on { background: linear-gradient(135deg, var(--gold-soft), var(--gold)); color: #2a1c00; border-color: transparent; font-weight: 700; }
+
+  .tab-sec { display: flex; flex-direction: column; gap: 24px; }
+  .tab-sec[hidden] { display: none; }
+
   .ct-card { background: linear-gradient(180deg, var(--bg-panel), var(--bg-inset)); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 28px; }
-  .ct-card h2 { font-size: 20px; color: var(--gold-soft); margin: 0 0 16px; }
+  .ct-card h2 { font-size: 20px; color: var(--gold-soft); margin: 0 0 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .qr-row { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
   .qr-box { text-align: center; }
   .qr-box img { width: 150px; height: auto; background: #fff; padding: 8px; border-radius: 10px; margin-bottom: 8px; }
@@ -237,7 +325,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   th { background: var(--bg-panel-2); color: var(--gold-soft); text-align: left; padding: 10px 12px; border: 1px solid var(--line-strong); font-size: 12.5px; font-family: var(--mono); }
   td { padding: 12px; border: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
   td a { color: var(--gold); }
-  .small { font-size: 11px; color: var(--text-faint); }
+  .small { font-size: 11px; color: var(--text-faint); font-weight: 400; }
   .badge-hot { background: var(--gold); color: #2a1c00; font-size: 11px; padding: 1px 8px; border-radius: 4px; font-weight: 700; }
   .hint { font-size: 13px; color: var(--purple-bright); margin-top: 12px; line-height: 1.8; }
   .mat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
@@ -249,7 +337,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   .prompt b { display: block; font-size: 14px; color: var(--gold-soft); margin-bottom: 8px; padding-left: 60px; }
   .p-tag { position: absolute; top: 14px; left: 14px; background: var(--gold); color: #2a1c00; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 4px; font-family: var(--mono); }
   .prompt pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.8; white-space: pre-wrap; color: #ffe9b0; margin: 0; }
-  .lead { font-size: 16px; margin: 0 0 14px; line-height: 1.8; }
+  .lead { font-size: 16px; margin: 0 0 14px; line-height: 1.9; }
   .strat { background: rgba(254,179,0,.06); border: 1px dashed var(--line-gold); border-radius: 10px; padding: 16px 20px; margin-top: 14px; }
   .strat h3 { font-size: 15px; color: var(--gold-soft); margin: 0 0 8px; }
   .strat ol, .strat p { font-size: 14px; line-height: 2; margin: 0; padding-left: 0; }
@@ -257,7 +345,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   .strat.purple { background: rgba(166,61,151,.08); border-color: var(--purple-bright); }
   .win { border-color: var(--line-gold); }
   ul { padding-left: 1.3em; font-size: 14px; line-height: 2; }
-.case { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 18px; overflow: hidden; }
+  .case { border: 1px solid var(--line); border-radius: 12px; margin-top: 18px; overflow: hidden; }
   .case-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; }
   .case-head h3 { font-size: 16px; margin: 0; color: var(--text); }
   .case-head span { font-size: 12px; font-family: var(--mono); padding: 2px 10px; border-radius: 4px; }
@@ -275,7 +363,32 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   .ideas { margin-top: 10px; padding: 12px 16px; background: var(--bg-panel); border-radius: 8px; font-size: 13px; line-height: 1.9; color: var(--text-muted); }
   .ideas b { color: var(--text); }
   .track-frame { width: 100%; aspect-ratio: 1180 / 760; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; background: var(--bg-panel); }
-  .track-full { margin: 0 0 16px; font-size: 13px; }
+  .track-full { margin: 0 0 4px; font-size: 13px; }
   .track-full a { color: var(--gold-soft); border-bottom: 1px dashed var(--line-gold); }
   @media (max-width: 700px) { .track-frame { aspect-ratio: auto; height: 520px; } }
 </style>
+
+<script>
+  const bar = document.getElementById('ct-tabs')!;
+  const chips = [...bar.querySelectorAll<HTMLButtonElement>('.ct-chip')];
+  const secs = [...document.querySelectorAll<HTMLElement>('[data-sec]')];
+
+  function show(key: string) {
+    const k = secs.some((s) => s.dataset.sec === key) ? key : 'overview';
+    chips.forEach((c) => c.classList.toggle('on', c.dataset.tab === k));
+    secs.forEach((s) => { s.hidden = s.dataset.sec !== k; });
+    if (k === 'overview') history.replaceState(null, '', location.pathname);
+    else history.replaceState(null, '', '#' + k);
+  }
+
+  chips.forEach((c) => c.addEventListener('click', () => show(c.dataset.tab ?? 'overview')));
+
+  const h = location.hash.slice(1);
+  if (h) show(h);
+
+  window.addEventListener('hashchange', () => {
+    const key = location.hash.slice(1);
+    if (!key) { show('overview'); return; }
+    if (secs.some((s) => s.dataset.sec === key)) show(key);
+  });
+</script>
