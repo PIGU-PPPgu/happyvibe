@@ -1,7 +1,7 @@
 ---
 name: 中国色 · 传统色谱
 category: design
-description: 中式传统配色速查：每种颜色带名字和色值——做语文/历史/文化类课件配色一绝。
+description: 中式传统配色速查：每种颜色带名字和色值——适合语文/历史/文化类课件配色。
 url: https://zhongguose.com
 order: 21
 ---

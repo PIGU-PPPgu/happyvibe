@@ -54,13 +54,13 @@ const weeks = [
       <p class="kicker mono">// CHALLENGE · 每天只需 15 分钟</p>
       <h1>21 天 AI 教学挑战</h1>
       <p class="sub text-muted">
-        规则简单：每天照着当天的卡做 15 分钟。**先自己悄悄练**——愿意分享再到群里晒，不愿意就一直安静学，没人催你。
+        规则简单：每天照着当天的卡做 15 分钟。<b style="color:var(--gold-soft)">先自己悄悄练</b>——愿意分享再到群里晒，不愿意就一直安静学，没人催你。
         坚持 21 天，你会带走：<b style="color:var(--gold-soft)">一个自己做的学科网页、两三个课堂神器、一套自己的话术</b>。
       </p>
     </TerminalWindow>
 
     <a class="ch-start btn btn-gold" href={days[0].link ? withBase(days[0].link) : '#'} onclick="document.querySelector('[data-day=\'1\']')?.scrollIntoView({behavior:'smooth'});return false;">
-      从 Day 1 开始 →（先自己悄悄练）
+      从 Day 1 开始 →
     </a>
 
     <p class="ch-stat mono" data-ch-stat>加载中…</p>

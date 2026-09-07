@@ -12,7 +12,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
 
     <TerminalWindow title="happyvibe contest — CAET 2026">
       <p class="kicker mono">// CONTEST · 中国教育技术协会「AI+教育」创新应用技能大赛</p>
-      <h1 class="title">比赛专区：做完就报名</h1>
+      <h1 class="title">比赛专区</h1>
       <p class="sub text-muted">
         基础教育组 4 条赛道 · 免费 · 报名截止 <b style="color:var(--gold-soft)">10 月 15 日</b>（剩 {days} 天）<br>
         预赛 10.16-10.31（50% 进决赛）· 颁奖 11.12 无锡年会
@@ -43,7 +43,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
 
     <!-- 四赛道 -->
     <section class="ct-card">
-      <h2>四条赛道怎么选（+ 站内对应任务）</h2>
+      <h2>四条赛道怎么选</h2>
       <img class="track-map" src="/images/contest/track-map.png" alt="四条赛道思维导图">
       <table>
         <tr><th>赛道</th><th>一句话定位</th><th>适合谁</th><th>站内直接对应</th></tr>
@@ -77,7 +77,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
 
     <!-- 材料清单 -->
     <section class="ct-card">
-      <h2>参赛要交什么（官方材料清单）</h2>
+      <h2>参赛要交什么</h2>
       <div class="mat-grid">
         <div class="mat"><h3>1 · 申报书 + 承诺书</h3><p>官网系统填报后自动生成 → 签字 → <b>学校盖章</b>（PDF 扫描件）</p></div>
         <div class="mat"><h3>2 · 作品介绍文档</h3><p>PDF：名称 + 3-5 个关键词 + 概要 + 教育痛点 + 技术创新点 + 落地场景 + 应用成效</p></div>
@@ -89,7 +89,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
 
     <!-- 三件套话术 -->
     <section class="ct-card">
-      <h2>参赛三件套 · 一键生成话术（复制给 AI）</h2>
+      <h2>参赛三件套 · 生成话术（复制给 AI）</h2>
 
       <div class="prompt"><span class="p-tag">话术 A</span><b>生成作品介绍文档</b>
         <pre>请按以下结构生成我的参赛作品介绍文档（PDF 格式，800 字内）：
@@ -138,7 +138,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
         <div class="case-head t2"><h3>赛道② AI+学习与资源 · 案例《课本可视化》</h3><span>小学语文</span></div>
         <div class="case-body">
           <p><b>痛点</b>：一年级课文《秋天》只有静态插图，低龄学生注意力撑不过三分钟。</p>
-          <p><b>作品</b>：<a href={withBase('/demos/textbook/')}>课本可视化样板</a>——教材页 + 朗读音频 + 大雁排字动画 + 跟读练习，扫码即用。</p>
+          <p><b>作品</b>：<a href={withBase('/demos/textbook/')}>课本可视化样板</a>——教材页 + 朗读音频 + 大雁排字动画 + 跟读练习。</p>
           <p><b>怎么做</b>：从<a href={withBase('/textbooks/')}>教材索引</a>领 PDF → 截课文页发给 AI → 走<a href={withBase('/modules/creation/subject-task/')}>七步迭代法</a> → 生成配音用 TTS。</p>
           <div class="ideas"><b>更多思路</b>：智能学伴（答疑机器人只按你的教学法回答）· 探究学习页（学生先猜再验证的交互实验）· 个性化阅读推荐（按阅读水平推送不同版本）· 错题本自动生成（AI 归因 + 同类题推送）</div>
         </div>
@@ -167,7 +167,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
 
     <!-- 制胜策略 -->
     <section class="ct-card win">
-      <h2>怎么拿下比赛（对手已是熟练玩家的应对策略）</h2>
+      <h2>怎么拿下比赛</h2>
       <p class="lead">对手拼技术，我们拼<b style="color:var(--gold-soft)">「真实 + 完整 + 可推广」</b>——评审五维度里，技术只是其中一项。</p>
       <table>
         <tr><th>维度</th><th>对手的打法</th><th>我们的差异化打法</th></tr>
@@ -178,7 +178,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
         <tr><td><b>技术规范</b></td><td>—</td><td>明确标注使用的 AI 工具平台（官方要求！作品简介中必须写）</td></tr>
       </table>
       <div class="strat">
-        <h3>🎯 三条铁律（贴在工位上）</h3>
+        <h3>三条铁律</h3>
         <ol>
           <li><b>一个作品只解决一个真实痛点</b>——评委记住的不是功能清单，是那个「错误率降了 8%」的数字</li>
           <li><b>没有课堂数据的故事不要讲</b>——所有「应用成效」必须有截图/数据/学生反馈支撑</li>
@@ -186,14 +186,14 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
         </ol>
       </div>
       <div class="strat purple">
-        <h3>⚡ 团队打法（五人一团，一鱼四吃）</h3>
+        <h3>团队打法</h3>
         <p>一个教研组 5 个人：2 人投赛道④（智能体，各自做一个）、2 人投赛道①（教学创新，同课不同环节）、1 人投赛道②（资源）。共享同一个学科的同一个数据底座——数据一次采集，五个作品复用，但每个作品切入点不同（不违反唯一性）。</p>
       </div>
     </section>
 
     <!-- 时间表 -->
     <section class="ct-card">
-      <h2>倒计时行动表（今天 → 10 月 15 日）</h2>
+      <h2>倒计时行动表</h2>
       <table>
         <tr><th>节点</th><th>做什么</th></tr>
         <tr><td class="mono">本周五（培训日）</td><td>选定赛道 + 选定真实痛点 + 作品 MVP 开工 + 答疑群建立</td></tr>

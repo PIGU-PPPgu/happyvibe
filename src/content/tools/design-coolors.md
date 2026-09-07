@@ -1,7 +1,7 @@
 ---
 name: Coolors · 配色生成器
 category: design
-description: 一键生成和谐配色方案，按一下换一套——给课件定主色调 10 秒搞定。
+description: 按一下换一套和谐配色方案——给课件定主色调。
 url: https://coolors.co
 order: 22
 ---
