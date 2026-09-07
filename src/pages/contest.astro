@@ -44,6 +44,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
     <!-- 四赛道 -->
     <section class="ct-card">
       <h2>四条赛道怎么选（+ 站内对应任务）</h2>
+      <img class="track-map" src="/images/contest/track-map.png" alt="四条赛道思维导图">
       <table>
         <tr><th>赛道</th><th>一句话定位</th><th>适合谁</th><th>站内直接对应</th></tr>
         <tr>
@@ -115,6 +116,52 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
 面向「完全没用过这个工具的老师」，傻瓜式步骤 + 每步截图占位标注，
 让评审看到：这个作品别人拿到手真的能用（推广适配性维度）。
 我的作品功能：____</pre>
+      </div>
+    </section>
+
+
+    <!-- 教学案例 -->
+    <section class="ct-card">
+      <h2>每条赛道怎么做：真实教学案例 + 更多思路</h2>
+
+      <div class="case">
+        <div class="case-head t1"><h3>赛道① AI+教学创新 · 案例《AI 试卷讲评系统》</h3><span>初中数学</span></div>
+        <div class="case-body">
+          <p><b>痛点</b>：每次月考后 300 份卷子的错题统计占两个晚上，讲评课全凭感觉挑题。</p>
+          <p><b>作品</b>：AI 分析答题卡数据 → 自动生成错误率排序 → 讲评课优先讲 Top5 错题 → 配变式训练 → 学生个体错因报告。</p>
+          <p><b>怎么做</b>：<a href={withBase('/modules/teaching/exam-paper-task/')}>命题实战</a>出卷 → 考后走<a href={withBase('/modules/edu-data/exam-analysis-task/')}>月考分析</a>话术 → 讲评课用<a href={withBase('/modules/teaching/html-concepts/')}>交互页面</a>演示错题。</p>
+          <div class="ideas"><b>更多思路</b>：作文讲评（AI 批注 + 范文对比墙）· 复习导图（学生自画 → AI 补漏 → 差异对照）· 课堂实录 AI 反思（录音转写 → 教学行为分析）· 分层作业自动推送</div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-head t2"><h3>赛道② AI+学习与资源 · 案例《课本可视化》</h3><span>小学语文</span></div>
+        <div class="case-body">
+          <p><b>痛点</b>：一年级课文《秋天》只有静态插图，低龄学生注意力撑不过三分钟。</p>
+          <p><b>作品</b>：<a href={withBase('/demos/textbook/')}>课本可视化样板</a>——教材页 + 朗读音频 + 大雁排字动画 + 跟读练习，扫码即用。</p>
+          <p><b>怎么做</b>：从<a href={withBase('/textbooks/')}>教材索引</a>领 PDF → 截课文页发给 AI → 走<a href={withBase('/modules/creation/subject-task/')}>七步迭代法</a> → 生成配音用 TTS。</p>
+          <div class="ideas"><b>更多思路</b>：智能学伴（答疑机器人只按你的教学法回答）· 探究学习页（学生先猜再验证的交互实验）· 个性化阅读推荐（按阅读水平推送不同版本）· 错题本自动生成（AI 归因 + 同类题推送）</div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-head t3"><h3>赛道③ AI+课程建设 · 案例《AI 素养校本课程》</h3><span>跨学科</span></div>
+        <div class="case-body">
+          <p><b>痛点</b>：学校要求开 AI 通识课但没有教材，零散课件拼不成体系。</p>
+          <p><b>作品</b>：8 课时 AI 素养课纲 + 每课时课件/教案/学生手册 + 教学实践一学期记录。</p>
+          <p><b>怎么做</b>：用<a href={withBase('/modules/growth/ai-learning/')}>素养四层次</a>定目标 → <a href={withBase('/modules/growth/innovation/')}>创意工坊 30 点子</a>选学生活动 → 每课时走七步法。</p>
+          <div class="ideas"><b>更多思路</b>：跨学科 PBL（AI+地理的「校园微气候」项目）· 地方文化课程（AI 助力非遗数字化）· 学科拓展课（数学建模 + AI 工具）· 德育课程（AI 情境判定 + 后果模拟）</div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-head t4"><h3>赛道④ 教育智能体 · 案例《学科助教智能体》</h3><span>我们的主场</span></div>
+        <div class="case-body">
+          <p><b>痛点</b>：学生课后问问题找不到人，家长问学习建议口径不统一。</p>
+          <p><b>作品</b>：<a href={withBase('/modules/growth/teacher-agent/')}>教师智能体</a>——装专家 + 喂你的教学资料和班情 + 教你的表达习惯 → 学生问它按你的口径答，你审核后放行。</p>
+          <p><b>怎么做</b>：WorkBuddy 装教育专家 → 喂「基本情况」话术 → <a href={withBase('/modules/growth/skill-born/')}>固化成 Skill</a> → <a href={withBase('/modules/software/task-cloud/')}>数据上云</a>（对应赛道「数据库互联」关键词）→ 多个智能体分工（对应「多智能体协同」）。</p>
+          <div class="ideas"><b>更多思路</b>：备课智能体（输入课标自动出三版教学设计）· 家校沟通智能体（按你的风格写家长信）· 班务管理智能体（<a href={withBase('/modules/class-management/co-teacher/')}>副班主任</a>）· 教研协作多智能体（一个查文献 + 一个写综述 + 一个审格式）· 学情预警智能体（成绩连续下滑自动提醒）</div>
+        </div>
       </div>
     </section>
 
@@ -190,8 +237,8 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   td { padding: 12px; border: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
   td a { color: var(--gold); }
   .small { font-size: 11px; color: var(--text-faint); }
-  .badge-hot { background: linear-gradient(135deg, var(--gold-soft), var(--gold)); color: #2a1c00; font-size: 11px; padding: 1px 8px; border-radius: 4px; font-weight: 700; }
-  .hint { font-size: 13px; color: var(--purple-soft); margin-top: 12px; line-height: 1.8; }
+  .badge-hot { background: var(--gold); color: #2a1c00; font-size: 11px; padding: 1px 8px; border-radius: 4px; font-weight: 700; }
+  .hint { font-size: 13px; color: var(--purple-bright); margin-top: 12px; line-height: 1.8; }
   .mat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
   .mat { background: var(--bg-panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
   .mat h3 { font-size: 14px; color: var(--gold-soft); margin: 0 0 6px; }
@@ -199,7 +246,7 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   .mat.hot { border-color: var(--line-gold); background: rgba(254,179,0,.05); }
   .prompt { position: relative; background: var(--bg-deep); border: 1px solid var(--line-gold); border-radius: 10px; padding: 16px 18px 16px 14px; margin: 14px 0; }
   .prompt b { display: block; font-size: 14px; color: var(--gold-soft); margin-bottom: 8px; padding-left: 60px; }
-  .p-tag { position: absolute; top: 14px; left: 14px; background: linear-gradient(135deg, var(--gold-soft), var(--gold)); color: #2a1c00; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 4px; font-family: var(--mono); }
+  .p-tag { position: absolute; top: 14px; left: 14px; background: var(--gold); color: #2a1c00; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 4px; font-family: var(--mono); }
   .prompt pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.8; white-space: pre-wrap; color: #ffe9b0; margin: 0; }
   .lead { font-size: 16px; margin: 0 0 14px; line-height: 1.8; }
   .strat { background: rgba(254,179,0,.06); border: 1px dashed var(--line-gold); border-radius: 10px; padding: 16px 20px; margin-top: 14px; }
@@ -209,4 +256,22 @@ const days = Math.max(0, Math.ceil((D1.getTime() - NOW.getTime()) / 86400000));
   .strat.purple { background: rgba(166,61,151,.08); border-color: var(--purple-bright); }
   .win { border-color: var(--line-gold); }
   ul { padding-left: 1.3em; font-size: 14px; line-height: 2; }
+.case { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 18px; overflow: hidden; }
+  .case-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; }
+  .case-head h3 { font-size: 16px; margin: 0; color: var(--text); }
+  .case-head span { font-size: 12px; font-family: var(--mono); padding: 2px 10px; border-radius: 4px; }
+  .case-head.t1 { background: rgba(254,179,0,.1); border-left: 4px solid var(--gold); }
+  .case-head.t1 span { color: var(--gold-bright, #b8860b); background: rgba(254,179,0,.12); }
+  .case-head.t2 { background: rgba(111,179,232,.1); border-left: 4px solid #6fb3e8; }
+  .case-head.t2 span { color: #4a8fc0; background: rgba(111,179,232,.12); }
+  .case-head.t3 { background: rgba(126,216,138,.1); border-left: 4px solid #7ed88a; }
+  .case-head.t3 span { color: #4a9e58; background: rgba(126,216,138,.12); }
+  .case-head.t4 { background: rgba(201,143,191,.1); border-left: 4px solid var(--purple-bright); }
+  .case-head.t4 span { color: var(--purple-bright); background: rgba(166,61,151,.1); }
+  .case-body { padding: 16px 20px; }
+  .case-body p { font-size: 14px; line-height: 1.9; margin: 6px 0; }
+  .case-body a { color: var(--gold); }
+  .ideas { margin-top: 10px; padding: 12px 16px; background: var(--bg-panel); border-radius: 8px; font-size: 13px; line-height: 1.9; color: var(--text-muted); }
+  .ideas b { color: var(--text); }
+  .track-map { width: 100%; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--line); }
 </style>
