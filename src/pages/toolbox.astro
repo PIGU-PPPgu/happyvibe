@@ -12,6 +12,7 @@ const CATS = [
   { key: 'class', label: '班级管理', icon: '▦' },
   { key: 'teaching', label: '教学', icon: '▶' },
   { key: 'agent', label: 'Agent / 知识库', icon: 'AI 助手' },
+  { key: 'skill', label: 'Skill / 脚本', icon: '◇' },
   { key: 'creation', label: '创作辅助', icon: '</>' },
   { key: 'design', label: '设计美学 · 前端下一步', icon: '✦' },
   { key: 'learn', label: '进阶学习 · 后端与部署', icon: '»' },
@@ -43,6 +44,7 @@ const CATS = [
                       : t.data.name}
                   </h3>
                   <p class="tool-desc">{t.data.description}</p>
+                  {t.data.install && <p class="tool-install mono">安装：{t.data.install}</p>}
                   {t.body && <div class="tool-note"><t.Content /></div>}
                 </div>
               </article>
@@ -68,5 +70,6 @@ const CATS = [
   .tool-name a:hover { color: var(--gold-soft); text-decoration: none; }
   .ext { font-size: 12px; color: var(--gold); }
   .tool-desc { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+  .tool-install { margin-top: 8px; font-size: 12px; color: var(--gold-soft); border-top: 1px dashed var(--line); padding-top: 8px; }
   .tool-note { margin-top: 10px; font-size: 13px; color: var(--text-faint); border-top: 1px dashed var(--line); padding-top: 10px; }
 </style>

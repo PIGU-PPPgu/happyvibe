@@ -31,9 +31,10 @@ const tools = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/tools' }),
   schema: z.object({
     name: z.string(),
-    category: z.enum(['class', 'teaching', 'creation', 'agent', 'local', 'design', 'learn']),
+    category: z.enum(['class', 'teaching', 'creation', 'agent', 'local', 'design', 'learn', 'skill']),
     description: z.string(),
     url: z.string().optional(),
+    install: z.string().optional(),
     image: z.string().optional(),
     order: z.number().default(99),
   }),
