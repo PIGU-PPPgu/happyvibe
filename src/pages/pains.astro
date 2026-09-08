@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TerminalWindow from '../components/TerminalWindow.astro';
+import Mermaid from '../components/Mermaid.astro';
 import { withBase } from '../lib/urls';
 
 interface Pain {
@@ -46,6 +47,12 @@ const GROUPS: Group[] = [
         fix: '万事留痕',
         href: '/modules/class-management/trace-desk/',
         effect: '一屏看清班务，过程自动留档',
+      },
+      {
+        text: '值日表每周重排，谁和谁一组全靠手工配',
+        fix: '留痕进阶玩法',
+        href: '/modules/class-management/trace-desk-advanced/',
+        effect: '值日劳动自动排班，表扬状批量出',
       },
     ],
   },
@@ -97,6 +104,12 @@ const GROUPS: Group[] = [
         href: '/modules/teaching/exam-paper-task/',
         effect: '做完手里有一份 19 题的完整卷',
       },
+      {
+        text: '通知、汇报、美篇，格式改到眼花',
+        fix: '家校沟通任务',
+        href: '/modules/class-management/home-comm-task/',
+        effect: '一段话术出稿，你只改口径和事实',
+      },
     ],
   },
   {
@@ -121,6 +134,12 @@ const GROUPS: Group[] = [
         fix: '副班主任',
         href: '/modules/class-management/co-teacher/',
         effect: '设一次，跑一学期',
+      },
+      {
+        text: '班会主题每周一换，课件素材从零开始找',
+        fix: '工具箱 · 班会课件',
+        href: '/toolbox/#class',
+        effect: '现成主题课件，改两处就能用',
       },
     ],
   },
@@ -147,6 +166,12 @@ const GROUPS: Group[] = [
         href: '/modules/software/task-subject-website/',
         effect: '从模板到上线，每步有截图',
       },
+      {
+        text: '成绩波动没人盯，发现下滑已经是期末',
+        fix: '教师智能体 · 学情预警',
+        href: '/modules/growth/teacher-agent/',
+        effect: '成绩连续下滑自动提醒',
+      },
     ],
   },
 ];
@@ -161,6 +186,39 @@ const GROUPS: Group[] = [
         每条痛点右边就是站里的现成解法——<b style="color:var(--gold-soft)">今天不学概念，只解决你举手的那件事</b>。
       </p>
     </TerminalWindow>
+
+    <div class="mindmap card">
+      <h2>痛点全景</h2>
+      <pre><code class="language-mermaid">
+mindmap
+  root((每天被什么折磨))
+    重复的表格活
+      错题统计两个晚上
+      六班成绩表合并
+      排座位改一版全班挪
+      收作业考勤靠脑记
+      值日表每周手工排
+    大批量的文字活
+      期末45份评语
+      30篇周记抓共性
+      家长会只会截表格
+    格式规范的文书活
+      课题申报书抠格式
+      每课备三套材料
+      出卷排版到眼花
+    突发与沟通活
+      出事当晚四份材料
+      家长口径不统一
+      一个人当三个人用
+    想给学生做东西
+      课文只有静态图
+      想要点名器积分板
+      学科主页不会做
+      成绩下滑没人盯
+      </code></pre>
+      <p class="mm-note text-muted">举手对号之后往下翻——每条痛点都链到站内解法。</p>
+    </div>
+    <Mermaid />
 
     <div class="ask card">
       <h2>交给 AI 前的三问</h2>
@@ -205,6 +263,10 @@ const GROUPS: Group[] = [
   .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
   .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
   .sub { margin: 0; line-height: 1.9; }
+  .mindmap { padding: 22px 26px; }
+  .mindmap h2 { font-size: 19px; color: var(--gold-soft); margin: 0 0 6px; }
+  .mindmap pre { margin: 0; }
+  .mm-note { margin: 10px 0 0; font-size: 13px; }
   .ask { padding: 22px 26px; border-color: var(--line-gold); background: rgba(254,179,0,.04); }
   .ask h2, .grp h2, .more h2 { font-size: 19px; color: var(--gold-soft); margin: 0 0 10px; }
   .ask ol { padding-left: 1.4em; margin: 8px 0; font-size: 15px; line-height: 2.1; }

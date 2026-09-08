@@ -1,0 +1,76 @@
+---
+/**
+ * Mermaid 渲染器：把页面里 <pre><code class="language-mermaid"> 变成图
+ * 只在包含 mermaid 代码块的页面引入（课程页按需判断）
+ */
+---
+
+<script>
+  import mermaid from 'mermaid';
+
+  const dark = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function init() {
+    const blocks = [...document.querySelectorAll<HTMLDivElement>('pre > code.language-mermaid')];
+    if (!blocks.length) return;
+
+    const isLight = document.documentElement.dataset.theme === 'light';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      securityLevel: 'strict',
+      fontFamily: 'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif',
+      themeVariables: isLight
+        ? {
+            background: 'transparent',
+            primaryColor: '#f7f2e8',
+            primaryTextColor: '#2a1c00',
+            primaryBorderColor: '#FEB300',
+            lineColor: '#a63d97',
+            secondaryColor: '#efe6f2',
+            tertiaryColor: '#f9f5ee',
+            textColor: '#3d2b52',
+          }
+        : {
+            background: 'transparent',
+            primaryColor: '#231735',
+            primaryTextColor: '#f5f0ff',
+            primaryBorderColor: '#FEB300',
+            lineColor: '#C77DFF',
+            secondaryColor: '#2f1d47',
+            tertiaryColor: '#1c1230',
+            textColor: '#efe9f7',
+          },
+    });
+
+    blocks.forEach((code) => {
+      const pre = code.parentElement!;
+      const src = code.textContent ?? '';
+      const div = document.createElement('div');
+      div.className = 'mermaid-render';
+      div.textContent = src;
+      pre.replaceWith(div);
+    });
+
+    mermaid.run({ querySelector: '.mermaid-render' }).catch((err) => {
+      console.warn('mermaid render failed:', err);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+</script>
+
+<style is:global>
+  .mermaid-render {
+    display: flex;
+    justify-content: center;
+    padding: 18px 12px;
+    margin: 18px 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow-x: auto;
+  }
+  .mermaid-render svg { max-width: 100%; height: auto; }
+</style>

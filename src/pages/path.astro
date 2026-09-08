@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import TerminalWindow from '../components/TerminalWindow.astro';
 import { PATH_STATIONS } from '../data/path';
 import PreTest from '../components/PreTest.astro';
+import Mermaid from '../components/Mermaid.astro';
 import { withBase } from '../lib/urls';
 
 // 校验路线图里的课程 ID 都真实存在
@@ -34,9 +35,28 @@ const totalStations = stations.length;
     </TerminalWindow>
 
     <div class="path-map-embed">
-      <iframe class="path-frame" src="/interactives/path-map" title="七站路线图" loading="lazy"></iframe>
-      <p class="path-full"><a href="/interactives/path-map" target="_blank" rel="noopener">全屏打开 →</a> <span class="mono text-muted">投屏时按 F 进演示模式</span></p>
+      <pre class="path-flow"><code class="language-mermaid">
+flowchart LR
+  subgraph A["会用"]
+    S1["01 会用 AI<br/>不只当搜索框"] --> S2["02 教学提效<br/>AI 教学工作流"]
+  end
+  subgraph B["用好"]
+    S2 --> S3["03 场景实践<br/>自己的知识库"]
+    S3 --> S4["04 数据分析<br/>看懂真实变化"]
+    S4 --> S5["05 Vibe Coding<br/>一句话做应用"]
+  end
+  subgraph C["做出来"]
+    S5 --> S6["06 做出作品<br/>AI 教育小应用"]
+    S6 --> S7["07 形成成果<br/>课例课题论文"]
+  end
+  S7 --> EXIT["任务库实战<br/>真实任务练手"]
+  classDef home fill:#231735,stroke:#FEB300,stroke-width:2px,color:#f5f0ff
+  classDef exit fill:#3a2a00,stroke:#FEB300,stroke-width:2.5px,color:#ffe9b0
+  class S5,S7 home
+  class EXIT exit
+      </code></pre>
     </div>
+    <Mermaid />
 
     <PreTest />
 
@@ -94,10 +114,7 @@ const totalStations = stations.length;
   .path-title { margin: 0 0 10px; font-size: clamp(24px, 4vw, 36px); }
   .path-sub { margin: 0; max-width: 620px; }
   .path-map-embed { margin-top: 24px; }
-  .path-frame { width: 100%; aspect-ratio: 880 / 620; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-panel); }
-  .path-full { margin: 8px 0 0; font-size: 13px; }
-  .path-full a { color: var(--gold-soft); border-bottom: 1px dashed var(--line-gold); }
-  @media (max-width: 700px) { .path-frame { aspect-ratio: auto; height: 520px; } }
+  .path-flow { margin: 0; }
   .path-finish {
     margin-top: 36px; padding: 24px 28px;
     display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;

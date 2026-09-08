@@ -4,6 +4,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PixelBadge from '../../../components/PixelBadge.astro';
 import MarkDoneButton from '../../../components/MarkDoneButton.astro';
 import StuckButton from '../../../components/StuckButton.astro';
+import Mermaid from '../../../components/Mermaid.astro';
 import { MODULE_MAP, type ModuleSlug } from '../../../data/modules';
 import { withBase } from '../../../lib/urls';
 
@@ -30,6 +31,7 @@ const lessonSlug = lesson.id.split('/').pop()!;
 
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const moduleHref = withBase(`/modules/${slug}/`);
+const hasMermaid = lesson.body.includes('```mermaid');
 ---
 <BaseLayout title={lesson.data.title} description={lesson.data.description}>
   <div class="container lesson-page">
@@ -73,6 +75,7 @@ const moduleHref = withBase(`/modules/${slug}/`);
 
         <div class="lesson-tail">
           <StuckButton lessonTitle={lesson.data.title} moduleTitle={meta.title} />
+    {hasMermaid && <Mermaid />}
           <a class="btn btn-ghost back-btn" href={moduleHref}>
             <span aria-hidden="true">↑</span> 返回 {meta.code} {meta.title} · 课程列表
           </a>
