@@ -224,6 +224,41 @@ const TABS = [
 
     <!-- 怎么赢 -->
     <section class="tab-sec" data-sec="strategy" hidden>
+      <div class="ct-card">
+        <h2>选题四象限</h2>
+        <p class="lead">拿你身边的活往这四格里放：横着看技术门槛，竖着看遇到频率。<b style="color:var(--gold-soft)">真痛点 = 持续出现 × 影响效率</b>——只有右上那格值得写 proposal 立项。</p>
+        <div class="quad" aria-label="痛点筛选四象限">
+          <div class="q-axis q-axis-y mono"><span>高频遇到</span><span>偶尔遇到</span></div>
+          <div class="q-grid">
+            <div class="q-cell q-hit">
+              <h3>立刻干掉</h3>
+              <p>高频 · 低门槛</p>
+              <ul><li>点名器、积分板、抢答页</li><li>批改统计、周记提炼</li></ul>
+              <p class="q-act">培训现场就做出来</p>
+            </div>
+            <div class="q-cell q-project">
+              <h3>立项攻坚</h3>
+              <p>高频 · 高门槛</p>
+              <ul><li>学情分析与预警</li><li>学科智能体、知识库</li></ul>
+              <p class="q-act">比赛作品从这里选</p>
+            </div>
+            <div class="q-cell q-casual">
+              <h3>顺手就做</h3>
+              <p>低频 · 低门槛</p>
+              <ul><li>通知模板、班会课件</li></ul>
+              <p class="q-act">需要时一句话的事</p>
+            </div>
+            <div class="q-cell q-skip">
+              <h3>别碰</h3>
+              <p>低频 · 高门槛</p>
+              <ul><li>一次性大屏、全校平台</li></ul>
+              <p class="q-act">门槛高又用不上，纯耗时间</p>
+            </div>
+          </div>
+          <div class="q-axis q-axis-x mono"><span>低门槛</span><span>高门槛</span></div>
+        </div>
+      </div>
+
       <div class="ct-card win">
         <h2>为什么是你</h2>
         <p class="lead">
@@ -344,6 +379,23 @@ const TABS = [
   .strat ol { padding-left: 1.4em; }
   .strat.purple { background: rgba(166,61,151,.08); border-color: var(--purple-bright); }
   .win { border-color: var(--line-gold); }
+  .quad { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .q-axis { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-faint); padding: 0 2px; }
+  .q-axis-y { flex-direction: column; position: absolute; left: -14px; top: 50%; transform: translate(-100%, -50%) ; writing-mode: vertical-rl; display: none; }
+  .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: relative; }
+  .q-cell { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--bg-panel); }
+  .q-cell h3 { margin: 0 0 2px; font-size: 16.5px; }
+  .q-cell > p { margin: 0 0 8px; font-size: 12px; color: var(--text-faint); }
+  .q-cell ul { margin: 0 0 10px; padding-left: 1.2em; font-size: 13.5px; color: var(--text-muted); line-height: 1.9; }
+  .q-act { font-size: 13px !important; font-weight: 600; }
+  .q-hit { border-color: #7ed88a66; background: rgba(126, 216, 138, .06); }
+  .q-hit h3 { color: #7ed88a; }
+  .q-project { border-color: var(--line-gold); background: rgba(254, 179, 0, .07); }
+  .q-project h3 { color: var(--gold-soft); }
+  .q-casual h3 { color: var(--text-muted); }
+  .q-skip { opacity: .6; border-style: dashed; }
+  .q-skip h3 { color: var(--text-faint); }
+  .q-skip .q-act { color: var(--text-faint); font-weight: 400; }
   ul { padding-left: 1.3em; font-size: 14px; line-height: 2; }
   .case { border: 1px solid var(--line); border-radius: 12px; margin-top: 18px; overflow: hidden; }
   .case-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; }
