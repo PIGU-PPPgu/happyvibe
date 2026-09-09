@@ -5,11 +5,28 @@ import TerminalWindow from '../components/TerminalWindow.astro';
 import TypeWriter from '../components/TypeWriter.astro';
 import ModuleCarousel from '../components/ModuleCarousel.astro';
 import OnboardingTour from '../components/OnboardingTour.astro';
+import { MODULES } from '../data/modules';
 import { withBase } from '../lib/urls';
 
 const lessons = await getCollection('lessons');
 const totalLessons = lessons.length;
 const moduleCount = new Set(lessons.map((l) => l.data.module)).size;
+
+const PAGES = [
+  { name: '学习路线图', href: '/path/', note: '七站三段' },
+  { name: '痛点对号入座', href: '/pains/', note: '20 条痛点对解法' },
+  { name: '比赛专区', href: '/contest/', note: '四赛道' },
+  { name: '工具箱', href: '/toolbox/', note: '29 个工具' },
+  { name: '21 天挑战', href: '/challenge/', note: '每天 15 分钟' },
+  { name: '教材索引', href: '/textbooks/', note: '1-9 年级课本页' },
+  { name: '培训者工具包', href: '/facilitator/', note: '含授课脚本' },
+  { name: '关于本站', href: '/about/', note: '' },
+];
+
+const moduleLessons = MODULES.map((m) => ({
+  m,
+  items: lessons.filter((l) => l.data.module === m.slug).sort((a, b) => a.data.order - b.data.order),
+}));
 
 const heroLines = [
   '$ happyvibe --start',
@@ -73,6 +90,54 @@ const heroLines = [
     </div>
   </section>
 
+  <section class="container sitemap" id="sitemap">
+    <header class="sec-head">
+      <h2 class="sec-title">站内地图 <span class="mono sec-code">// 8 个页面 · 10 个模块 · {totalLessons} 节课</span></h2>
+      <p class="sec-sub text-muted">整个站的结构在这两张图里：上面是总览，点节点聚焦、按 / 搜索；下面是目录树，点模块名展开课表，学过的课打金勾。</p>
+    </header>
+
+    <iframe class="site-frame" src="/interactives/site-map" title="站内地图" loading="lazy"></iframe>
+    <p class="site-full"><a href="/interactives/site-map" target="_blank" rel="noopener">全屏打开 →</a></p>
+
+    <div class="tree card">
+      <p class="tree-root mono">~/happyvibe</p>
+      <details class="tr-branch" open>
+        <summary><span class="tr-name">页面</span><span class="tr-n mono">{PAGES.length}</span></summary>
+        <ul class="tr-list">
+          {PAGES.map((p) => (
+            <li><a href={withBase(p.href)}>{p.name}{p.note && <span class="tr-note"> · {p.note}</span>}</a></li>
+          ))}
+        </ul>
+      </details>
+      <details class="tr-branch">
+        <summary><span class="tr-name">modules · 课程模块</span><span class="tr-n mono">{moduleLessons.length} / {totalLessons}</span></summary>
+        {moduleLessons.map(({ m, items }) => (
+          <details class="tr-mod">
+            <summary>
+              <span class="tr-code mono">{m.code}</span>
+              <span class="tr-name">{m.title}</span>
+              <span class="tr-n mono">{items.length} 课</span>
+            </summary>
+            <ul class="tr-list">
+              {items.map((l) => {
+                const id = `${m.slug}/${l.id.split('/').pop()}`;
+                return (
+                  <li>
+                    <a href={withBase(`/modules/${id}/`)} data-tree-lesson={id}>
+                      <span class="tr-check mono" aria-hidden="true">✓</span>
+                      <span class="tr-title">{l.data.title}</span>
+                      {l.data.minutes && <span class="tr-min mono">{l.data.minutes} 分钟</span>}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        ))}
+      </details>
+    </div>
+  </section>
+
   <OnboardingTour />
 </BaseLayout>
 
@@ -121,6 +186,30 @@ const heroLines = [
   .mc-pct { font-size: 12px; color: var(--gold-soft); min-width: 34px; text-align: right; }
   .continue-sec { margin-block: 56px 20px; }
   .continue-card { padding: 26px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .sitemap { margin-top: 64px; }
+  .site-frame { width: 100%; aspect-ratio: 960 / 1000; border: 1px solid var(--line); border-radius: 12px; margin: 8px 0; background: var(--bg-panel); }
+  .site-full { margin: 0 0 18px; font-size: 13px; }
+  .site-full a { color: var(--gold-soft); border-bottom: 1px dashed var(--line-gold); }
+  .tree { padding: 18px 22px; }
+  .tree-root { margin: 0 0 8px; font-size: 13px; color: var(--gold); }
+  .tree summary { cursor: pointer; display: flex; align-items: baseline; gap: 10px; padding: 8px 8px; border-radius: 6px; list-style: none; }
+  .tree summary::-webkit-details-marker { display: none; }
+  .tree summary::before { content: '▸'; color: var(--gold); font-size: 12px; transition: transform .15s; }
+  .tree details[open] > summary::before { transform: rotate(90deg); }
+  .tree summary:hover { background: rgba(254, 179, 0, .06); }
+  .tr-name { font-size: 15px; font-weight: 600; }
+  .tr-n { margin-left: auto; font-size: 12px; color: var(--text-faint); }
+  .tr-code { font-size: 12px; color: var(--purple-soft); }
+  .tr-list { list-style: none; margin: 0; padding: 2px 0 10px 26px; display: flex; flex-direction: column; gap: 4px; }
+  .tr-list a { display: flex; align-items: baseline; gap: 8px; color: var(--text-muted); padding: 6px 8px; border-radius: 6px; font-size: 14.5px; }
+  .tr-list a:hover { color: var(--gold-soft); background: var(--bg-panel); text-decoration: none; }
+  .tr-note { color: var(--text-faint); font-size: 13px; }
+  .tr-check { color: var(--text-faint); visibility: hidden; font-size: 13px; }
+  .tr-list a.is-done .tr-check { visibility: visible; color: var(--gold); }
+  .tr-list a.is-done { color: var(--gold-soft); }
+  .tr-min { margin-left: auto; font-size: 11.5px; color: var(--text-faint); }
+  .tr-mod summary { padding-left: 16px; }
+  @media (max-width: 700px) { .site-frame { aspect-ratio: auto; height: 640px; } }
   .continue-title { margin: 0 0 4px; font-size: 20px; }
   .continue-sub { margin: 0 0 8px; font-size: 14px; }
   .continue-lesson { margin: 0; font-family: var(--mono); font-size: 15px; color: var(--gold-soft); }
@@ -129,6 +218,16 @@ const heroLines = [
 <script>
   import { getDoneMap, getLessonIndex, onProgress } from '../lib/progress';
   import { withBase } from '../lib/urls';
+
+  // 站内地图目录树：学过的课打金勾
+  function refreshTree() {
+    const done = getDoneMap();
+    document.querySelectorAll<HTMLAnchorElement>('[data-tree-lesson]').forEach((a) => {
+      a.classList.toggle('is-done', Boolean(done[a.dataset.treeLesson]));
+    });
+  }
+  refreshTree();
+  onProgress(refreshTree);
 
   function refresh() {
     const index = getLessonIndex();
