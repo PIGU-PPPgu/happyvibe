@@ -1,7 +1,7 @@
 ---
 title: 亲手固化一个 Skill：从「重复做事」到「一句话复用」
 module: growth
-order: 5
+order: 6
 description: 用本站的真实案例，手把手带你走完 Skill 形成的四步循环——你会发现：你已经无数次「做过」这件事，只差把它写下来。
 source: 本站 skills/tutorial-visuals/SKILL.md 的真实诞生过程
 status: ready

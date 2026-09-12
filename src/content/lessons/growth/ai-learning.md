@@ -1,7 +1,7 @@
 ---
 title: AI 素养学习：老师持续进化自学地图
 module: growth
-order: 2
+order: 3
 description: 学完本站之后怎么继续进化？AI 素养四层次 + 精选资源清单（蓝皮书、easy-vibe、官方文档）+ 每周 30 分钟习惯。
 source: 培训成长路径图 · 教师成长方向
 status: ready

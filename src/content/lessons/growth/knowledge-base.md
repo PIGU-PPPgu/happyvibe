@@ -1,7 +1,7 @@
 ---
 title: Agent + Obsidian：搭建会生长的个人知识库
 module: growth
-order: 1
+order: 2
 description: 把教材、教案、班务资料交给 Obsidian 管，让 Agent 在你的知识库上读写——资料不再散落各处。
 source: 培训 PPT S43、S50
 status: ready

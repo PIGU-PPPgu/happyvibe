@@ -1,7 +1,7 @@
 ---
 title: Skill 的使用与迁移：一个技能，所有 Agent 通用
 module: growth
-order: 6
+order: 7
 description: 固化好的 SKILL.md 怎么用？WorkBuddy 里启用、搬到 Claude Code/ZCode/Trae——技能文件是纯文本，复制粘贴就行迁移。
 source: 本站 skills/tutorial-visuals/SKILL.md 实践 ／ 各 Agent 技能机制通用原理
 status: ready

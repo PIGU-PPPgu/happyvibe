@@ -20,161 +20,205 @@ interface Group {
 
 const GROUPS: Group[] = [
   {
-    id: 'tables',
-    title: '重复的表格活',
-    nature: '每个月都在做，每次格式都一样',
+    id: 'tips',
+    title: '指尖上的负担',
+    nature: '国家发过文要减的：打卡、截图、留痕',
     pains: [
       {
-        text: '月考后几百份答题卡的错题统计，占掉整整两个晚上',
-        fix: '月考分析实战',
-        href: '/modules/edu-data/exam-analysis-task/',
-        effect: 'AI 出排序和错因报告，你只挑要讲的题',
-      },
-      {
-        text: '六个班的成绩表，格式不一，合并一次一晚上',
-        fix: '三个痛点任务',
+        text: '安全教育平台：群里催完打卡，截图还要一张一张收、一张一张核',
+        fix: '批量核对汇总',
         href: '/modules/software/wb-06-office/',
-        effect: '一晚上的合并活变 10 分钟核对',
+        effect: '统计汇总这段交给 AI，规则你定',
       },
       {
-        text: '排座位：谁近视、谁好动、谁要成绩互补，改一版全班挪',
-        fix: '排座课 + SEAT OS',
-        href: '/modules/class-management/seat-planner/',
-        effect: '规则你说了算，草案自动生成',
+        text: '政务 APP 打卡、接龙、点赞投票、传照片传轨迹',
+        fix: '痛点拆解课',
+        href: '/modules/growth/pain-breakdown/',
+        effect: '制度减不掉的，工具至少省掉汇总那段',
       },
       {
-        text: '收没收到作业、考勤、请假，全靠脑子记和小本本',
+        text: '晨午检表天天填、谁没到天天追原因',
+        fix: '痛点拆解课',
+        href: '/modules/growth/pain-breakdown/',
+        effect: '一句话生成当日台账',
+      },
+      {
+        text: '留痕材料，晚间和周末赶工',
         fix: '万事留痕',
         href: '/modules/class-management/trace-desk/',
-        effect: '一屏看清班务，过程自动留档',
-      },
-      {
-        text: '值日表每周重排，谁和谁一组全靠手工配',
-        fix: '留痕进阶玩法',
-        href: '/modules/class-management/trace-desk-advanced/',
-        effect: '值日劳动自动排班，表扬状批量出',
-      },
-    ],
-  },
-  {
-    id: 'words',
-    title: '大批量的文字活',
-    nature: '到点就来，一份一份磨',
-    pains: [
-      {
-        text: '期末 45 份评语 + 素质发展手册 + 家长会材料三座大山',
-        fix: '期末三大件流水线',
-        href: '/modules/software/task-final-term/',
-        effect: '批量生成 + 事实你填，流程全在课里',
-      },
-      {
-        text: '30 篇周记读完只想说「都挺好」，共性抓不出来',
-        fix: '三个痛点任务',
-        href: '/modules/software/wb-06-office/',
-        effect: 'AI 提炼共性，你负责判断和面谈',
-      },
-      {
-        text: '家长会要展示班级数据，只会截表格发家长',
-        fix: '任务库 · 数据大屏',
-        href: '/modules/creation/task-library/',
-        effect: '一句话出数字滚动和图表动画页',
+        effect: '过程自动留档，材料自动成',
       },
     ],
   },
   {
     id: 'docs',
-    title: '格式规范的文书活',
-    nature: '内容不难，格式和资料耗人',
+    title: '检查与台账',
+    nature: '平时没人看，检查前一夜全来了',
     pains: [
       {
-        text: '课题申报书：对着往年文件抠格式，文献综述没头绪',
-        fix: '课题生成器 + 文献矩阵',
-        href: '/modules/research/topic-generator/',
-        effect: '五天出一份骨架完整的申报书',
+        text: '检查前一夜补 15 篇听课记录、补教案——手写三小时',
+        fix: '痛点拆解课',
+        href: '/modules/growth/pain-breakdown/',
+        effect: '课堂要点整理成规范记录格式',
       },
       {
-        text: '教案、课件、分层练习，每课都要备三套材料',
+        text: '教案规定张数，教学反思不少于 500 字',
+        fix: 'AI 辅助备课',
+        href: '/modules/teaching/lesson-prep/',
+        effect: '反思出初稿，你改成自己的话',
+      },
+      {
+        text: '班主任手册、班会记录、家访记录，期末集中补',
+        fix: '痛点拆解课',
+        href: '/modules/growth/pain-breakdown/',
+        effect: '平时一句话记，期末不补课',
+      },
+      {
+        text: '帮社区、保险、银行统计学生户籍参保',
+        fix: '三个痛点任务',
+        href: '/modules/software/wb-06-office/',
+        effect: '表格导进去，汇总自动出',
+      },
+    ],
+  },
+  {
+    id: 'teaching',
+    title: '教学循环',
+    nature: '天天摸的活，最容易忽略它有多费',
+    pains: [
+      {
+        text: '备一节好课：教学设计、课件、素材、案例，每样重搜一遍',
         fix: 'AI 辅助备课',
         href: '/modules/teaching/lesson-prep/',
         effect: '一次生成备课包，你改成自己的',
       },
       {
-        text: '出单元卷：双向细目表、三档难度、答案排版',
+        text: '出卷：找题、拼卷、排版、答案、双向细目表',
         fix: '命题实战',
         href: '/modules/teaching/exam-paper-task/',
-        effect: '做完手里有一份 19 题的完整卷',
+        effect: '做完手里有一份完整的卷',
       },
       {
-        text: '通知、汇报、美篇，格式改到眼花',
-        fix: '家校沟通任务',
-        href: '/modules/class-management/home-comm-task/',
-        effect: '一段话术出稿，你只改口径和事实',
+        text: '一人带四个班，每个学生写三页，改到眼花',
+        fix: '三个痛点任务',
+        href: '/modules/software/wb-06-office/',
+        effect: '批改后的统计提炼交给 AI',
+      },
+      {
+        text: '登分：卷面分一个数一个数敲进 Excel',
+        fix: '成绩分析与增值评价',
+        href: '/modules/edu-data/grade-analysis/',
+        effect: '拍照转表格，函数不用会',
+      },
+      {
+        text: '成绩分析只会求平均分，排名、进步率、错题率无从下手',
+        fix: '月考分析实战',
+        href: '/modules/edu-data/exam-analysis-task/',
+        effect: '一句话出全套分析',
+      },
+      {
+        text: '讲评课凭感觉挑题，错题分布靠印象',
+        fix: '数据可视化',
+        href: '/modules/edu-data/visualization/',
+        effect: '错题排序出来，讲评有靶子',
       },
     ],
   },
   {
-    id: 'sudden',
-    title: '突发与沟通活',
+    id: 'class',
+    title: '班务管理',
+    nature: '一个人的班主任，三个人的活',
+    pains: [
+      {
+        text: '排座位：身高视力动静成绩全要配，家长还盯着黄金座位',
+        fix: '排座课 + SEAT OS',
+        href: '/modules/class-management/seat-planner/',
+        effect: '规则你说了算，草案自动生成',
+      },
+      {
+        text: '值日排班乱、学生不自觉、老师天天催',
+        fix: '留痕进阶玩法',
+        href: '/modules/class-management/trace-desk-advanced/',
+        effect: '值日自动排班，表扬状批量出',
+      },
+      {
+        text: '课间纪律事件，事后追记谁干了什么说不清',
+        fix: '万事留痕',
+        href: '/modules/class-management/trace-desk/',
+        effect: '一句话记录，过程留档',
+      },
+      {
+        text: '黑板报、班级文化布置，每学期换主题做手工',
+        fix: '任务库',
+        href: '/modules/creation/task-library/',
+        effect: '主题方案和版式一句话出',
+      },
+    ],
+  },
+  {
+    id: 'home',
+    title: '家校沟通',
     nature: '最急的活，最不能出错的话',
     pains: [
       {
-        text: '学生出事当晚：群发告知、个别沟通、台账留痕、一周跟进，四份材料等你写',
-        fix: '留痕深度实战',
-        href: '/modules/class-management/trace-desk/',
-        effect: '一段话术生成四份材料，事实你出措辞它出',
-      },
-      {
-        text: '家长问学习建议，十个老师十个口径',
-        fix: '教师智能体',
-        href: '/modules/growth/teacher-agent/',
-        effect: '喂你的班情和口径，按你的话回答',
-      },
-      {
-        text: '班主任一个人当三个人用，晨报周报月报连轴转',
+        text: '家长群「收到」要数，没回的要单独 @',
         fix: '副班主任',
         href: '/modules/class-management/co-teacher/',
         effect: '设一次，跑一学期',
       },
       {
-        text: '班会主题每周一换，课件素材从零开始找',
-        fix: '工具箱 · 班会课件',
-        href: '/toolbox/#class',
-        effect: '现成主题课件，改两处就能用',
+        text: '家长消息 24 小时随时来，课间十分钟回不完 99+',
+        fix: '教师智能体',
+        href: '/modules/growth/teacher-agent/',
+        effect: '按你的口径起草，你审后发',
+      },
+      {
+        text: '学生出事当晚：群发告知、个别沟通、台账、跟进四份材料',
+        fix: '留痕深度实战',
+        href: '/modules/class-management/trace-desk/',
+        effect: '一段话术生成四份，事实你出措辞它出',
+      },
+      {
+        text: '期末几十条手写评语，一人一段不许重样，家长还会公开挑毛病',
+        fix: '期末三大件流水线',
+        href: '/modules/software/task-final-term/',
+        effect: '素材三行进，草稿分维度出',
+      },
+      {
+        text: '家长会：讲稿、数据展示、PPT，一学期磨一次',
+        fix: '任务库 · 数据大屏',
+        href: '/modules/creation/task-library/',
+        effect: '数据滚动图表页一句话出',
       },
     ],
   },
   {
-    id: 'make',
-    title: '想给学生做点东西',
-    nature: '有想法，卡在不会技术',
+    id: 'young',
+    title: '年轻老师特有',
+    nature: '骨干路上额外压的担子',
     pains: [
       {
-        text: '课文只有静态插图，低年级注意力撑不过三分钟',
-        fix: '课本可视化',
-        href: '/demos/textbook/',
-        effect: '教材页 + 朗读 + 动画，1-9 年级有样板',
+        text: '赛课磨课：教案改 20 版，课件一帧一帧抠',
+        fix: '痛点拆解课',
+        href: '/modules/growth/pain-breakdown/',
+        effect: '评课意见整合、版本对比交给 AI',
       },
       {
-        text: '想要随机点名器、积分板、抢答页，不知道从哪弄',
-        fix: '课堂三件套',
-        href: '/modules/software/task-classroom-kit/',
-        effect: '三句话换三个工具，明天就能用',
+        text: '师徒结对：一学期 15 节听课任务加记录',
+        fix: '痛点拆解课',
+        href: '/modules/growth/pain-breakdown/',
+        effect: '记录格式化，整理不再熬夜',
       },
       {
-        text: '想给自己的学科做个主页，放资料放链接',
-        fix: '任务一 · 学科网站',
-        href: '/modules/software/task-subject-website/',
-        effect: '从模板到上线，每步有截图',
-      },
-      {
-        text: '成绩波动没人盯，发现下滑已经是期末',
-        fix: '教师智能体 · 学情预警',
-        href: '/modules/growth/teacher-agent/',
-        effect: '成绩连续下滑自动提醒',
+        text: '职称材料：学时、证明、论文、年限，缺一样卡一年',
+        fix: '痛点拆解课',
+        href: '/modules/growth/pain-breakdown/',
+        effect: '清单核对器，缺什么提前知道',
       },
     ],
   },
 ];
+const painCount = GROUPS.reduce((a: number, g: Group) => a + g.pains.length, 0);
 ---
 <BaseLayout title="痛点对号入座" description="老师每天被什么折磨：成绩统计、期末评语、课题申报、突发沟通、想给学生做东西——每个痛点都有一条现成的路。">
   <div class="container pains-page">
@@ -192,33 +236,47 @@ const GROUPS: Group[] = [
       <pre><code class="language-mermaid">
 mindmap
   root((每天被什么折磨))
-    重复的表格活
-      错题统计两个晚上
-      六班成绩表合并
-      排座位改一版全班挪
-      收作业考勤靠脑记
-      值日表每周手工排
-    大批量的文字活
-      期末45份评语
-      30篇周记抓共性
-      家长会只会截表格
-    格式规范的文书活
-      课题申报书抠格式
-      每课备三套材料
-      出卷排版到眼花
-    突发与沟通活
+    指尖上的负担
+      催打卡收截图
+      接龙点赞留痕
+      晨午检天天填
+      留痕材料赶工
+    检查与台账
+      检查前补听课记录
+      教案反思五百字
+      手册记录期末补
+      帮社区统计户籍参保
+    教学循环
+      备课每样重搜
+      出卷排版
+      四个班三页
+      登分一个数一个数敲
+      分析只会平均分
+      讲评凭感觉
+    班务管理
+      排座位全家挪
+      值日天天催
+      纪律说不清
+      黑板报换主题
+    家校沟通
+      收到要数
+      消息回不完
       出事当晚四份材料
-      家长口径不统一
-      一个人当三个人用
-    想给学生做东西
-      课文只有静态图
-      想要点名器积分板
-      学科主页不会做
-      成绩下滑没人盯
+      评语不许重样
+      家长会三件
+    年轻老师特有
+      赛课改二十版
+      十五节听课任务
+      职称缺一样卡一年
       </code></pre>
       <p class="mm-note text-muted">举手对号之后往下翻——每条痛点都链到站内解法。</p>
     </div>
     <Mermaid />
+
+    <div class="ask card">
+      <h2>拆解方法</h2>
+      <p>这页只是靶子。挑一条你最恨的，去 <a href={withBase('/modules/growth/pain-breakdown/')}>痛点拆解课</a>：反问六问抠细节 → 四格拆解出话术 → 反向提问让 AI 出产品方案——今天培训讲的就是这条链。</p>
+    </div>
 
     <div class="ask card">
       <h2>交给 AI 前的三问</h2>

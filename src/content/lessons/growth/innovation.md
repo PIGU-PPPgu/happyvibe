@@ -1,7 +1,7 @@
 ---
 title: 创意工坊：把 AI 玩成「你的」AI
 module: growth
-order: 7
+order: 8
 description: 任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。
 source: 教师成长方向 · 个性化创造
 status: ready

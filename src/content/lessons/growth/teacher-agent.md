@@ -1,7 +1,7 @@
 ---
 title: 教师智能体：造一个「懂你学科的你」
 module: growth
-order: 3
+order: 4
 description: 用 WorkBuddy 专家+Skill 组合出自己的数字分身：懂你的学科、你的班情、你的表达习惯——你不在时它替你答疑。
 source: 培训成长路径图 · 教师成长方向
 status: ready
