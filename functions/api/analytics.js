@@ -31,14 +31,15 @@ export async function onRequestGet({ env, request }) {
   const prevStart = iso(now - (2 * days - 1) * DAY);
 
   // hours 维度用于页面端还原「星期 × 小时」热力图和每日趋势（UTC，页面端换算北京时间）
+  // 每行 n=浏览量、v=访问次数；v 落在访问开始的那个小时/页面/地区上
   const query = `query {
     viewer {
       accounts(filter: {accountTag: "${ACCOUNT_ID}"}) {
         cur: rumPageloadEventsAdaptiveGroups(limit: 1, ${F(curStart, curEnd)}) { count sum { visits } }
         prev: rumPageloadEventsAdaptiveGroups(limit: 1, ${F(prevStart, prevEnd)}) { count sum { visits } }
-        paths: rumPageloadEventsAdaptiveGroups(limit: 10, ${F(curStart, curEnd)}, orderBy: [count_DESC]) { dimensions { requestPath } count }
-        countries: rumPageloadEventsAdaptiveGroups(limit: 12, ${F(curStart, curEnd)}, orderBy: [count_DESC]) { dimensions { countryName } count }
-        hours: rumPageloadEventsAdaptiveGroups(limit: 800, ${F(curStart, curEnd)}) { dimensions { datetimeHour } count }
+        paths: rumPageloadEventsAdaptiveGroups(limit: 10, ${F(curStart, curEnd)}, orderBy: [count_DESC]) { dimensions { requestPath } count sum { visits } }
+        countries: rumPageloadEventsAdaptiveGroups(limit: 12, ${F(curStart, curEnd)}, orderBy: [count_DESC]) { dimensions { countryName } count sum { visits } }
+        hours: rumPageloadEventsAdaptiveGroups(limit: 800, ${F(curStart, curEnd)}) { dimensions { datetimeHour } count sum { visits } }
       }
     }
   }`;
@@ -63,9 +64,9 @@ export async function onRequestGet({ env, request }) {
         days,
         cur: { pv: cur.count, visits: cur.sum?.visits || 0 },
         prev: { pv: prev.count, visits: prev.sum?.visits || 0 },
-        paths: (acc.paths || []).map((row) => ({ p: row.dimensions.requestPath, n: row.count })),
-        countries: (acc.countries || []).map((row) => ({ c: row.dimensions.countryName, n: row.count })),
-        hours: (acc.hours || []).map((row) => ({ h: row.dimensions.datetimeHour, n: row.count })),
+        paths: (acc.paths || []).map((row) => ({ p: row.dimensions.requestPath, n: row.count, v: row.sum?.visits || 0 })),
+        countries: (acc.countries || []).map((row) => ({ c: row.dimensions.countryName, n: row.count, v: row.sum?.visits || 0 })),
+        hours: (acc.hours || []).map((row) => ({ h: row.dimensions.datetimeHour, n: row.count, v: row.sum?.visits || 0 })),
       },
       200,
       { 'Cache-Control': 'public, max-age=300' }
