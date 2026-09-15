@@ -52,14 +52,7 @@ const favicon =
     <SiteFooter />
     <SearchModal />
     <script type="application/json" id="hv-lesson-index" set:html={JSON.stringify(lessonIndex)} />
-    <script>
-      /* 本地访问记录：只存这台浏览器，供「数据看板」页展示 */
-      import { logVisit } from '../lib/visits';
-      logVisit(location.pathname);
-    </script>
-    <!-- Cloudflare Web Analytics -->
-    <script defer type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d0f96afd858c433eaa99dfdb3f26f6d1"}'></script>
-    <!-- End Cloudflare Web Analytics -->
+    <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 -->
   </body>
 </html>
 
