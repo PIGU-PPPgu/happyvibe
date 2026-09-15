@@ -12,10 +12,7 @@ const moduleNames: Record<string, string> = Object.fromEntries(
     <TerminalWindow title="happyvibe analytics — cloudflare web analytics">
       <p class="kicker mono">// ANALYTICS · 全站真实访问数据</p>
       <h1 class="title">数据看板</h1>
-      <p class="sub text-muted">
-        这里是整个学习站（不只是你一个人）的访问统计，数据来自本站所在的 Cloudflare 云服务。主口径是「访问次数」：一位老师打开学习站、连续浏览算一次访问，间隔超过 30 分钟再来算新的一次。
-        统计不识别也不存储任何个人身份，看不到谁是谁——只有次数、页面和地区。数据自 9 月 1 日统计服务上线起累积。
-      </p>
+      <p class="sub text-muted">全站老师的真实访问统计，自 9 月 1 日起累积。</p>
     </TerminalWindow>
 
     <section class="an-controls" aria-label="时间范围">
@@ -74,14 +71,9 @@ const moduleNames: Record<string, string> = Object.fromEntries(
     </section>
 
     <section class="card trend-card">
-      <h2 class="c-title" data-trend-title>每日访问次数</h2>
+      <h2 class="c-title" data-trend-title>每日浏览量</h2>
       <div class="trend" data-trend></div>
     </section>
-
-    <p class="privacy text-muted">
-      口径：访问次数按会话统计——连续浏览算一次，间隔超过 30 分钟再来算新的一次，因此同一张脸不同天来会算多次；统计服务刻意不去重到「人」，因为那需要采集个人身份。
-      页面浏览量 = 页面被打开的次数。时段已换算为北京时间，落在访问开始的时刻。
-    </p>
   </div>
 </BaseLayout>
 
@@ -150,8 +142,6 @@ const moduleNames: Record<string, string> = Object.fromEntries(
   .t-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
   .t-bar { width: 100%; max-width: 26px; background: linear-gradient(180deg, var(--gold), rgba(254, 179, 0, 0.35)); border-radius: 3px 3px 0 0; min-height: 2px; }
   .t-lab { font-size: 10px; color: var(--text-faint); font-family: var(--mono); white-space: nowrap; }
-
-  .privacy { margin: 0; font-size: 13px; line-height: 2; max-width: 760px; }
 
   @media (max-width: 860px) {
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -255,16 +245,17 @@ const moduleNames: Record<string, string> = Object.fromEntries(
     set('[data-k-pv-sub]', delta(d.cur.pv, d.prev.pv));
     text('[data-k-avg]', d.cur.visits ? (d.cur.pv / d.cur.visits).toFixed(1) : '0');
 
-    // 小时桶（UTC）→ 北京时间的 星期×小时 热力图 + 每日趋势，均按访问次数（v 落在访问开始的小时）
+    // 小时桶（UTC）→ 北京时间的 星期×小时 热力图 + 每日趋势
+    // 热力图和每日趋势按浏览量画（访问次数只落在访问开始的小时，太稀疏）；指标卡主口径仍是访问次数
     const heat = new Array(7 * 24).fill(0);
     const daily = new Map<string, number>();
-    for (const { h, v } of d.hours) {
+    for (const { h, n } of d.hours) {
       const ms = Date.parse(h);
       if (Number.isNaN(ms)) continue;
       const b = bj(ms);
-      heat[((b.getUTCDay() + 6) % 7) * 24 + b.getUTCHours()] += v;
+      heat[((b.getUTCDay() + 6) % 7) * 24 + b.getUTCHours()] += n;
       const k = dayKeyOf(b);
-      daily.set(k, (daily.get(k) || 0) + v);
+      daily.set(k, (daily.get(k) || 0) + n);
     }
     text('[data-k-days]', String(daily.size));
     const startLabel = $('[data-k-days-sub]');
@@ -279,7 +270,7 @@ const moduleNames: Record<string, string> = Object.fromEntries(
         for (let h = 0; h < 24; h++) {
           const n = heat[dow * 24 + h];
           const lvl = n === 0 ? '' : n / max > 0.66 ? 'h4' : n / max > 0.33 ? 'h3' : n / max > 0.12 ? 'h2' : 'h1';
-          html += `<span class="heat-cell ${lvl}" title="${WEEK[dow]} ${h}时 · ${n} 次访问"></span>`;
+          html += `<span class="heat-cell ${lvl}" title="${WEEK[dow]} ${h}时 · ${n} 次浏览"></span>`;
         }
       }
       heatEl.innerHTML = html;
@@ -288,7 +279,7 @@ const moduleNames: Record<string, string> = Object.fromEntries(
     set('[data-bars-page]', barRows(d.paths.map((r) => [pageName(r.p || ''), r.n]), d.cur.pv));
     set('[data-bars-country]', barRows(d.countries.map((r) => [countryName(r.c || ''), r.v]), d.cur.visits));
 
-    // 每日访问次数：从范围首日到今天（北京时间）逐日补零
+    // 每日浏览量：从范围首日到今天（北京时间）逐日补零
     const trendEl = $('[data-trend]');
     if (trendEl) {
       const todayBj = bj(Date.now());
@@ -303,12 +294,12 @@ const moduleNames: Record<string, string> = Object.fromEntries(
           const n = daily.get(k) || 0;
           const hpx = Math.round((n / maxDay) * 64);
           const [, m, day] = k.split('-');
-          return `<div class="t-col" title="${k} · ${n} 次访问"><span class="t-bar" style="height:${Math.max(2, hpx)}px"></span><span class="t-lab">${Number(m)}/${Number(day)}</span></div>`;
+          return `<div class="t-col" title="${k} · ${n} 次浏览"><span class="t-bar" style="height:${Math.max(2, hpx)}px"></span><span class="t-lab">${Number(m)}/${Number(day)}</span></div>`;
         })
         .join('');
     }
     const tt = $('[data-trend-title]');
-    if (tt) tt.textContent = `每日访问次数（近 ${d.days} 天）`;
+    if (tt) tt.textContent = `每日浏览量（近 ${d.days} 天）`;
   }
 
   function stateNote(msg: string) {
