@@ -16,9 +16,9 @@ const moduleNames: Record<string, string> = Object.fromEntries(
     </TerminalWindow>
 
     <section class="an-controls" aria-label="时间范围">
-      <div class="seg" role="group" aria-label="统计范围">
-        <button type="button" class="seg-btn is-on" data-range="7">近 7 天</button>
-        <button type="button" class="seg-btn" data-range="30">近 30 天</button>
+      <div class="an-seg" role="group" aria-label="统计范围">
+        <button type="button" class="an-seg-btn is-on" data-range="7">近 7 天</button>
+        <button type="button" class="an-seg-btn" data-range="30">近 30 天</button>
       </div>
       <button type="button" class="ghost-btn" data-refresh>刷新</button>
     </section>
@@ -79,21 +79,21 @@ const moduleNames: Record<string, string> = Object.fromEntries(
 
 <script type="application/json" id="hv-module-names" set:html={JSON.stringify(moduleNames)} />
 
-<style>
+<style is:global>
   .an-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 20px; }
   .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
   .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
   .sub { margin: 0; line-height: 1.9; max-width: 680px; }
 
   .an-controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  .seg-btn {
+  .an-seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .an-seg-btn {
     padding: 7px 16px; background: var(--bg-panel); border: 0; border-right: 1px solid var(--line);
     color: var(--text-muted); font-family: var(--sans); font-size: 13.5px; cursor: pointer;
   }
-  .seg-btn:last-child { border-right: 0; }
-  .seg-btn:hover { color: var(--text); }
-  .seg-btn.is-on { background: rgba(254, 179, 0, 0.12); color: var(--gold-soft); }
+  .an-seg-btn:last-child { border-right: 0; }
+  .an-seg-btn:hover { color: var(--text); }
+  .an-seg-btn.is-on { background: rgba(254, 179, 0, 0.12); color: var(--gold-soft); }
   .ghost-btn {
     padding: 7px 14px; background: none; border: 1px solid var(--line); border-radius: 8px;
     color: var(--text-muted); font-family: var(--sans); font-size: 13.5px; cursor: pointer;
@@ -110,15 +110,15 @@ const moduleNames: Record<string, string> = Object.fromEntries(
   .delta-up { color: var(--gold-soft); }
   .delta-down { color: var(--purple-soft); }
 
-  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
   .chart, .heat-card, .trend-card { padding: 20px 22px; }
   .c-title { margin: 0 0 14px; font-size: 17px; }
-  .bars { display: flex; flex-direction: column; gap: 10px; }
-  .b-row { display: grid; grid-template-columns: 128px 1fr 44px; align-items: center; gap: 10px; }
-  .b-name { margin: 0; font-size: 13.5px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bars { display: flex; flex-direction: column; gap: 8px; }
+  .b-row { display: grid; grid-template-columns: 128px 1fr 48px; align-items: center; gap: 10px; }
+  .b-name { margin: 0; font-size: 13.5px; line-height: 1.1; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .b-track { height: 10px; background: rgba(128, 128, 128, 0.12); border-radius: 5px; overflow: hidden; }
   .b-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--purple-bright), var(--gold)); border-radius: 5px; }
-  .b-num { margin: 0; font-size: 12.5px; color: var(--text-faint); text-align: right; }
+  .b-num { margin: 0; font-size: 12.5px; line-height: 1.1; color: var(--text-faint); text-align: right; font-variant-numeric: tabular-nums; }
   .b-zero { color: var(--text-faint); font-size: 13.5px; }
 
   .heat-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
