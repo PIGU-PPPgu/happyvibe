@@ -1,0 +1,333 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import ToolRail from '../components/ToolRail.astro';
+import { TOOLBOX_CATS } from '../data/toolbox';
+
+const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
+
+// 空分类不出卡片；补进工具后自动出现
+const cats = TOOLBOX_CATS
+  .map((c) => ({ ...c, items: tools.filter((t) => t.data.category === c.key) }))
+  .filter((c) => c.items.length > 0);
+
+const catOrder = new Map(TOOLBOX_CATS.map((c, i) => [c.key, i]));
+const allTools = [...tools].sort(
+  (a, b) => (catOrder.get(a.data.category) ?? 99) - (catOrder.get(b.data.category) ?? 99) || a.data.order - b.data.order
+);
+
+const railCards = [
+  { key: 'all', code: 'A', label: '全部工具', icon: '≡', desc: '六个分类一起看', accent: '#FEB300', count: tools.length },
+  ...cats.map((c) => ({ key: c.key, code: c.code, label: c.label, icon: c.icon, desc: c.desc, accent: c.accent, count: c.items.length })),
+];
+---
+
+<BaseLayout title="工具箱" description="班主任工具、教学工具、Skill 脚本、设计资源——左侧选分类，右侧出工具">
+  <div class="container toolbox-page">
+    <TerminalWindow title="happyvibe toolbox">
+      <p class="kicker mono">// TOOLBOX · {tools.length} 个工具 · {cats.length} 个分类</p>
+      <h1 class="tb-title">工具箱</h1>
+      <p class="tb-sub text-muted">
+        原则不变：<strong>大量重复、有固定流程的活才交给工具</strong>；涉及学生信息的界面分享前请脱敏。
+      </p>
+    </TerminalWindow>
+
+    <!-- 分类条：窄屏显示（宽屏用左侧卡组） -->
+    <nav class="cat-bar" id="cat-bar">
+      {railCards.map((c) => (
+        <button class="cat-chip" data-cat={c.key} type="button">
+          <span class="mono" aria-hidden="true">{c.icon}</span> {c.label} <span class="cat-n mono">{c.count}</span>
+        </button>
+      ))}
+    </nav>
+
+    <div class="tb-layout">
+      <aside class="tb-rail">
+        <ToolRail cards={railCards} />
+      </aside>
+
+      <div class="tb-main">
+        <section class="cat-detail" data-detail="all">
+          <h2 class="cd-title"><span class="mono" aria-hidden="true">≡</span> 全部工具 <span class="cd-count mono">{tools.length} 个</span></h2>
+          <div class="tb-grid">
+            {allTools.map((t) => (
+              <article class="tool-card card">
+                {t.data.image && <img class="tool-img" src={t.data.image} alt="" loading="lazy" />}
+                <div class="tool-body">
+                  <h3 class="tool-name">
+                    {t.data.url
+                      ? <a href={t.data.url} target="_blank" rel="noopener noreferrer">{t.data.name} <span class="mono ext" aria-hidden="true">↗</span></a>
+                      : t.data.name}
+                  </h3>
+                  <p class="tool-desc">{t.data.description}</p>
+                  {t.data.install && <p class="tool-install mono">安装：{t.data.install}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {cats.map((c) => (
+          <section class="cat-detail" data-detail={c.key} hidden>
+            <h2 class="cd-title"><span class="mono" aria-hidden="true">{c.icon}</span> {c.label} <span class="cd-count mono">{c.items.length} 个</span></h2>
+            <div class="tb-grid">
+              {c.items.map((t) => (
+                <article class="tool-card card">
+                  {t.data.image && <img class="tool-img" src={t.data.image} alt="" loading="lazy" />}
+                  <div class="tool-body">
+                    <h3 class="tool-name">
+                      {t.data.url
+                        ? <a href={t.data.url} target="_blank" rel="noopener noreferrer">{t.data.name} <span class="mono ext" aria-hidden="true">↗</span></a>
+                        : t.data.name}
+                    </h3>
+                    <p class="tool-desc">{t.data.description}</p>
+                    {t.data.install && <p class="tool-install mono">安装：{t.data.install}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .toolbox-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 24px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .tb-title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .tb-sub { margin: 0; max-width: 640px; }
+
+  .tb-layout {
+    display: grid; grid-template-columns: 268px minmax(0, 1fr);
+    gap: 26px; align-items: start;
+  }
+  .tb-rail { position: sticky; top: calc(var(--header-h) + 16px); }
+
+  .cat-detail { display: flex; flex-direction: column; gap: 16px; }
+  .cat-detail[hidden] { display: none; } /* 必须：否则 display:flex 覆盖 hidden，八个分类全铺开、筛选看起来失效 */
+  .cd-title { margin: 0; font-size: 22px; display: flex; align-items: center; gap: 10px; }
+  .cd-count { font-size: 14px; color: var(--text-faint); }
+
+  .tb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .tool-card { overflow: hidden; display: flex; flex-direction: column; }
+  .tool-img { width: 100%; height: 170px; object-fit: cover; object-position: top; border-bottom: 1px solid var(--line); }
+  .tool-body { padding: 18px 20px 20px; }
+  .tool-name { margin: 0 0 8px; font-size: 17px; }
+  .tool-name a { color: var(--text); }
+  .tool-name a:hover { color: var(--gold-soft); text-decoration: none; }
+  .ext { font-size: 12px; color: var(--gold); }
+  .tool-desc { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+  .tool-install { margin-top: 8px; font-size: 12px; color: var(--gold-soft); border-top: 1px dashed var(--line); padding-top: 8px; }
+
+  .cat-bar { display: none; gap: 8px; flex-wrap: nowrap; overflow-x: auto;
+    position: sticky; top: calc(var(--header-h) + 8px); z-index: 20;
+    padding: 10px; background: rgba(21,14,34,.9); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid var(--line); }
+  .cat-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px;
+    border: 1px solid var(--line-strong); background: var(--bg-panel); color: var(--text-muted);
+    font-size: 13.5px; cursor: pointer; font-family: var(--sans); }
+  .cat-chip:hover { border-color: var(--gold); color: var(--text); }
+  .cat-chip.on { background: linear-gradient(135deg, var(--gold-soft), var(--gold)); color: #2a1c00; border-color: transparent; font-weight: 700; }
+  .cat-n { font-size: 11px; opacity: .7; }
+
+  @media (max-width: 819px) {
+    .tb-layout { grid-template-columns: 1fr; }
+    .tb-rail { display: none; }
+    .cat-bar { display: flex; }
+  }
+</style>
+
+<script>
+  const bar = document.getElementById('cat-bar')!;
+  const chips = [...bar.querySelectorAll<HTMLButtonElement>('.cat-chip')];
+  const details = [...document.querySelectorAll<HTMLElement>('[data-detail]')];
+
+  // ---- 左侧卡组（首页同款堆叠滑卡：拖拽甩动/弹簧回弹/圆点；点击=坐标命中，立即筛选）----
+  const railStage = document.querySelector<HTMLElement>('[data-rstage]');
+  const railCards = railStage ? [...railStage.querySelectorAll<HTMLButtonElement>('[data-rcard]')] : [];
+  const railTotal = railCards.length;
+  const railKeys = railCards.map((c) => c.dataset.key!);
+  const railDots = railStage ? [...railStage.parentElement!.querySelectorAll<HTMLButtonElement>('[data-rdot]')] : [];
+  let progress = 0;
+  let raf = 0;
+  let fromRail = false;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const wrapIdx = (i: number) => ((Math.round(i) % railTotal) + railTotal) % railTotal;
+  const offsetOf = (i: number) => {
+    let o = (i - progress) % railTotal;
+    if (o > railTotal / 2) o -= railTotal;
+    if (o < -railTotal / 2) o += railTotal;
+    return o;
+  };
+
+  function renderRail() {
+    const y = 58, x = 16, shrink = .06;
+    railCards.forEach((card, i) => {
+      const o = offsetOf(i);
+      const ao = Math.abs(o);
+      card.style.transform = `translateY(${o * y}px) translateX(${-ao * x}px) scale(${1 - ao * shrink})`;
+      card.style.opacity = String(Math.max(.3, Math.min(1, 1.1 - ao * .3)));
+      card.style.zIndex = String(100 - Math.round(ao * 10));
+      card.classList.toggle('is-front', ao < .5);
+    });
+    const front = wrapIdx(progress);
+    railDots.forEach((d, i) => d.classList.toggle('active', i === front));
+  }
+
+  function setProgress(p: number) { progress = p; renderRail(); }
+
+  // 选中并切视图：状态立即生效（筛选取决于点击，不取决于动画），弹簧只是视觉
+  function select(key: string, springTarget?: number) {
+    const idx = railKeys.indexOf(key);
+    if (idx < 0) return;
+    fromRail = true;
+    show(key);
+    fromRail = false;
+    if (springTarget !== undefined) springTo(springTarget);
+    else { progress = idx; renderRail(); }
+  }
+
+  const springToKey = (i: number) =>
+    select(railKeys[wrapIdx(i)], i + Math.round((progress - i) / railTotal) * railTotal);
+
+  function springTo(target: number) {
+    if (reduced) { setProgress(target); return; }
+    cancelAnimationFrame(raf);
+    let pos = progress, v = 0, last = performance.now();
+    const k = 210, damp = 30;
+    const step = (now: number) => {
+      // 按真实时钟追赶：帧率被节流也能按时完成
+      let dtTotal = Math.min(.25, (now - last) / 1000); last = now;
+      while (dtTotal > 1e-4) {
+        const dt = Math.min(.032, dtTotal); dtTotal -= dt;
+        v += (-k * (pos - target) - damp * v) * dt;
+        pos += v * dt;
+      }
+      setProgress(pos);
+      if (Math.abs(pos - target) > .001 || Math.abs(v) > .001) raf = requestAnimationFrame(step);
+      else {
+        // 保险：弹簧停稳后按最终位置再同步一次视图（幂等）
+        fromRail = true;
+        show(railKeys[wrapIdx(target)]);
+        fromRail = false;
+      }
+    };
+    raf = requestAnimationFrame(step);
+  }
+
+  // 坐标命中：点在了哪张卡的可见区域（取离前卡最近=层级最高者）
+  function cardAt(px: number, py: number): number {
+    let best = -1, bestAo = 1e9;
+    railCards.forEach((card, i) => {
+      const r = card.getBoundingClientRect();
+      if (px >= r.left && px <= r.right && py >= r.top && py <= r.bottom) {
+        const ao = Math.abs(offsetOf(i));
+        if (ao < bestAo) { bestAo = ao; best = i; }
+      }
+    });
+    return best;
+  }
+
+  if (railStage) {
+    // 拖拽 + 轻点（move/up 挂 window）
+    let startY = 0, startP = 0, lastY = 0, lastT = 0, vel = 0, down = false, moved = 0;
+    const onMove = (e: PointerEvent) => {
+      if (!down) return;
+      moved = Math.max(moved, Math.abs(e.clientY - startY));
+      const now = performance.now();
+      vel = (lastY - e.clientY) / Math.max(1, now - lastT) * 1000;
+      lastY = e.clientY; lastT = now;
+      setProgress(startP + (startY - e.clientY) / 90);
+    };
+    const onUp = (e: PointerEvent) => {
+      if (!down) return;
+      down = false;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      if (moved < 8) {
+        const hit = cardAt(e.clientX, e.clientY);
+        if (hit >= 0) springToKey(hit);
+        return;
+      }
+      let shift = Math.round((startY - e.clientY) / 140 + vel / 600);
+      shift = Math.max(-3, Math.min(3, shift));
+      springToKey(Math.round(startP) + shift);
+    };
+    railStage.addEventListener('pointerdown', (e) => {
+      down = true; moved = 0; startY = lastY = e.clientY; startP = progress;
+      lastT = performance.now(); vel = 0;
+      cancelAnimationFrame(raf);
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    });
+    // 兜底：pointerup 未命中时，原生 click 再路由一次（幂等）
+    railStage.addEventListener('click', (e) => {
+      if (moved >= 8) return;
+      const hit = cardAt(e.clientX, e.clientY);
+      if (hit >= 0) springToKey(hit);
+    });
+
+    // 键盘用户：按钮聚焦后 Enter 仍走原生 click
+    railCards.forEach((card, i) => card.addEventListener('click', () => springToKey(i)));
+
+    // 箭头 & 圆点 & 键盘
+    document.querySelector('[data-rprev]')?.addEventListener('click', () => springToKey(Math.round(progress) - 1));
+    document.querySelector('[data-rnext]')?.addEventListener('click', () => springToKey(Math.round(progress) + 1));
+    railDots.forEach((d, i) => d.addEventListener('click', () => springToKey(i)));
+    railStage.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') { e.preventDefault(); springToKey(Math.round(progress) - 1); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); springToKey(Math.round(progress) + 1); }
+    });
+    renderRail();
+  }
+
+  // ---- 视图切换（卡组 / 芯片 / hash 共用）----
+  let bootDone = false; // 初始 hash 恢复时不滚动
+
+  function show(key: string) {
+    const k = !key || key === 'all' ? 'all' : key;
+    chips.forEach((c) => c.classList.toggle('on', c.dataset.cat === k));
+    details.forEach((d) => { d.hidden = d.dataset.detail !== k; });
+    if (k === 'all') history.replaceState(null, '', location.pathname);
+    else history.replaceState(null, '', '#' + k);
+    if (!fromRail && railStage) {
+      const idx = railKeys.indexOf(k);
+      if (idx >= 0 && wrapIdx(progress) !== idx) {
+        progress = idx;
+        renderRail();
+      }
+    }
+    // 关键：切分类后把新内容滚到可见处——否则页面停在旧滚动位置，看起来像"没反应"
+    if (bootDone) {
+      const sec = document.querySelector<HTMLElement>(`[data-detail="${k}"]`);
+      const head = sec?.querySelector<HTMLElement>('.cd-title');
+      if (head) {
+        const r = head.getBoundingClientRect();
+        if (r.top < 0 || r.top > innerHeight - 80) {
+          head.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+  }
+
+  chips.forEach((c) => c.addEventListener('click', () => {
+    const target = c.dataset.cat ?? 'all';
+    const current = chips.find((x) => x.classList.contains('on'))?.dataset.cat ?? 'all';
+    show(target === current ? 'all' : target);
+  }));
+
+  // 初始 hash
+  const h = location.hash.slice(1);
+  if (h && details.some((d) => d.dataset.detail === h)) show(h);
+  window.setTimeout(() => { bootDone = true; }, 800);
+
+  // hash 变化时切视图
+  window.addEventListener('hashchange', () => {
+    const key = location.hash.slice(1);
+    if (!key) { show('all'); return; }
+    if (details.some((d) => d.dataset.detail === key)) show(key);
+  });
+</script>

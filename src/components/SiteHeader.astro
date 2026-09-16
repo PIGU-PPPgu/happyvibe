@@ -1,0 +1,191 @@
+---
+import { withBase } from '../lib/urls';
+const nav = [
+  { href: '/', label: '首页', code: '00' },
+  { href: '/modules/', label: '课程模块', code: '01' },
+  { href: '/toolbox/', label: '工具箱', code: '02' },
+  { href: '/analytics/', label: '数据看板', code: '03' },
+  { href: '/about/', label: '关于', code: '04' },
+];
+const path = Astro.url.pathname;
+const isActive = (href: string, anchor?: boolean) => {
+  const target = withBase(href);
+  if (anchor) return false;
+  if (href === '/') return path === withBase('/') || path === withBase('');
+  return path.startsWith(target);
+};
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href={withBase('/')} aria-label="HappyVibe 数智学园 首页">
+      <span class="logo-blocks" aria-hidden="true">▚▞</span>
+      <span class="logo-text">HAPPYVIBE<span class="logo-cursor">_</span></span>
+      <span class="logo-cn">数智学园</span>
+    </a>
+
+    <nav class="main-nav" aria-label="主导航">
+      {nav.map((item) => (
+        <a href={withBase(item.href)} class:list={['nav-link', { active: isActive(item.href, item.anchor) }]}>
+          <span class="nav-code" aria-hidden="true">{item.code}</span>{item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程">
+        <span aria-hidden="true">?</span>
+      </button>
+      <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）">
+        <span aria-hidden="true">⌕</span>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式">
+        <span class="theme-icon-dark" aria-hidden="true">☀</span>
+        <span class="theme-icon-light" aria-hidden="true">☾</span>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单">
+        <span aria-hidden="true">≡</span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden>
+    {nav.map((item) => (
+      <a href={withBase(item.href)} class:list={['mobile-link', { active: isActive(item.href, item.anchor) }]}>{item.label}</a>
+    ))}
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    background: var(--header-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: var(--mono);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .logo:hover { text-decoration: none; }
+  .logo-blocks { color: var(--gold); font-size: 15px; }
+  .logo-text {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+  }
+  .logo-cursor { color: var(--gold); animation: blink 1.1s step-end infinite; }
+  .logo-cn { color: var(--text-muted); font-size: 12px; }
+  .main-nav { display: none; gap: 4px; margin-left: 12px; flex-wrap: nowrap; }
+  .nav-link {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .nav-link:hover { color: var(--text); background: rgba(166, 61, 151, 0.14); text-decoration: none; }
+  .nav-link.active { color: var(--gold-soft); background: rgba(254, 179, 0, 0.1); }
+  .nav-code { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-right: 5px; }
+  .nav-link.active .nav-code { color: var(--gold); }
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 16px;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .icon-btn:hover { border-color: var(--line-gold); color: var(--text); }
+  .theme-toggle { color: var(--gold); }
+  .menu-toggle { font-size: 18px; color: var(--text); }
+  .theme-icon-light { display: none; }
+  :global([data-theme='light']) .theme-icon-dark { display: none; }
+  :global([data-theme='light']) .theme-icon-light { display: inline; }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .mobile-nav {
+    position: absolute;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: 8px 20px 16px;
+  }
+  .mobile-nav[hidden] {
+    display: none;
+  }
+  .mobile-link { padding: 10px 4px; color: var(--text-muted); border-bottom: 1px dashed var(--line); }
+  .mobile-link.active { color: var(--gold-soft); }
+  @media (min-width: 900px) {
+    .main-nav { display: flex; }
+    .menu-toggle { display: none; }
+  }
+  /* 900–1280px：七个导航项压缩字号与间距，保证单行放下 */
+  @media (min-width: 900px) and (max-width: 1279px) {
+    .header-inner { gap: 10px; }
+    .logo-cn { display: none; }
+    .main-nav { gap: 2px; margin-left: 4px; }
+    .nav-link { font-size: 13px; padding: 6px 8px; }
+    .nav-code { margin-right: 4px; font-size: 10px; }
+    .header-actions { gap: 8px; }
+  }
+  @media (max-width: 560px) {
+    .logo-cn { display: none; }
+  }
+</style>
+
+<script>
+  // 「新手教程」重看：首页直接重开，其他页跳回首页自动开始（含页脚入口）
+  document.querySelectorAll<HTMLButtonElement>('[data-tour-start]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (location.pathname === '/') {
+        window.dispatchEvent(new CustomEvent('hv-tour:start'));
+      } else {
+        try { sessionStorage.setItem('hv-tour-run', '1'); } catch {}
+        location.href = '/';
+      }
+    });
+  });
+
+  const toggle = document.querySelector('[data-menu-toggle]') as HTMLButtonElement | null;
+  const mobileNav = document.getElementById('mobile-nav');
+  toggle?.addEventListener('click', () => {
+    const open = mobileNav?.hasAttribute('hidden');
+    if (open) mobileNav?.removeAttribute('hidden');
+    else mobileNav?.setAttribute('hidden', '');
+    toggle.setAttribute('aria-expanded', String(Boolean(open)));
+  });
+
+  const themeBtn = document.querySelector('[data-theme-toggle]');
+  themeBtn?.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem('hv-theme', next);
+    } catch {}
+  });
+</script>

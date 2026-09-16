@@ -1,0 +1,169 @@
+---
+import { withBase } from '../lib/urls';
+---
+<div class="search-overlay" data-search-overlay hidden>
+  <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="search-head">
+      <span class="mono search-prompt" aria-hidden="true">&gt;_</span>
+      <span class="text-muted">全站搜索课程与工具</span>
+      <button class="search-close" type="button" data-search-close aria-label="关闭搜索">
+        Esc
+      </button>
+    </div>
+    <div id="hv-search" class="search-body"></div>
+    <p class="search-hint text-muted mono" data-search-hint>
+      构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+    </p>
+  </div>
+</div>
+
+<style>
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--overlay-bg);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    padding: 10vh 16px 16px;
+  }
+  .search-overlay[hidden] {
+    display: none;
+  }
+  .search-panel {
+    width: 100%;
+    max-width: 640px;
+    max-height: 72vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-panel);
+    border: 1px solid var(--line-gold);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow), var(--glow-gold);
+    overflow: hidden;
+  }
+  .search-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .search-prompt { color: var(--gold); }
+  .search-close {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+  .search-close:hover { color: var(--text); border-color: var(--line-gold); }
+  .search-body { flex: 1; overflow-y: auto; }
+  .search-hint {
+    margin: 0;
+    padding: 10px 16px;
+    border-top: 1px dashed var(--line);
+    font-size: 11px;
+  }
+  /* Pagefind UI 主题适配 */
+  .search-body :global(.pagefind-ui) {
+    --pagefind-ui-primary: var(--gold);
+    --pagefind-ui-text: var(--text);
+    --pagefind-ui-background: transparent;
+    --pagefind-ui-clear-background: var(--bg-panel-2);
+    --pagefind-ui-highlight: rgba(254, 179, 0, 0.35);
+    --pagefind-ui-border: var(--line);
+    --pagefind-ui-tag: var(--purple);
+    font-family: var(--sans);
+  }
+  .search-body :global(.pagefind-ui .pagefind-ui__search-input) {
+    background: var(--bg-inset);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    border-radius: var(--radius-sm);
+  }
+  .search-body :global(.pagefind-ui .pagefind-ui__search-input:focus) {
+    outline: 2px solid var(--gold);
+  }
+  .search-body :global(.pagefind-ui .pagefind-ui__result-link) {
+    color: var(--gold-soft);
+  }
+  .search-body :global(.pagefind-ui .pagefind-ui__result-excerpt mark) {
+    background: var(--pagefind-ui-highlight, rgba(254,179,0,.35));
+    color: var(--text);
+  }
+</style>
+
+<script>
+  import { withBase } from '../lib/urls';
+
+  const overlay = document.querySelector<HTMLElement>('[data-search-overlay]');
+  const closeBtn = document.querySelector('[data-search-close]');
+  const hint = document.querySelector('[data-search-hint]');
+  let uiReady = false;
+
+  async function ensureUi() {
+    if (uiReady) return;
+    const { PagefindUI } = await import('@pagefind/default-ui');
+    // 运行时加载构建期生成的 pagefind 索引（不参与 Vite 打包）
+    const pagefindUrl = `${withBase('/pagefind/pagefind.js')}`;
+    // @ts-expect-error 运行时产物
+    window.pagefind = await import(/* @vite-ignore */ pagefindUrl);
+    new PagefindUI({
+      element: '#hv-search',
+      baseUrl: withBase('/'),
+      showSubResults: true,
+      showImages: false,
+      translations: {
+        placeholder: '搜索：万事留痕 / Vibe Coding / Agent…',
+        clear_search: '清除',
+        load_more: '加载更多结果',
+        search_label: '本站搜索',
+        zero_results: '没有找到「[SEARCH_TERM]」相关内容',
+        many_results: '找到 [COUNT] 条关于「[SEARCH_TERM]」的结果',
+        one_result: '找到 [COUNT] 条关于「[SEARCH_TERM]」的结果',
+        searching: '正在搜索「[SEARCH_TERM]」…',
+      },
+    });
+    uiReady = true;
+    hint?.setAttribute('hidden', '');
+  }
+
+  function open() {
+    if (!overlay) return;
+    overlay.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+    ensureUi().catch(() => {
+      // 开发模式（无构建索引）时保留提示
+    });
+    setTimeout(() => {
+      const input = overlay.querySelector<HTMLInputElement>('input');
+      input?.focus();
+    }, 60);
+  }
+
+  function close() {
+    if (!overlay) return;
+    overlay.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('[data-search-open]').forEach((btn) => btn.addEventListener('click', open));
+  closeBtn?.addEventListener('click', close);
+  overlay?.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      overlay?.hasAttribute('hidden') ? open() : close();
+    }
+    if (e.key === 'Escape' && overlay && !overlay.hasAttribute('hidden')) close();
+  });
+</script>

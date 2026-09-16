@@ -1,0 +1,62 @@
+---
+import { withBase } from '../lib/urls';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <p class="footer-logo mono">▚▞ HAPPYVIBE<span aria-hidden="true">_</span></p>
+      <p class="footer-slogan">HappyVibe for Teachers</p>
+      <p class="footer-note text-muted">An open-source learning-site framework for teachers · CC BY 4.0</p>
+    </div>
+    <nav class="footer-nav" aria-label="页脚导航">
+      <a href={withBase('/')}>首页</a>
+      <a href={withBase('/modules/')}>课程模块</a>
+      <a href={withBase('/toolbox/')}>工具箱</a>
+      <a href={withBase('/analytics/')}>数据看板</a>
+      <a href="https://github.com/PIGU-PPPgu/happyvibe" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="footer-tour" type="button" data-tour-start>新手教程</button>
+    </nav>
+  </div>
+  <div class="container footer-meta mono">
+    <span>© {year} HappyVibe contributors · CC BY 4.0</span>
+    <span class="footer-cmd" aria-hidden="true">$ exit 0 # built for teachers</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 80px;
+    border-top: 1px solid var(--line);
+    background: var(--bg-deep);
+    padding: 40px 0 28px;
+  }
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: space-between;
+  }
+  .footer-logo { color: var(--gold); font-weight: 700; letter-spacing: 0.06em; margin: 0 0 6px; }
+  .footer-slogan { margin: 0 0 4px; color: var(--text); }
+  .footer-note { margin: 0; font-size: 13px; }
+  .footer-nav { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  .footer-nav a { color: var(--text-muted); }
+  .footer-tour {
+    background: none; border: 0; padding: 0; cursor: pointer; text-align: left;
+    color: var(--text-muted); font-size: 14px; font-family: var(--sans);
+    border-bottom: 1px dashed var(--line);
+  }
+  .footer-tour:hover { color: var(--gold-soft); }
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    justify-content: space-between;
+    margin-top: 32px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--line);
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+</style>

@@ -1,0 +1,350 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+import { MODULES } from '../data/modules';
+
+const moduleNames: Record<string, string> = Object.fromEntries(
+  MODULES.map((m) => [m.slug, `${m.code} ${m.title}`])
+);
+---
+<BaseLayout title="数据看板" description="整个学习站的真实访问统计：访问次数、浏览量、热门页面、地区分布与访问时段——数据来自 Cloudflare Web Analytics。">
+  <div class="container an-page">
+    <TerminalWindow title="happyvibe analytics — cloudflare web analytics">
+      <p class="kicker mono">// ANALYTICS · 全站真实访问数据</p>
+      <h1 class="title">数据看板</h1>
+      <p class="sub text-muted">全站老师的真实访问统计，自 9 月 1 日起累积。</p>
+    </TerminalWindow>
+
+    <section class="an-controls" aria-label="时间范围">
+      <div class="an-seg" role="group" aria-label="统计范围">
+        <button type="button" class="an-seg-btn is-on" data-range="7">近 7 天</button>
+        <button type="button" class="an-seg-btn" data-range="30">近 30 天</button>
+      </div>
+      <button type="button" class="ghost-btn" data-refresh>刷新</button>
+    </section>
+
+    <p class="state-note card" data-state hidden></p>
+
+    <section class="kpi-grid" aria-label="核心数据">
+      <div class="kpi card">
+        <p class="k-label">访问次数</p>
+        <p class="k-num mono" data-k-visits>…</p>
+        <p class="k-sub text-muted" data-k-visits-sub>一次访问 = 一位老师的一次连续浏览</p>
+      </div>
+      <div class="kpi card">
+        <p class="k-label">页面浏览量</p>
+        <p class="k-num mono" data-k-pv>…</p>
+        <p class="k-sub text-muted" data-k-pv-sub>访问的人一共看了多少个页面</p>
+      </div>
+      <div class="kpi card">
+        <p class="k-label">人均浏览</p>
+        <p class="k-num mono" data-k-avg>…</p>
+        <p class="k-sub text-muted">浏览量 ÷ 访问次数</p>
+      </div>
+      <div class="kpi card">
+        <p class="k-label">活跃天数</p>
+        <p class="k-num mono" data-k-days>…</p>
+        <p class="k-sub text-muted" data-k-days-sub>范围内有人来学习的天数</p>
+      </div>
+    </section>
+
+    <section class="charts">
+      <div class="chart card">
+        <h2 class="c-title">热门页面</h2>
+        <div class="bars" data-bars-page></div>
+      </div>
+      <div class="chart card">
+        <h2 class="c-title">访问来源地区</h2>
+        <div class="bars" data-bars-country></div>
+      </div>
+    </section>
+
+    <section class="card heat-card">
+      <div class="heat-head">
+        <h2 class="c-title">访问时段</h2>
+        <p class="heat-legend mono" aria-hidden="true">少 <span class="lg-chip"></span><span class="lg-chip"></span><span class="lg-chip"></span><span class="lg-chip"></span> 多</p>
+      </div>
+      <div class="heat-scroll">
+        <div class="heat-grid" data-heat></div>
+        <p class="heat-axis mono" aria-hidden="true"><span>0时</span><span>6时</span><span>12时</span><span>18时</span><span>23时</span></p>
+      </div>
+    </section>
+
+    <section class="card trend-card">
+      <h2 class="c-title" data-trend-title>每日浏览量</h2>
+      <div class="trend" data-trend></div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script type="application/json" id="hv-module-names" set:html={JSON.stringify(moduleNames)} />
+
+<style is:global>
+  .an-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 20px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .sub { margin: 0; line-height: 1.9; max-width: 680px; }
+
+  .an-controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .an-seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .an-seg-btn {
+    padding: 7px 16px; background: var(--bg-panel); border: 0; border-right: 1px solid var(--line);
+    color: var(--text-muted); font-family: var(--sans); font-size: 13.5px; cursor: pointer;
+  }
+  .an-seg-btn:last-child { border-right: 0; }
+  .an-seg-btn:hover { color: var(--text); }
+  .an-seg-btn.is-on { background: rgba(254, 179, 0, 0.12); color: var(--gold-soft); }
+  .ghost-btn {
+    padding: 7px 14px; background: none; border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text-muted); font-family: var(--sans); font-size: 13.5px; cursor: pointer;
+  }
+  .ghost-btn:hover { border-color: var(--line-gold); color: var(--text); }
+
+  .state-note { margin: 0; padding: 14px 18px; color: var(--text-muted); line-height: 1.8; border-left: 3px solid var(--gold); }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .kpi { padding: 18px 20px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .k-label { margin: 0; font-size: 14px; color: var(--text-muted); }
+  .k-num { margin: 2px 0 0; font-size: clamp(30px, 3.4vw, 42px); font-weight: 700; color: var(--gold); line-height: 1.1; }
+  .k-sub { margin: 4px 0 0; font-size: 12.5px; }
+  .delta-up { color: var(--gold-soft); }
+  .delta-down { color: var(--purple-soft); }
+
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .chart, .heat-card, .trend-card { padding: 20px 22px; }
+  .c-title { margin: 0 0 14px; font-size: 17px; }
+  .bars { display: flex; flex-direction: column; gap: 8px; }
+  .b-row { display: grid; grid-template-columns: 128px 1fr 48px; align-items: center; gap: 10px; }
+  .b-name { margin: 0; font-size: 13.5px; line-height: 1.1; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .b-track { height: 10px; background: rgba(128, 128, 128, 0.12); border-radius: 5px; overflow: hidden; }
+  .b-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--purple-bright), var(--gold)); border-radius: 5px; }
+  .b-num { margin: 0; font-size: 12.5px; line-height: 1.1; color: var(--text-faint); text-align: right; font-variant-numeric: tabular-nums; }
+  .b-zero { color: var(--text-faint); font-size: 13.5px; }
+
+  .heat-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .heat-legend { margin: 0; font-size: 11.5px; color: var(--text-faint); display: inline-flex; align-items: center; gap: 4px; }
+  .lg-chip { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .lg-chip:nth-child(2) { background: rgba(254, 179, 0, 0.18); }
+  .lg-chip:nth-child(3) { background: rgba(254, 179, 0, 0.42); }
+  .lg-chip:nth-child(4) { background: rgba(254, 179, 0, 0.68); }
+  .lg-chip:nth-child(5) { background: rgba(254, 179, 0, 0.95); }
+  .heat-scroll { overflow-x: auto; }
+  .heat-grid { display: grid; grid-template-columns: 40px repeat(24, minmax(14px, 1fr)); gap: 3px; min-width: 620px; }
+  .heat-rowlab { font-size: 12px; color: var(--text-faint); align-self: center; }
+  .heat-cell { aspect-ratio: 1; border-radius: 3px; background: rgba(128, 128, 128, 0.1); }
+  .heat-cell.h1 { background: rgba(254, 179, 0, 0.18); }
+  .heat-cell.h2 { background: rgba(254, 179, 0, 0.42); }
+  .heat-cell.h3 { background: rgba(254, 179, 0, 0.68); }
+  .heat-cell.h4 { background: rgba(254, 179, 0, 0.95); }
+  .heat-axis { display: flex; justify-content: space-between; margin: 6px 0 0 44px; font-size: 11px; color: var(--text-faint); }
+
+  .trend { display: flex; align-items: flex-end; gap: 4px; height: 88px; }
+  .t-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
+  .t-bar { width: 100%; max-width: 26px; background: linear-gradient(180deg, var(--gold), rgba(254, 179, 0, 0.35)); border-radius: 3px 3px 0 0; min-height: 2px; }
+  .t-lab { font-size: 10px; color: var(--text-faint); font-family: var(--mono); white-space: nowrap; }
+
+  @media (max-width: 860px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts { grid-template-columns: 1fr; }
+    .b-row { grid-template-columns: 96px 1fr 40px; }
+  }
+</style>
+
+<script>
+  import { getLessonIndex } from '../lib/progress';
+  import { withBase } from '../lib/urls';
+
+  const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel);
+
+  const PAGE_NAMES: Record<string, string> = {
+    '/': '首页',
+    '/modules': '课程总览',
+    '/path': '学习路线图',
+    '/pains': '痛点对号入座',
+    '/contest': '比赛专区',
+    '/toolbox': '工具箱',
+    '/challenge': '21 天挑战',
+    '/textbooks': '教材索引',
+    '/sitemap': '站内地图',
+    '/analytics': '数据看板',
+    '/facilitator': '培训者工具包',
+    '/workshop-script': '授课逐字稿',
+    '/about': '关于本站',
+    '/interactives/contest-tracks': '四赛道交互图',
+    '/interactives/topic-roadmap': '技术路线图',
+    '/interactives/site-map': '站内地图（交互版）',
+  };
+
+  const moduleNames = (() => {
+    try {
+      return JSON.parse(document.getElementById('hv-module-names')?.textContent || '{}') as Record<string, string>;
+    } catch { return {}; }
+  })();
+
+  function pageName(raw: string): string {
+    const p = raw.split('?')[0].replace(/\/+$/, '') || '/';
+    if (PAGE_NAMES[p]) return PAGE_NAMES[p];
+    const m = p.match(/^\/modules\/([a-z-]+)\/([a-z0-9-]+)$/);
+    if (m) {
+      const lesson = getLessonIndex()[`${m[1]}/${m[2]}`];
+      return lesson?.t || moduleNames[m[1]] || m[2];
+    }
+    const mod = p.match(/^\/modules\/([a-z-]+)$/);
+    if (mod) return moduleNames[mod[1]] || mod[1];
+    return p;
+  }
+
+  const regionNames = (() => {
+    try { return new Intl.DisplayNames(['zh-CN'], { type: 'region' }); } catch { return null; }
+  })();
+  function countryName(code: string): string {
+    if (!code) return '未知';
+    try { return regionNames?.of(code) || code; } catch { return code; }
+  }
+
+  const WEEK = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
+  const TZ = 8 * 3600_000; // 北京时间 UTC+8
+  const bj = (ms: number) => new Date(ms + TZ);
+  const dayKeyOf = (d: Date) => d.toISOString().slice(0, 10);
+
+  interface Hour { h: string; n: number; v: number }
+  interface Row { p?: string; c?: string; n: number; v: number }
+  interface Payload {
+    ok: boolean; reason?: string; days: number;
+    cur: { pv: number; visits: number };
+    prev: { pv: number; visits: number };
+    paths: Row[]; countries: Row[]; hours: Hour[];
+  }
+
+  function barRows(data: [string, number][], total: number): string {
+    if (!data.length || total === 0) return '<p class="b-zero">这个范围还没有记录。</p>';
+    return data
+      .map(([name, n]) => {
+        const w = Math.max(2, Math.round((n / total) * 100));
+        return `<div class="b-row"><p class="b-name" title="${esc(name)}">${esc(name)}</p><div class="b-track"><span class="b-fill" style="width:${w}%"></span></div><p class="b-num">${n}</p></div>`;
+      })
+      .join('');
+  }
+
+  function delta(cur: number, prev: number): string {
+    if (!prev) return cur ? '上期无数据' : '暂无对比';
+    if (cur === prev) return '与上期持平';
+    const pct = Math.round(((cur - prev) / prev) * 100);
+    const up = pct > 0;
+    return `<span class="${up ? 'delta-up' : 'delta-down'}">较上期 ${up ? '+' : '−'}${Math.abs(pct)}%</span>`;
+  }
+
+  function render(d: Payload) {
+    const set = (sel: string, html: string) => { const el = $(sel); if (el) el.innerHTML = html; };
+    const text = (sel: string, val: string) => { const el = $(sel); if (el) el.textContent = val; };
+
+    text('[data-k-visits]', String(d.cur.visits));
+    set('[data-k-visits-sub]', delta(d.cur.visits, d.prev.visits));
+    text('[data-k-pv]', String(d.cur.pv));
+    set('[data-k-pv-sub]', delta(d.cur.pv, d.prev.pv));
+    text('[data-k-avg]', d.cur.visits ? (d.cur.pv / d.cur.visits).toFixed(1) : '0');
+
+    // 小时桶（UTC）→ 北京时间的 星期×小时 热力图 + 每日趋势
+    // 热力图和每日趋势按浏览量画（访问次数只落在访问开始的小时，太稀疏）；指标卡主口径仍是访问次数
+    const heat = new Array(7 * 24).fill(0);
+    const daily = new Map<string, number>();
+    for (const { h, n } of d.hours) {
+      const ms = Date.parse(h);
+      if (Number.isNaN(ms)) continue;
+      const b = bj(ms);
+      heat[((b.getUTCDay() + 6) % 7) * 24 + b.getUTCHours()] += n;
+      const k = dayKeyOf(b);
+      daily.set(k, (daily.get(k) || 0) + n);
+    }
+    text('[data-k-days]', String(daily.size));
+    const startLabel = $('[data-k-days-sub]');
+    if (startLabel) startLabel.textContent = `范围内 ${d.days} 天里有访问的天数`;
+
+    const max = Math.max(1, ...heat);
+    const heatEl = $('[data-heat]');
+    if (heatEl) {
+      let html = '';
+      for (let dow = 0; dow < 7; dow++) {
+        html += `<span class="heat-rowlab">${WEEK[dow]}</span>`;
+        for (let h = 0; h < 24; h++) {
+          const n = heat[dow * 24 + h];
+          const lvl = n === 0 ? '' : n / max > 0.66 ? 'h4' : n / max > 0.33 ? 'h3' : n / max > 0.12 ? 'h2' : 'h1';
+          html += `<span class="heat-cell ${lvl}" title="${WEEK[dow]} ${h}时 · ${n} 次浏览"></span>`;
+        }
+      }
+      heatEl.innerHTML = html;
+    }
+
+    set('[data-bars-page]', barRows(d.paths.map((r) => [pageName(r.p || ''), r.n]), d.cur.pv));
+    set('[data-bars-country]', barRows(d.countries.map((r) => [countryName(r.c || ''), r.v]), d.cur.visits));
+
+    // 每日浏览量：从范围首日到今天（北京时间）逐日补零
+    const trendEl = $('[data-trend]');
+    if (trendEl) {
+      const todayBj = bj(Date.now());
+      const days: string[] = [];
+      for (let i = d.days - 1; i >= 0; i--) {
+        const dt = new Date(todayBj.getTime() - i * 86400_000);
+        days.push(dayKeyOf(dt));
+      }
+      const maxDay = Math.max(1, ...[...daily.values()]);
+      trendEl.innerHTML = days
+        .map((k) => {
+          const n = daily.get(k) || 0;
+          const hpx = Math.round((n / maxDay) * 64);
+          const [, m, day] = k.split('-');
+          return `<div class="t-col" title="${k} · ${n} 次浏览"><span class="t-bar" style="height:${Math.max(2, hpx)}px"></span><span class="t-lab">${Number(m)}/${Number(day)}</span></div>`;
+        })
+        .join('');
+    }
+    const tt = $('[data-trend-title]');
+    if (tt) tt.textContent = `每日浏览量（近 ${d.days} 天）`;
+  }
+
+  function stateNote(msg: string) {
+    const el = $('[data-state]');
+    if (!el) return;
+    if (msg) { el.textContent = msg; el.hidden = false; }
+    else el.hidden = true;
+  }
+
+  let days = 7;
+
+  async function load() {
+    stateNote('正在从 Cloudflare 拉取统计…');
+    try {
+      const r = await fetch(withBase(`/api/analytics?days=${days}`));
+      const j = await r.json();
+      if (j.ok) {
+        stateNote('');
+        render(j as Payload);
+      } else if (j.reason === 'unconfigured') {
+        stateNote('统计接口还没接入：需要一个 Cloudflare 只读统计 Token 配置到站点环境变量，配置好刷新即可。');
+      } else {
+        stateNote('统计服务暂时不可用，稍后点「刷新」再试。');
+      }
+    } catch {
+      stateNote('统计服务暂时不可用，稍后点「刷新」再试。');
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-range]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-range]').forEach((b) => b.classList.remove('is-on'));
+      btn.classList.add('is-on');
+      days = Number(btn.dataset.range);
+      load();
+    });
+  });
+
+  $('[data-refresh]')?.addEventListener('click', () => {
+    // 绕过 5 分钟浏览器缓存强制取新数据
+    fetch(withBase(`/api/analytics?days=${days}`), { cache: 'reload' })
+      .then((r) => r.json())
+      .then((j) => { if (j.ok) { stateNote(''); render(j as Payload); } })
+      .catch(() => stateNote('统计服务暂时不可用，稍后点「刷新」再试。'));
+  });
+
+  load();
+</script>

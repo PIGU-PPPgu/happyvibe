@@ -1,0 +1,234 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PixelBadge from '../../../components/PixelBadge.astro';
+import MarkDoneButton from '../../../components/MarkDoneButton.astro';
+import StuckButton from '../../../components/StuckButton.astro';
+import Mermaid from '../../../components/Mermaid.astro';
+import { MODULE_MAP, type ModuleSlug } from '../../../data/modules';
+import { withBase } from '../../../lib/urls';
+
+export async function getStaticPaths() {
+  const lessons = await getCollection('lessons');
+  return lessons.map((l) => ({
+    params: { slug: l.data.module, lesson: l.id.split('/').pop()! },
+    props: { lesson: l },
+  }));
+}
+
+const { lesson } = Astro.props;
+const { Content, headings } = await render(lesson);
+const { slug } = Astro.params;
+const meta = MODULE_MAP.get(slug as ModuleSlug)!;
+
+const siblings = (await getCollection('lessons'))
+  .filter((l) => l.data.module === slug)
+  .sort((a, b) => a.data.order - b.data.order);
+const idx = siblings.findIndex((l) => l.id === lesson.id);
+const prev = siblings[idx - 1];
+const next = siblings[idx + 1];
+const lessonSlug = lesson.id.split('/').pop()!;
+
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const moduleHref = withBase(`/modules/${slug}/`);
+const hasMermaid = lesson.body.includes('```mermaid');
+---
+<BaseLayout title={lesson.data.title} description={lesson.data.description}>
+  <div class="container lesson-page">
+    <nav class="crumbs mono" aria-label="面包屑">
+      <a href={withBase('/')}>~/happyvibe</a> <span aria-hidden="true">/</span>
+      <a class="crumb-up" href={moduleHref}>
+        <span aria-hidden="true">↩</span> {slug}
+      </a> <span aria-hidden="true">/</span>
+      <span class="crumb-here">{lessonSlug}</span>
+    </nav>
+
+    {toc.length >= 3 && (
+      <details class="toc-mobile">
+        <summary class="mono">▸ 本页目录（{toc.length} 节）</summary>
+        <ul>
+          {toc.map((h) => (
+            <li class:list={[`d${h.depth}`]}><a href={`#${h.slug}`}>{h.text}</a></li>
+          ))}
+        </ul>
+      </details>
+    )}
+
+    <div class="lesson-layout">
+      <div class="lesson-main">
+        <header class="lesson-header">
+          <p class="lesson-kicker mono">
+            <a href={moduleHref} style={`color:${meta.accent}`}>{meta.code} · {meta.title}</a>
+          </p>
+          <h1 class="lesson-title">{lesson.data.title}</h1>
+          <p class="lesson-desc">{lesson.data.description}</p>
+          <div class="lesson-meta">
+            <span class="mono text-muted">{lesson.data.source}</span>
+            {lesson.data.status === 'draft' && <PixelBadge variant="draft" />}
+            <MarkDoneButton lessonId={`${slug}/${lessonSlug}`} />
+          </div>
+        </header>
+
+        <article class="prose" data-pagefind-body>
+          <Content />
+        </article>
+
+        <div class="lesson-tail">
+          <StuckButton lessonTitle={lesson.data.title} moduleTitle={meta.title} />
+    {hasMermaid && <Mermaid />}
+          <a class="btn btn-ghost back-btn" href={moduleHref}>
+            <span aria-hidden="true">↑</span> 返回 {meta.code} {meta.title} · 课程列表
+          </a>
+        </div>
+
+        <nav class="lesson-nav" aria-label="课程导航">
+          {prev ? (
+            <a class="btn btn-ghost nav-prev" href={withBase(`/modules/${slug}/${prev.id.split('/').pop()}/`)}>
+              <span class="nav-dir mono">← 上一课</span>
+              <span>{prev.data.title}</span>
+            </a>
+          ) : <span />}
+          {next ? (
+            <a class="btn btn-ghost nav-next" href={withBase(`/modules/${slug}/${next.id.split('/').pop()}/`)}>
+              <span class="nav-dir mono">下一课 →</span>
+              <span>{next.data.title}</span>
+            </a>
+          ) : <span />}
+        </nav>
+      </div>
+
+      {toc.length >= 3 && (
+        <aside class="toc" aria-label="本页目录">
+          <p class="toc-title mono">// 本页目录</p>
+          <ul>
+            {toc.map((h) => (
+              <li class:list={[`d${h.depth}`]}><a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a></li>
+            ))}
+          </ul>
+        </aside>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .lesson-page { padding: 40px 0 20px; }
+  .crumbs { font-size: 13px; color: var(--text-faint); margin-bottom: 26px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .crumbs a { color: var(--text-muted); }
+  .crumb-up {
+    padding: 3px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+  }
+  .crumb-up:hover { border-color: var(--line-gold); color: var(--gold-soft); text-decoration: none; }
+  .crumb-here { color: var(--gold); }
+
+  .toc-mobile {
+    margin-bottom: 22px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg-panel);
+  }
+  .toc-mobile summary {
+    cursor: pointer;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--gold-soft);
+    list-style: none;
+  }
+  .toc-mobile[open] summary { border-bottom: 1px dashed var(--line); }
+  .toc-mobile ul { list-style: none; margin: 0; padding: 10px 14px; }
+  .toc-mobile li { margin: 4px 0; }
+  .toc-mobile li a { color: var(--text-muted); font-size: 14px; }
+  .toc-mobile li.d3 { padding-left: 16px; }
+  @media (min-width: 1120px) {
+    .toc-mobile { display: none; }
+  }
+
+  .lesson-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+  @media (min-width: 1120px) {
+    .lesson-layout { grid-template-columns: minmax(0, 1fr) 230px; }
+  }
+
+  .lesson-header { margin-bottom: 34px; }
+  .lesson-kicker { font-size: 13px; letter-spacing: 0.06em; margin: 0 0 10px; }
+  .lesson-title { margin: 0 0 12px; font-size: clamp(26px, 4.4vw, 40px); line-height: 1.3; }
+  .lesson-desc { margin: 0 0 18px; color: var(--text-muted); font-size: 16.5px; }
+  .lesson-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+
+  .lesson-tail { margin-top: 44px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .back-btn { margin-top: 0; }
+  .lesson-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .lesson-nav .btn {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    max-width: 48%;
+  }
+  .nav-next { align-items: flex-end; text-align: right; margin-left: auto; }
+  .nav-dir { font-size: 11px; letter-spacing: 0.1em; color: var(--text-faint); }
+  .lesson-nav a:hover .nav-dir { color: var(--gold); }
+
+  .toc { display: none; }
+  @media (min-width: 1120px) {
+    .toc {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+      align-self: start;
+      max-height: calc(100vh - var(--header-h) - 48px);
+      overflow-y: auto;
+      padding: 16px 4px 16px 16px;
+      border-left: 2px solid var(--line);
+    }
+    .toc-title { font-size: 11px; letter-spacing: 0.1em; color: var(--text-faint); margin: 0 0 10px; }
+    .toc ul { list-style: none; margin: 0; padding: 0; }
+    .toc li { margin: 2px 0; }
+    .toc li a {
+      display: block;
+      padding: 4px 8px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-muted);
+      border-left: 2px solid transparent;
+      margin-left: -18px;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .toc li.d3 a { padding-left: 20px; font-size: 12.5px; }
+    .toc li a:hover { color: var(--text); text-decoration: none; }
+    .toc li a.active {
+      color: var(--gold-soft);
+      border-left-color: var(--gold);
+      font-weight: 600;
+    }
+  }
+</style>
+
+<script>
+  // 目录滚动高亮
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+  if (links.length) {
+    const byId = new Map(links.map((a) => [a.getAttribute('data-toc-link')!, a]));
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((a) => a.classList.remove('active'));
+            byId.get(e.target.id)?.classList.add('active');
+          }
+        }
+      },
+      { rootMargin: '-80px 0px -70% 0px' }
+    );
+    links.forEach((a) => {
+      const el = document.getElementById(a.getAttribute('data-toc-link')!);
+      if (el) obs.observe(el);
+    });
+  }
+</script>

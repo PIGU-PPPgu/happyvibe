@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/TerminalWindow.astro';
+---
+<BaseLayout title="关于" description="HappyVibe for Teachers：一个开源的教师 AI 学习站框架。">
+  <div class="container about-page">
+    <TerminalWindow title="about — happyvibe">
+      <p class="kicker mono">// ABOUT · HAPPYVIBE FOR TEACHERS</p>
+      <h1 class="title">关于本项目</h1>
+      <p class="sub text-muted">一个从真实教师培训站里长出来的开源框架。</p>
+    </TerminalWindow>
+
+    <div class="prose">
+      <h2>它是什么</h2>
+      <p>
+        HappyVibe 起源于一个真实的集团教师 AI 学习站（<a href="https://happyvibe.intelliedu.cc" target="_blank" rel="noopener">在线演示</a>）。
+        这个仓库是它的框架部分：课程系统、工具箱、搜索、进度、新手引导、数据看板，以及全部零依赖的原生交互组件。
+        站内现在放的是示例课程，换成你自己的 Markdown 就是一个正式的学习站。
+      </p>
+
+      <h2>适合谁</h2>
+      <ul>
+        <li>想给学校、教研组、培训项目搭一个学习站的老师或信息中心；</li>
+        <li>想要一个结构清晰、能改成自己样子的 Astro 内容站开发者。</li>
+      </ul>
+
+      <h2>协议与署名</h2>
+      <p>
+        本项目采用 <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> 协议：
+        你可以自由使用、修改和再分发，包括商业用途，但必须注明出处。署名示例：
+      </p>
+      <blockquote><p>Based on HappyVibe for Teachers by 吴林璋 (Pigou Workshop) · happyvibe.intelliedu.cc</p></blockquote>
+
+      <h2>定制指南</h2>
+      <p>怎么加课、换工具、配色、部署、接数据看板，都在仓库的 README 里。</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page { padding: 48px 0 20px; max-width: 860px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .sub { margin: 0; }
+</style>

@@ -1,0 +1,12 @@
+---
+interface Props {
+  variant: 'draft' | 'ready';
+  text?: string;
+}
+const { variant, text } = Astro.props;
+const label = text ?? (variant === 'draft' ? '内容校对中' : '已就绪');
+---
+<span class:list={['badge', variant === 'draft' ? 'badge-draft' : 'badge-ready']}>
+  <span class="pixel-icon" aria-hidden="true">{variant === 'draft' ? '▒' : '■'}</span>
+  {label}
+</span>

@@ -1,0 +1,68 @@
+---
+interface Props {
+  lessonId: string;
+}
+const { lessonId } = Astro.props;
+---
+<button class="mark-done" type="button" data-mark-done data-lesson-id={lessonId}>
+  <span class="mark-icon" aria-hidden="true">✓</span>
+  <span class="mark-label">标记已学</span>
+</button>
+
+<style>
+  .mark-done {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .mark-done:hover {
+    border-color: var(--line-gold);
+    color: var(--text);
+  }
+  .mark-done.done {
+    background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+    border-color: transparent;
+    color: #2a1c00;
+    font-weight: 700;
+  }
+  .mark-icon {
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+</style>
+
+<script>
+  import { isDone, toggleDone } from '../lib/progress';
+
+  function paint(btn: Element) {
+    const id = btn.getAttribute('data-lesson-id') || '';
+    const done = isDone(id);
+    btn.classList.toggle('done', done);
+    const label = btn.querySelector('.mark-label');
+    if (label) label.textContent = done ? '已学完 ✓' : '标记已学';
+    btn.setAttribute('aria-pressed', String(done));
+  }
+  document.querySelectorAll('[data-mark-done]').forEach((btn) => {
+    paint(btn);
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-lesson-id') || '';
+      toggleDone(id);
+      paint(btn);
+    });
+  });
+</script>

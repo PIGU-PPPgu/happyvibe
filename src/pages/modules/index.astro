@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TerminalWindow from '../../components/TerminalWindow.astro';
+import { MODULES, MODE_LABEL, MODULE_MAP, type ModuleMeta } from '../../data/modules';
+import { withBase } from '../../lib/urls';
+
+const lessons = await getCollection('lessons');
+const counts = new Map<string, number>();
+for (const l of lessons) counts.set(l.data.module, (counts.get(l.data.module) ?? 0) + 1);
+const total = lessons.length;
+
+const byslug = (s: string): ModuleMeta => MODULE_MAP.get(s as never)!;
+---
+<BaseLayout title="课程模块" description={`全部课程模块一览，${total} 节课按需取用`}>
+  <div class="container mods-page">
+    <TerminalWindow title="happyvibe modules — all">
+      <p class="kicker mono">// MODULES · {MODULES.length} 个模块 / {total} 门课</p>
+      <h1 class="title">全部课程模块</h1>
+      <p class="sub text-muted">
+        每个模块是一组课。不知道从哪开始？回<a href={withBase('/')}>首页</a>从第 1 课进。
+      </p>
+    </TerminalWindow>
+
+    {[['全部模块', '按顺序学或按需查阅', MODULES]].map(([label, note, mods]) => (
+      <section class="grp">
+        <header class="grp-head"><h2>{label}</h2><span class="grp-note text-muted">{note}</span></header>
+        <div class="grid">
+          {(mods as ModuleMeta[]).map((m) => (
+            <a class="mod-card" href={withBase(`/modules/${m.slug}/`)} data-mod-card={m.slug}>
+              <div class="mc-top">
+                <span class="mc-icon" style={`color:${m.accent}`} aria-hidden="true">{m.icon}</span>
+                <span class="mc-code mono" style={`color:${m.accent}`}>{m.code}</span>
+              </div>
+              <h3 class="mc-title">{m.title}</h3>
+              <p class="mc-sub">{m.subtitle}</p>
+              <span class="mc-mode mono">{MODE_LABEL[m.mode]}</span>
+              <div class="mc-foot">
+                <span class="mc-count mono">{counts.get(m.slug) ?? 0} 课</span>
+                <div class="mc-bar"><div class="mc-fill" data-bar></div></div>
+                <span class="mc-pct mono" data-pct>0%</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>
+
+<script>
+  import { getDoneMap, getLessonIndex, onProgress } from '../../lib/progress';
+
+  function refresh() {
+    const done = getDoneMap();
+    const byModule = new Map<string, { done: number; total: number }>();
+    for (const id of Object.keys(getLessonIndex())) {
+      const m = id.split('/')[0];
+      const st = byModule.get(m) ?? { done: 0, total: 0 };
+      st.total += 1;
+      if (done[id]) st.done += 1;
+      byModule.set(m, st);
+    }
+    document.querySelectorAll<HTMLElement>('[data-mod-card]').forEach((card) => {
+      const slug = card.dataset.modCard!;
+      const st = byModule.get(slug);
+      const pct = st && st.total ? Math.round((st.done / st.total) * 100) : 0;
+      const fill = card.querySelector<HTMLElement>('[data-bar]');
+      const pctEl = card.querySelector<HTMLElement>('[data-pct]');
+      if (fill) fill.style.width = `${pct}%`;
+      if (pctEl) pctEl.textContent = `${pct}%`;
+    });
+  }
+  refresh();
+  onProgress(refresh);
+</script>
+
+<style>
+  .mods-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 36px; }
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+  .sub { margin: 0; max-width: 600px; }
+  .grp-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+  .grp-head h2 { margin: 0; font-size: 20px; color: var(--gold-soft); }
+  .grp-note { font-size: 13px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .mod-card {
+    display: flex; flex-direction: column; gap: 6px; padding: 22px;
+    color: var(--text); background: linear-gradient(180deg, var(--bg-panel), var(--bg-inset));
+    border: 1px solid var(--line); border-radius: var(--radius);
+    transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .mod-card:hover { text-decoration: none; border-color: var(--line-gold); transform: translateY(-3px); box-shadow: var(--shadow), var(--glow-purple); }
+  .mc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .mc-icon { font-size: 22px; font-family: var(--mono); }
+  .mc-code { font-size: 13px; font-weight: 700; letter-spacing: .1em; }
+  .mc-title { margin: 0; font-size: 19px; }
+  .mc-sub { margin: 0 0 8px; font-size: 13.5px; color: var(--text-muted); flex: 1; }
+  .mc-mode { align-self: flex-start; font-size: 11.5px; padding: 1px 9px; border-radius: 4px; background: rgba(254, 179, 0, .12); color: var(--gold-soft); border: 1px solid var(--line-gold); }
+  .mc-foot { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .mc-count { font-size: 12px; color: var(--text-faint); }
+  .mc-bar { flex: 1; height: 6px; background: var(--bg-deep); border-radius: 3px; overflow: hidden; border: 1px solid var(--line); }
+  .mc-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--purple-bright), var(--gold)); transition: width .5s ease; }
+  .mc-pct { font-size: 12px; color: var(--gold-soft); min-width: 34px; text-align: right; }
+</style>

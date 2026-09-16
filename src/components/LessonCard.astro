@@ -1,0 +1,86 @@
+---
+import { withBase } from '../lib/urls';
+import PixelBadge from './PixelBadge.astro';
+
+interface Props {
+  moduleSlug: string;
+  slug: string;
+  order: number;
+  title: string;
+  description: string;
+  status: 'draft' | 'ready';
+  minutes?: number;
+}
+const { moduleSlug, slug, order, title, description, status, minutes } = Astro.props;
+const href = withBase(`/modules/${moduleSlug}/${slug}/`);
+---
+<a class="lesson-card card" href={href} data-lesson-card data-lesson-id={`${moduleSlug}/${slug}`}>
+  <span class="lesson-no mono" aria-hidden="true">{String(order).padStart(2, '0')}</span>
+  <span class="lesson-main">
+    <span class="lesson-title">
+      {title}
+      {status === 'draft' && <PixelBadge variant="draft" />}
+      {minutes && <span class="lesson-min mono">约 {minutes} 分钟</span>}
+    </span>
+    <span class="lesson-desc">{description}</span>
+  </span>
+  <span class="lesson-done mono" aria-hidden="true">✓</span>
+</a>
+
+<style>
+  .lesson-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 20px;
+    color: var(--text);
+  }
+  .lesson-card:hover { color: var(--text); text-decoration: none; }
+  .lesson-no {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--purple-soft);
+    opacity: 0.75;
+    line-height: 1.3;
+    min-width: 34px;
+  }
+  .lesson-card:hover .lesson-no { color: var(--gold); opacity: 1; }
+  .lesson-main { display: flex; flex-direction: column; gap: 4px; }
+  .lesson-title {
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .lesson-desc {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .lesson-min { font-size: 11px; color: var(--text-faint); background: var(--bg-panel); border: 1px solid var(--line); padding: 1px 7px; border-radius: 4px; }
+  .lesson-done {
+    margin-left: auto;
+    color: var(--gold);
+    opacity: 0;
+    font-weight: 700;
+    transition: opacity 0.2s ease;
+  }
+  .lesson-card.is-done .lesson-min { font-size: 11px; color: var(--text-faint); background: var(--bg-panel); border: 1px solid var(--line); padding: 1px 7px; border-radius: 4px; }
+  .lesson-done { opacity: 1; }
+  .lesson-card.is-done .lesson-title { color: var(--gold-soft); }
+</style>
+
+<script>
+  import { isDone, onProgress } from '../lib/progress';
+
+  function refresh() {
+    document.querySelectorAll('[data-lesson-card]').forEach((el) => {
+      const id = el.getAttribute('data-lesson-id') || '';
+      el.classList.toggle('is-done', isDone(id));
+    });
+  }
+  refresh();
+  onProgress(refresh);
+</script>
