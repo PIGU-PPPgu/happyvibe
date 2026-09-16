@@ -95,8 +95,8 @@ const total = (await getCollection('lessons')).length;
     { sel: '.start-here .sh-title', title: '三种学法', body: '不知道先学什么，就在这里选一个：直接上手工具、按目标挑任务、或跟路线图系统学。' },
     { sel: '#modules .sec-title', title: '全部课程模块', body: '{N} 节课按模块分好。拖动卡片翻页，点「进入」看模块里的课。' },
     { sel: '.main-nav', mobileSel: '.menu-toggle', title: '顶部导航', body: '课程模块、学习路线图、比赛专区、工具箱，随时从这里过去。' },
-    { sel: '.search-trigger', title: '全站搜索', body: '想不起某个功能在哪，点这里或按 ⌘K，像查字典一样搜全站。' },
-    { sel: '.progress-chip', title: '进度记在本地', body: '每课底部有「标记已学」，这里显示总进度。进度记在你自己的浏览器里，不用注册，换设备不跟随。' },
+    { sel: '[data-search-open]', title: '全站搜索', body: '想不起某个功能在哪，点这个放大镜或按 ⌘K，像查字典一样搜全站。' },
+    { sel: '[data-tour-start]', title: '进度记在本地', body: '每课底部有「标记已学」，进度记在你自己的浏览器里，不用注册，换设备不跟随。' },
     { center: true, title: '认全了', body: '三个去处：开始第 1 课、看七站路线图、去比赛专区。', cta: { label: '开始第 1 课', href: '/modules/software/wb-01-start/' } },
   ];
 

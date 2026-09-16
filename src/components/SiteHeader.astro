@@ -34,26 +34,17 @@ const isActive = (href: string, anchor?: boolean) => {
     </nav>
 
     <div class="header-actions">
-      <button class="tour-trigger" type="button" data-tour-start aria-label="重看新手教程" title="新手教程">
-        <span aria-hidden="true">?</span> <span class="tt-label">教程</span>
+      <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程">
+        <span aria-hidden="true">?</span>
       </button>
-      <button class="search-trigger" type="button" data-search-open aria-label="搜索课程内容">
-        <span aria-hidden="true">⌕</span> 搜索 <kbd class="kbd">⌘K</kbd>
+      <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）">
+        <span aria-hidden="true">⌕</span>
       </button>
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式">
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式">
         <span class="theme-icon-dark" aria-hidden="true">☀</span>
         <span class="theme-icon-light" aria-hidden="true">☾</span>
       </button>
-      <div class="progress-chip" data-progress-chip role="status" aria-label="学习进度">
-        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
-          <circle cx="10" cy="10" r="8" fill="none" stroke="var(--line-strong)" stroke-width="2.5"></circle>
-          <circle class="ring" cx="10" cy="10" r="8" fill="none" stroke="var(--gold)" stroke-width="2.5"
-            stroke-linecap="round" stroke-dasharray="50.27" stroke-dashoffset="50.27"
-            transform="rotate(-90 10 10)"></circle>
-        </svg>
-        <span class="progress-num mono" data-progress-num>0%</span>
-      </div>
-      <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单">
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单">
         <span aria-hidden="true">≡</span>
       </button>
     </div>
@@ -112,37 +103,7 @@ const isActive = (href: string, anchor?: boolean) => {
   .nav-link.active { color: var(--gold-soft); background: rgba(254, 179, 0, 0.1); }
   .nav-code { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-right: 5px; }
   .nav-link.active .nav-code { color: var(--gold); }
-  .tour-trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 11px;
-    background: var(--bg-panel);
-    color: var(--text-muted);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    font-family: var(--sans);
-    font-size: 13px;
-    cursor: pointer;
-  }
-  .tour-trigger:hover { border-color: var(--line-gold); color: var(--text); }
-  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-  .search-trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 6px 12px;
-    background: var(--bg-panel);
-    color: var(--text-muted);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    font-family: var(--mono);
-    font-size: 13px;
-    cursor: pointer;
-  }
-  .search-trigger:hover { border-color: var(--line-gold); color: var(--text); }
-  .progress-chip { display: flex; align-items: center; gap: 6px; }
-  .theme-toggle {
+  .icon-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -151,27 +112,20 @@ const isActive = (href: string, anchor?: boolean) => {
     background: var(--bg-panel);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    color: var(--gold);
+    color: var(--text-muted);
     font-size: 16px;
+    font-family: var(--mono);
     cursor: pointer;
     transition: border-color 0.2s ease;
+    flex-shrink: 0;
   }
-  .theme-toggle:hover { border-color: var(--line-gold); }
+  .icon-btn:hover { border-color: var(--line-gold); color: var(--text); }
+  .theme-toggle { color: var(--gold); }
+  .menu-toggle { font-size: 18px; color: var(--text); }
   .theme-icon-light { display: none; }
   :global([data-theme='light']) .theme-icon-dark { display: none; }
   :global([data-theme='light']) .theme-icon-light { display: inline; }
-  .progress-num { font-size: 12px; color: var(--gold-soft); }
-  .ring { transition: stroke-dashoffset 0.5s ease; }
-  .menu-toggle {
-    display: inline-flex;
-    background: none;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-size: 18px;
-    padding: 4px 10px;
-    cursor: pointer;
-  }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .mobile-nav {
     position: absolute;
     top: var(--header-h);
@@ -200,23 +154,13 @@ const isActive = (href: string, anchor?: boolean) => {
     .nav-link { font-size: 13px; padding: 6px 8px; }
     .nav-code { margin-right: 4px; font-size: 10px; }
     .header-actions { gap: 8px; }
-    .search-trigger { padding: 6px 9px; font-size: 12.5px; }
-    .search-trigger .kbd { display: none; }
-    .tour-trigger { padding: 6px 9px; }
-    .tour-trigger .tt-label { display: none; }
   }
   @media (max-width: 560px) {
-    .search-trigger .kbd { display: none; }
-    .search-trigger { padding: 6px 10px; }
     .logo-cn { display: none; }
-    .tour-trigger { padding: 6px 9px; }
-    .tour-trigger .tt-label { display: none; }
   }
 </style>
 
 <script>
-  import { countDone, getLessonIndex, onProgress } from '../lib/progress';
-
   // 「新手教程」重看：首页直接重开，其他页跳回首页自动开始（含页脚入口）
   document.querySelectorAll<HTMLButtonElement>('[data-tour-start]').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -246,16 +190,4 @@ const isActive = (href: string, anchor?: boolean) => {
       localStorage.setItem('hv-theme', next);
     } catch {}
   });
-
-  function refresh() {
-    const total = Object.keys(getLessonIndex()).length;
-    const done = countDone(Object.keys(getLessonIndex()));
-    const pct = total ? Math.round((done / total) * 100) : 0;
-    const ring = document.querySelector<SVGCircleElement>('[data-progress-chip] .ring');
-    const num = document.querySelector('[data-progress-num]');
-    if (ring) ring.style.strokeDashoffset = String(50.27 * (1 - pct / 100));
-    if (num) num.textContent = `${pct}%`;
-  }
-  refresh();
-  onProgress(refresh);
 </script>

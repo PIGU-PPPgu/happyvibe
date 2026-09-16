@@ -25,10 +25,25 @@ const TABS = [
       <p class="kicker mono">// CONTEST · 中国教育技术协会「AI+教育」创新应用技能大赛</p>
       <h1 class="title">比赛专区</h1>
       <p class="sub text-muted">
-        基础教育组 4 条赛道 · 免费 · 报名截止 <b style="color:var(--gold-soft)">10 月 15 日</b>（剩 {days} 天）<br>
+        基础教育组 4 条赛道 · 免费 · <b style="color:var(--gold-soft)" data-contest-countdown>报名截止 10 月 15 日（剩 {days} 天）</b><br>
         预赛 10.16-10.31（50% 进决赛）· 颁奖 11.12 无锡年会
       </p>
     </TerminalWindow>
+
+    <div class="ct-card ct-stance">
+      <h2>站内态度</h2>
+      <ul>
+        <li>我们与这项比赛的主办方没有任何合作关系，没有收取任何费用，也不代办报名；</li>
+        <li>建议把比赛当作学习成果的顺便检验：先在这里把作品做出来，愿意就拿去交一份材料；</li>
+        <li>比赛信息以官网为准，本届收官后本区块自动归档折叠。</li>
+      </ul>
+    </div>
+
+    <details class="ct-wrap" data-contest-details open>
+      <summary>
+        <span class="cw-name">CAET 2026「AI+教育」创新应用技能大赛</span>
+        <span class="cw-meta mono" data-contest-meta>报名截止 10 月 15 日</span>
+      </summary>
 
     <!-- Tab 导航（投屏培训时点着讲） -->
     <nav class="ct-tabs" id="ct-tabs">
@@ -325,6 +340,7 @@ const TABS = [
         </ul>
       </div>
     </section>
+    </details>
   </div>
 </BaseLayout>
 
@@ -333,6 +349,18 @@ const TABS = [
   .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
   .title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
   .sub { margin: 0; line-height: 1.9; }
+
+  .ct-stance ul { margin: 0; }
+  .ct-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-inset); }
+  .ct-wrap > summary { cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 18px 22px; }
+  .ct-wrap > summary::-webkit-details-marker { display: none; }
+  .ct-wrap > summary::before { content: '▸'; color: var(--gold); font-size: 13px; transition: transform .15s; }
+  .ct-wrap[open] > summary::before { transform: rotate(90deg); }
+  .ct-wrap > summary:hover { background: rgba(254, 179, 0, .05); }
+  .cw-name { font-size: 16px; font-weight: 700; }
+  .cw-meta { margin-left: auto; font-size: 12.5px; color: var(--gold-soft); }
+  .ct-wrap .ct-tabs { margin: 0 14px; }
+  .ct-wrap .tab-sec { padding: 4px 14px 22px; }
 
   .ct-tabs { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto;
     position: sticky; top: calc(var(--header-h) + 8px); z-index: 20;
@@ -443,4 +471,23 @@ const TABS = [
     if (!key) { show('overview'); return; }
     if (secs.some((s) => s.dataset.sec === key)) show(key);
   });
+
+  // 比赛时效：报名截止 10.15 → 预赛 10.16-10.31 → 颁奖 11.12；11 月 20 日后整块折叠归档
+  const DEADLINE = new Date('2026-10-15T23:59:59+08:00').getTime();
+  const AWARD = new Date('2026-11-12T23:59:59+08:00').getTime();
+  const ARCHIVE = new Date('2026-11-20T00:00:00+08:00').getTime();
+  const cd = document.querySelector('[data-contest-countdown]');
+  const meta = document.querySelector('[data-contest-meta]');
+  const wrap = document.querySelector('[data-contest-details]') as HTMLDetailsElement | null;
+  const now = Date.now();
+  if (cd && now > DEADLINE) {
+    if (now > AWARD) {
+      cd.textContent = '本届已收官（11.12 无锡年会颁奖）';
+      if (meta) meta.textContent = '已收官';
+      if (wrap && now >= ARCHIVE) wrap.open = false;
+    } else {
+      cd.textContent = '报名已截止 · 预赛进行中（10.16-10.31）';
+      if (meta) meta.textContent = '预赛进行中';
+    }
+  }
 </script>
