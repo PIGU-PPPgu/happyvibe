@@ -76,14 +76,21 @@ init({
 - 配色用站内色板衍生：金 #FEB300、紫 #A63D97、蓝 #4FC3F7、绿 #66D9A8 等对面同色类对比可用
 - 无 emoji（闸门会拦），无真实学生信息
 
-## 构建与验收（六项闸门，全过才算完成）
+## 构建与验收（harness + 六项闸门，全过才算完成）
 
 ```bash
 npm run build:interactives     # 产出 public/interactives/<name>.html
-npm run check:interactives     # 六项闸门
+npm run check:interactives     # 六项闸门：体积（2D<100KB / 3D<1MB）、零外部请求、无 emoji、title、全屏按钮、双主题
+node scripts/test_interactives.mjs <name>   # 自测 harness（只验单个资源；不带参数跑全部）
 ```
 
-闸门内容：体积（2D<100KB / 3D<1MB）、零外部请求（只拦资源加载上下文，代码内命名空间常量不算）、无 emoji、title、全屏按钮、双主题变量。
+**harness 是验收的最终标准**，无头浏览器加载 `?selftest=1` 检查三类内容：
+
+1. **运行报错**：页面 JS 错误与未捕获 rejection 必须为零；
+2. **画布主体占比**：主画布内容包围盒需 ≥50% 宽 × ≥40% 高（防「主体一小块缩在中间」）；
+3. **资源内置断言**：用 `window.__hvPushCheck(name, pass, detail)` 写场景级/数据级断言（范例：`src/interactives/math/math-cube-nets/index.mjs` 的 `runSelfChecks`，验证 3D 面的世界坐标在展开态/折叠态分别等于网格坐标/立方体面心）。
+
+写断言的铁律：**比较前先判 `Number.isFinite`**——NaN 与任何数比较都是 false，会静默通过断言（真实教训：曾因此放过五个面全 NaN 的场景）。3D 资源渲染器需带 `preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest')`，画布尺寸一律取 `#stage` 的 clientWidth/Height（勿用 innerWidth，视口就绪时序不可靠）。
 
 体积超标的减重手段：不引 examples/jsm 控件（自写 orbit/事件，样例已示范）、贴图用程序化生成、three 按需 import、几何体合并。
 

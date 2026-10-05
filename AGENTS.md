@@ -9,7 +9,7 @@
    - **思维导图 / 路线图 / 全景图 → 用 Mermaid**。站内已支持渲染：markdown/页面里写 ` ```mermaid ` 代码块，页面引入 `src/components/Mermaid.astro` 即可（课程页按 `body.includes('```mermaid')` 按需加载）。主题跟随站内深浅色，写在 Mermaid.astro 的 themeVariables 里
    - **架构图 / 流程图 / 时序图 / 数据流图 → 用 archify**（`skills/archify/`，源自 github.com/tt-a1i/archify，MIT）：按 `skills/archify/SKILL.md` 写类型化 JSON → `node skills/archify/bin/archify.mjs validate <type> <json> --quality showcase` 全绿 → `deliver <type> <json> <输出.html> --quality showcase`。产物是单文件交互 HTML（动画 trace / 搜索 / 聚焦 / 演示模式 F），放 `public/interactives/`，页面用 iframe 嵌入并配「全屏打开」链接；引用路径去掉 `.html` 后缀（Pages 会 308 跳转）。`meta.locale` 用 `zh-CN`
    - 用户点名要哪种就用哪种，不重复造图
-2.5 **做教学 3D/2D 交互资源（资源库）** → 先读 `skills/teaching-interactives/SKILL.md`，按其目录约定与验收命令执行；产物是单文件 HTML，`npm run build:interactives && npm run check:interactives` 六项闸门全过才算完成（可加 slug 只构建/校验单个）
+2.5 **做教学 3D/2D 交互资源（资源库）** → 先读 `skills/teaching-interactives/SKILL.md`，按其目录约定与验收命令执行；产物是单文件 HTML，验收 = 六项闸门（`npm run check:interactives`）+ 自测 harness（`node scripts/test_interactives.mjs`，可加 slug 跑单个）全过才算完成
 3. 课程内容在 `src/content/lessons/<模块>/<课>.md`，规范见 README「怎么加一节新课」；教学资源条目在 `src/content/resources/<学科>/<名>.md`，规范见 README「怎么加一条教学资源」
 4. 所有视觉产出遵循：傻瓜式步骤（精确到按钮）、图文并茂、无 emoji、大字号、隐私安全（真实学生信息不上线）
 5. **文风红线（AI-isms 清单）**——以下模式一律禁止，出现即重写：
