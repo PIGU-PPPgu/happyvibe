@@ -4,7 +4,8 @@ import { existsSync } from 'node:fs';
 
 const report = JSON.parse(await readFile('scripts/.interactives-report.json', 'utf8'));
 const EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/u;
-const EXT_URL = /https?:\/\//;
+// 零外部请求：只拦截真正的资源加载上下文（命名空间常量、代码内论文引用字符串不算）
+const EXT_URL = /(src|href|action)\s*=\s*["']https?:\/\/|fetch\(\s*["'`]https?:\/\/|import\s*\(?\s*["']https?:\/\/|url\(\s*["']?\s*https?:\/\/|new\s+URL\(\s*["']https?:\/\/|\.open\(\s*["'`](GET|POST|PUT|DELETE)["'`]\s*,\s*["'`]https?:\/\//i;
 let failed = 0;
 const names = Object.keys(report);
 if (names.length === 0) { console.log('check: no interactives built'); process.exit(0); }
