@@ -7,8 +7,8 @@ const PAIR_COLORS = { y: 0xfeb300, x: 0xa63d97, z: 0x4fc3f7 }; // 对面同色�
 let renderer, scene, camera, root;
 let hinges = []; // { node, axis, sign }
 let netIndex = 0;
-let fold = 0; // 0 展开 → 1 折起
-const spherical = { theta: 0.65, phi: 1.08, radius: 5.6 };
+let fold = 0.22; // 0 展开 → 1 折起；默认微折，让「这是会折叠的展开图」一眼可见
+const spherical = { theta: 0.65, phi: 0.92, radius: 5.2 };
 const target = new THREE.Vector3(0, 0.5, 0);
 
 function themeColors() {
@@ -103,7 +103,7 @@ function buildUI(stage) {
     '<button class="btn" id="prev" type="button" aria-label="上一个">上个</button>',
     '<strong id="netname" style="font-size:16px;min-width:7em;text-align:center"></strong>',
     '<button class="btn" id="next" type="button" aria-label="下一个">下个</button>',
-    '<input id="fold" type="range" min="0" max="100" value="0" step="1" aria-label="折叠程度" style="width:180px;accent-color:var(--gold)">',
+    '<input id="fold" type="range" min="0" max="100" value="22" step="1" aria-label="折叠程度" style="width:180px;accent-color:var(--gold)">',
     '<span style="font-size:15px;color:var(--muted)">展开 ← → 折叠</span>',
   ].join('');
   stage.appendChild(bar);
