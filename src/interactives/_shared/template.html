@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+:root{--bg:#150e22;--panel:#1e1433;--panel2:#271a42;--text:#f2ecf8;--muted:#a99cc0;--purple:#a63d97;--gold:#feb300;--line:rgba(180,130,210,.16)}
+:root[data-theme=light]{--bg:#f7f4fb;--panel:#ffffff;--panel2:#f3eefb;--text:#241a33;--muted:#5e5275;--purple:#8a2f7d;--gold:#b8860b;--line:rgba(90,50,120,.16)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(0,0,0,.001);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+#bar h1{font-size:21px;font-weight:700;letter-spacing:.02em}
+#hint{font-size:15px;color:var(--muted)}
+.btn{font:inherit;font-size:16px;line-height:1;padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;touch-action:manipulation}
+.btn:hover{border-color:var(--gold)}
+#fs{margin-left:auto}
+#stage{position:absolute;inset:0}
+#stage.pad{inset:56px 0 0 0}
+</style>
+</head>
+<body>
+<div id="bar">
+  <h1>__TITLE__</h1>
+  <span id="hint">__HINT__</span>
+  <button class="btn" id="theme" type="button" aria-label="切换深浅色">深浅</button>
+  <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
+</div>
+<div id="stage" class="pad"></div>
+<script>__BUNDLE__</script>
+</body>
+</html>
