@@ -33,6 +33,14 @@ status: ready           # ready = 已校对；draft = 内容校对中（页面�
 
 保存后重新构建发布即可，导航、搜索、进度自动收录。
 
+## 怎么加一条教学资源（资源库）
+
+1. 写资源本体：`src/interactives/<学科>/<名>/` 下 `index.mjs`（入口，用 `_shared/runtime.mjs` 的 `init`）+ `meta.json`（`{"title":"中文名","hint":"一句操作提示"}`）
+2. 写条目：`src/content/resources/<学科>/<名>.md`（frontmatter 照任一黄金样例，如 `src/content/resources/math/math-cube-nets.md`）
+3. `npm run build:interactives && npm run check:interactives` 六项全过（命令后可加资源名单独构建校验），再 `npm run build` 看页面
+
+规范细节（形态选择、视觉红线、事实校验）见 `skills/teaching-interactives/SKILL.md`。
+
 ## 部署
 
 - **GitHub Pages（默认）**：推送到 GitHub 仓库 main 分支，Actions 自动构建发布（见 `.github/workflows/deploy.yml`）。仓库设置 → Pages → Source 选 **GitHub Actions**。项目站会自动以仓库名作为 base 路径构建。
@@ -43,11 +51,14 @@ status: ready           # ready = 已校对；draft = 内容校对中（页面�
 ```
 src/content/lessons/   课程（Markdown）
 src/content/tools/     工具箱条目
+src/content/resources/ 教学资源条目（K12 资源库）
+src/interactives/      教学交互资源源码（构建产物为单文件 HTML）
 src/data/modules.ts    模块定义
 src/data/path.ts       学习路线图七站
 public/images/lessons/ 课程截图（webp）
+public/interactives/   交互资源构建产物（单文件 HTML，gitignore）
 docs/                  设计文档、计划、隐私清单、待补充清单
-scripts/               PPT 图片提取与压缩脚本
+scripts/               构建/校验/图片脚本
 ```
 
 ## 内容维护约定
