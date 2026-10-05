@@ -219,7 +219,6 @@ init({
       });
       tabs.appendChild(b);
     });
-    tabs.children[0].click();
     wrap.appendChild(tabs);
     cardEl = document.createElement('div');
     cardEl.className = 'rh-card';
@@ -229,6 +228,8 @@ init({
     wrap.appendChild(quizEl);
     stage.appendChild(wrap);
     api.onResize = () => { if (DATA[mi].pairs) buildQuiz(DATA[mi]); };
+    // 初始触发须在 cardEl/quizEl 就绪之后，否则 render() 写 undefined.innerHTML
+    tabs.children[0].click();
 
     // 深链：?m=by&i=2 选手法与例句，&mk=1 直接显示标注
     try {

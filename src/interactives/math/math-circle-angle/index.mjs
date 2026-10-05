@@ -6,7 +6,7 @@ import { init } from '../../_shared/runtime.mjs';
 const BLUE = '#4FC3F7';
 
 let cv, ctx, stageEl, W = 0, H = 0;
-const pts = { A: 200, B: 340, P: 80, Q: 120 }; // 圆上角度（数学角，逆时针，度）
+const pts = { A: 190, B: 350, P: 80, Q: 120 }; // 圆上角度（数学角，逆时针，度）
 let dragKey = null;
 
 function css(name, fallback) {
@@ -32,9 +32,13 @@ function oppositeArc(k) {
 const arcDeg = (arc) => norm(arc.to - arc.from);
 
 function geom() {
-  const R = Math.max(120, Math.min(narrow() ? W / 2 - 30 : (W - 320) / 2 - 40, (H - 90) / 2 - 40));
-  const cx = narrow() ? W / 2 : (W - 320) / 2;
-  const cy = H / 2;
+  // 主体铺满画布：径向预算 = 顶部点标签字高（P 最靠上，sin80≈.985）+ 底部蓝环外缘（R+20+线宽半 4.5）
+  const topPad = 6, botPad = 6, glyph = 16, labelR = 34, ringOut = 24.5;
+  const RByH = (H - topPad - botPad - glyph - ringOut - labelR * 0.985) / 1.985;
+  const RByW = (narrow() ? W / 2 : (W - 280) / 2) - labelR - 14;
+  const R = Math.max(80, Math.min(RByW, RByH));
+  const cx = narrow() ? W / 2 : (W - 280) / 2;
+  const cy = topPad + (R + labelR) * 0.985 + glyph; // 顶部对齐，圆下方留足蓝环与标签
   const pos = {};
   for (const k of ['A', 'B', 'P', 'Q']) pos[k] = [cx + R * Math.cos(rad(pts[k])), cy - R * Math.sin(rad(pts[k]))];
   return { R, cx, cy, pos };
@@ -184,15 +188,15 @@ function draw() {
 
 // ---------- UI ----------
 const STYLE = `
-#panel{position:fixed;top:64px;right:14px;z-index:15;width:288px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
-#angles{display:flex;flex-direction:column;gap:6px;font-size:21px;font-weight:700;font-family:Georgia,'Times New Roman',serif}
+#panel{position:fixed;top:64px;right:14px;z-index:15;width:240px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#angles{display:flex;flex-direction:column;gap:6px;font-size:19px;font-weight:700;font-family:Georgia,'Times New Roman',serif}
 #angles .gold{color:var(--gold)}
 #angles .blue{color:#4FC3F7}
 #angles .purple{color:var(--purple)}
 #angles .note{font-size:15px;font-weight:400;color:var(--muted);font-family:"Noto Sans SC","PingFang SC",sans-serif}
-#rel{font-size:18px;font-weight:600;text-align:center;padding:6px;background:var(--panel2);border-radius:8px;font-family:Georgia,serif}
-#concl{font-size:16.5px;line-height:1.6;color:var(--text)}
-.tip{font-size:15px;color:var(--muted)}
+#rel{font-size:17px;font-weight:600;text-align:center;padding:6px;background:var(--panel2);border-radius:8px;font-family:Georgia,serif}
+#concl{font-size:15.5px;line-height:1.6;color:var(--text)}
+.tip{font-size:14px;color:var(--muted)}
 .btns{display:flex;gap:8px}
 .btns .btn{flex:1}
 @media (max-width:760px){#panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;padding:10px 12px;gap:7px}#angles{font-size:18px;flex-direction:row;flex-wrap:wrap;gap:4px 12px}#concl{font-size:15px}.tip{display:none}}
@@ -220,7 +224,7 @@ function buildUI(stage) {
     renderPanel(); draw();
   });
   panel.querySelector('#reset').addEventListener('click', () => {
-    Object.assign(pts, { A: 200, B: 340, P: 80, Q: 120 });
+    Object.assign(pts, { A: 190, B: 350, P: 80, Q: 120 });
     renderPanel(); draw();
   });
 }

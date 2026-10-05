@@ -68,20 +68,24 @@ function fmtVal(fn, d) {
 const fmtNum = (v) => (v >= 0 ? v.toFixed(2) : v.toFixed(2));
 
 // ---------- 布局 ----------
+// 宽 ≥640 即「圆 + 图像」并排（本资源核心是圆到曲线的投影对应）；
+// 窄屏底部面板为紧凑条，画布预留其高度避免遮挡
 function layout() {
-  const panelW = W < 900 ? 0 : 280;
-  const graphW = W < 900 ? 0 : Math.min(430, (W - panelW) * 0.42);
+  const narrow = W < 900;
+  const panelW = narrow ? 0 : 280;
+  const graphW = W < 640 ? 0 : Math.min(430, (W - panelW) * 0.42);
   const circleBox = W - panelW - graphW - 40;
-  const R = Math.max(110, Math.min(circleBox, H - 130) / 2 - 30);
+  const R = Math.max(80, Math.min(circleBox, narrow ? H - 176 : H - 130) / 2 - 30);
   return {
     R,
     cx: 30 + circleBox / 2,
-    cy: H / 2,
+    cy: narrow ? (H - 96) / 2 : H / 2,
     gx0: 30 + circleBox + 30,           // 图像区左
     gx1: W - panelW - 24,               // 图像区右
     gy0: 70,
-    gy1: H - 46,
+    gy1: H - (narrow ? 96 : 46),
     panelW,
+    graph: graphW > 0,
   };
 }
 
@@ -107,7 +111,7 @@ function draw() {
   const p = palette();
   ctx.fillStyle = p.bg;
   ctx.fillRect(0, 0, W, H);
-  const { R, cx, cy, gx0, gx1, gy0, gy1, panelW } = layout();
+  const { R, cx, cy, gx0, gx1, gy0, gy1, graph } = layout();
   const d = theta, r = d * D2R;
   const px = cx + R * Math.cos(r), py = cy - R * Math.sin(r);
   const FONT = '"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
@@ -254,7 +258,7 @@ function draw() {
   }
 
   // ===== 图像区 =====
-  if (panelW > 0) {
+  if (graph) {
     const yMax = mode === 'tan' ? 3 : 1.4;
     const mx = (t) => gx0 + (t / 360) * (gx1 - gx0);       // t 为度
     const my = (v) => (gy0 + gy1) / 2 - (v / yMax) * ((gy1 - gy0) / 2);
@@ -369,7 +373,7 @@ const STYLE = `
 .ops{display:flex;gap:8px}
 .ops .btn{flex:1}
 .tip{font-size:15px;color:var(--muted)}
-@media (max-width:900px){#panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;padding:10px 12px;gap:7px}#vals{display:flex;flex-wrap:wrap;gap:4px 14px}#vals .theta{font-size:19px}.tip{display:none}}
+@media (max-width:900px){#panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;padding:8px 10px;flex-direction:row;align-items:center;flex-wrap:wrap;gap:6px 12px}.fns{flex:0 0 auto}.fns .btn{padding:7px 10px}#vals{flex:1;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px}#vals .theta{font-size:16px}#vals .rad{font-size:13px}#vals .sp{font-size:11px;margin-left:5px;vertical-align:2px}#vals .val{font-size:14px}.ops{flex:0 0 auto}.ops .btn{padding:7px 10px}.tip{display:none}}
 `;
 
 function buildUI(stage) {

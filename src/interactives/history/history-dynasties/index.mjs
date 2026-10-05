@@ -36,8 +36,9 @@ function theme() {
   return { bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'), panel: v('--panel', '#1e1433') };
 }
 
-const BAND_H = 150;
-function bandTop() { return H * 0.5 - BAND_H / 2; }
+const BAND_H_MIN = 150;
+function bandH() { return Math.max(BAND_H_MIN, Math.round(H * 0.46)); }
+function bandTop() { return H * 0.5 - bandH() / 2; }
 const PAD = 60;
 
 function draw() {
@@ -52,6 +53,7 @@ function draw() {
   // 限制平移范围
   view.offset = Math.max(0, Math.min(Math.max(0, totalW - visibleW), view.offset));
   const bandW = 140 * view.scale;
+  const BH = bandH();
   const top = bandTop();
 
   ctx.textAlign = 'center';
@@ -63,7 +65,7 @@ function draw() {
     ctx.fillStyle = BAND_COLORS[i % BAND_COLORS.length];
     ctx.globalAlpha = hovered ? 1 : 0.88;
     const r = Math.min(10, bandW * 0.12);
-    roundRect(x + 4, top, bandW - 8, BAND_H, r);
+    roundRect(x + 4, top, bandW - 8, BH, r);
     ctx.fill();
     ctx.globalAlpha = 1;
 
@@ -72,15 +74,15 @@ function draw() {
     ctx.fillStyle = t.bg;
     ctx.font = `700 ${nameSize}px 'Noto Sans SC','PingFang SC',sans-serif`;
     const name = d.name.length > 4 && bandW < 110 ? d.name.slice(0, 3) + '…' : d.name;
-    ctx.fillText(name, x + bandW / 2, top + BAND_H * 0.42, bandW - 14);
+    ctx.fillText(name, x + bandW / 2, top + BH * 0.42, bandW - 14);
 
     // 起止年：放大后显示
     if (bandW > 95) {
       ctx.fillStyle = t.bg;
       ctx.globalAlpha = 0.8;
       ctx.font = `13px 'Noto Sans SC','PingFang SC',sans-serif`;
-      ctx.fillText(d.s, x + bandW / 2, top + BAND_H * 0.62, bandW - 10);
-      ctx.fillText('至 ' + d.e, x + bandW / 2, top + BAND_H * 0.76, bandW - 10);
+      ctx.fillText(d.s, x + bandW / 2, top + BH * 0.62, bandW - 10);
+      ctx.fillText('至 ' + d.e, x + bandW / 2, top + BH * 0.76, bandW - 10);
       ctx.globalAlpha = 1;
     }
 
@@ -88,7 +90,7 @@ function draw() {
     if (bandW > 150) {
       for (let k = 0; k < d.events.length; k++) {
         ctx.beginPath();
-        ctx.arc(x + bandW / 2, top + BAND_H + 18 + k * 16, 3.5, 0, Math.PI * 2);
+        ctx.arc(x + bandW / 2, top + BH + 18 + k * 16, 3.5, 0, Math.PI * 2);
         ctx.fillStyle = t.gold;
         ctx.fill();
       }

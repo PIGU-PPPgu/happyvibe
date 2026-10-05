@@ -25,7 +25,7 @@ let panelEl, ctrlBar, unfoldEl;
 
 const dims = { a: 5, b: 3, h: 4 };
 let unfold = 0.14; // 0 折成盒 → 1 完全摊平；默认微开，提示可展开
-const spherical = { theta: 0.72, phi: 1.02, radius: 10 };
+const spherical = { theta: 0.45, phi: 1.02, radius: 10 }; // 默认视角：前墙近正面+右墙+顶面，三面可见且轮廓方正
 const target = new THREE.Vector3(0, 0, 0);
 
 function themeColors() {
@@ -144,7 +144,8 @@ function build() {
   const hingeF = new THREE.Group(); hingeF.position.set(0, 0, b / 2); root.add(hingeF);
   const front = face('front', plane(a, h), new THREE.Vector3(0, 0, h / 2), hingeF);
 
-  const hingeT = new THREE.Group(); hingeT.position.set(0, 0, h); front.add(hingeT);
+  // 顶面铰链挂在前面的远端边缘（前几何中心 (0,0,h/2)，边缘在局部 z=h/2）
+  const hingeT = new THREE.Group(); hingeT.position.set(0, 0, h / 2); front.add(hingeT);
   face('top', plane(a, b), new THREE.Vector3(0, 0, b / 2), hingeT);
 
   const hingeB = new THREE.Group(); hingeB.position.set(0, 0, -b / 2); root.add(hingeB);
@@ -165,7 +166,8 @@ function build() {
 }
 
 function applyUnfold() {
-  const t = (unfold * Math.PI) / 2;
+  // unfold=0 折成盒（各面立起 90°）→ 1 完全摊平（各面落平）；root.position 按同一语义做居中
+  const t = ((1 - unfold) * Math.PI) / 2;
   hinges.F.rotation.x = -t; // 前面向上立起
   hinges.T.rotation.x = -t; // 顶面随之翻过来盖住盒口
   hinges.B.rotation.x = t;
@@ -180,7 +182,39 @@ function refit() {
   const sph = new THREE.Box3().setFromObject(root).getBoundingSphere(new THREE.Sphere());
   target.copy(sph.center);
   const t = Math.tan((camera.fov * Math.PI) / 360);
+  // 包围球给初值，再按真实投影轮廓收敛：内容占画布宽 ≤80%、高 ≤88%，尽量拉满且任何展开程度都不裁切
   spherical.radius = THREE.MathUtils.clamp((sph.radius / t) * 1.08, 2.5, 120);
+  const verts = [];
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    const p = o.geometry.attributes.position, w = new THREE.Vector3();
+    for (let i = 0; i < p.count; i++) verts.push(w.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld).clone());
+  });
+  const q = new THREE.Vector3();
+  const extents = () => {
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (const v of verts) {
+      q.copy(v).project(camera);
+      if (q.x < x0) x0 = q.x; if (q.x > x1) x1 = q.x;
+      if (q.y < y0) y0 = q.y; if (q.y > y1) y1 = q.y;
+    }
+    return [(x1 - x0) / 2, (y1 - y0) / 2, (x0 + x1) / 2, (y0 + y1) / 2];
+  };
+  // 收敛半径并把投影轮廓摆正（透视近大远小使内容偏移随深度变化，需迭代）
+  const right = new THREE.Vector3(), up = new THREE.Vector3();
+  for (let i = 0; i < 5; i++) {
+    updateCamera();
+    camera.updateMatrixWorld(true);
+    camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+    const [ex, ey, mx, my] = extents();
+    if (!isFinite(ex) || ex <= 0) break;
+    spherical.radius = THREE.MathUtils.clamp(spherical.radius * Math.max(ex / 0.8, ey / 0.88), 2.5, 120);
+    // 相机与目标一起平移时画面反向移动：内容在 NDC (mx,my) → 目标点沿 right/up 移动 +(mx,my)×每弧度世界量
+    right.setFromMatrixColumn(camera.matrixWorld, 0);
+    up.setFromMatrixColumn(camera.matrixWorld, 1);
+    target.addScaledVector(right, mx * spherical.radius * t * camera.aspect * 0.9);
+    target.addScaledVector(up, my * spherical.radius * t * 0.9);
+  }
   chipH = 0.17 * spherical.radius * t; // 贴片约占屏高 8.5%，投屏文字不小于 16px
 }
 
@@ -332,8 +366,9 @@ init({
     scene.background = themeColors().bg;
     camera = new THREE.PerspectiveCamera(40, document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight, 0.1, 400);
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 1.1));
-    const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+    // three r155+ 物理光照：强度需按旧习惯 ×π，否则各面偏暗、深色面融进背景
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 2.0));
+    const dir = new THREE.DirectionalLight(0xffffff, 2.8);
     dir.position.set(3, 6, 4);
     scene.add(dir);
 

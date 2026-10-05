@@ -44,9 +44,10 @@ let solid = null;
 let faceMat = null;
 let lineMats = [];
 let chips = [];
+let arrowObjs = {};
 let current = 'cube';
-const spherical = { theta: 0.72, phi: 1.05, radius: 9 };
-const target = new THREE.Vector3(0, 0.3, 0);
+const spherical = { theta: 0.785, phi: 1.05, radius: 6 };
+const target = new THREE.Vector3(0, -0.1, 0);
 
 function palette() {
   const cs = getComputedStyle(document.documentElement);
@@ -54,29 +55,49 @@ function palette() {
   return { bg: g('--bg', '#150e22'), panel: g('--panel', '#1e1433'), text: g('--text', '#f2ecf8'), line: g('--line', 'rgba(180,130,210,.16)') };
 }
 
-// ---------- 3D 几何体（面板色面 + 文字色边线，教材线框风） ----------
-function ring(r, y, mat) {
-  const pts = [];
-  for (let i = 0; i < 64; i++) {
-    const a = (i / 64) * Math.PI * 2;
-    pts.push(new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r));
+// ---------- 3D 几何体（面板色面 + 文字色管状线框，教材线框风） ----------
+// 线框用细管/圆环网格而非 1px 线：小屏与缩略采样下都保持清晰
+function tube(a, b, mat, r = 0.022) {
+  const d = b.clone().sub(a);
+  const len = d.length();
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 6), mat);
+  m.position.copy(a).addScaledVector(d, 0.5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+  return m;
+}
+
+function edgeTubes(geo, mat, r = 0.022) {
+  const g = new THREE.Group();
+  const pos = new THREE.EdgesGeometry(geo).attributes.position.array;
+  for (let i = 0; i < pos.length; i += 6) {
+    g.add(tube(
+      new THREE.Vector3(pos[i], pos[i + 1], pos[i + 2]),
+      new THREE.Vector3(pos[i + 3], pos[i + 4], pos[i + 5]),
+      mat, r
+    ));
   }
-  return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), mat);
+  return g;
+}
+
+function ring(r, y, mat) {
+  const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.02, 6, 72), mat);
+  m.rotation.x = Math.PI / 2;
+  m.position.y = y;
+  return m;
 }
 
 function buildSolid(id) {
   const p = palette();
   const g = new THREE.Group();
   faceMat = new THREE.MeshStandardMaterial({ color: p.panel, roughness: 0.55, metalness: 0.08 });
-  const lm = () => new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.65 });
+  const lm = () => new THREE.MeshBasicMaterial({ color: p.text });
   const line = () => { const m = lm(); lineMats.push(m); return m; };
   const mesh = (geo) => new THREE.Mesh(geo, faceMat);
 
   if (id === 'cube') {
     const geo = new THREE.BoxGeometry(2, 2, 2);
     const m = mesh(geo);
-    const em = line();
-    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), em));
+    m.add(edgeTubes(geo, line()));
     g.add(m);
   } else if (id === 'cyl') {
     const m = mesh(new THREE.CylinderGeometry(1, 1, 2, 48));
@@ -89,24 +110,19 @@ function buildSolid(id) {
     g.add(ring(1, -1, line()));
     // 两条素线，直观图惯例
     for (const sx of [1, -1]) {
-      const em = line();
-      g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, 1, 0), new THREE.Vector3(sx, -1, 0),
-      ]), em));
+      g.add(tube(new THREE.Vector3(0, 1, 0), new THREE.Vector3(sx, -1, 0), line()));
     }
   } else {
     const boxGeo = new THREE.BoxGeometry(2, 2, 2);
     const box = mesh(boxGeo);
     box.position.y = 1;
-    const em = line();
-    box.add(new THREE.LineSegments(new THREE.EdgesGeometry(boxGeo), em));
+    box.add(edgeTubes(boxGeo, line()));
     g.add(box);
     const cyl = mesh(new THREE.CylinderGeometry(0.7, 0.7, 1.2, 48));
     cyl.position.y = 2.6;
     g.add(cyl);
-    g.add((() => { const r1 = ring(0.7, 3.2, line()); return r1; })());
-    const r2 = ring(0.7, 2, line());
-    g.add(r2);
+    g.add(ring(0.7, 3.2, line()));
+    g.add(ring(0.7, 2, line()));
     g.position.y = -1.6; // 整体居中
   }
   return g;
@@ -114,6 +130,7 @@ function buildSolid(id) {
 
 function switchSolid(id) {
   current = id;
+  spherical.radius = RADIUS[id];
   if (solid) {
     solid.traverse((o) => {
       if (o.geometry) o.geometry.dispose();
@@ -123,7 +140,9 @@ function switchSolid(id) {
   }
   lineMats = [];
   solid = buildSolid(id);
+  solid.position.y = 0.3; // 整体上移，压低纵向跨度（上方留给方向箭头与贴片）
   scene.add(solid);
+  updateAnchors();
   document.querySelectorAll('#ctrl [data-solid]').forEach((b) => b.classList.toggle('on', b.dataset.solid === id));
   redrawViews();
 }
@@ -161,20 +180,53 @@ function makeChips() {
   for (const key of ORDER) {
     const a = AXES[key];
     const sp = chipSprite(a.label, a.css);
-    sp.position.copy(a.dir).multiplyScalar(2.55);
-    sp.scale.set(0.8, 0.36, 1);
+    sp.scale.set(0.74, 0.34, 1);
     sp.renderOrder = 5;
     scene.add(sp);
     chips.push(sp);
   }
+  updateAnchors();
 }
 
 function makeArrows() {
+  const LEN = 0.42, HEAD = 0.2;
   for (const key of ORDER) {
     const a = AXES[key];
-    const arrow = new THREE.ArrowHelper(a.dir, a.dir.clone().multiplyScalar(1.85), 0.55, a.color, 0.26, 0.14);
-    arrow.line.material.linewidth = 3;
+    const arrow = new THREE.ArrowHelper(a.dir, new THREE.Vector3(), LEN, a.color, HEAD, 0.12);
+    arrow.line.visible = false; // 1px 线在缩放下不可见，改用细管箭杆
+    const shaftLen = LEN - HEAD;
+    const shaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.022, 0.022, shaftLen, 6),
+      new THREE.MeshBasicMaterial({ color: a.color })
+    );
+    shaft.position.copy(a.dir).multiplyScalar(shaftLen / 2);
+    shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), a.dir);
+    arrow.add(shaft);
     scene.add(arrow);
+    arrowObjs[key] = arrow;
+  }
+}
+
+// 方向箭头与贴片的锚点随几何体顶面联动；箭头推到几何体轮廓之外保证可见，
+// 「上面」贴片放箭头旁侧，压低整体纵向跨度
+function updateAnchors() {
+  const topY = current === 'combo' ? 1.9 : 1.3; // 几何体顶面高度（含整体上移 0.3）
+  // 屏幕横向单位向量（随方位角）：侧面箭头沿它外推，避开几何体轮廓
+  const rt = new THREE.Vector3(Math.cos(spherical.theta), 0, -Math.sin(spherical.theta));
+  for (const key of ORDER) {
+    if (key === 'top') {
+      arrowObjs.top.position.set(0, topY + 0.1, 0);
+      continue;
+    }
+    const side = key === 'front' ? 0.9 : -0.9;
+    arrowObjs[key].position.copy(AXES[key].dir).multiplyScalar(2.2).addScaledVector(rt, side);
+  }
+  for (let i = 0; i < ORDER.length; i++) {
+    const key = ORDER[i];
+    const sp = chips[i];
+    if (!sp) continue;
+    if (key === 'top') sp.position.set(0.62, topY + 0.45, 0);
+    else sp.position.copy(AXES[key].dir).multiplyScalar(3.05);
   }
 }
 
@@ -226,19 +278,21 @@ function redrawViews() {
 
 // ---------- UI ----------
 const STYLE = `
-#ctrl{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;z-index:20;flex-wrap:wrap;justify-content:center;max-width:94vw}
+#vp{position:absolute;inset:0 216px 0 0}
+#vp canvas{display:block}
+#ctrl{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:max-content;max-width:94vw;display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;z-index:20;flex-wrap:wrap;justify-content:center}
 #ctrl .btn.on{border-color:var(--gold);color:var(--gold)}
-#panel{position:fixed;top:64px;right:14px;z-index:15;display:flex;flex-direction:column;gap:10px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px 10px;width:174px}
-.card-head{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:600;padding:2px 2px 6px}
+#panel{position:fixed;top:64px;right:14px;z-index:15;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px 8px 6px;width:190px}
+.card-head{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:2px 2px 3px}
 .card .sw{width:12px;height:12px;border-radius:3px;flex:none}
-.view-wrap{position:relative;height:148px}
+.view-wrap{position:relative;height:92px}
 .view-wrap canvas{width:100%;height:100%;display:block}
 .mask{position:absolute;inset:0;border-radius:8px;background:var(--panel2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:opacity .25s}
-.mask b{font-size:46px;color:var(--muted)}
-.mask em{font-style:normal;font-size:15px;color:var(--muted)}
+.mask b{font-size:32px;color:var(--muted)}
+.mask em{font-style:normal;font-size:14px;color:var(--muted)}
 .card.open .mask{opacity:0;pointer-events:none}
-@media (max-width:760px){#panel{flex-direction:row;left:10px;right:10px;top:auto;bottom:96px}.card{flex:1;width:auto;padding:6px 8px 8px}.view-wrap{height:104px}#ctrl{gap:6px;padding:8px 10px;bottom:10px}}
+@media (max-width:640px){#vp{inset:0 0 224px 0}#panel{flex-direction:row;left:10px;right:10px;top:auto;bottom:96px}.card{flex:1;width:auto;padding:6px 8px 8px}.view-wrap{height:96px}#ctrl{gap:6px;padding:8px 10px;bottom:10px;max-width:94vw}}
 `;
 
 function buildUI(stage) {
@@ -278,11 +332,12 @@ function buildUI(stage) {
   ctrl.querySelectorAll('[data-solid]').forEach((b) => b.addEventListener('click', () => switchSolid(b.dataset.solid)));
 }
 
-// 视口偏移：右侧面板占位时物体视觉居中在剩余区域
-function applyViewOffset() {
-  const w = document.getElementById('stage').clientWidth, h = document.getElementById('stage').clientHeight;
-  if (w < 760) camera.setViewOffset(w, h, 0, h * 0.09, w, h);
-  else camera.setViewOffset(w, h, w * 0.09, 0, w, h);
+// 每个几何体的默认相机距离：组合体更高，退远些才不裁顶
+const RADIUS = { cube: 6.5, cyl: 6.5, cone: 6.5, combo: 7.9 };
+
+function vpSize() {
+  const vp = document.getElementById('vp');
+  return [vp.clientWidth, vp.clientHeight];
 }
 
 function updateCamera() {
@@ -296,23 +351,26 @@ function updateCamera() {
 
 init({
   mount(stage, api) {
+    buildUI(stage); // 先注入样式，#vp 才有布局尺寸
+    const vp = document.createElement('div');
+    vp.id = 'vp';
+    stage.appendChild(vp);
+    const [w0, h0] = vpSize();
     renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
-    stage.appendChild(renderer.domElement);
+    renderer.setSize(w0, h0);
+    vp.appendChild(renderer.domElement);
     renderer.domElement.style.touchAction = 'none';
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(palette().bg);
-    camera = new THREE.PerspectiveCamera(40, document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight, 0.1, 100);
-    applyViewOffset();
+    camera = new THREE.PerspectiveCamera(40, w0 / h0, 0.1, 100);
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 1.15));
     const dir = new THREE.DirectionalLight(0xffffff, 1.0);
     dir.position.set(3, 6, 4);
     scene.add(dir);
 
-    buildUI(stage);
     makeArrows();
     makeChips();
     switchSolid('cube');
@@ -337,7 +395,7 @@ init({
       if (pointers.size === 2) {
         const [a, b] = [...pointers.values()];
         const d = Math.hypot(a[0] - b[0], a[1] - b[1]);
-        spherical.radius = Math.min(14, Math.max(3.5, spherical.radius * pinchDist / Math.max(d, 1)));
+        spherical.radius = Math.min(14, Math.max(3.2, spherical.radius * pinchDist / Math.max(d, 1)));
         pinchDist = d;
         return;
       }
@@ -351,7 +409,7 @@ init({
     el.addEventListener('pointercancel', release);
     el.addEventListener('wheel', (e) => {
       e.preventDefault();
-      spherical.radius = Math.min(14, Math.max(3.5, spherical.radius * (1 + Math.sign(e.deltaY) * 0.08)));
+      spherical.radius = Math.min(14, Math.max(3.2, spherical.radius * (1 + Math.sign(e.deltaY) * 0.08)));
     }, { passive: false });
     window.addEventListener('keydown', (e) => {
       if (e.target && e.target.tagName === 'INPUT') return;
@@ -361,10 +419,11 @@ init({
     });
 
     api.onResize = () => {
-      renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
-      camera.aspect = document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight;
+      const [w, h] = vpSize();
+      if (!w || !h) return;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      applyViewOffset();
       redrawViews();
     };
     api.onTheme = () => {

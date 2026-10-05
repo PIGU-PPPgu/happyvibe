@@ -62,8 +62,9 @@ function draw() {
   ctx.fillStyle = t.bg;
   ctx.fillRect(0, 0, W, H);
   drawn = [];
-  const cy = H * 0.44;
-  const ch = 46;
+  const cy = H * 0.4;
+  const ch = H < 380 ? 56 : 64;
+  const sp = H < 380 ? 34 : 44;
 
   // 阶段底色带：酝酿起步 / 深化 / 新时代
   const phases = [
@@ -77,19 +78,19 @@ function draw() {
     const xa = Math.max(xOf(p.a), 0), xb = Math.min(xOf(p.b), W);
     if (xb <= xa) continue;
     ctx.fillStyle = i % 2 === 0 ? t.panel2 : t.panel;
-    ctx.fillRect(xa, cy + 40, xb - xa, ph);
+    ctx.fillRect(xa, cy + 10, xb - xa, ph);
     ctx.fillStyle = t.muted;
     ctx.font = `16px ${FONT}`;
     ctx.textAlign = 'center';
     const cx = (xOf(p.a) + xOf(p.b)) / 2;
-    if (cx > 30 && cx < W - 30) ctx.fillText(p.n, cx, cy + 40 + ph / 2);
+    if (cx > 30 && cx < W - 30) ctx.fillText(p.n, cx, cy + 10 + ph / 2);
     if (i > 0) {
       ctx.strokeStyle = t.muted;
       ctx.setLineDash([5, 5]);
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.moveTo(xOf(p.a), cy - 10);
-      ctx.lineTo(xOf(p.a), cy + 40 + ph);
+      ctx.moveTo(xOf(p.a), cy - sp - ch - 8);
+      ctx.lineTo(xOf(p.a), cy + 10 + ph);
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -132,7 +133,7 @@ function draw() {
     else if (x - w / 2 - lastX[1] > 10) side = 1;
     if (side < 0) continue;
     lastX[side] = x + w / 2;
-    const y2 = side === 0 ? cy - 28 : cy + 28;
+    const y2 = side === 0 ? cy - sp : cy + sp;
     ctx.strokeStyle = t.gold;
     ctx.globalAlpha = 0.5;
     ctx.lineWidth = 1.2;
@@ -155,10 +156,10 @@ function draw() {
     ctx.stroke();
     ctx.fillStyle = t.gold;
     ctx.font = `700 16px ${FONT}`;
-    ctx.fillText(String(Math.floor(e.y)), x, cardY + 14, w - 12);
+    ctx.fillText(String(Math.floor(e.y)), x, cardY + ch * 0.3, w - 12);
     ctx.fillStyle = t.text;
     ctx.font = `700 17px ${FONT}`;
-    ctx.fillText(e.t, x, cardY + 32, w - 12);
+    ctx.fillText(e.t, x, cardY + ch * 0.7, w - 12);
     drawn.push({ x: x - w / 2, y: cardY, w, h: ch, i });
   }
 }

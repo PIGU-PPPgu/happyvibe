@@ -8,8 +8,10 @@ let renderer, scene, camera, root;
 let hinges = []; // { node, axis, sign }
 let carriers = [];
 let netIndex = 0;
-let fold = 0.22; // 0 展开 → 1 折起；默认微折，让「这是会折叠的展开图」一眼可见
-const spherical = { theta: 0.7, phi: 1.12, radius: 4.1 };
+const FOLD0 = 0.18; // 默认折叠度（铰链角约 16°）：微折可见，且高机位下画面双轴占满
+let fold = FOLD0; // 0 展开 → 1 折起
+const spherical = { theta: 0.7, phi: 0.65, radius: 4.1 }; // phi 小 = 俯视角高，展平的网不压扁
+const FILL = 0.88; // 自适应取景目标：内容占画布约 88%
 const target = new THREE.Vector3(0, 0.5, 0);
 
 function themeColors() {
@@ -18,6 +20,69 @@ function themeColors() {
     bg: new THREE.Color(cs.getPropertyValue('--bg').trim() || '#150e22'),
     line: new THREE.Color(cs.getPropertyValue('--text').trim() || '#f2ecf8'),
   };
+}
+
+const norm3 = (v) => { const l = Math.hypot(v[0], v[1], v[2]); return [v[0] / l, v[1] / l, v[2] / l]; };
+const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+
+// 当前折叠度下每面四角的世界坐标（×2 网格系），供取景拟合
+function netCorners(cells, geo, f) {
+  const pts = [];
+  for (let i = 0; i < cells.length; i++) {
+    const path = [];
+    for (let j = i; j !== 0; j = geo.parent[j]) path.push(j);
+    for (const dx of [-1, 1]) {
+      for (const dz of [-1, 1]) {
+        let p = [2 * cells[i][0] + dx, 0, 2 * cells[i][1] + dz];
+        for (const j of path) {
+          const h = geo.hinge[j];
+          const a = f * h.sign * Math.PI / 2;
+          if (h.axis === 'z') {
+            const lx = p[0] - h.line, ly = p[1];
+            p = [h.line + lx * Math.cos(a) - ly * Math.sin(a), lx * Math.sin(a) + ly * Math.cos(a), p[2]];
+          } else {
+            const ly = p[1], lz = p[2] - h.line;
+            p = [p[0], ly * Math.cos(a) - lz * Math.sin(a), h.line + ly * Math.sin(a) + lz * Math.cos(a)];
+          }
+        }
+        pts.push(p);
+      }
+    }
+  }
+  return pts;
+}
+
+// 相机距离拟合：二分找半径，让投影包围盒双轴都不超画布 FILL 比例（切网/改尺寸时算一次）
+function fitRadius(cells, geo, f) {
+  const xs = cells.map((c) => c[0]), zs = cells.map((c) => c[1]);
+  const ox = -(Math.min(...xs) + Math.max(...xs)) / 2, oz = -(Math.min(...zs) + Math.max(...zs)) / 2;
+  const pts = netCorners(cells, geo, f).map((p) => [(p[0] + 2 * ox) / 2, p[1] / 2, (p[2] + 2 * oz) / 2]);
+  const tanV = Math.tan((camera.fov * Math.PI) / 360), tanH = tanV * camera.aspect;
+  const { theta, phi } = spherical;
+  const overflow = (r) => {
+    const pos = [r * Math.sin(phi) * Math.sin(theta), target.y + r * Math.cos(phi), r * Math.sin(phi) * Math.cos(theta)];
+    const fwd = norm3([target.x - pos[0], target.y - pos[1], target.z - pos[2]]);
+    const right = norm3([-fwd[2], 0, fwd[0]]);
+    const up = cross3(right, fwd);
+    let m = 0;
+    for (const p of pts) {
+      const d = [p[0] - pos[0], p[1] - pos[1], p[2] - pos[2]];
+      const zc = d[0] * fwd[0] + d[1] * fwd[1] + d[2] * fwd[2];
+      m = Math.max(
+        m,
+        Math.abs((d[0] * right[0] + d[1] * right[1] + d[2] * right[2]) / (zc * tanH)) / FILL,
+        Math.abs((d[0] * up[0] + d[1] * up[1] + d[2] * up[2]) / (zc * tanV)) / FILL
+      );
+    }
+    return m;
+  };
+  let lo = 1.5, hi = 20;
+  for (let k = 0; k < 36; k++) {
+    const mid = (lo + hi) / 2;
+    if (overflow(mid) > 1) lo = mid;
+    else hi = mid;
+  }
+  return Math.min(7.5, Math.max(3.2, (lo + hi) / 2));
 }
 
 function buildNet(cells) {
@@ -74,9 +139,8 @@ function buildNet(cells) {
     hinges.push({ node: hingeNode, axis: h.axis, sign: h.sign });
   }
   root.add(carriers[0]);
-  // 相机距离随网大小自适应：网占满视野，投屏可读
-  const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)) + 1;
-  spherical.radius = Math.min(7.5, Math.max(3.2, span * 1.0));
+  // 相机距离按当前折叠度的投影包围盒拟合：任一张网双轴都约占画布 88%，投屏可读
+  spherical.radius = fitRadius(cells, geo, fold);
   applyFold();
 }
 
@@ -138,7 +202,7 @@ function runSelfChecks() {
     (geo.centers[i][2] - geo.centers[0][2]) / 2,
   ]);
   push('t1-折叠态=立方体', bad.length === 0, bad.join(' '));
-  fold = 0.22;
+  fold = FOLD0;
   applyFold();
   updateCamera();
   camera.updateMatrixWorld(true);
@@ -165,7 +229,7 @@ function buildUI(stage) {
     '<button class="btn" id="prev" type="button" aria-label="上一个">上个</button>',
     '<strong id="netname" style="font-size:16px;min-width:7em;text-align:center"></strong>',
     '<button class="btn" id="next" type="button" aria-label="下一个">下个</button>',
-    '<input id="fold" type="range" min="0" max="100" value="22" step="1" aria-label="折叠程度" style="width:180px;accent-color:var(--gold)">',
+    '<input id="fold" type="range" min="0" max="100" value="' + Math.round(FOLD0 * 100) + '" step="1" aria-label="折叠程度" style="width:180px;accent-color:var(--gold)">',
     '<span style="font-size:15px;color:var(--muted)">展开 ← → 折叠</span>',
   ].join('');
   stage.appendChild(bar);
@@ -245,6 +309,9 @@ init({
       renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
       camera.aspect = document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight;
       camera.updateProjectionMatrix();
+      // 画布比例变化（如切全屏）后重新取景
+      const cells = NETS[netIndex].cells;
+      spherical.radius = fitRadius(cells, foldGeometry(cells), fold);
     };
     api.onTheme = () => {
       const c = themeColors();
