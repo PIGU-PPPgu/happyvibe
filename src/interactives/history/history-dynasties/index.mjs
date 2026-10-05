@@ -1,0 +1,221 @@
+import { init } from '../../_shared/runtime.mjs';
+
+// 等宽朝代尺：20 个朝代带，缩放放大后显示大事圆点，点击看大事列表
+const DYNASTIES = [
+  { name: '夏', s: '约前2070', e: '约前1600', events: [['约前2070', '禹建立夏朝，世袭制代替禅让制']] },
+  { name: '商', s: '约前1600', e: '约前1046', events: [['约前1600', '汤灭夏建商'], ['', '甲骨文是现存较成熟的汉字']] },
+  { name: '西周', s: '前1046', e: '前771', events: [['前1046', '牧野之战，周武王灭商'], ['前841', '国人暴动']] },
+  { name: '春秋', s: '前770', e: '前476', events: [['前770', '周平王东迁洛邑'], ['', '孔子创办私学，儒家学派形成']] },
+  { name: '战国', s: '前475', e: '前221', events: [['前356', '商鞅变法'], ['', '都江堰建成']] },
+  { name: '秦', s: '前221', e: '前207', events: [['前221', '秦统一六国，建立中央集权'], ['前209', '陈胜吴广起义']] },
+  { name: '西汉', s: '前202', e: '公元9年', events: [['前202', '刘邦建立汉朝'], ['', '张骞两次出使西域'], ['', '罢黜百家，独尊儒术']] },
+  { name: '东汉', s: '25年', e: '220年', events: [['105年', '蔡伦改进造纸术'], ['', '张仲景著伤寒杂病论']] },
+  { name: '三国', s: '220年', e: '280年', events: [['200年', '官渡之战'], ['208年', '赤壁之战']] },
+  { name: '西晋', s: '266年', e: '316年', events: [['266年', '司马炎建晋'], ['280年', '西晋统一全国']] },
+  { name: '东晋', s: '317年', e: '420年', events: [['317年', '司马睿建东晋'], ['383年', '淝水之战']] },
+  { name: '南北朝', s: '420年', e: '589年', events: [['', '北魏孝文帝改革，迁都洛阳']] },
+  { name: '隋', s: '581年', e: '618年', events: [['581年', '杨坚建隋'], ['', '开凿大运河'], ['', '创立科举制']] },
+  { name: '唐', s: '618年', e: '907年', events: [['618年', '李渊建唐'], ['', '贞观之治'], ['755年', '安史之乱']] },
+  { name: '五代十国', s: '907年', e: '960年', events: [['907年', '朱温建后梁，唐亡']] },
+  { name: '北宋', s: '960年', e: '1127年', events: [['960年', '陈桥驿兵变'], ['1005年', '澶渊之盟'], ['', '毕昇发明活字印刷术']] },
+  { name: '南宋', s: '1127年', e: '1276年', events: [['1127年', '赵构建立南宋'], ['', '岳飞抗金']] },
+  { name: '元', s: '1271年', e: '1368年', events: [['1271年', '忽必烈定国号元'], ['', '创立行省制度']] },
+  { name: '明', s: '1368年', e: '1644年', events: [['1368年', '朱元璋建明'], ['1405年', '郑和首次下西洋']] },
+  { name: '清', s: '1644年', e: '1911年', events: [['1644年', '清军入关'], ['', '康乾盛世'], ['1840年', '鸦片战争']] },
+];
+
+const BAND_COLORS = ['#feb300', '#a63d97', '#4fc3f7', '#66d9a8', '#e0a96d', '#9d8cff'];
+
+let canvas, ctx, view = { scale: 1, offset: 0 }; // offset：视口左缘对应的带索引坐标
+let selected = -1;
+let W = 0, H = 0, dpr = 1;
+
+function theme() {
+  const cs = getComputedStyle(document.documentElement);
+  const v = (k, f) => cs.getPropertyValue(k).trim() || f;
+  return { bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'), panel: v('--panel', '#1e1433') };
+}
+
+const BAND_H = 150;
+function bandTop() { return H * 0.5 - BAND_H / 2; }
+const PAD = 60;
+
+function draw() {
+  const t = theme();
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = t.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const n = DYNASTIES.length;
+  const totalW = n * 140 * view.scale;
+  const visibleW = Math.max(W - PAD * 2, 0);
+  // 限制平移范围
+  view.offset = Math.max(0, Math.min(Math.max(0, totalW - visibleW), view.offset));
+  const bandW = 140 * view.scale;
+  const top = bandTop();
+
+  ctx.textAlign = 'center';
+  for (let i = 0; i < n; i++) {
+    const x = PAD + i * bandW - view.offset;
+    if (x + bandW < -50 || x > W + 50) continue;
+    const d = DYNASTIES[i];
+    const hovered = selected === i;
+    ctx.fillStyle = BAND_COLORS[i % BAND_COLORS.length];
+    ctx.globalAlpha = hovered ? 1 : 0.88;
+    const r = Math.min(10, bandW * 0.12);
+    roundRect(x + 4, top, bandW - 8, BAND_H, r);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // 朝代名：随缩放增大
+    const nameSize = Math.max(17, Math.min(34, bandW * 0.2));
+    ctx.fillStyle = t.bg;
+    ctx.font = `700 ${nameSize}px 'Noto Sans SC','PingFang SC',sans-serif`;
+    const name = d.name.length > 4 && bandW < 110 ? d.name.slice(0, 3) + '…' : d.name;
+    ctx.fillText(name, x + bandW / 2, top + BAND_H * 0.42, bandW - 14);
+
+    // 起止年：放大后显示
+    if (bandW > 95) {
+      ctx.fillStyle = t.bg;
+      ctx.globalAlpha = 0.8;
+      ctx.font = `13px 'Noto Sans SC','PingFang SC',sans-serif`;
+      ctx.fillText(d.s, x + bandW / 2, top + BAND_H * 0.62, bandW - 10);
+      ctx.fillText('至 ' + d.e, x + bandW / 2, top + BAND_H * 0.76, bandW - 10);
+      ctx.globalAlpha = 1;
+    }
+
+    // 大事圆点：进一步放大后
+    if (bandW > 150) {
+      for (let k = 0; k < d.events.length; k++) {
+        ctx.beginPath();
+        ctx.arc(x + bandW / 2, top + BAND_H + 18 + k * 16, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = t.gold;
+        ctx.fill();
+      }
+    }
+  }
+
+  // 选中信息面板
+  if (selected >= 0) {
+    const d = DYNASTIES[selected];
+    const lines = d.events.map(([y, e]) => (y ? `${y}　${e}` : e));
+    const pw = Math.min(460, W - 40);
+    const ph = 64 + lines.length * 26;
+    const px = Math.min(Math.max(20, W / 2 - pw / 2), W - pw - 20);
+    const py = H - ph - 86;
+    ctx.fillStyle = t.panel;
+    ctx.strokeStyle = t.line;
+    ctx.lineWidth = 1;
+    roundRect(px, py, pw, ph, 10);
+    ctx.fill();
+    ctx.stroke();
+    ctx.textAlign = 'left';
+    ctx.fillStyle = t.gold;
+    ctx.font = `700 18px 'Noto Sans SC','PingFang SC',sans-serif`;
+    ctx.fillText(`${d.name}（${d.s} 至 ${d.e}）`, px + 18, py + 32);
+    ctx.fillStyle = t.text;
+    ctx.font = `15px 'Noto Sans SC','PingFang SC',sans-serif`;
+    lines.forEach((l, i) => ctx.fillText(l, px + 18, py + 60 + i * 26, pw - 36));
+  }
+
+  // 缩放提示
+  ctx.textAlign = 'left';
+  ctx.fillStyle = t.muted;
+  ctx.font = `13px 'Noto Sans SC','PingFang SC',sans-serif`;
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function hitBand(mx) {
+  const bandW = 140 * view.scale;
+  const i = Math.floor((mx - PAD + view.offset) / bandW);
+  return i >= 0 && i < DYNASTIES.length ? i : -1;
+}
+
+init({
+  mount(stage, api) {
+    canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
+    stage.appendChild(canvas);
+    ctx = canvas.getContext('2d');
+
+    const resize = () => {
+      dpr = Math.min(devicePixelRatio, 2);
+      W = stage.clientWidth; H = stage.clientHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw();
+    };
+    resize();
+    api.onResize = resize;
+    api.onTheme = draw;
+
+    let dragging = false, lastX = 0, moved = 0;
+    const pointers = new Map();
+    let pinch0 = 0, scale0 = 1;
+
+    const zoomAt = (mx, factor) => {
+      const s0 = view.scale;
+      const s1 = Math.max(1, Math.min(9, s0 * factor));
+      const c = (view.offset + (mx - PAD)) / s0; // 指针下的内容坐标（缩放前）
+      view.scale = s1;
+      view.offset = Math.max(0, c * s1 - (mx - PAD));
+      draw();
+    };
+
+    canvas.addEventListener('pointerdown', (e) => {
+      pointers.set(e.pointerId, e.clientX);
+      if (pointers.size === 1) { dragging = true; lastX = e.clientX; moved = 0; }
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        pinch0 = Math.abs(a - b); scale0 = view.scale;
+      }
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, e.clientX);
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        const d = Math.abs(a - b);
+        if (d > 10 && pinch0 > 10) {
+          view.scale = Math.max(1, Math.min(9, scale0 * d / pinch0));
+          draw();
+        }
+        return;
+      }
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      moved += Math.abs(dx);
+      view.offset = Math.max(0, view.offset - dx);
+      lastX = e.clientX;
+      draw();
+    });
+    const release = (e) => {
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0) dragging = false;
+    };
+    canvas.addEventListener('pointerup', (e) => {
+      release(e);
+      if (moved < 6) {
+        const i = hitBand(e.clientX);
+        selected = i === selected ? -1 : i;
+        draw();
+      }
+    });
+    canvas.addEventListener('pointercancel', release);
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      zoomAt(e.clientX, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+    }, { passive: false });
+  },
+});
