@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { SUBJECT_SLUGS } from './data/subjects';
 
 export const MODULE_SLUGS = [
   'basics',
@@ -40,4 +41,30 @@ const tools = defineCollection({
   }),
 });
 
-export const collections = { lessons, tools };
+const RESOURCE_KINDS = ['interactive-3d', 'interactive-2d', 'diagram', 'external'] as const;
+const RESOURCE_SOURCES = ['smartedu', 'phet', 'geogebra'] as const;
+
+const resources = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/resources' }),
+  schema: z
+    .object({
+      title: z.string(),
+      subject: z.enum(SUBJECT_SLUGS),
+      stage: z.enum(['primary', 'junior', 'senior']),
+      grades: z.array(z.number().int().min(1).max(12)).nonempty(),
+      topic: z.string(),
+      kind: z.enum(RESOURCE_KINDS),
+      file: z.string().optional(),
+      url: z.string().url().optional(),
+      source: z.enum(RESOURCE_SOURCES).optional(),
+      usage: z.string(),
+      tags: z.array(z.string()).optional(),
+      status: z.enum(['draft', 'ready']).default('draft'),
+      order: z.number().default(99),
+    })
+    .refine((d) => (d.kind === 'external' ? Boolean(d.url && d.source && !d.file) : Boolean(d.file && !d.url)), {
+      message: 'external 条目必填 url+source；自产条目必填 file，二者互斥',
+    }),
+});
+
+export const collections = { lessons, tools, resources };
