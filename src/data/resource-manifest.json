@@ -1,0 +1,32 @@
+{
+  "own": [
+    { "slug": "math-rect-volume", "subject": "math", "title": "长方体与正方体表面积与体积", "kind": "interactive-3d", "stage": "primary", "grades": [5], "topic": "长方体和正方体 · 表面积", "order": 20, "brief": "滑杆改长宽高，实时展开面与表面积、体积算式联动；标注每个面的尺寸" },
+    { "slug": "math-views", "subject": "math", "title": "三视图与直观图", "kind": "interactive-3d", "stage": "junior", "grades": [7], "topic": "几何图形初步 · 三视图", "order": 30, "brief": "几何体（正方体/圆柱/圆锥/组合体）拖转 + 三视图投影联动，附答案遮罩开关" },
+    { "slug": "math-function-lab", "subject": "math", "title": "一次函数与反比例函数图像实验室", "kind": "interactive-2d", "stage": "junior", "grades": [8], "topic": "一次函数 / 反比例函数 · 图像与性质", "order": 40, "brief": "k、b 滑杆，图像与性质表（增减性、象限、交点）联动；两种函数可切换" },
+    { "slug": "math-quadratic", "subject": "math", "title": "二次函数的图像与系数", "kind": "interactive-2d", "stage": "junior", "grades": [9], "topic": "二次函数 · 系数与图像", "order": 50, "brief": "a/b/c 滑杆联动开口方向、对称轴、定点、与 y 轴交点；显示顶点式推导" },
+    { "slug": "math-circle-angle", "subject": "math", "title": "圆周角动态演示", "kind": "interactive-2d", "stage": "junior", "grades": [9], "topic": "圆 · 圆周角", "order": 60, "brief": "拖动圆周上的点，同弧圆周角恒相等、圆心角两倍关系实时标注；可切换弧" },
+    { "slug": "math-unit-circle", "subject": "math", "title": "单位圆与三角函数", "kind": "interactive-2d", "stage": "senior", "grades": [10], "topic": "三角函数 · 定义与图像", "order": 70, "brief": "角度扫动，单位圆上的点与 sin/cos/tan 图像同步描点；显示特殊角" },
+    { "slug": "math-solid-section", "subject": "math", "title": "立体几何截面演示", "kind": "interactive-3d", "stage": "senior", "grades": [10], "topic": "立体几何 · 截面", "order": 80, "brief": "平面切正方体/圆柱/圆锥，截面多边形高亮；平移旋转平面，判断截面形状" },
+
+    { "slug": "history-qin-unify", "subject": "history", "title": "秦统一多民族国家建立", "kind": "interactive-2d", "stage": "junior", "grades": [7], "topic": "秦汉时期 · 统一多民族国家建立", "order": 20, "brief": "战国形势到秦疆域四至的地图演变分步动画，步进按钮控制，附都城与长城标注" },
+    { "slug": "history-silk-road", "subject": "history", "title": "丝绸之路", "kind": "interactive-2d", "stage": "junior", "grades": [7], "topic": "秦汉时期 · 沟通中外文明的丝路", "order": 30, "brief": "陆上/海上路线分步点亮，途经地与交流物产标注（丝绸、瓷器、葡萄等）" },
+    { "slug": "history-bronze", "subject": "history", "title": "青铜器与甲骨文", "kind": "interactive-3d", "stage": "junior", "grades": [7], "topic": "夏商周时期 · 青铜器与甲骨文", "order": 40, "brief": "可旋转青铜鼎（程序化建模）+ 纹饰放大热点 + 甲骨文与今字对照翻面卡片" },
+    { "slug": "history-modern-timeline", "subject": "history", "title": "中国近代史大事年表", "kind": "interactive-2d", "stage": "junior", "grades": [8], "topic": "中国近代史 · 大事年表", "order": 50, "brief": "1840-1919/1949 可拖时间线，事件卡片按屈辱/探索/抗争三色分层" },
+    { "slug": "history-reform-open", "subject": "history", "title": "改革开放历程", "kind": "interactive-2d", "stage": "junior", "grades": [8], "topic": "中国特色社会主义道路 · 改革开放", "order": 60, "brief": "大事时间线 + 深圳等城市经济数据增长条（1978 至今）" },
+    { "slug": "history-new-routes", "subject": "history", "title": "新航路开辟", "kind": "interactive-2d", "stage": "junior", "grades": [9], "topic": "走向近代 · 新航路的开辟", "order": 70, "brief": "迪亚士/达伽马/哥伦布/麦哲伦四条航线动态航行 + 时间轴与人物卡" },
+    { "slug": "history-world-wars", "subject": "history", "title": "两次世界大战时间线", "kind": "interactive-2d", "stage": "junior", "grades": [9], "topic": "经济大危机与第二次世界大战", "order": 80, "brief": "1914-1945 双层时间线（一战/二战），关键事件与因果连线，凡尔赛-华盛顿体系标注" },
+
+    { "slug": "chinese-stroke-order", "subject": "chinese", "title": "易错字笔顺对比", "kind": "interactive-2d", "stage": "primary", "grades": [1, 2, 3], "topic": "识字与写字 · 笔顺", "order": 20, "brief": "田字格逐笔动画（火、出、里、方、万等常见易错字），正确与错误笔顺并排对比，步进按钮" },
+    { "slug": "chinese-pinyin", "subject": "chinese", "title": "拼音声母韵母表", "kind": "interactive-2d", "stage": "primary", "grades": [1], "topic": "汉语拼音 · 声母韵母", "order": 30, "brief": "23 声母 24 韵母分类表，点击放大显示与拼读示例字（文字口型要点，无音频）" },
+    { "slug": "chinese-punctuation", "subject": "chinese", "title": "标点符号用法决策图", "kind": "interactive-2d", "stage": "primary", "grades": [3, 4, 5, 6], "topic": "标点符号 · 正确使用", "order": 40, "brief": "按场景（停顿/疑问/引用/列举）走流程选择该用哪种标点，例句对错并列" },
+    { "slug": "chinese-rhetoric", "subject": "chinese", "title": "修辞手法例句对比", "kind": "interactive-2d", "stage": "junior", "grades": [7, 8], "topic": "词句品析 · 修辞", "order": 50, "brief": "比喻/拟人/排比/夸张例句切换，手法成分高亮标注，附本体喻体连线" },
+    { "slug": "chinese-classical-words", "subject": "chinese", "title": "文言实词翻面卡片", "kind": "interactive-2d", "stage": "junior", "grades": [7, 8, 9], "topic": "文言文 · 实词积累", "order": 60, "brief": "40 个高频实词卡片，正面义项背面例句，点击翻面，按册次筛选" },
+    { "slug": "chinese-essay-structure", "subject": "chinese", "title": "文章结构思维导图", "kind": "interactive-2d", "stage": "junior", "grades": [7, 8, 9], "topic": "写作 · 结构", "order": 70, "brief": "写景/写人/议论文三棵可折叠结构树，节点带写作提示语" },
+    { "slug": "chinese-famous-lines", "subject": "chinese", "title": "古诗文名句情境填空", "kind": "interactive-2d", "stage": "junior", "grades": [6, 7, 8, 9], "topic": "古诗文积累 · 默写", "order": 80, "brief": "按月/山/水主题分组，情境选择题式填空，选择后即时判定并显示全句出处" }
+  ],
+  "external": [
+    { "subject": "math", "min": 15, "sources": ["smartedu", "phet", "geogebra"], "note": "国家平台课程教学栏按册次章节选精品课例与课件（小学/初中/高中至少各 3 条）；PhET 选数学模拟（有中文界面的）；GeoGebra 只录链接。每条必须联网验证 URL 返回 200" },
+    { "subject": "history", "min": 15, "sources": ["smartedu"], "note": "统编版七上/七下/八上/八下/九上/九下逐册选精品课；适当收国家平台党史等专题资源。深链打不开的写检索路径" },
+    { "subject": "chinese", "min": 15, "sources": ["smartedu"], "note": "统编版逐册选精品课与课文朗读资源；优先基础型作业示范课。深链打不开的写检索路径" }
+  ]
+}
