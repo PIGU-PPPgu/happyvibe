@@ -7,13 +7,19 @@ import path from 'node:path';
 const SRC = 'src/interactives';
 const OUT = 'public/interactives';
 const template = await readFile(path.join(SRC, '_shared', 'template.html'), 'utf8');
+// 可选：node scripts/build_interactives.mjs <slug>... 只构建指定资源，报告与既有条目合并
+const only = process.argv.slice(2);
 
-const report = {};
+let report = {};
+try {
+  report = JSON.parse(await readFile('scripts/.interactives-report.json', 'utf8'));
+} catch (e) {}
 let count = 0;
 for (const s of await readdir(SRC, { withFileTypes: true })) {
   if (!s.isDirectory() || s.name === '_shared') continue;
   for (const e of await readdir(path.join(SRC, s.name), { withFileTypes: true })) {
     if (!e.isDirectory()) continue;
+    if (only.length > 0 && !only.includes(e.name)) continue;
     const entry = path.join(SRC, s.name, e.name, 'index.mjs');
     if (!existsSync(entry)) continue;
     const meta = JSON.parse(await readFile(path.join(SRC, s.name, e.name, 'meta.json'), 'utf8'));
