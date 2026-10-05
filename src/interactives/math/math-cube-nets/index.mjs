@@ -6,9 +6,10 @@ const PAIR_COLORS = { y: 0xfeb300, x: 0xa63d97, z: 0x4fc3f7 }; // 对面同色�
 
 let renderer, scene, camera, root;
 let hinges = []; // { node, axis, sign }
+let carriers = [];
 let netIndex = 0;
 let fold = 0.22; // 0 展开 → 1 折起；默认微折，让「这是会折叠的展开图」一眼可见
-const spherical = { theta: 0.65, phi: 0.92, radius: 5.2 };
+const spherical = { theta: 0.7, phi: 1.12, radius: 4.1 };
 const target = new THREE.Vector3(0, 0.5, 0);
 
 function themeColors() {
@@ -30,7 +31,7 @@ function buildNet(cells) {
   root.position.set(-(Math.min(...xs) + Math.max(...xs)) / 2, 0, -(Math.min(...zs) + Math.max(...zs)) / 2);
 
   const geo = foldGeometry(cells);
-  const carriers = [];
+  carriers = [];
   const plane = new THREE.PlaneGeometry(1, 1);
   plane.rotateX(-Math.PI / 2);
 
@@ -54,25 +55,34 @@ function buildNet(cells) {
     carriers.push(carrier);
   }
 
-  // 铰链层级：hinge 挂在 parent carrier 内，child carrier 挂在 hinge 内
+  // 铰链层级：hinge 挂在 parent carrier 内（位于共享边），child carrier 在 hinge 内
+  // 以共享边原点定位（子面坐标 = 子格中心 - 边位置），否则绝对坐标会被双重计算
   hinges = [];
   for (let j = 1; j < cells.length; j++) {
     const h = geo.hinge[j];
     const p = geo.parent[j];
     const hingeNode = new THREE.Group();
-    if (h.axis === 'z') hingeNode.position.set(h.line / 2 - cells[p][0], 0, 0);
-    else hingeNode.position.set(0, 0, h.line / 2 - cells[p][1]);
+    if (h.axis === 'z') {
+      hingeNode.position.set(h.line / 2 - cells[p][0], 0, 0);
+      carriers[j].position.set(cells[j][0] - h.line / 2, 0, cells[j][1] - cells[p][1]);
+    } else {
+      hingeNode.position.set(0, 0, h.line / 2 - cells[p][1]);
+      carriers[j].position.set(cells[j][0] - cells[p][0], 0, cells[j][1] - h.line / 2);
+    }
     carriers[p].add(hingeNode);
     hingeNode.add(carriers[j]);
     hinges.push({ node: hingeNode, axis: h.axis, sign: h.sign });
   }
   root.add(carriers[0]);
+  // 相机距离随网大小自适应：网占满视野，投屏可读
+  const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)) + 1;
+  spherical.radius = Math.min(7.5, Math.max(3.2, span * 1.0));
   applyFold();
 }
 
 function applyFold() {
   for (const h of hinges) {
-    const a = (h.axis === 'z' ? 1 : -1) * h.sign * fold * Math.PI / 2;
+    const a = h.sign * fold * Math.PI / 2;
     if (h.axis === 'z') h.node.rotation.z = a;
     else h.node.rotation.x = a;
   }
@@ -92,6 +102,58 @@ function setNet(i) {
   netIndex = (i + NETS.length) % NETS.length;
   buildNet(NETS[netIndex].cells);
   nameEl.textContent = `${netIndex + 1}/${NETS.length} ${NETS[netIndex].name}`;
+}
+
+// 自测：展开态六面世界坐标 === 网格坐标；折叠态 === 立方体六面中心（能抓住铰链挂载坐标系错误）
+function runSelfChecks() {
+  const cells = NETS[netIndex].cells;
+  const geo = foldGeometry(cells);
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  const base = new THREE.Vector3();
+  const checkAt = (t, expect) => {
+    fold = t;
+    applyFold();
+    root.updateMatrixWorld(true);
+    carriers[0].getWorldPosition(base);
+    const bad = [];
+    carriers.forEach((c, i) => {
+      const p = new THREE.Vector3();
+      c.getWorldPosition(p);
+      const e = expect(i);
+      if (
+        !Number.isFinite(p.x) || !Number.isFinite(p.y) || !Number.isFinite(p.z) ||
+        Math.abs(p.x - base.x - e[0]) > 1e-6 || Math.abs(p.y - base.y - e[1]) > 1e-6 || Math.abs(p.z - base.z - e[2]) > 1e-6
+      ) {
+        bad.push(`${i}:(${p.x - base.x},${p.y - base.y},${p.z - base.z})≠(${e})`);
+      }
+    });
+    return bad;
+  };
+  let bad = checkAt(0, (i) => [cells[i][0] - cells[0][0], 0, cells[i][1] - cells[0][1]]);
+  push('t0-展开态=网格', bad.length === 0, bad.join(' '));
+  bad = checkAt(1, (i) => [
+    (geo.centers[i][0] - geo.centers[0][0]) / 2,
+    (geo.centers[i][1] - geo.centers[0][1]) / 2,
+    (geo.centers[i][2] - geo.centers[0][2]) / 2,
+  ]);
+  push('t1-折叠态=立方体', bad.length === 0, bad.join(' '));
+  fold = 0.22;
+  applyFold();
+  updateCamera();
+  camera.updateMatrixWorld(true);
+  camera.updateProjectionMatrix();
+  root.updateMatrixWorld(true);
+  const proj = carriers.map((c, i) => {
+    const p = new THREE.Vector3();
+    c.getWorldPosition(p);
+    p.project(camera);
+    return `${i}:(${Math.round((p.x * 0.5 + 0.5) * 100)}%,${Math.round((0.5 - p.y * 0.5) * 100)}%,z=${p.z.toFixed(3)})`;
+  });
+  push('屏幕投影', true, proj.join(' '));
+  const box = new THREE.Box3().setFromObject(root);
+  push('相机与场景数值', true,
+    `r=${spherical.radius} phi=${spherical.phi} fov=${camera.fov} pos=${camera.position.toArray().map((v) => v.toFixed(2))} size=${box.getSize(new THREE.Vector3()).toArray().map((v) => v.toFixed(2))} canvas=${renderer.domElement.width}x${renderer.domElement.height}`);
 }
 
 let nameEl;
@@ -118,16 +180,16 @@ function buildUI(stage) {
 
 init({
   mount(stage, api) {
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
+    renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
     stage.appendChild(renderer.domElement);
     renderer.domElement.style.touchAction = 'none';
 
     scene = new THREE.Scene();
     const colors = themeColors();
     scene.background = colors.bg;
-    camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 50);
+    camera = new THREE.PerspectiveCamera(40, document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight, 0.1, 50);
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 1.1));
     const dir = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -136,6 +198,7 @@ init({
 
     buildUI(stage);
     setNet(0);
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖拽旋转 + 滚轮/双指缩放
     let dragging = false, px = 0, py = 0;
@@ -179,8 +242,8 @@ init({
     });
 
     api.onResize = () => {
-      renderer.setSize(innerWidth, innerHeight);
-      camera.aspect = innerWidth / innerHeight;
+      renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
+      camera.aspect = document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight;
       camera.updateProjectionMatrix();
     };
     api.onTheme = () => {

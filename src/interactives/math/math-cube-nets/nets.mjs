@@ -26,7 +26,7 @@ function hingeZ(x0, sign) {
   ];
   const q = [x0, 0, 0];
   const Rq = [0 * x0 - sign * 0, sign * x0 + 0 * 0, 0];
-  return { R, t: [q[0] - Rq[0], q[1] - Rq[1], q[2] - Rq[2]], axis: 'z', sign };
+  return { R, t: [q[0] - Rq[0], q[1] - Rq[1], q[2] - Rq[2]], axis: 'z', sign, line: x0 };
 }
 // 绕「平行 x 轴、过点 (0, 0, z0)」转 sign*90°
 function hingeX(z0, sign) {
@@ -37,7 +37,7 @@ function hingeX(z0, sign) {
   ];
   const Rq = [0, -sign * z0, 0];
   const q = [0, 0, z0];
-  return { R, t: [q[0] - Rq[0], q[1] - Rq[1], q[2] - Rq[2]], axis: 'x', sign };
+  return { R, t: [q[0] - Rq[0], q[1] - Rq[1], q[2] - Rq[2]], axis: 'x', sign, line: z0 };
 }
 function applyHinge(h, p) {
   return [

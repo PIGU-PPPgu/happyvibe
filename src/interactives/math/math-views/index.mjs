@@ -280,7 +280,7 @@ function buildUI(stage) {
 
 // 视口偏移：右侧面板占位时物体视觉居中在剩余区域
 function applyViewOffset() {
-  const w = innerWidth, h = innerHeight;
+  const w = document.getElementById('stage').clientWidth, h = document.getElementById('stage').clientHeight;
   if (w < 760) camera.setViewOffset(w, h, 0, h * 0.09, w, h);
   else camera.setViewOffset(w, h, w * 0.09, 0, w, h);
 }
@@ -296,15 +296,15 @@ function updateCamera() {
 
 init({
   mount(stage, api) {
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
+    renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
     stage.appendChild(renderer.domElement);
     renderer.domElement.style.touchAction = 'none';
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(palette().bg);
-    camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
+    camera = new THREE.PerspectiveCamera(40, document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight, 0.1, 100);
     applyViewOffset();
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 1.15));
@@ -361,8 +361,8 @@ init({
     });
 
     api.onResize = () => {
-      renderer.setSize(innerWidth, innerHeight);
-      camera.aspect = innerWidth / innerHeight;
+      renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
+      camera.aspect = document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight;
       camera.updateProjectionMatrix();
       applyViewOffset();
       redrawViews();

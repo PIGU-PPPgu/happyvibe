@@ -322,15 +322,15 @@ function requestBuild() {
 
 init({
   mount(stage, api) {
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
+    renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
     stage.appendChild(renderer.domElement);
     renderer.domElement.style.touchAction = 'none';
 
     scene = new THREE.Scene();
     scene.background = themeColors().bg;
-    camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 400);
+    camera = new THREE.PerspectiveCamera(40, document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight, 0.1, 400);
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 1.1));
     const dir = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -388,8 +388,8 @@ init({
     });
 
     api.onResize = () => {
-      renderer.setSize(innerWidth, innerHeight);
-      camera.aspect = innerWidth / innerHeight;
+      renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
+      camera.aspect = document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight;
       camera.updateProjectionMatrix();
     };
     api.onTheme = () => {

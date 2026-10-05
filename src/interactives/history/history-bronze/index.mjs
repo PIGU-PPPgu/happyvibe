@@ -342,7 +342,7 @@ function updateCamera() {
 
 init({
   mount(stage, api) {
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     stage.appendChild(renderer.domElement);
     renderer.domElement.style.cssText += 'position:absolute;inset:0;touch-action:none';
