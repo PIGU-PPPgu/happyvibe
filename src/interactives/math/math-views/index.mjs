@@ -1,0 +1,386 @@
+import { init } from '../../_shared/runtime.mjs';
+import * as THREE from 'three';
+
+// 三视图与直观图：3D 几何体拖转，三个方向的彩色箭头对应三张视图卡片；卡片默认遮罩，点击揭晓
+// 色板来自 skills/teaching-interactives/SKILL.md：金 #FEB300 紫 #A63D97 蓝 #4FC3F7（方向色）
+const AXES = {
+  front: { color: 0xfeb300, css: '#FEB300', label: '正面', dir: new THREE.Vector3(0, 0, -1) },
+  left: { color: 0xa63d97, css: '#A63D97', label: '左面', dir: new THREE.Vector3(-1, 0, 0) },
+  top: { color: 0x4fc3f7, css: '#4FC3F7', label: '上面', dir: new THREE.Vector3(0, 1, 0) },
+};
+const ORDER = ['front', 'left', 'top'];
+
+// 视图形状（单位坐标，y 向上）：r 矩形(x,y 为左下角) / c 圆 / t 三角形(底边在 y，顶点向上)
+const R = (x, y, w, h) => ({ t: 'r', x, y, w, h });
+const C = (x, y, r, dot) => ({ t: 'c', x, y, r, dot });
+const T = (x, y, w, h) => ({ t: 't', x, y, w, h });
+
+const SOLIDS = {
+  cube: {
+    name: '正方体',
+    views: { front: [R(-1, 0, 2, 2)], left: [R(-1, 0, 2, 2)], top: [R(-1, -1, 2, 2)] },
+  },
+  cyl: {
+    name: '圆柱',
+    views: { front: [R(-1, 0, 2, 2)], left: [R(-1, 0, 2, 2)], top: [C(0, 0, 1)] },
+  },
+  cone: {
+    name: '圆锥',
+    views: { front: [T(-1, 0, 2, 2)], left: [T(-1, 0, 2, 2)], top: [C(0, 0, 1, true)] },
+  },
+  combo: {
+    name: '组合体',
+    views: {
+      front: [R(-1, 0, 2, 2), R(-0.7, 2, 1.4, 1.2)],
+      left: [R(-1, 0, 2, 2), R(-0.7, 2, 1.4, 1.2)],
+      top: [R(-1, -1, 2, 2), C(0, 0, 0.7)],
+    },
+  },
+};
+const SOLID_ORDER = ['cube', 'cyl', 'cone', 'combo'];
+
+let renderer, scene, camera;
+let solid = null;
+let faceMat = null;
+let lineMats = [];
+let chips = [];
+let current = 'cube';
+const spherical = { theta: 0.72, phi: 1.05, radius: 9 };
+const target = new THREE.Vector3(0, 0.3, 0);
+
+function palette() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = (k, f) => cs.getPropertyValue(k).trim() || f;
+  return { bg: g('--bg', '#150e22'), panel: g('--panel', '#1e1433'), text: g('--text', '#f2ecf8'), line: g('--line', 'rgba(180,130,210,.16)') };
+}
+
+// ---------- 3D 几何体（面板色面 + 文字色边线，教材线框风） ----------
+function ring(r, y, mat) {
+  const pts = [];
+  for (let i = 0; i < 64; i++) {
+    const a = (i / 64) * Math.PI * 2;
+    pts.push(new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r));
+  }
+  return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), mat);
+}
+
+function buildSolid(id) {
+  const p = palette();
+  const g = new THREE.Group();
+  faceMat = new THREE.MeshStandardMaterial({ color: p.panel, roughness: 0.55, metalness: 0.08 });
+  const lm = () => new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.65 });
+  const line = () => { const m = lm(); lineMats.push(m); return m; };
+  const mesh = (geo) => new THREE.Mesh(geo, faceMat);
+
+  if (id === 'cube') {
+    const geo = new THREE.BoxGeometry(2, 2, 2);
+    const m = mesh(geo);
+    const em = line();
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), em));
+    g.add(m);
+  } else if (id === 'cyl') {
+    const m = mesh(new THREE.CylinderGeometry(1, 1, 2, 48));
+    g.add(m);
+    g.add(ring(1, 1, line()));
+    g.add(ring(1, -1, line()));
+  } else if (id === 'cone') {
+    const m = mesh(new THREE.ConeGeometry(1, 2, 48));
+    g.add(m);
+    g.add(ring(1, -1, line()));
+    // 两条素线，直观图惯例
+    for (const sx of [1, -1]) {
+      const em = line();
+      g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 1, 0), new THREE.Vector3(sx, -1, 0),
+      ]), em));
+    }
+  } else {
+    const boxGeo = new THREE.BoxGeometry(2, 2, 2);
+    const box = mesh(boxGeo);
+    box.position.y = 1;
+    const em = line();
+    box.add(new THREE.LineSegments(new THREE.EdgesGeometry(boxGeo), em));
+    g.add(box);
+    const cyl = mesh(new THREE.CylinderGeometry(0.7, 0.7, 1.2, 48));
+    cyl.position.y = 2.6;
+    g.add(cyl);
+    g.add((() => { const r1 = ring(0.7, 3.2, line()); return r1; })());
+    const r2 = ring(0.7, 2, line());
+    g.add(r2);
+    g.position.y = -1.6; // 整体居中
+  }
+  return g;
+}
+
+function switchSolid(id) {
+  current = id;
+  if (solid) {
+    solid.traverse((o) => {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) o.material.dispose();
+    });
+    scene.remove(solid);
+  }
+  lineMats = [];
+  solid = buildSolid(id);
+  scene.add(solid);
+  document.querySelectorAll('#ctrl [data-solid]').forEach((b) => b.classList.toggle('on', b.dataset.solid === id));
+  redrawViews();
+}
+
+// ---------- 方向箭头 + 标签贴片 ----------
+function chipSprite(text, colorCss) {
+  const p = palette();
+  const c = document.createElement('canvas');
+  c.width = 176; c.height = 80;
+  const x = c.getContext('2d');
+  x.fillStyle = p.panel;
+  x.strokeStyle = p.line;
+  x.lineWidth = 4;
+  x.beginPath();
+  const m = 5, r = 16;
+  x.moveTo(m + r, m);
+  x.arcTo(171, m, 171, 75, r);
+  x.arcTo(171, 75, m, 75, r);
+  x.arcTo(m, 75, m, m, r);
+  x.arcTo(m, m, 171, m, r);
+  x.closePath();
+  x.fill(); x.stroke();
+  x.fillStyle = colorCss;
+  x.font = 'bold 40px "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText(text, 88, 44);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+}
+
+function makeChips() {
+  for (const s of chips) { s.material.map.dispose(); s.material.dispose(); scene.remove(s); }
+  chips = [];
+  for (const key of ORDER) {
+    const a = AXES[key];
+    const sp = chipSprite(a.label, a.css);
+    sp.position.copy(a.dir).multiplyScalar(2.55);
+    sp.scale.set(0.8, 0.36, 1);
+    sp.renderOrder = 5;
+    scene.add(sp);
+    chips.push(sp);
+  }
+}
+
+function makeArrows() {
+  for (const key of ORDER) {
+    const a = AXES[key];
+    const arrow = new THREE.ArrowHelper(a.dir, a.dir.clone().multiplyScalar(1.85), 0.55, a.color, 0.26, 0.14);
+    arrow.line.material.linewidth = 3;
+    scene.add(arrow);
+  }
+}
+
+// ---------- 三视图卡片（2D 正投影线框） ----------
+function drawView(cv, shapes) {
+  const dpr = Math.min(devicePixelRatio, 2);
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if (!w || !h) return;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const x = cv.getContext('2d');
+  x.scale(dpr, dpr);
+  const p = palette();
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  for (const s of shapes) {
+    const b = s.t === 'c' ? [s.x - s.r, s.x + s.r, s.y - s.r, s.y + s.r] : [s.x, s.x + s.w, s.y, s.y + s.h];
+    x0 = Math.min(x0, b[0]); x1 = Math.max(x1, b[1]);
+    y0 = Math.min(y0, b[2]); y1 = Math.max(y1, b[3]);
+  }
+  const pad = 12;
+  const sc = Math.min((w - pad * 2) / (x1 - x0), (h - pad * 2) / (y1 - y0));
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const mx = (v) => w / 2 + (v - cx) * sc;
+  const my = (v) => h / 2 - (v - cy) * sc;
+  x.lineWidth = 3; x.lineJoin = 'round';
+  x.strokeStyle = p.text; x.fillStyle = p.text;
+  for (const s of shapes) {
+    x.beginPath();
+    if (s.t === 'r') x.rect(mx(s.x), my(s.y + s.h), s.w * sc, s.h * sc);
+    else if (s.t === 'c') x.arc(mx(s.x), my(s.y), s.r * sc, 0, Math.PI * 2);
+    else {
+      x.moveTo(mx(s.x), my(s.y));
+      x.lineTo(mx(s.x + s.w), my(s.y));
+      x.lineTo(mx(s.x + s.w / 2), my(s.y + s.h));
+      x.closePath();
+    }
+    x.stroke();
+    if (s.t === 'c' && s.dot) {
+      x.beginPath();
+      x.arc(mx(s.x), my(s.y), 4, 0, Math.PI * 2);
+      x.fill();
+    }
+  }
+}
+
+function redrawViews() {
+  const views = SOLIDS[current].views;
+  for (const key of ORDER) drawView(document.querySelector(`.card[data-view="${key}"] canvas`), views[key]);
+}
+
+// ---------- UI ----------
+const STYLE = `
+#ctrl{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;z-index:20;flex-wrap:wrap;justify-content:center;max-width:94vw}
+#ctrl .btn.on{border-color:var(--gold);color:var(--gold)}
+#panel{position:fixed;top:64px;right:14px;z-index:15;display:flex;flex-direction:column;gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px 10px;width:174px}
+.card-head{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:600;padding:2px 2px 6px}
+.card .sw{width:12px;height:12px;border-radius:3px;flex:none}
+.view-wrap{position:relative;height:148px}
+.view-wrap canvas{width:100%;height:100%;display:block}
+.mask{position:absolute;inset:0;border-radius:8px;background:var(--panel2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:opacity .25s}
+.mask b{font-size:46px;color:var(--muted)}
+.mask em{font-style:normal;font-size:15px;color:var(--muted)}
+.card.open .mask{opacity:0;pointer-events:none}
+@media (max-width:760px){#panel{flex-direction:row;left:10px;right:10px;top:auto;bottom:96px}.card{flex:1;width:auto;padding:6px 8px 8px}.view-wrap{height:104px}#ctrl{gap:6px;padding:8px 10px;bottom:10px}}
+`;
+
+function buildUI(stage) {
+  const st = document.createElement('style');
+  st.textContent = STYLE;
+  stage.appendChild(st);
+
+  const ctrl = document.createElement('div');
+  ctrl.id = 'ctrl';
+  ctrl.innerHTML = [
+    ...SOLID_ORDER.map((id) => `<button class="btn" type="button" data-solid="${id}" aria-label="${SOLIDS[id].name}">${SOLIDS[id].name}</button>`),
+    '<button class="btn" id="ans" type="button" aria-label="全部揭晓或盖上">答案</button>',
+  ].join('');
+  stage.appendChild(ctrl);
+
+  const panel = document.createElement('div');
+  panel.id = 'panel';
+  panel.innerHTML = ORDER.map((key) => `
+    <div class="card" data-view="${key}">
+      <div class="card-head"><i class="sw" style="background:${AXES[key].css}"></i>从${AXES[key].label}看</div>
+      <div class="view-wrap"><canvas></canvas><div class="mask"><b>?</b><em>点击揭晓</em></div></div>
+    </div>`).join('');
+  stage.appendChild(panel);
+
+  const ansBtn = ctrl.querySelector('#ans');
+  const cards = [...panel.querySelectorAll('.card')];
+  const syncAns = () => ansBtn.classList.toggle('on', cards.every((c) => c.classList.contains('open')));
+  cards.forEach((c) => c.querySelector('.view-wrap').addEventListener('click', () => {
+    c.classList.toggle('open');
+    syncAns();
+  }));
+  ansBtn.addEventListener('click', () => {
+    const open = !cards.every((c) => c.classList.contains('open'));
+    cards.forEach((c) => c.classList.toggle('open', open));
+    syncAns();
+  });
+  ctrl.querySelectorAll('[data-solid]').forEach((b) => b.addEventListener('click', () => switchSolid(b.dataset.solid)));
+}
+
+// 视口偏移：右侧面板占位时物体视觉居中在剩余区域
+function applyViewOffset() {
+  const w = innerWidth, h = innerHeight;
+  if (w < 760) camera.setViewOffset(w, h, 0, h * 0.09, w, h);
+  else camera.setViewOffset(w, h, w * 0.09, 0, w, h);
+}
+
+function updateCamera() {
+  camera.position.set(
+    target.x + spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta),
+    target.y + spherical.radius * Math.cos(spherical.phi),
+    target.z + spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta)
+  );
+  camera.lookAt(target);
+}
+
+init({
+  mount(stage, api) {
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    stage.appendChild(renderer.domElement);
+    renderer.domElement.style.touchAction = 'none';
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(palette().bg);
+    camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
+    applyViewOffset();
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 1.15));
+    const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+    dir.position.set(3, 6, 4);
+    scene.add(dir);
+
+    buildUI(stage);
+    makeArrows();
+    makeChips();
+    switchSolid('cube');
+
+    // 拖拽旋转 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道）
+    let dragging = false, px = 0, py = 0;
+    const pointers = new Map();
+    let pinchDist = 0;
+    const el = renderer.domElement;
+    el.addEventListener('pointerdown', (e) => {
+      pointers.set(e.pointerId, [e.clientX, e.clientY]);
+      if (pointers.size === 1) { dragging = true; px = e.clientX; py = e.clientY; }
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        pinchDist = Math.hypot(a[0] - b[0], a[1] - b[1]);
+      }
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', (e) => {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, [e.clientX, e.clientY]);
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        const d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+        spherical.radius = Math.min(14, Math.max(3.5, spherical.radius * pinchDist / Math.max(d, 1)));
+        pinchDist = d;
+        return;
+      }
+      if (!dragging) return;
+      spherical.theta -= (e.clientX - px) * 0.008;
+      spherical.phi = Math.min(1.45, Math.max(0.25, spherical.phi - (e.clientY - py) * 0.006));
+      px = e.clientX; py = e.clientY;
+    });
+    const release = (e) => { pointers.delete(e.pointerId); if (pointers.size === 0) dragging = false; };
+    el.addEventListener('pointerup', release);
+    el.addEventListener('pointercancel', release);
+    el.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      spherical.radius = Math.min(14, Math.max(3.5, spherical.radius * (1 + Math.sign(e.deltaY) * 0.08)));
+    }, { passive: false });
+    window.addEventListener('keydown', (e) => {
+      if (e.target && e.target.tagName === 'INPUT') return;
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const i = SOLID_ORDER.indexOf(current);
+      switchSolid(SOLID_ORDER[(i + (e.key === 'ArrowRight' ? 1 : SOLID_ORDER.length - 1)) % SOLID_ORDER.length]);
+    });
+
+    api.onResize = () => {
+      renderer.setSize(innerWidth, innerHeight);
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      applyViewOffset();
+      redrawViews();
+    };
+    api.onTheme = () => {
+      const p = palette();
+      scene.background = new THREE.Color(p.bg);
+      if (faceMat) faceMat.color.set(p.panel);
+      for (const m of lineMats) m.color.set(p.text);
+      makeChips();
+      redrawViews();
+    };
+
+    updateCamera();
+    (function loop() {
+      requestAnimationFrame(loop);
+      updateCamera();
+      renderer.render(scene, camera);
+    })();
+  },
+});

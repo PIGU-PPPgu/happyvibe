@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TerminalWindow from '../../components/TerminalWindow.astro';
 import { SUBJECTS, subjectBySlug, STAGES } from '../../data/subjects';
@@ -16,7 +16,7 @@ if (!meta) return Astro.redirect(withBase('/resources/'));
 const rendered = (await getCollection('resources'))
   .filter((r) => r.data.subject === subject)
   .sort((a, b) => a.data.order - b.data.order)
-  .map(async (r) => ({ r, Content: (await r.render()).Content }));
+  .map(async (r) => ({ r, Content: (await render(r)).Content }));
 const all = await Promise.all(rendered);
 
 const own = all.filter(({ r }) => r.data.kind !== 'external');
