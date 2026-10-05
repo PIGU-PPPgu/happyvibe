@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TerminalWindow from '../../components/TerminalWindow.astro';
+import { SUBJECTS, STAGES } from '../../data/subjects';
+import { withBase } from '../../lib/urls';
+
+const all = await getCollection('resources');
+const own = all.filter((r) => r.data.kind !== 'external');
+const ext = all.filter((r) => r.data.kind === 'external');
+
+// 覆盖矩阵：subject × stage 的资源计数
+const cell = new Map<string, number>();
+for (const r of all) {
+  const k = `${r.data.subject}|${r.data.stage}`;
+  cell.set(k, (cell.get(k) ?? 0) + 1);
+}
+const count = (slug: string, stage: string) => cell.get(`${slug}|${stage}`) ?? 0;
+const subjectTotal = (slug: string) => all.filter((r) => r.data.subject === slug).length;
+const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
+---
+
+<BaseLayout title="教学资源库" description="K12 学科 3D/2D 交互教学资源：单文件可下载、断网可投屏，按教材章节知识点组织">
+  <div class="container res-page">
+    <TerminalWindow title="happyvibe resources">
+      <p class="kicker mono">// RESOURCES · {all.length} 条资源 · {covered}/{SUBJECTS.length} 学科已上线</p>
+      <h1 class="res-title">教学资源库</h1>
+      <p class="res-sub text-muted">
+        自产资源是单文件网页，下载后断网双击即可投屏；外链资源以国家中小学智慧教育平台为主。
+        按学科进入，按教材章节找知识点。
+      </p>
+    </TerminalWindow>
+
+    <div class="res-stats">
+      <div class="stat"><span class="stat-n mono">{own.length}</span><span class="stat-l">自产交互资源</span></div>
+      <div class="stat"><span class="stat-n mono">{ext.length}</span><span class="stat-l">精选外链</span></div>
+      <div class="stat"><span class="stat-n mono">{SUBJECTS.length}</span><span class="stat-l">学科规划</span></div>
+    </div>
+
+    <section class="matrix-wrap" aria-label="学科与学段覆盖矩阵">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th scope="col">学科</th>
+            {STAGES.map((s) => <th scope="col">{s.label}</th>)}
+            <th scope="col">合计</th>
+          </tr>
+        </thead>
+        <tbody>
+          {SUBJECTS.map((s) => (
+            <tr class={subjectTotal(s.slug) === 0 ? 'empty' : ''}>
+              <th scope="row">
+                <a href={withBase(`/resources/${s.slug}/`)} class="subj-link">
+                  <span class="subj-icon mono" style={`--accent:${s.accent}`}>{s.icon}</span>
+                  {s.name}
+                </a>
+              </th>
+              {STAGES.map((st) => {
+                const n = count(s.slug, st.key);
+                const inRange = !(s.grades[1] < st.grades[0] || s.grades[0] > st.grades[1]);
+                return <td>{inRange ? (n > 0 ? <span class="cell-n mono" data-n={n}>{n}</span> : <span class="cell-zero">—</span>) : <span class="cell-na"></span>}</td>;
+              })}
+              <td class="mono total">{subjectTotal(s.slug) || ''}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .res-page { padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 22px; }
+  .res-title { font-size: 28px; margin: 4px 0 6px; }
+  .res-sub { max-width: 720px; line-height: 1.7; }
+  .res-stats { display: flex; gap: 14px; flex-wrap: wrap; }
+  .stat {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 14px 22px; background: var(--bg-panel);
+    border: 1px solid var(--line); border-radius: var(--radius); min-width: 130px;
+  }
+  .stat-n { font-size: 26px; color: var(--gold); font-weight: 700; }
+  .stat-l { font-size: 13px; color: var(--text-muted); }
+  .matrix-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
+  .matrix { width: 100%; border-collapse: collapse; min-width: 560px; }
+  .matrix th, .matrix td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .matrix thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; }
+  .matrix tbody tr:last-child th, .matrix tbody tr:last-child td { border-bottom: none; }
+  .subj-link { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 600; }
+  .subj-link:hover { color: var(--gold-soft); }
+  .subj-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 8px; font-size: 14px;
+    color: var(--accent); border: 1px solid var(--line);
+  }
+  .cell-n {
+    display: inline-flex; min-width: 30px; padding: 3px 9px; justify-content: center;
+    border-radius: 999px; background: rgba(166, 61, 151, 0.16); color: var(--text); font-size: 14px;
+  }
+  .cell-zero { color: var(--text-faint); }
+  .total { color: var(--gold-soft); }
+  tr.empty .subj-link { color: var(--text-muted); }
+</style>

@@ -6,8 +6,9 @@ const nav = [
   { href: '/path/', label: '学习路线图', code: '02' },
   { href: '/contest/', label: '比赛专区', code: '03' },
   { href: '/toolbox/', label: '工具箱', code: '04' },
+  { href: '/resources/', label: '资源库', code: '05' },
   { href: '/analytics/', label: '数据看板', code: '06' },
-  { href: '/about/', label: '关于', code: '05' },
+  { href: '/about/', label: '关于', code: '07' },
 ];
 const path = Astro.url.pathname;
 const isActive = (href: string, anchor?: boolean) => {
@@ -146,13 +147,13 @@ const isActive = (href: string, anchor?: boolean) => {
     .main-nav { display: flex; }
     .menu-toggle { display: none; }
   }
-  /* 900–1280px：七个导航项压缩字号与间距，保证单行放下 */
+  /* 900–1280px：八个导航项压缩字号与间距，保证单行放下 */
   @media (min-width: 900px) and (max-width: 1279px) {
     .header-inner { gap: 10px; }
     .logo-cn { display: none; }
     .main-nav { gap: 2px; margin-left: 4px; }
-    .nav-link { font-size: 13px; padding: 6px 8px; }
-    .nav-code { margin-right: 4px; font-size: 10px; }
+    .nav-link { font-size: 12px; padding: 6px 6px; }
+    .nav-code { display: none; }
     .header-actions { gap: 8px; }
   }
   @media (max-width: 560px) {

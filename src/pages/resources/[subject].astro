@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TerminalWindow from '../../components/TerminalWindow.astro';
+import { SUBJECTS, subjectBySlug, STAGES } from '../../data/subjects';
+import { withBase } from '../../lib/urls';
+
+export function getStaticPaths() {
+  return SUBJECTS.map((s) => ({ params: { subject: s.slug } }));
+}
+
+const { subject } = Astro.params;
+const meta = subjectBySlug(subject ?? '');
+if (!meta) return Astro.redirect(withBase('/resources/'));
+
+const rendered = (await getCollection('resources'))
+  .filter((r) => r.data.subject === subject)
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(async (r) => ({ r, Content: (await r.render()).Content }));
+const all = await Promise.all(rendered);
+
+const own = all.filter(({ r }) => r.data.kind !== 'external');
+const ext = all.filter(({ r }) => r.data.kind === 'external');
+
+// 按知识点分组，组内自产在前；组顺序取组内最小 order
+const topics = new Map<string, typeof all>();
+for (const item of all) {
+  const list = topics.get(item.r.data.topic) ?? [];
+  list.push(item);
+  topics.set(item.r.data.topic, list);
+}
+const groups = [...topics.entries()]
+  .map(([topic, items]) => ({
+    topic,
+    items: items.sort((a, b) =>
+      a.r.data.kind === b.r.data.kind ? a.r.data.order - b.r.data.order : a.r.data.kind === 'external' ? 1 : -1
+    ),
+    order: Math.min(...items.map((i) => i.r.data.order)),
+  }))
+  .sort((a, b) => a.order - b.order);
+
+const stageLabel = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
+const KIND_LABEL: Record<string, string> = {
+  'interactive-3d': '3D 交互',
+  'interactive-2d': '2D 交互',
+  diagram: '图示',
+  external: '外链',
+};
+const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平台', phet: 'PhET', geogebra: 'GeoGebra' };
+---
+
+<BaseLayout title={`${meta.name}教学资源`} description={`${meta.name}学科 3D/2D 交互教学资源，按教材章节知识点组织，单文件可投屏`}>
+  <div class="container res-page">
+    <TerminalWindow title={`happyvibe resources / ${meta.slug}`}>
+      <p class="kicker mono">// {meta.name} · 自产 {own.length} · 外链 {ext.length}</p>
+      <h1 class="res-title"><span class="mono" style={`color:${meta.accent}`}>{meta.icon}</span> {meta.name}教学资源</h1>
+      <p class="res-sub text-muted">按教材章节排列。自产资源点击全屏打开，可下载后断网使用。</p>
+    </TerminalWindow>
+
+    {groups.length === 0 && <p class="empty-note text-muted">该学科资源制作中。</p>}
+
+    {groups.map((g) => (
+      <section class="topic">
+        <h2 class="topic-title">{g.topic}</h2>
+        <div class="cards">
+          {g.items.map(({ r, Content }) => (
+            <article class="card" data-kind={r.data.kind}>
+              <div class="card-head">
+                {r.data.kind === 'external' ? (
+                  <a class="card-title" href={r.data.url} target="_blank" rel="noopener">{r.data.title}</a>
+                ) : (
+                  <a class="card-title" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">{r.data.title}</a>
+                )}
+                <span class="badge kind" data-kind={r.data.kind}>{KIND_LABEL[r.data.kind]}</span>
+              </div>
+              <p class="card-usage">{r.data.usage}</p>
+              <div class="card-meta">
+                <span class="badge">{stageLabel[r.data.stage]}</span>
+                <span class="badge mono">{r.data.grades.join('、')} 年级</span>
+                {r.data.kind === 'external' && SOURCE_LABEL[r.data.source] && <span class="badge src">{SOURCE_LABEL[r.data.source]}</span>}
+                {r.data.status === 'draft' && <span class="badge draft">校对中</span>}
+              </div>
+              <details class="card-body">
+                <summary>使用步骤</summary>
+                <div class="body-md"><Content /></div>
+              </details>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .res-page { padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 26px; }
+  .res-title { font-size: 28px; margin: 4px 0 6px; }
+  .res-sub { line-height: 1.7; }
+  .empty-note { padding: 30px 0; }
+  .topic { display: flex; flex-direction: column; gap: 12px; }
+  .topic-title { font-size: 19px; color: var(--gold-soft); border-left: 3px solid var(--gold); padding-left: 10px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .card {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 16px; background: var(--bg-panel);
+    border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .card-title { color: var(--text); font-weight: 600; font-size: 16px; text-decoration: none; line-height: 1.5; }
+  .card-title:hover { color: var(--gold-soft); }
+  .card-usage { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge {
+    font-size: 12px; padding: 2px 8px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--text-muted); white-space: nowrap;
+  }
+  .badge.kind[data-kind='external'] { color: var(--purple-soft); border-color: var(--line-strong); }
+  .badge.kind[data-kind='interactive-3d'] { color: #6EC1FF; border-color: rgba(110, 193, 255, 0.4); }
+  .badge.kind[data-kind='interactive-2d'] { color: #7CE38B; border-color: rgba(124, 227, 139, 0.4); }
+  .badge.src { color: var(--gold-soft); border-color: var(--line-gold); }
+  .badge.draft { color: var(--gold); }
+  .card-body { font-size: 14px; }
+  .card-body summary { cursor: pointer; color: var(--text-faint); font-size: 13px; }
+  .card-body .body-md { margin-top: 8px; color: var(--text-muted); line-height: 1.8; }
+  .card-body .body-md :global(p) { margin: 0 0 6px; }
+  .card-body .body-md :global(ol), .card-body .body-md :global(ul) { padding-left: 18px; }
+</style>
