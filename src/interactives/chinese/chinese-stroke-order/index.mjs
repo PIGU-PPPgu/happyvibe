@@ -171,7 +171,7 @@ const FONT = "'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',
 function theme() {
   const cs = getComputedStyle(document.documentElement);
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
-  return { text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), gold: v('--gold', '#feb300'), panel: v('--panel', '#1e1433'), bg: v('--bg', '#150e22'), line: v('--line', 'rgba(180,130,210,.16)') };
+  return { text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), gold: v('--gold', '#E8B04B'), panel: v('--panel', '#1e1433'), bg: v('--bg', '#150e22'), line: v('--line', 'rgba(180,130,210,.16)') };
 }
 function cur() { return CHARS[ci]; }
 function seqs() { return [cur().correct, cur().error]; }
@@ -422,56 +422,16 @@ function teachGo(i) {
   document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
     el.setAttribute('aria-pressed', String(k === i));
   });
-  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
-    el.style.display = k === i ? '' : 'none';
-  });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '语文·小学一二三年级｜统编版一年级上·下册 · 识字与写字·笔顺';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '语文·小学一二三年级｜统编版一年级上·下册 · 识字与写字·笔顺',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => teachGo(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条（第一行按钮，第二行引导语）：叠在舞台顶部，layout() 已为其让位
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;flex-direction:column;gap:6px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)';
-  const row = document.createElement('div');
-  row.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap';
-  row.innerHTML =
-    STEPS.map(
-      (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
-    ).join('') + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  const guideRow = document.createElement('div');
-  guideRow.innerHTML = STEPS.map(
-    (s, i) =>
-      `<span data-hv-guide style="font-size:15px;line-height:1.6;color:var(--text);${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-  ).join('');
-  panel.appendChild(row);
-  panel.appendChild(guideRow);
-  document.body.appendChild(panel);
-  teachPanel = panel;
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:150px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => teachGo(i)));
-  panel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  teachGo(0);
-}
 
 // 自测：数据级断言——错例与规范确有分歧、环节预设停在分歧笔上（NaN 防护先判整型）
 function runSelfChecks() {
@@ -496,18 +456,18 @@ function runSelfChecks() {
   });
   // 行为自测：模拟点击环节按钮，验证场景真的切到预设状态（字与笔画推进），且只显示当前环节引导语
   const btns = [...document.querySelectorAll('[data-hv-step]')];
-  const guides = [...document.querySelectorAll('[data-hv-guide]')];
   btns.forEach((b, i) => {
     b.click();
     const s = STEPS[i] || {};
     const stateOk = cur().ch === s.ch && step === s.step;
-    const guideOk = guides[i] && guides[i].style.display !== 'none' && guides.every((g, k) => k === i || g.style.display === 'none');
+    const guideOk = (document.getElementById('guide').textContent || '').replace(/\s+/g, '') === (s.guide || '').replace(/\s+/g, '');
     push(`环节切换-${i}-${s.name}`, stateOk && guideOk, `ch=${cur().ch} step=${step}`);
   });
   teachGo(0);
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:pointer';
@@ -515,7 +475,6 @@ init({
     ctx = canvas.getContext('2d');
 
     buildUI(stage);
-    buildTeachingPanel();
 
     const resize = () => {
       dpr = Math.min(devicePixelRatio, 2);

@@ -91,7 +91,7 @@ const STEPS = [
   { year: '影响', title: '世界开始连成一个整体', route: null, final: true,
     text: '欧洲与亚洲、非洲、美洲建立起直接的商业联系，往来日益密切；世界观念逐步确立；欧洲大西洋沿岸工商业经济繁荣起来；随之而来的殖民扩张也给亚非拉人民带来深重灾难。' },
 ];
-const ROUTE_COLOR = { dias: '#4fc3f7', columbus: '#ef7d57', gama: '#66d9a8', magellan: '#feb300' };
+const ROUTE_COLOR = { dias: '#6FA8C9', columbus: '#ef7d57', gama: '#7FBF9E', magellan: '#E8B04B' };
 const ROUTE_ORDER = ['dias', 'columbus', 'gama', 'magellan'];
 
 // 地名（step 为出现的最早步骤）
@@ -118,7 +118,7 @@ function theme() {
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
   return {
     bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'),
-    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'),
+    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#E8B04B'),
     panel: v('--panel', '#1e1433'), panel2: v('--panel2', '#271a42'),
   };
 }
@@ -239,7 +239,7 @@ function draw() {
   const t = ease(animT);
 
   // 海洋
-  ctx.fillStyle = mix(th.bg, '#4fc3f7', 0.15);
+  ctx.fillStyle = mix(th.bg, '#6FA8C9', 0.15);
   ctx.fillRect(0, 0, W, H);
   // 陆地
   for (const l of LANDS) {
@@ -428,51 +428,23 @@ function setPhase(i) {
   goStep(PHASES[i].step, PHASES[i].instant);
   highlightPhase(i);
 }
-function buildTeachingPanel() {
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '历史·九年级｜统编版九上 · 走向近代 · 新航路的开辟';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap;max-width:30vw;overflow:hidden;text-overflow:ellipsis';
-  document.getElementById('hint').before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '历史·九年级｜统编版九上 · 走向近代 · 新航路的开辟',
+  steps: PHASES.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setPhase(i) })),
+  summary: SUMMARY,
+};
 
-  teachPanel = document.createElement('div');
-  teachPanel.style.cssText =
-    'position:fixed;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  teachPanel.style.top = document.getElementById('bar').offsetHeight + 'px';
-  teachPanel.innerHTML =
-    PHASES.map((p, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false" style="font-size:15px;padding:7px 14px">${i + 1}. ${p.name}</button>`).join('') +
-    PHASES.map((p, i) => `<span data-hv-guide style="flex:1;min-width:240px;font-size:15px;line-height:1.6;${i === 0 ? '' : 'display:none'}">${p.guide}</span>`).join('') +
-    '<button class="btn" id="hv-summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(teachPanel);
-  phaseBtns = [...teachPanel.querySelectorAll('[data-hv-step]')];
-  phaseGuides = [...teachPanel.querySelectorAll('[data-hv-guide]')];
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;left:50%;transform:translateX(-50%);z-index:16;max-width:640px;margin:0 16px;' +
-    'padding:14px 18px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  summaryEl.style.top = teachPanel.offsetHeight + 64 + 'px';
-  document.body.appendChild(summaryEl);
-
-  phaseBtns.forEach((el, i) => el.addEventListener('click', () => setPhase(i)));
-  teachPanel.querySelector('#hv-summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  highlightPhase(0);
-}
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
     stage.appendChild(canvas);
     ctx = canvas.getContext('2d');
     buildPanel(stage);
-    buildTeachingPanel();
 
     const resize = () => {
       dpr = Math.min(devicePixelRatio || 1, 2);

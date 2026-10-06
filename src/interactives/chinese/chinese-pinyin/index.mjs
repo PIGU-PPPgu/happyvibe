@@ -205,42 +205,17 @@ function setStep(i, open = true) {
   });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）：学科·学段年级｜教材版本册次 · 知识点
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '语文·一年级｜统编版一上 · 汉语拼音声母韵母';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  document.getElementById('hint').before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '语文·一年级｜统编版一上 · 汉语拼音声母韵母',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条 + 引导语 + 小结按钮（置于遮罩之上，卡片打开时也能切环节）
-  const panel = document.createElement('div');
-  panel.className = 'hv-panel';
-  panel.innerHTML =
-    STEPS.map(
-      (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`
-    ).join('') +
-    STEPS.map(
-      (s, i) => `<span data-hv-guide class="hv-guide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`
-    ).join('') +
-    '<button class="btn" id="hv-summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.className = 'hv-sum';
-  summaryEl.textContent = SUMMARY;
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#hv-summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0, false);
-  if (SELFTEST) runSelfChecks();
-}
 
 init({
+  teaching: TEACHING,
   mount(stage) {
     const style = document.createElement('style');
     style.textContent = CSS;
@@ -321,7 +296,5 @@ init({
         if (i >= 0) openCard(i);
       }
     } catch (e) {}
-
-    buildTeachingPanel();
   },
 });

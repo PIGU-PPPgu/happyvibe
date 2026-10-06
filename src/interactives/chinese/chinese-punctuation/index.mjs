@@ -307,48 +307,16 @@ function setStep(i) {
   render();
   renderTabs();
   document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
-  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = META_TEXT;
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '语文·小学三至六年级｜统编版各册语文园地 · 标点符号正确使用',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条 + 引导语 + 小结浮层
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  const stepBtns = STEPS.map(
-    (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
-  ).join('');
-  const guides = STEPS.map(
-    (s, i) =>
-      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-  ).join('');
-  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-}
 
 function runSelfChecks() {
   if (typeof window.__hvPushCheck !== 'function') return;
@@ -363,11 +331,10 @@ function runSelfChecks() {
   }
   window.__hvPushCheck('end-card-fields', broken.length === 0, broken.length ? '字段缺失: ' + broken.join(',') : '11 张终点卡用法要点与对错例句齐全');
   // 教研契约标记就位
-  const guides = [...document.querySelectorAll('[data-hv-guide]')].map((g) => g.textContent.trim());
   window.__hvPushCheck(
     'teaching-panel-ready',
-    document.querySelectorAll('[data-hv-step]').length === STEPS.length && guides.length === STEPS.length && guides.join('').length >= 60,
-    `${STEPS.length} 个环节、${guides.length} 条引导语共 ${guides.join('').length} 字`
+    document.querySelectorAll('[data-hv-step]').length === STEPS.length && TEACHING.steps.map((s) => (s.guide || '').length).reduce((a, b) => a + b, 0) >= 60,
+    `${STEPS.length} 个环节、teaching-panel 配置核对`
   );
   // 场景级：环节按钮真的切换到预设状态
   setStep(2);
@@ -382,6 +349,7 @@ function runSelfChecks() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage) {
     const style = document.createElement('style');
     style.textContent = CSS;
@@ -396,7 +364,6 @@ init({
     wrap.appendChild(bodyEl);
     stage.appendChild(wrap);
     renderTabs();
-    buildTeachingPanel();
 
     // 深链：?p=dunhao 直达终点卡；?view=all 打开全景
     try {
@@ -414,7 +381,6 @@ init({
       }
       if (deep) {
         // 深链直接改场景，环节高亮与引导语一并取消
-        document.querySelectorAll('[data-hv-guide]').forEach((el) => { el.style.display = 'none'; });
         document.querySelectorAll('[data-hv-step]').forEach((el) => el.setAttribute('aria-pressed', 'false'));
       }
     } catch (e) {}

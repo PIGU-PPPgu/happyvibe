@@ -238,44 +238,17 @@ function setStep(i, apply = true) {
   });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）：学科·学段年级｜教材版本 · 知识点（版本册次与条目正文一致，不编造册次）
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '语文·六至九年级｜统编版必背古诗文 · 古诗文积累与默写';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  document.getElementById('hint').before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '语文·六至九年级｜统编版必背古诗文 · 古诗文积累与默写',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条 + 引导语 + 小结按钮
-  const panel = document.createElement('div');
-  panel.className = 'hv-panel';
-  panel.innerHTML =
-    STEPS.map(
-      (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`
-    ).join('') +
-    STEPS.map(
-      (s, i) => `<span data-hv-guide class="hv-guide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`
-    ).join('') +
-    '<button class="btn" id="hv-summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.className = 'hv-sum';
-  summaryEl.textContent = SUMMARY;
-  // 隐藏状态放行内样式：小结按钮靠比较 style.display 切换
-  summaryEl.style.display = 'none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#hv-summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  // 初始不强制切场景：默认状态（月主题第 1 题未作答）本就是环节 1 的预设，深链参数仍可用
-  setStep(0, false);
-}
 
 init({
+  teaching: TEACHING,
   mount(stage) {
     const style = document.createElement('style');
     style.textContent = CSS;
@@ -301,7 +274,6 @@ init({
     wrap.appendChild(bodyEl);
     stage.appendChild(wrap);
     startGroup(0);
-    buildTeachingPanel();
     if (SELFTEST) runSelfChecks();
 
     // 深链：?t=shan 选主题，&q=2 跳到第 2 题，&a=1 自动选正确项演示判定态

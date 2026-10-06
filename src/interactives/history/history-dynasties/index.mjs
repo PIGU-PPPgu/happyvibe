@@ -24,7 +24,7 @@ const DYNASTIES = [
   { name: '清', s: '1644年', e: '1911年', events: [['1644年', '清军入关'], ['', '康乾盛世'], ['1840年', '鸦片战争']] },
 ];
 
-const BAND_COLORS = ['#feb300', '#a63d97', '#4fc3f7', '#66d9a8', '#e0a96d', '#9d8cff'];
+const BAND_COLORS = ['#E8B04B', '#A66BA6', '#6FA8C9', '#7FBF9E', '#D99A6C', '#9D8FD1'];
 
 let canvas, ctx, view = { scale: 1, offset: 0 }; // offset：视口左缘对应的带索引坐标
 let selected = -1;
@@ -33,7 +33,7 @@ let W = 0, H = 0, dpr = 1;
 function theme() {
   const cs = getComputedStyle(document.documentElement);
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
-  return { bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'), panel: v('--panel', '#1e1433') };
+  return { bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#E8B04B'), panel: v('--panel', '#1e1433') };
 }
 
 const BAND_H_MIN = 150;
@@ -187,47 +187,17 @@ function setStep(i) {
   });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '历史·七年级｜统编版七年级上、下册 · 中国古代史 · 朝代更替';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '历史·七年级｜统编版七年级上、下册 · 中国古代史 · 朝代更替',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节导航 + 引导语 + 小结
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  const stepBtns = STEPS.map(
-    (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
-  ).join('');
-  const guides = STEPS.map(
-    (s, i) =>
-      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-  ).join('');
-  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:16;max-width:640px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-}
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
@@ -245,7 +215,6 @@ init({
     resize();
     api.onResize = resize;
     api.onTheme = draw;
-    buildTeachingPanel();
 
     let dragging = false, lastX = 0, moved = 0;
     const pointers = new Map();

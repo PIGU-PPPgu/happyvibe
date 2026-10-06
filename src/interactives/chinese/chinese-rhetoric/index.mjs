@@ -240,39 +240,17 @@ function setStep(k) {
   document.querySelectorAll('[data-hv-guide]').forEach((el, j) => { el.style.display = j === k ? '' : 'none'; });
 }
 
-function buildTeachingPanel() {
-  // 定位行进顶栏（提示语前）；顶栏缺失时落回场景顶部
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '语文·初中七八年级｜统编版七上至八下 · 修辞手法辨析';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
-  const hintEl = document.getElementById('hint');
-  if (hintEl) hintEl.before(metaEl); else wrap.prepend(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '语文·初中七八年级｜统编版七上至八下 · 修辞手法辨析',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条 + 引导语（置于手法标签上方），小结浮层按钮唤出
-  const teach = document.createElement('div');
-  teach.className = 'rh-teach';
-  teach.innerHTML =
-    '<div class="rh-tsteps">' +
-    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`).join('') +
-    '<button class="btn rh-sumbtn" id="rh-sumbtn" type="button">小结</button>' +
-    '</div>' +
-    STEPS.map((s, i) => `<span data-hv-guide class="rh-tguide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`).join('');
-  wrap.prepend(teach);
 
-  const panelEl = document.createElement('div');
-  panelEl.dataset.hvSummary = '';
-  panelEl.className = 'rh-panel';
-  panelEl.textContent = SUMMARY;
-  document.body.appendChild(panelEl);
-
-  teach.querySelector('#rh-sumbtn').addEventListener('click', () => {
-    panelEl.style.display = panelEl.style.display === 'none' ? '' : 'none';
-  });
-  teach.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-}
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     const style = document.createElement('style');
     style.textContent = CSS;
@@ -302,7 +280,6 @@ init({
     wrap.appendChild(quizEl);
     stage.appendChild(wrap);
     api.onResize = () => { if (DATA[mi].pairs) buildQuiz(DATA[mi]); };
-    buildTeachingPanel();
     // 初始状态由教学环节 1 落定（须在 cardEl/quizEl 就绪之后，否则 render() 写 undefined.innerHTML）
     setStep(0);
 

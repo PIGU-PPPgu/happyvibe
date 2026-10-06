@@ -117,7 +117,7 @@ let defaultMode = '3d';
 function themeColors() {
   const cs = getComputedStyle(document.documentElement);
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
-  return { bg: v('--panel2', '#271a42'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), gold: v('--gold', '#feb300'), panel: v('--panel', '#1e1433'), line: v('--line', 'rgba(180,130,210,.16)') };
+  return { bg: v('--panel2', '#271a42'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), gold: v('--gold', '#E8B04B'), panel: v('--panel', '#1e1433'), line: v('--line', 'rgba(180,130,210,.16)') };
 }
 
 function makeSpotTexture(color) {
@@ -266,47 +266,16 @@ function setStep(i) {
   document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
     el.setAttribute('aria-pressed', String(k === i));
   });
-  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
-    el.style.display = k === i ? '' : 'none';
-  });
 }
 
-function buildTeachingPanel(stage) {
-  // 定位行进顶栏
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '历史·七年级｜统编版七上第二单元第5课 · 青铜器与甲骨文';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:2px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '历史·七年级｜统编版七上第二单元第5课 · 青铜器与甲骨文',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条：顶栏 tabs 行下方，按钮切预设状态，未激活的引导语留 DOM
-  const panel = document.createElement('div');
-  panel.id = 'teach';
-  panel.innerHTML =
-    STEPS.map(
-      (s) => `<button class="qb" data-hv-step type="button" aria-pressed="false" style="padding:9px 14px">${s.name}</button>`
-    ).join('') +
-    STEPS.map(
-      (s, i) => `<span class="guide" data-hv-guide style="${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-    ).join('') +
-    '<button class="qb" id="summaryBtn" type="button">小结</button>';
-  stage.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:172px;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#summaryBtn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-}
 
 // 自测断言：验证环节按钮真的把场景切到预设状态（selftest 下 harness 采集）
 function runSelfChecks() {
@@ -319,17 +288,16 @@ function runSelfChecks() {
     spin: spinning,
     flipped: els.cards.querySelectorAll('.flip.on').length,
     pressed: [...document.querySelectorAll('[data-hv-step]')].map((b) => b.getAttribute('aria-pressed')),
-    guides: [...document.querySelectorAll('[data-hv-guide]')].map((g) => g.style.display !== 'none'),
   });
   setStep(1);
   const s1 = snap();
-  ok('step2-认其纹', s1.spot === '兽面纹' && s1.spin === true && s1.zoomShown && s1.canvasShown && !s1.cardsShown && s1.guides[1] === true && s1.guides[0] === false, JSON.stringify(s1));
+  ok('step2-认其纹', s1.spot === '兽面纹' && s1.spin === true && s1.zoomShown && s1.canvasShown && !s1.cardsShown, JSON.stringify(s1));
   setStep(2);
   const s2 = snap();
-  ok('step3-识其字', s2.cardsShown && !s2.canvasShown && s2.flipped === 0 && s2.pressed[2] === 'true' && s2.guides[2] === true, JSON.stringify(s2));
+  ok('step3-识其字', s2.cardsShown && !s2.canvasShown && s2.flipped === 0 && s2.pressed[2] === 'true', JSON.stringify(s2));
   setStep(0);
   const s0 = snap();
-  ok('step1-观其器', s0.canvasShown && !s0.cardsShown && s0.spin === false && s0.spot === '后母戊鼎' && s0.pressed[0] === 'true' && s0.guides[0] === true, JSON.stringify(s0));
+  ok('step1-观其器', s0.canvasShown && !s0.cardsShown && s0.spin === false && s0.spot === '后母戊鼎' && s0.pressed[0] === 'true', JSON.stringify(s0));
 }
 
 function drawCards() {
@@ -446,7 +414,6 @@ function buildUI(stage) {
   tabs.querySelector('#tabCard').addEventListener('click', () => setMode('card'));
   setMode(defaultMode);
   setSpot(-1);
-  buildTeachingPanel(stage);
   setStep(0);
   if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 }
@@ -461,6 +428,7 @@ function updateCamera() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));

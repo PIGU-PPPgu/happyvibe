@@ -38,8 +38,8 @@ function theme() {
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
   return {
     bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'),
-    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'),
-    panel: v('--panel', '#1e1433'), panel2: v('--panel2', '#271a42'), purple: v('--purple', '#a63d97'),
+    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#E8B04B'),
+    panel: v('--panel', '#1e1433'), panel2: v('--panel2', '#271a42'), purple: v('--purple', '#A66BA6'),
   };
 }
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -339,43 +339,17 @@ function setStep(i, scene = true) {
   document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
 }
 
-function buildTeachingPanel() {
-  // 定位行：进顶栏
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '历史·八年级｜统编版八下第三单元 · 中国特色社会主义道路：改革开放';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
-  document.getElementById('hint').before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '历史·八年级｜统编版八下第三单元 · 中国特色社会主义道路：改革开放',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节按钮 + 引导语 + 小结按钮
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:7;display:flex;align-items:center;gap:8px;flex-wrap:wrap;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)';
-  panel.innerHTML =
-    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 14px">${i + 1}. ${s.name}</button>`).join('') +
-    '<button class="btn" id="hv-summary-btn" type="button" style="font-size:15px;padding:7px 14px;margin-left:auto">小结</button>' +
-    STEPS.map((s, i) => `<span data-hv-guide style="flex-basis:100%;font-size:15px;color:var(--text);line-height:1.5;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`).join('');
-  document.body.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:148px;left:50%;transform:translateX(-50%);z-index:8;max-width:640px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#hv-summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  // ?mode=data 嵌入参数保留：只点亮环节条，不动场景
-  setStep(0, new URLSearchParams(location.search).get('mode') !== 'data');
-}
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
@@ -397,7 +371,6 @@ init({
       draw();
     };
     resize();
-    buildTeachingPanel();
     if (new URLSearchParams(location.search).has('selftest')) {
       // 断言「抓转折」环节真的把视口聚焦到 1978 年（比较前先判 Number.isFinite）
       setStep(1);

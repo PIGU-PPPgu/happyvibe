@@ -159,8 +159,8 @@ function theme() {
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
   return {
     bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'),
-    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'),
-    purple: v('--purple', '#a63d97'), panel: v('--panel', '#1e1433'), panel2: v('--panel2', '#271a42'),
+    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#E8B04B'),
+    purple: v('--purple', '#A66BA6'), panel: v('--panel', '#1e1433'), panel2: v('--panel2', '#271a42'),
   };
 }
 const ease = (t) => t * t * (3 - 2 * t);
@@ -302,7 +302,7 @@ function draw() {
   // 水域（岛屿最后挖回陆地色）
   for (const w of [OCEAN, MED, EAST, BLACK, CASPIAN, ARAL]) {
     poly(w);
-    ctx.fillStyle = mix2(th.bg, '#4fc3f7', 0.16);
+    ctx.fillStyle = mix2(th.bg, '#6FA8C9', 0.16);
     ctx.fill();
     ctx.strokeStyle = 'rgba(79,195,247,0.6)';
     ctx.lineWidth = 1.6 * view.s;
@@ -362,7 +362,7 @@ function draw() {
     const p1 = stepI === 1 ? clamp(t / 0.72, 0, 1) : 1;
     const p2 = stepI === 1 ? clamp((t - 0.72) / 0.28, 0, 1) : 1;
     const end1 = route(ZQ1_GO, p1, th.gold, 3.4);
-    const end2 = route(ZQ1_BACK, p2, '#9d8cff', 2.6);
+    const end2 = route(ZQ1_BACK, p2, '#9D8FD1', 2.6);
     if (end1 && p1 < 1) {
       ctx.beginPath();
       ctx.arc(end1[0], end1[1], 4.5 * view.s, 0, Math.PI * 2);
@@ -372,7 +372,7 @@ function draw() {
     if (end2 && p2 > 0 && p2 < 1) {
       ctx.beginPath();
       ctx.arc(end2[0], end2[1], 4.5 * view.s, 0, Math.PI * 2);
-      ctx.fillStyle = '#9d8cff';
+      ctx.fillStyle = '#9D8FD1';
       ctx.fill();
     }
   }
@@ -388,7 +388,7 @@ function draw() {
     }
     if (t > 0.5) {
       ctx.globalAlpha = clamp((t - 0.5) / 0.5, 0, 1) * (stepI === 2 ? 1 : 1);
-      for (const e of ENVOYS) route(e, 1, '#9d8cff', 2, [7 * view.s, 6 * view.s]);
+      for (const e of ENVOYS) route(e, 1, '#9D8FD1', 2, [7 * view.s, 6 * view.s]);
       ctx.globalAlpha = 1;
     }
   }
@@ -411,11 +411,11 @@ function draw() {
   // 步5：海上丝路
   if (stepI >= 5) {
     const p = stepI === 5 ? t : 1;
-    const end = route(SEA, p, '#4fc3f7', 3.4);
+    const end = route(SEA, p, '#6FA8C9', 3.4);
     if (end && p < 1) {
       ctx.beginPath();
       ctx.arc(end[0], end[1], 4.5 * view.s, 0, Math.PI * 2);
-      ctx.fillStyle = '#4fc3f7';
+      ctx.fillStyle = '#6FA8C9';
       ctx.fill();
     }
   }
@@ -481,7 +481,7 @@ function draw() {
     const p = P(b.p[0], b.p[1]);
     ctx.font = `700 ${26 * fontF}px ${FONT}`;
     labelBG(b.n, p[0], p[1], 10 * fontF, 0.5);
-    ctx.fillStyle = b.step === 4 ? th.gold : '#4fc3f7';
+    ctx.fillStyle = b.step === 4 ? th.gold : '#6FA8C9';
     ctx.fillText(b.n, p[0], p[1]);
     ctx.globalAlpha = 1;
   }
@@ -572,48 +572,14 @@ function setTeachStep(i, instant) {
   goStep(TEACH[i].step, instant);
   syncTeachActive();
 }
-function buildTeachingPanel(stage) {
-  // 定位行（小屏隐藏 hint 让位）
-  const st = document.createElement('style');
-  st.textContent = '@media (max-width:1180px){#hint{display:none}}';
-  document.head.appendChild(st);
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '历史·初中七年级｜统编版七上第三单元第14课 · 丝绸之路的开通与经营西域';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0';
-  document.getElementById('hint').before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '历史·初中七年级｜统编版七上第三单元第14课 · 丝绸之路的开通与经营西域',
+  steps: TEACH.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setTeachStep(i) })),
+  summary: TEACH_SUMMARY,
+};
 
-  // 环节条 + 当前引导语（未激活的引导语留在 DOM）
-  const bar = document.createElement('div');
-  bar.style.cssText =
-    'position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:15;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;' +
-    'padding:8px 14px 10px;background:var(--panel);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;' +
-    'box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:calc(100% - 16px)';
-  bar.innerHTML =
-    TEACH.map((s, i) =>
-      `<button class="qb" data-hv-step type="button" aria-pressed="false" style="font-size:15px;padding:8px 13px">${s.name}</button>`).join('') +
-    '<button class="qb" id="tq-summary-btn" type="button" style="font-size:15px;padding:8px 13px">小结</button>' +
-    TEACH.map((s, i) =>
-      `<span data-hv-guide style="flex-basis:100%;font-size:15px;color:var(--text);line-height:1.55;text-align:center;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`).join('');
-  stage.appendChild(bar);
-  teachBtns = [...bar.querySelectorAll('[data-hv-step]')];
-  teachGuides = [...bar.querySelectorAll('[data-hv-guide]')];
-  teachBtns.forEach((el, i) => el.addEventListener('click', () => setTeachStep(i)));
 
-  const sumBtn = bar.querySelector('#tq-summary-btn');
-  const sum = document.createElement('div');
-  sum.dataset.hvSummary = '';
-  sum.textContent = TEACH_SUMMARY;
-  sum.style.cssText =
-    'position:fixed;top:172px;left:50%;transform:translateX(-50%);z-index:30;max-width:680px;margin:0 16px;padding:16px 20px;' +
-    'background:var(--panel);border:1px solid var(--gold);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.35);' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(sum);
-  sumBtn.addEventListener('click', () => {
-    sum.style.display = sum.style.display === 'none' ? '' : 'none';
-  });
-  setTeachStep(0, true);
-}
 
 // 自测：环节按钮/引导语/小结齐备，且每个环节点击后真的切到预设步骤、引导语单条显示
 function runSelfChecks() {
@@ -621,8 +587,6 @@ function runSelfChecks() {
   if (!push) return;
   const nBtn = document.querySelectorAll('[data-hv-step]').length;
   push('环节按钮数量', nBtn === TEACH.length, `data-hv-step=${nBtn}`);
-  teachGuides = [...document.querySelectorAll('[data-hv-guide]')];
-  push('引导语条数', teachGuides.length === TEACH.length, `data-hv-guide=${teachGuides.length}`);
   const sumEl = document.querySelector('[data-hv-summary]');
   const sumLen = sumEl ? sumEl.textContent.length : 0;
   push('小结字数', sumLen >= 30, `summary=${sumLen}字`);
@@ -630,8 +594,6 @@ function runSelfChecks() {
   TEACH.forEach((t, i) => {
     setTeachStep(i, true);
     if (stepI !== t.step || animT !== 1) bad.push(`环节${i}:${stepI}≠${t.step}`);
-    const shown = teachGuides.filter((el) => el.style.display !== 'none');
-    if (shown.length !== 1 || shown[0] !== teachGuides[i]) bad.push(`引导语${i}未单显`);
   });
   push('环节切换到预设步骤', bad.length === 0,
     bad.join(' ') || TEACH.map((t) => `${t.name}→第${t.step + 1}步`).join('、'));
@@ -670,13 +632,13 @@ function goStep(i, instant) {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
     stage.appendChild(canvas);
     ctx = canvas.getContext('2d');
     buildPanel(stage);
-    buildTeachingPanel(stage);
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     const resize = () => {

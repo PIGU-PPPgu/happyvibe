@@ -197,39 +197,14 @@ function setStep(k) {
   document.querySelectorAll('[data-hv-guide]').forEach((el, j) => { el.style.display = j === k ? '' : 'none'; });
 }
 
-function buildTeachingPanel() {
-  // 定位行进顶栏（提示语前）；顶栏缺失时落回场景顶部
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '语文·初中｜统编版七至九年级写作单元 · 文章结构与提纲';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
-  const hintEl = document.getElementById('hint');
-  if (hintEl) hintEl.before(metaEl); else barEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '语文·初中｜统编版七至九年级写作单元 · 文章结构与提纲',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条 + 引导语（置于树按钮上方），小结浮层按钮唤出
-  const teach = document.createElement('div');
-  teach.className = 'es-teach';
-  teach.innerHTML =
-    '<div class="es-tsteps">' +
-    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`).join('') +
-    '<button class="btn es-sumbtn" id="es-sumbtn" type="button">小结</button>' +
-    '</div>' +
-    STEPS.map((s, i) => `<span data-hv-guide class="es-tguide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`).join('');
-  document.querySelector('.es-wrap').prepend(teach);
 
-  // display 只写在行内（类里不写 none），切换 '' / 'none' 两个方向都可靠
-  const panelEl = document.createElement('div');
-  panelEl.dataset.hvSummary = '';
-  panelEl.className = 'es-panel';
-  panelEl.textContent = SUMMARY;
-  panelEl.style.display = 'none';
-  document.body.appendChild(panelEl);
-
-  teach.querySelector('#es-sumbtn').addEventListener('click', () => {
-    panelEl.style.display = panelEl.style.display === 'none' ? '' : 'none';
-  });
-  teach.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-}
 
 // 自测断言：逐个点击环节，验证场景真的切到预设状态（哪棵树、展开几个一级分支、选中节点）
 function runSelfChecks() {
@@ -246,6 +221,7 @@ function runSelfChecks() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage) {
     const style = document.createElement('style');
     style.textContent = CSS;
@@ -275,7 +251,6 @@ init({
     stage.appendChild(wrap);
 
     // 初始状态由教学环节 1 落定（须在 treeBox 就绪之后）
-    buildTeachingPanel();
     setStep(0);
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 

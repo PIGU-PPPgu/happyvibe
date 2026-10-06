@@ -31,7 +31,7 @@ function palette() {
   return {
     bg: css('--bg', '#150e22'), text: css('--text', '#f2ecf8'), muted: css('--muted', '#a99cc0'),
     line: css('--line', 'rgba(180,130,210,.16)'), panel: css('--panel', '#1e1433'),
-    gold: css('--gold', '#feb300'),
+    gold: css('--gold', '#E8B04B'),
   };
 }
 function planeDef() {
@@ -470,50 +470,14 @@ function positionShape() {
   if (shape && teachPanel) shape.style.top = `${teachPanel.offsetTop + teachPanel.offsetHeight + 12}px`;
 }
 
-function buildTeachingPanel() {
-  const hintEl = document.getElementById('hint');
-  if (hintEl) {
-    const metaEl = document.createElement('span');
-    metaEl.dataset.hvMeta = '';
-    metaEl.textContent = META_TEXT;
-    metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
-    hintEl.before(metaEl);
-  }
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '数学·高一｜人教A版必修第二册第八章 · 截面',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  teachPanel = document.createElement('div');
-  teachPanel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;flex-direction:column;gap:6px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)';
-  const row = document.createElement('div');
-  row.style.cssText = 'display:flex;align-items:center;gap:10px;flex-wrap:wrap';
-  row.innerHTML =
-    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`).join('') +
-    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  const guideRow = document.createElement('div');
-  guideRow.style.cssText = 'display:flex;align-items:baseline;gap:10px;flex-wrap:wrap';
-  guideRow.innerHTML = STEPS.map(
-    (s, i) => `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-  ).join('');
-  teachPanel.appendChild(row);
-  teachPanel.appendChild(guideRow);
-  document.body.appendChild(teachPanel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:150px;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  teachPanel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  teachPanel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-  positionShape();
-}
 
 // 自测断言：每个环节预设的截面顶点必须全是有限数，且形状分类与预期一致
 function runSelfChecks() {
@@ -530,6 +494,7 @@ function runSelfChecks() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -557,8 +522,6 @@ init({
     chip.renderOrder = 10;
     scene.add(chip);
     updateScene();
-
-    buildTeachingPanel();
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖拽旋转 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道）

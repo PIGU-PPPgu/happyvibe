@@ -2,15 +2,15 @@ import { init } from '../../_shared/runtime.mjs';
 import * as THREE from 'three';
 
 // 长方体表面积/体积：滑杆改长宽高，展开滑杆摊平六面，算式面板与 3D 面颜色联动
-// 色板来自 skills/teaching-interactives/SKILL.md：金 #FEB300 紫 #A63D97 蓝 #4FC3F7（对面同色）
-const BLUE = 0x4fc3f7;
+// 色板来自 skills/teaching-interactives/SKILL.md：金 #E8B04B 紫 #A66BA6 蓝 #6FA8C9（对面同色）
+const BLUE = 0x6fa8c9;
 const CW = 360, CH = 220; // 标注贴片画布尺寸
 
 const FACES = [
-  { id: 'top', name: '上面', terms: '长×宽', color: 0xfeb300 },
-  { id: 'bottom', name: '下面', terms: '长×宽', color: 0xfeb300 },
-  { id: 'front', name: '前面', terms: '长×高', color: 0xa63d97 },
-  { id: 'back', name: '后面', terms: '长×高', color: 0xa63d97 },
+  { id: 'top', name: '上面', terms: '长×宽', color: 0xe8b04b },
+  { id: 'bottom', name: '下面', terms: '长×宽', color: 0xe8b04b },
+  { id: 'front', name: '前面', terms: '长×高', color: 0xa66ba6 },
+  { id: 'back', name: '后面', terms: '长×高', color: 0xa66ba6 },
   { id: 'right', name: '右面', terms: '宽×高', color: BLUE },
   { id: 'left', name: '左面', terms: '宽×高', color: BLUE },
 ];
@@ -242,20 +242,20 @@ function renderPanel() {
   const cube = a === b && b === h;
   const p = ['<div class="sec">表面积 S</div>'];
   if (cube) {
-    p.push(`<div class="row" data-pair="all"><i class="sw" style="background:#FEB300"></i><span>六个面都是 ${a}×${a}</span></div>`);
+    p.push(`<div class="row" data-pair="all"><i class="sw" style="background:#E8B04B"></i><span>六个面都是 ${a}×${a}</span></div>`);
     p.push(`<div class="tot">S = 6×${a}×${a} = ${6 * a * a} 平方厘米</div>`);
   } else {
-    p.push(`<div class="row" data-pair="tb"><i class="sw" style="background:#FEB300"></i><span>上下 2×(长×宽) = 2×(${a}×${b}) = ${2 * a * b}</span></div>`);
-    p.push(`<div class="row" data-pair="fb"><i class="sw" style="background:#A63D97"></i><span>前后 2×(长×高) = 2×(${a}×${h}) = ${2 * a * h}</span></div>`);
-    p.push(`<div class="row" data-pair="lr"><i class="sw" style="background:#4FC3F7"></i><span>左右 2×(宽×高) = 2×(${b}×${h}) = ${2 * b * h}</span></div>`);
+    p.push(`<div class="row" data-pair="tb"><i class="sw" style="background:#E8B04B"></i><span>上下 2×(长×宽) = 2×(${a}×${b}) = ${2 * a * b}</span></div>`);
+    p.push(`<div class="row" data-pair="fb"><i class="sw" style="background:#A66BA6"></i><span>前后 2×(长×高) = 2×(${a}×${h}) = ${2 * a * h}</span></div>`);
+    p.push(`<div class="row" data-pair="lr"><i class="sw" style="background:#6FA8C9"></i><span>左右 2×(宽×高) = 2×(${b}×${h}) = ${2 * b * h}</span></div>`);
     p.push(`<div class="tot">S = ${2 * a * b} + ${2 * a * h} + ${2 * b * h} = ${2 * (a * b + a * h + b * h)} 平方厘米</div>`);
   }
   p.push('<div class="sec">体积 V</div>');
   if (cube) {
-    p.push(`<div class="row" data-pair="all"><i class="sw" style="background:#4FC3F7"></i><span>棱长 ${a}</span></div>`);
+    p.push(`<div class="row" data-pair="all"><i class="sw" style="background:#6FA8C9"></i><span>棱长 ${a}</span></div>`);
     p.push(`<div class="tot">V = ${a}×${a}×${a} = ${a * a * a} 立方厘米</div>`);
   } else {
-    p.push(`<div class="row" data-pair="tb"><i class="sw" style="background:#FEB300"></i><span>底面 长×宽 = ${a}×${b} = ${a * b}</span></div>`);
+    p.push(`<div class="row" data-pair="tb"><i class="sw" style="background:#E8B04B"></i><span>底面 长×宽 = ${a}×${b} = ${a * b}</span></div>`);
     p.push(`<div class="tot">V = 底面积×高 = ${a * b}×${h} = ${a * b * h} 立方厘米</div>`);
   }
   p.push('<div class="unit">单位：厘米</div>');
@@ -406,47 +406,14 @@ function setStep(i) {
   document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '数学·五年级｜人教版五下 · 长方体和正方体';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '数学·五年级｜人教版五下 · 长方体和正方体',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  const st = document.createElement('style');
-  st.textContent = [
-    '#teach{position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}',
-    '#teach .btn{font-size:15px;padding:7px 16px}',
-    '#teach .btn[aria-pressed="true"]{border-color:var(--gold);background:var(--panel2)}',
-    '#teach [data-hv-guide]{flex:1 1 100%;font-size:15px;line-height:1.6;color:var(--text)}',
-    '#hvsum{position:fixed;left:14px;top:176px;z-index:16;max-width:min(560px,46vw);padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.8;display:none}',
-    '@media (max-width:760px){#hvsum{right:14px;max-width:none;top:120px}}',
-  ].join('');
-  document.head.appendChild(st);
 
-  // 环节条：按钮一行，引导语整行铺在其下
-  const panel = document.createElement('div');
-  panel.id = 'teach';
-  panel.innerHTML =
-    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`).join('') +
-    '<button class="btn" id="hvsum-btn" type="button" style="margin-left:auto">小结</button>' +
-    STEPS.map((s, i) => `<span data-hv-guide${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`).join('');
-  document.body.appendChild(panel);
-
-  const summaryEl = document.createElement('div');
-  summaryEl.id = 'hvsum';
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#hvsum-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-}
 
 // 自测：折叠态包围盒=长方体尺寸；摊平态六面共面且外扩尺寸符合铰链布局；正方体面板公式正确
 function runSelfChecks() {
@@ -480,6 +447,7 @@ function runSelfChecks() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -500,7 +468,6 @@ init({
     buildUI(stage);
     build();
     renderPanel();
-    buildTeachingPanel();
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖拽旋转 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道）

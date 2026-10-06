@@ -52,17 +52,17 @@ const QIN_FINAL = [...QIN_N, ...COAST.slice().reverse(), ...QIN_W];
 
 // 七雄（数组顺序即绘制顺序，灭亡顺序见 KILL_STEP；capDir 控制都城名排在圆点左/右侧）
 const STATES = [
-  { id: 'chu', name: '楚', color: '#66d9a8', cap: [116.8, 32.6, '寿春'], capDir: 'right', label: [112.4, 30.3],
+  { id: 'chu', name: '楚', color: '#7FBF9E', cap: [116.8, 32.6, '寿春'], capDir: 'right', label: [112.4, 30.3],
     poly: [[107.1, 31.7], [108.2, 32.3], [109.2, 33.0], [110.8, 33.3], [112.4, 33.4], [113.9, 33.4], [115.1, 33.0], [116.4, 32.5], [117.7, 33.1], [118.6, 34.3], [120.0, 34.3], [120.5, 33.1], [121.9, 31.4], [121.0, 30.4], [121.7, 28.7], [120.6, 27.4], [118.9, 26.2], [116.9, 25.0], [114.5, 24.6], [111.8, 24.5], [110.0, 25.2], [109.3, 26.9], [108.3, 28.6], [107.7, 30.0], [106.8, 30.8]] },
   { id: 'qi', name: '齐', color: '#7fd4e8', cap: [118.3, 36.8, '临淄'], capDir: 'right', label: [119.0, 36.2],
     poly: [[116.4, 34.9], [117.8, 34.6], [119.0, 34.7], [119.8, 35.4], [120.9, 36.3], [122.1, 36.9], [122.6, 37.3], [121.4, 37.6], [120.6, 37.85], [119.2, 37.4], [117.7, 37.5], [116.8, 37.1], [116.2, 36.3]] },
   { id: 'yan', name: '燕', color: '#f2789f', cap: [116.4, 39.9, '蓟'], capDir: 'right', label: [119.9, 41.5],
     poly: [[114.9, 39.4], [116.4, 39.5], [117.8, 39.9], [119.2, 40.4], [120.8, 40.6], [122.6, 40.9], [124.5, 40.7], [125.4, 41.7], [124.2, 42.5], [121.5, 42.9], [118.5, 42.8], [116.2, 42.2], [115.2, 41.2], [114.7, 40.3]] },
-  { id: 'zhao', name: '赵', color: '#9d8cff', cap: [114.5, 36.6, '邯郸'], capDir: 'right', label: [114.7, 38.5],
+  { id: 'zhao', name: '赵', color: '#9D8FD1', cap: [114.5, 36.6, '邯郸'], capDir: 'right', label: [114.7, 38.5],
     poly: [[110.8, 38.6], [111.9, 40.2], [113.7, 40.5], [115.2, 39.9], [116.2, 39.2], [116.0, 38.1], [115.1, 37.2], [114.4, 36.5], [113.8, 36.4], [114.0, 37.6], [112.4, 38.0], [110.9, 37.5]] },
-  { id: 'wei', name: '魏', color: '#4fc3f7', cap: [114.3, 34.8, '大梁'], capDir: 'right', label: [111.5, 35.5],
+  { id: 'wei', name: '魏', color: '#6FA8C9', cap: [114.3, 34.8, '大梁'], capDir: 'right', label: [111.5, 35.5],
     poly: [[110.7, 34.6], [110.8, 36.1], [112.0, 37.2], [113.5, 36.9], [114.0, 36.35], [115.7, 35.9], [116.5, 35.1], [116.3, 34.3], [114.7, 33.9], [114.05, 34.95], [113.0, 35.9], [111.9, 35.4], [112.0, 34.8]] },
-  { id: 'qin', name: '秦', color: '#feb300', cap: [108.7, 34.35, '咸阳'], capDir: 'right', label: [106.6, 33.2],
+  { id: 'qin', name: '秦', color: '#E8B04B', cap: [108.7, 34.35, '咸阳'], capDir: 'right', label: [106.6, 33.2],
     poly: [[103.6, 34.9], [103.7, 33.2], [104.6, 31.6], [106.5, 30.7], [108.4, 31.3], [108.6, 32.4], [109.6, 33.2], [110.5, 34.1], [110.6, 35.1], [110.4, 36.6], [109.0, 37.9], [107.2, 38.3], [105.7, 37.1], [104.1, 35.7]] },
   { id: 'han', name: '韩', color: '#ef7d57', cap: [113.73, 34.4, '新郑'], capDir: 'left', label: [112.5, 34.7],
     poly: [[111.8, 34.0], [112.0, 34.8], [111.9, 35.4], [113.0, 35.9], [113.9, 35.7], [114.05, 34.95], [113.7, 33.9], [112.6, 33.8]] },
@@ -121,7 +121,7 @@ function theme() {
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
   return {
     bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'),
-    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'),
+    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#E8B04B'),
     panel: v('--panel', '#1e1433'), panel2: v('--panel2', '#271a42'),
   };
 }
@@ -256,7 +256,7 @@ function draw() {
   ctx.clearRect(0, 0, W, H);
 
   // 海洋
-  ctx.fillStyle = mix(th.bg, '#4fc3f7', 0.16);
+  ctx.fillStyle = mix(th.bg, '#6FA8C9', 0.16);
   ctx.fillRect(0, 0, W, H);
 
   // 大陆（其他地区）+ 海岸线
@@ -572,55 +572,17 @@ function placeTeachBar() {
   teachBarEl.style.top = bar.offsetHeight + 2 + 'px';
   if (sumEl) sumEl.style.top = teachBarEl.offsetTop + teachBarEl.offsetHeight + 8 + 'px';
 }
-function buildTeachingPanel() {
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '历史·七年级｜统编版七上 · 第9课 秦统一中国';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '历史·七年级｜统编版七上 · 第9课 秦统一中国',
+  steps: TEACH.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => goStep(TEACH[i].mapStep, true) })),
+  summary: SUMMARY,
+};
 
-  const bar = document.createElement('div');
-  bar.style.cssText =
-    'position:fixed;top:58px;left:0;right:0;z-index:9;display:flex;align-items:center;gap:8px;' +
-    'padding:6px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  bar.innerHTML =
-    TEACH.map((s, i) =>
-      `<button class="btn" data-hv-step type="button" aria-pressed="${i === 0}" style="font-size:15px;padding:6px 12px;white-space:nowrap">${i + 1}. ${s.name}</button>`
-    ).join('') +
-    TEACH.map((s, i) =>
-      `<span data-hv-guide style="flex:1;min-width:240px;font-size:15px;color:var(--text);line-height:1.5;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-    ).join('') +
-    '<button class="btn" id="hv-sum-btn" type="button" style="margin-left:auto;white-space:nowrap">小结</button>';
-  document.body.appendChild(bar);
-  teachBarEl = bar;
 
-  const el = document.createElement('div');
-  el.dataset.hvSummary = '';
-  el.textContent = SUMMARY;
-  el.style.cssText =
-    'position:fixed;top:110px;left:50%;transform:translateX(-50%);z-index:20;max-width:600px;margin:0 12px;' +
-    'padding:14px 18px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:15px;line-height:1.8;display:none';
-  document.body.appendChild(el);
-  sumEl = el;
-  placeTeachBar();
-
-  const steps = [...bar.querySelectorAll('[data-hv-step]')];
-  const guides = [...bar.querySelectorAll('[data-hv-guide]')];
-  const setTeach = (i) => {
-    goStep(TEACH[i].mapStep);
-    steps.forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
-    guides.forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
-  };
-  steps.forEach((el, i) => el.addEventListener('click', () => setTeach(i)));
-  bar.querySelector('#hv-sum-btn').addEventListener('click', () => {
-    sumEl.style.display = sumEl.style.display === 'none' ? '' : 'none';
-  });
-  setTeach(0);
-}
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
@@ -628,7 +590,6 @@ init({
     ctx = canvas.getContext('2d');
 
     buildPanel(stage);
-    buildTeachingPanel();
 
     const resize = () => {
       dpr = Math.min(devicePixelRatio || 1, 2);

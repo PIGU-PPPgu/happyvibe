@@ -2,7 +2,7 @@ import { init } from '../../_shared/runtime.mjs';
 
 // 单位圆与三角函数：拖动圆上动点或播放扫角，投影线段与右侧图像同步描点；特殊角吸附显示根式
 // 颜色读 CSS 变量：金 var(--gold) sin，紫 var(--purple) cos，蓝为站内色板常量 tan
-const BLUE = '#4FC3F7';
+const BLUE = '#6FA8C9';
 
 let cv, ctx, stageEl, W = 0, H = 0;
 let theta = 60;          // 角度（吸附后为整数）
@@ -17,7 +17,7 @@ function palette() {
   return {
     bg: css('--bg', '#150e22'), text: css('--text', '#f2ecf8'), muted: css('--muted', '#a99cc0'),
     line: css('--line', 'rgba(180,130,210,.16)'), panel: css('--panel', '#1e1433'),
-    gold: css('--gold', '#feb300'), purple: css('--purple', '#a63d97'),
+    gold: css('--gold', '#E8B04B'), purple: css('--purple', '#A66BA6'),
   };
 }
 
@@ -369,7 +369,7 @@ const STYLE = `
 #vals .val{font-size:19px;font-weight:600;font-family:Georgia,serif}
 #vals .gold{color:var(--gold)}
 #vals .purple{color:var(--purple)}
-#vals .blue{color:#4FC3F7}
+#vals .blue{color:#6FA8C9}
 .ops{display:flex;gap:8px}
 .ops .btn{flex:1}
 .tip{font-size:15px;color:var(--muted)}
@@ -462,45 +462,14 @@ function setStep(i) {
   });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '数学·高中一年级｜人教A版必修第一册第五章 · 三角函数的概念与图像';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '数学·高中一年级｜人教A版必修第一册第五章 · 三角函数的概念与图像',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节导航 + 引导语 + 小结
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  const stepBtns = STEPS.map(
-    (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
-  ).join('');
-  const guides = STEPS.map(
-    (s, i) =>
-      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-  ).join('');
-  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--line-gold,var(--line));border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-}
 
 // 自测断言：特殊角精确值、诱导对称性、环节切换真的改状态（比较前判有限性）
 function runSelfChecks() {
@@ -528,6 +497,7 @@ function resize() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     stageEl = stage;
     cv = document.createElement('canvas');
@@ -538,7 +508,6 @@ init({
     buildUI(stage);
     renderPanel();
     resize();
-    buildTeachingPanel();
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖动圆上动点（鼠标与触摸统一 pointer 通道）

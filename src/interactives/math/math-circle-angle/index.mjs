@@ -3,7 +3,7 @@ import { init } from '../../_shared/runtime.mjs';
 // 圆周角动态演示：拖 A、B 定弧，拖 P、Q 沿圆移动
 // 同弧上 ∠APB = ∠AQB = 圆心角一半；P、Q 异弧时两角互补；AB 为直径时恒 90°
 // 颜色读 CSS 变量：金 var(--gold) P 与所对弧，紫 var(--purple) 圆心角，蓝为站内色板常量
-const BLUE = '#4FC3F7';
+const BLUE = '#6FA8C9';
 
 let cv, ctx, stageEl, W = 0, H = 0;
 const pts = { A: 190, B: 350, P: 80, Q: 120 }; // 圆上角度（数学角，逆时针，度）
@@ -16,7 +16,7 @@ function palette() {
   return {
     bg: css('--bg', '#150e22'), text: css('--text', '#f2ecf8'), muted: css('--muted', '#a99cc0'),
     line: css('--line', 'rgba(180,130,210,.16)'), panel: css('--panel', '#1e1433'),
-    gold: css('--gold', '#feb300'), purple: css('--purple', '#a63d97'),
+    gold: css('--gold', '#E8B04B'), purple: css('--purple', '#A66BA6'),
   };
 }
 
@@ -221,20 +221,12 @@ function setStep(i) {
 }
 
 // 定位行进顶栏（提示语过长时省略号收缩，窄屏隐藏提示语、缩小定位行）
-function buildTeachingPanel() {
-  const fit = document.createElement('style');
-  fit.textContent = [
-    '#bar #hint{min-width:0;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
-    '@media (max-width:900px){#bar h1{font-size:17px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}',
-    '@media (max-width:760px){#bar #hint{display:none}[data-hv-meta]{font-size:12px}}',
-  ].join('');
-  document.head.appendChild(fit);
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = META;
-  metaEl.style.cssText = 'color:var(--gold);font-size:13px;white-space:nowrap';
-  document.getElementById('hint').before(metaEl);
-}
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: META,
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
 // ---------- UI ----------
 const STYLE = `
@@ -246,7 +238,7 @@ const STYLE = `
 #hvsum{font-size:14px;line-height:1.75;color:var(--text);padding:10px 12px;background:var(--panel2);border:1px solid var(--gold);border-radius:8px;max-height:42vh;overflow:auto}
 #angles{display:flex;flex-direction:column;gap:6px;font-size:19px;font-weight:700;font-family:Georgia,'Times New Roman',serif}
 #angles .gold{color:var(--gold)}
-#angles .blue{color:#4FC3F7}
+#angles .blue{color:#6FA8C9}
 #angles .purple{color:var(--purple)}
 #angles .note{font-size:15px;font-weight:400;color:var(--muted);font-family:"Noto Sans SC","PingFang SC",sans-serif}
 #rel{font-size:17px;font-weight:600;text-align:center;padding:6px;background:var(--panel2);border-radius:8px;font-family:Georgia,serif}
@@ -264,10 +256,6 @@ function buildUI(stage) {
   const panel = document.createElement('div');
   panel.id = 'panel';
   panel.innerHTML = [
-    '<div class="steps">' +
-    STEPS.map((t, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${t.name}</button>`).join('') +
-    '</div>',
-    ...STEPS.map((t, i) => `<span class="guide" data-hv-guide${i ? ' style="display:none"' : ''}>${t.guide}</span>`),
     '<div id="angles"></div>',
     '<div id="rel"></div>',
     '<div id="concl"></div>',
@@ -275,12 +263,9 @@ function buildUI(stage) {
     '<div class="btns">',
     '<button class="btn" id="dia" type="button" aria-label="AB 设为直径">直径</button>',
     '<button class="btn" id="reset" type="button" aria-label="复位">复位</button>',
-    '<button class="btn" id="summary" type="button" aria-label="知识小结">小结</button>',
     '</div>',
-    `<div id="hvsum" data-hv-summary style="display:none">${SUMMARY}</div>`,
   ].join('');
   stage.appendChild(panel);
-  buildTeachingPanel();
   panel.querySelector('#dia').addEventListener('click', () => {
     pts.A = 180; pts.B = 0;
     renderPanel(); draw();
@@ -289,12 +274,6 @@ function buildUI(stage) {
     Object.assign(pts, { A: 190, B: 350, P: 80, Q: 120 });
     renderPanel(); draw();
   });
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#summary').addEventListener('click', () => {
-    const el = panel.querySelector('#hvsum');
-    el.style.display = el.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
 }
 
 // 自检：逐环节核对预设的几何关系——同弧两圆周角相等且为圆心角一半、直径所对圆周角 90°（比较前先判有限性）
@@ -336,6 +315,7 @@ function resize() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     stageEl = stage;
     cv = document.createElement('canvas');

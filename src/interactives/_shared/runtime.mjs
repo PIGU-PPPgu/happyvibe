@@ -35,12 +35,14 @@ export function init(opts) {
     const steps = [...document.querySelectorAll('[data-hv-step]')];
     const guide = txt('#guide');
     const summary = txt('#summary');
+    // 「合计」语义：面板迁移后 DOM 只含激活环节的引导语，从 teaching 配置取全量求和
+    const allGuides = teach && teach.steps ? teach.steps.map((s) => s.guide || '').join('') : guide;
     return {
       metaChars: txt('#meta').length,
       steps: steps.length,
       stepNames: steps.slice(0, 6).map((s) => s.textContent.trim()),
-      guideCount: guide ? 1 : 0,
-      guideChars: guide.length,
+      guideCount: steps.length ? 1 : 0,
+      guideChars: allGuides.length,
       summaryChars: summary.length,
     };
   }

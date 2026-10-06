@@ -2,7 +2,7 @@ import { init } from '../../_shared/runtime.mjs';
 
 // 一次函数 / 反比例函数图像实验室：k、b 滑杆联动图像、坐标轴交点与性质表
 // 曲线颜色读 CSS 变量：金 var(--gold) 一次函数，紫 var(--purple) 反比例，蓝为站内色板常量
-const BLUE = '#4FC3F7';
+const BLUE = '#6FA8C9';
 
 let cv, ctx, stageEl, W = 0, H = 0;
 let ui = null; // 控制面板元素引用（sk/sb/vk/vb/sync），供教学环节预设复用
@@ -16,7 +16,7 @@ function palette() {
   return {
     bg: css('--bg', '#150e22'), text: css('--text', '#f2ecf8'), muted: css('--muted', '#a99cc0'),
     line: css('--line', 'rgba(180,130,210,.16)'), panel: css('--panel', '#1e1433'),
-    gold: css('--gold', '#feb300'), purple: css('--purple', '#a63d97'),
+    gold: css('--gold', '#E8B04B'), purple: css('--purple', '#A66BA6'),
   };
 }
 
@@ -336,59 +336,19 @@ const SUMMARY =
   '反比例函数 y = k/x（k ≠ 0）的图像是双曲线：k > 0 时两支分别在第一、三象限，k < 0 时在第二、四象限；' +
   'k > 0 时每一支上 y 随 x 增大而减小，k < 0 时每一支上 y 随 x 增大而增大；k = 0 时 y = k/x 无意义，没有图像。';
 
-function setStep(i) {
+function applyStep(i) {
   const s = STEPS[i];
   state.linK = s.k; state.linB = s.b; state.invK = s.invK;
   setType(s.type); // 同步类型按钮、滑杆量程与数值、解析式、性质表
   resetView();
-  document.querySelectorAll('[data-hv-step]').forEach((el, kk) => el.setAttribute('aria-pressed', String(kk === i)));
-  document.querySelectorAll('[data-hv-guide]').forEach((el, kk) => { el.style.display = kk === i ? '' : 'none'; });
 }
 
-function buildTeachingPanel() {
-  // 顶栏排布兜底：定位行较长时提示语省略号收缩，窄屏隐藏提示语
-  const fit = document.createElement('style');
-  fit.textContent = [
-    '#bar #hint{min-width:0;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
-    '@media (max-width:900px){#bar h1{font-size:17px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}',
-    '@media (max-width:760px){#bar #hint{display:none}[data-hv-meta]{font-size:12px}}',
-  ].join('');
-  document.head.appendChild(fit);
-
-  // 定位行（标题右侧）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '数学·八年级｜人教版八下第十九章《一次函数》· 图像与性质';
-  metaEl.style.cssText = 'color:var(--gold);font-size:13px;white-space:nowrap';
-  hintEl.before(metaEl);
-
-  // 环节条（顶栏下方）+ 引导语 + 小结按钮
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  panel.innerHTML =
-    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`).join('') +
-    STEPS.map((s, i) => `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`).join('') +
-    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(panel);
-
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:116px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-}
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '数学·八年级｜人教版八下第十九章《一次函数》· 图像与性质',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => applyStep(i) })),
+  summary: SUMMARY,
+};
 
 // 自测断言：验证每个环节按钮真的把场景切到预设状态（解析式、滑杆、性质表联动）
 function runSelfChecks() {
@@ -398,21 +358,21 @@ function runSelfChecks() {
   const expect = ['y = 2x + 1', 'y = -2x + 1', 'y = 2x - 3', 'y = 6/x'];
   const bad = [];
   STEPS.forEach((s, i) => {
-    setStep(i);
+    applyStep(i);
     if (state.type !== s.type || formula() !== expect[i]) bad.push(`环节${i + 1}解析式=${formula()}`);
     const want = s.type === 'linear' ? s.k : s.invK;
     if (!Number.isFinite(+ui.sk.value) || +ui.sk.value !== want) bad.push(`环节${i + 1}滑杆=${ui.sk.value}≠${want}`);
   });
-  setStep(0);
+  applyStep(0);
   push('环节预设切换', bad.length === 0, bad.join(' ') || '四个环节的类型、解析式、k 滑杆均切换到位');
-  setStep(1);
+  applyStep(1);
   const p1 = document.getElementById('props').textContent;
   push('性质表联动(k<0)', p1.includes('减小') && p1.includes('(0, 1)'), p1.slice(0, 50));
-  setStep(3);
+  applyStep(3);
   state.invK = 0; ui.sync(); renderProps(); draw();
   const p3 = document.getElementById('props').textContent;
   push('反比例k=0无图像', p3.includes('无意义'), p3.slice(0, 30));
-  setStep(0);
+  applyStep(0);
 }
 
 function resize() {
@@ -428,6 +388,7 @@ function resize() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     stageEl = stage;
     cv = document.createElement('canvas');
@@ -438,7 +399,6 @@ init({
     buildUI(stage);
     renderProps();
     resize();
-    buildTeachingPanel();
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖拽平移 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道，缩放以指针为焦点）

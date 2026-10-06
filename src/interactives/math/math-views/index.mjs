@@ -2,11 +2,11 @@ import { init } from '../../_shared/runtime.mjs';
 import * as THREE from 'three';
 
 // 三视图与直观图：3D 几何体拖转，三个方向的彩色箭头对应三张视图卡片；卡片默认遮罩，点击揭晓
-// 色板来自 skills/teaching-interactives/SKILL.md：金 #FEB300 紫 #A63D97 蓝 #4FC3F7（方向色）
+// 色板来自 skills/teaching-interactives/SKILL.md：金 #E8B04B 紫 #A66BA6 蓝 #6FA8C9（方向色）
 const AXES = {
-  front: { color: 0xfeb300, css: '#FEB300', label: '正面', dir: new THREE.Vector3(0, 0, -1) },
-  left: { color: 0xa63d97, css: '#A63D97', label: '左面', dir: new THREE.Vector3(-1, 0, 0) },
-  top: { color: 0x4fc3f7, css: '#4FC3F7', label: '上面', dir: new THREE.Vector3(0, 1, 0) },
+  front: { color: 0xe8b04b, css: '#E8B04B', label: '正面', dir: new THREE.Vector3(0, 0, -1) },
+  left: { color: 0xa66ba6, css: '#A66BA6', label: '左面', dir: new THREE.Vector3(-1, 0, 0) },
+  top: { color: 0x6fa8c9, css: '#6FA8C9', label: '上面', dir: new THREE.Vector3(0, 1, 0) },
 };
 const ORDER = ['front', 'left', 'top'];
 
@@ -373,46 +373,14 @@ function setStep(i) {
   });
 }
 
-function buildTeachingPanel() {
-  // 定位行（顶栏提示前）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = '数学·七年级｜人教版七年级上册 · 第四章 几何图形初步 · 三视图';
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '数学·七年级｜人教版七年级上册 · 第四章 几何图形初步 · 三视图',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条 + 引导语 + 小结按钮（悬浮条在顶栏下方，右侧卡片面板已下移让位）
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  panel.innerHTML =
-    STEPS.map(
-      (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
-    ).join('') +
-    STEPS.map(
-      (s, i) =>
-        `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-    ).join('') +
-    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(panel);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:134px;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  panel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-}
 
 function vpSize() {
   const vp = document.getElementById('vp');
@@ -429,6 +397,7 @@ function updateCamera() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     buildUI(stage); // 先注入样式，#vp 才有布局尺寸
     const vp = document.createElement('div');
@@ -453,7 +422,6 @@ init({
     makeArrows();
     makeChips();
     switchSolid('cube');
-    buildTeachingPanel();
 
     // 拖拽旋转 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道）
     let dragging = false, px = 0, py = 0;

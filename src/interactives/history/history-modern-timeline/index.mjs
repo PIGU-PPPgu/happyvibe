@@ -4,8 +4,8 @@ import { init } from '../../_shared/runtime.mjs';
 const Y0 = 1840, Y1 = 1949;
 const LANES = [
   { name: '屈辱', sub: '列强侵略', color: '#e26a6a' },
-  { name: '探索', sub: '近代化探索', color: '#feb300' },
-  { name: '抗争', sub: '反抗与革命', color: '#66d9a8' },
+  { name: '探索', sub: '近代化探索', color: '#E8B04B' },
+  { name: '抗争', sub: '反抗与革命', color: '#7FBF9E' },
 ];
 
 const EVENTS = [
@@ -49,7 +49,7 @@ function theme() {
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
   return {
     bg: v('--bg', '#150e22'), text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'),
-    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#feb300'),
+    line: v('--line', 'rgba(180,130,210,.16)'), gold: v('--gold', '#E8B04B'),
     panel: v('--panel', '#1e1433'), panel2: v('--panel2', '#271a42'),
   };
 }
@@ -330,51 +330,14 @@ function runSelfChecks() {
   setTeachStep(0);
 }
 
-function buildTeachingPanel(stage) {
-  const panel = document.createElement('div');
-  panel.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = TEACH_META;
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
-  panel.appendChild(metaEl);
-  panel.insertAdjacentHTML(
-    'beforeend',
-    TEACH_STEPS.map(
-      (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false" style="font-size:14px;padding:6px 12px;white-space:nowrap">${i + 1}. ${s.name}</button>`
-    ).join('') +
-      TEACH_STEPS.map(
-        (s, i) => `<span data-hv-guide style="flex:1;min-width:240px;font-size:14px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-      ).join('') +
-      '<button class="btn" id="summary-btn" type="button" style="margin-left:auto;font-size:14px;padding:6px 12px">小结</button>'
-  );
-  document.body.appendChild(panel);
-  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setTeachStep(i)));
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '历史·八年级｜统编版八上第 1-8 单元 · 中国近代史大事年表',
+  steps: TEACH_STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setTeachStep(i) })),
+  summary: TEACH_SUMMARY,
+};
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = TEACH_SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:15px;line-height:1.9;display:none';
-  document.body.appendChild(summaryEl);
-  panel.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
 
-  // 画面让位：舞台顶部移到环节条之下，画布随之重排（面板换行时跟随）
-  const fit = () => {
-    const top = 56 + panel.offsetHeight + 6;
-    stage.style.top = top + 'px';
-    summaryEl.style.top = top + 10 + 'px';
-  };
-  fit();
-  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(fit).observe(panel);
-  setTeachStep(0);
-}
 
 function updatePanel() {
   if (sel >= 0) {
@@ -390,6 +353,7 @@ function updatePanel() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
@@ -418,7 +382,6 @@ init({
     resize();
     api.onResize = resize;
     api.onTheme = draw;
-    buildTeachingPanel(stage);
     resize(); // 环节条使舞台顶部下移，重算一次画布尺寸（后续换行由 ResizeObserver 链触发）
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 

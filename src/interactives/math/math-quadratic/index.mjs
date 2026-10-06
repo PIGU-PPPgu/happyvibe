@@ -2,7 +2,7 @@ import { init } from '../../_shared/runtime.mjs';
 
 // 二次函数的图像与系数：a、b、c 滑杆联动开口、对称轴、顶点、与 y 轴交点、判别式；面板给顶点式配方推导
 // 曲线颜色读 CSS 变量：金 var(--gold) 抛物线，紫 var(--purple) 对称轴，蓝为站内色板常量
-const BLUE = '#4FC3F7';
+const BLUE = '#6FA8C9';
 
 let cv, ctx, stageEl, W = 0, H = 0;
 const view = { cx: 0, cy: 0, span: 8 };
@@ -15,7 +15,7 @@ function palette() {
   return {
     bg: css('--bg', '#150e22'), text: css('--text', '#f2ecf8'), muted: css('--muted', '#a99cc0'),
     line: css('--line', 'rgba(180,130,210,.16)'), panel: css('--panel', '#1e1433'),
-    gold: css('--gold', '#feb300'), purple: css('--purple', '#a63d97'),
+    gold: css('--gold', '#E8B04B'), purple: css('--purple', '#A66BA6'),
   };
 }
 
@@ -328,43 +328,14 @@ function setStep(i) {
   document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
 }
 
-function buildTeachingPanel() {
-  // 定位行进顶栏（标题后）
-  const hintEl = document.getElementById('hint');
-  const metaEl = document.createElement('span');
-  metaEl.dataset.hvMeta = '';
-  metaEl.textContent = META;
-  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
-  hintEl.before(metaEl);
+// 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
+const TEACHING = {
+  meta: '数学·九年级｜人教版九上 · 二次函数的图像与系数',
+  steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, apply: () => setStep(i) })),
+  summary: SUMMARY,
+};
 
-  // 环节条：贴在顶栏下方，舞台随之下移，不遮公式框
-  const bar = document.createElement('div');
-  bar.style.cssText =
-    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
-    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
-  bar.innerHTML =
-    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`).join('') +
-    STEPS.map((s, i) =>
-      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
-    ).join('') +
-    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
-  document.body.appendChild(bar);
 
-  const summaryEl = document.createElement('div');
-  summaryEl.dataset.hvSummary = '';
-  summaryEl.textContent = SUMMARY;
-  summaryEl.style.cssText =
-    'position:fixed;top:124px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
-    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
-    'font-size:16px;line-height:1.8;display:none';
-  document.body.appendChild(summaryEl);
-
-  bar.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
-  bar.querySelector('#summary-btn').addEventListener('click', () => {
-    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
-  });
-  setStep(0);
-}
 
 // 自检：逐环节核对预设的解析结果（一般式/对称轴/顶点纵坐标/判别式），比较前先判有限性
 function runSelfChecks() {
@@ -398,6 +369,7 @@ function resize() {
 }
 
 init({
+  teaching: TEACHING,
   mount(stage, api) {
     stageEl = stage;
     cv = document.createElement('canvas');
@@ -406,7 +378,6 @@ init({
     ctx = cv.getContext('2d');
 
     buildUI(stage);
-    buildTeachingPanel();
     resize();
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
