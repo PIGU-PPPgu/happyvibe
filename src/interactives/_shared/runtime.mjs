@@ -1,24 +1,48 @@
-// 资源共享运行时：主题（跟随站内 hv-theme 键与 ?theme= 参数）、全屏、resize、自测
+// 资源共享运行时：主题、全屏、resize、教学面板（教研契约）、自测
 const SELFTEST = new URLSearchParams(location.search).has('selftest');
 
 export function init(opts) {
   const el = document.getElementById('stage');
   const param = new URLSearchParams(location.search).get('theme');
+  let theme = param === 'light' || param === 'dark' ? param : 'dark';
+  try {
+    const saved = localStorage.getItem('hv-theme');
+    if ((saved === 'light' || saved === 'dark') && !param) theme = saved;
+  } catch (e) {}
+  document.documentElement.dataset.theme = theme;
 
   if (SELFTEST) {
-    const report = { errors: [], checks: [], canvas: null };
-    window.addEventListener('error', (e) => report.errors.push(String(e.message).slice(0, 200)));
-    window.addEventListener('unhandledrejection', (e) => report.errors.push('rejection: ' + String(e.reason).slice(0, 200)));
+    const selfReport = { errors: [], checks: [], canvas: null, pedagogy: null };
+    window.addEventListener('error', (e) => selfReport.errors.push(String(e.message).slice(0, 200)));
+    window.addEventListener('unhandledrejection', (e) => selfReport.errors.push('rejection: ' + String(e.reason).slice(0, 200)));
     // 资源在 mount 过程中可通过 pushCheck 注入场景级断言
-    window.__hvPushCheck = (name, pass, detail) => report.checks.push({ name, pass, detail: String(detail ?? '') });
+    window.__hvPushCheck = (name, pass, detail) => selfReport.checks.push({ name, pass, detail: String(detail ?? '') });
     setTimeout(() => {
-      try { report.canvas = sampleCanvas(); } catch (e) { report.errors.push('canvas-sample: ' + e.message); }
-      try { report.pedagogy = samplePedagogy(); } catch (e) { report.errors.push('pedagogy-sample: ' + e.message); }
+      try { selfReport.canvas = sampleCanvas(); } catch (e) { selfReport.errors.push('canvas-sample: ' + e.message); }
+      try { selfReport.pedagogy = samplePedagogy(); } catch (e) { selfReport.errors.push('pedagogy-sample: ' + e.message); }
       const pre = document.createElement('pre');
       pre.id = 'hv-selftest';
-      pre.textContent = '__HV__' + JSON.stringify(report) + '__HV__';
+      pre.textContent = '__HV__' + JSON.stringify(selfReport) + '__HV__';
       document.body.appendChild(pre);
     }, 2500);
+  }
+
+  function samplePedagogy() {
+    const txt = (sel) => {
+      const el = document.querySelector(sel);
+      return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : '';
+    };
+    const steps = [...document.querySelectorAll('[data-hv-step]')];
+    const guide = txt('#guide');
+    const summary = txt('#summary');
+    return {
+      metaChars: txt('#meta').length,
+      steps: steps.length,
+      stepNames: steps.slice(0, 6).map((s) => s.textContent.trim()),
+      guideCount: guide ? 1 : 0,
+      guideChars: guide.length,
+      summaryChars: summary.length,
+    };
   }
 
   function sampleCanvas() {
@@ -29,7 +53,7 @@ export function init(opts) {
     const c = off.getContext('2d');
     c.drawImage(cv, 0, 0, off.width, off.height);
     const d = c.getImageData(0, 0, off.width, off.height).data;
-    // 3×3 区域灰阶方差（内容覆盖度）+ 前景主色
+    // 3×3 区域灰阶方差（内容覆盖度）+ 前景主色 + 内容包围盒
     const regions = [];
     const colors = new Map();
     for (let ry = 0; ry < 3; ry++) {
@@ -56,7 +80,7 @@ export function init(opts) {
       for (let x = 0; x < off.width; x += 2) {
         const i = (y * off.width + x) * 4;
         const lum = (d[i] + d[i + 1] + d[i + 2]) / 3;
-        if (Math.abs(lum - bgLum / 1) > 25) {
+        if (Math.abs(lum - bgLum) > 14) {
           hit++;
           const fx = x / off.width, fy = y / off.height;
           if (fx < x0) x0 = fx;
@@ -70,28 +94,42 @@ export function init(opts) {
     return { regions, topColors: top, bbox };
   }
   function round2(v) { return Math.round(v * 100) / 100; }
-  // 教研员契约采集：定位行 / 教学环节 / 每环节引导语 / 知识小结
-  function samplePedagogy() {
-    const txt = (el) => (el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : '');
-    const meta = txt(document.querySelector('[data-hv-meta]'));
-    const steps = [...document.querySelectorAll('[data-hv-step]')];
-    const guides = [...document.querySelectorAll('[data-hv-guide]')].map(txt).filter(Boolean);
-    const summary = [...document.querySelectorAll('[data-hv-summary]')].map(txt).join(' ');
-    return {
-      metaChars: meta.length,
-      steps: steps.length,
-      stepNames: steps.slice(0, 6).map(txt),
-      guideCount: guides.length,
-      guideChars: guides.join('').length,
-      summaryChars: summary.length,
-    };
+
+  // ---------- 教学面板（教研契约）：meta / 环节 / 引导 / 小结 ----------
+  const teach = opts.teaching;
+  if (teach && teach.steps && teach.steps.length) {
+    el.classList.remove('pad');
+    el.classList.add('pad2');
+    const metaEl = document.getElementById('meta');
+    metaEl.textContent = teach.meta || '';
+    const teachBar = document.getElementById('teach');
+    teachBar.hidden = false;
+    const stepsEl = document.getElementById('steps');
+    const guideEl = document.getElementById('guide');
+    const stepBtns = teach.steps.map((s, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn';
+      b.dataset.hvStep = '';
+      b.textContent = s.name;
+      b.addEventListener('click', () => setStep(i));
+      stepsEl.appendChild(b);
+      return b;
+    });
+    function setStep(i) {
+      stepBtns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+      guideEl.textContent = teach.steps[i].guide || '';
+      if (teach.steps[i].apply) teach.steps[i].apply();
+    }
+    // 首个环节的预设延迟到 mount 之后：资源场景对象在 mount 里才创建
+    window.__hvApplyStep0 = () => setStep(0);
+    const summaryEl = document.getElementById('summary');
+    summaryEl.textContent = teach.summary || '';
+    summaryEl.dataset.hvSummary = '';
+    document.getElementById('summary-btn').addEventListener('click', () => {
+      summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+    });
   }
-  let theme = param === 'light' || param === 'dark' ? param : 'dark';
-  try {
-    const saved = localStorage.getItem('hv-theme');
-    if ((saved === 'light' || saved === 'dark') && !param) theme = saved;
-  } catch (e) {}
-  document.documentElement.dataset.theme = theme;
 
   const api = { onTheme: null, onResize: null };
   document.getElementById('theme').addEventListener('click', () => {
@@ -110,5 +148,6 @@ export function init(opts) {
     new ResizeObserver(() => { if (api.onResize) api.onResize(); }).observe(el);
   }
   opts.mount(el, api);
+  if (window.__hvApplyStep0) window.__hvApplyStep0();
   return api;
 }

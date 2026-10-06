@@ -17,7 +17,7 @@ async function testOne(name) {
   try {
     const { stdout } = await run(
       CHROME,
-      ['--headless=new', '--disable-gpu-sandbox', '--no-sandbox', '--virtual-time-budget=8000', '--dump-dom', url],
+      ['--headless=new', '--disable-gpu-sandbox', '--no-sandbox', '--window-size=1280,800', '--virtual-time-budget=8000', '--dump-dom', url],
       { maxBuffer: 16 * 1024 * 1024, timeout: 90000 }
     );
     dom = stdout;
@@ -53,13 +53,13 @@ async function testOne(name) {
       .replace(/<[^>]+>/g, ' ');
     if (stageText.replace(/\s+/g, '').length < 60) problems.push('DOM 内容过少（<60 字符）');
   }
-  // 教研员契约：定位 / 环节 / 引导 / 小结（external 无产物不适用）
+  // 教研员契约：定位 / 环节 / 引导 / 小结（external 无产物不适用；引导语为单元素随环节切换，只查总量）
   const ped = r.pedagogy;
   if (ped) {
     if (ped.metaChars < 8) problems.push(`缺定位行 [data-hv-meta]（学科·年级 + 教材章节知识点，现 ${ped.metaChars} 字）`);
     if (ped.steps < 2) problems.push(`教学环节不足 [data-hv-step]（需 ≥2 个，如引入/探究/归纳，现 ${ped.steps} 个）`);
-    if (ped.guideCount < ped.steps || ped.guideChars < 60) {
-      problems.push(`引导语不足 [data-hv-guide]（每个环节需一句教师引导，合计 ≥60 字；现 ${ped.guideCount} 条 ${ped.guideChars} 字）`);
+    if (ped.guideChars < 60) {
+      problems.push(`引导语不足 [data-hv-guide]（环节引导话术合计 ≥60 字；现 ${ped.guideChars} 字）`);
     }
     if (ped.summaryChars < 30) problems.push(`缺知识小结 [data-hv-summary]（≥30 字结论，现 ${ped.summaryChars} 字）`);
   }
