@@ -1,4 +1,4 @@
-// 资源共享运行时：主题、全屏、resize、教学面板（教研契约）、自测
+// 资源共享运行时：主题、全屏、resize、教学面板（教研契约：定位/环节/引导/讲解/小结）、随堂检测、键盘翻环节、自测
 const SELFTEST = new URLSearchParams(location.search).has('selftest');
 
 export function init(opts) {
@@ -35,20 +35,25 @@ export function init(opts) {
     const steps = [...document.querySelectorAll('[data-hv-step]')];
     const guide = txt('#guide');
     const summary = txt('#summary');
-    // 「合计」语义：面板迁移后 DOM 只含激活环节的引导语，从 teaching 配置取全量求和
+    // 「合计」语义：面板 DOM 只含激活环节的引导语/讲解，从 teaching 配置取全量求和
     const allGuides = teach && teach.steps ? teach.steps.map((s) => s.guide || '').join('') : guide;
+    const allNotes = teach && teach.steps ? teach.steps.map((s) => s.note || '').join('') : '';
+    const quiz = teach && teach.quiz ? teach.quiz : null;
     return {
       metaChars: txt('#meta').length,
       steps: steps.length,
       stepNames: steps.slice(0, 6).map((s) => s.textContent.trim()),
       guideCount: steps.length ? 1 : 0,
       guideChars: allGuides.length,
+      noteChars: allNotes.length,
       summaryChars: summary.length,
+      quizCount: quiz ? quiz.length : 0,
+      quizChars: quiz ? quiz.map((q) => (q.q || '') + (q.why || '')).join('').length : 0,
     };
   }
 
   function sampleCanvas() {
-    const cv = [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height)[0];
+    const cv = [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * b.height)[0];
     if (!cv) return null;
     const off = document.createElement('canvas');
     off.width = 360; off.height = 225;
@@ -74,7 +79,7 @@ export function init(opts) {
       }
     }
     const top = [...colors.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6).map(([k, v]) => [k.toString(16), v]);
-    // 内容包围盒：与背景色亮度差 >25 的像素范围（占整幅比例）
+    // 内容包围盒：与背景色亮度差 >14 的像素范围（占整幅比例）
     const bgKey = [...colors.entries()].sort((a, b) => b[1] - a[1])[0][0];
     const bgLum = (((bgKey >> 10) & 31) * 8 + ((bgKey >> 5) & 31) * 8 + ((bgKey & 31) * 8)) / 3;
     let x0 = 1, y0 = 1, x1 = 0, y1 = 0, hit = 0;
@@ -97,17 +102,42 @@ export function init(opts) {
   }
   function round2(v) { return Math.round(v * 100) / 100; }
 
-  // ---------- 教学面板（教研契约）：meta / 环节 / 引导 / 小结 ----------
+  // ---------- 教学面板（教研契约）：定位 / 环节 / 引导 / 讲解 / 小结 / 检测 ----------
   const teach = opts.teaching;
+  const overlays = []; // Esc 逐个收起
+  function toggleOverlay(node) {
+    const open = node.style.display === 'none' || !node.style.display;
+    closeOverlays();
+    if (open) node.style.display = 'block';
+    return open;
+  }
+  function closeOverlays() {
+    for (const n of overlays) n.style.display = 'none';
+  }
+
   if (teach && teach.steps && teach.steps.length) {
     el.classList.remove('pad');
     el.classList.add('pad2');
     const metaEl = document.getElementById('meta');
     metaEl.textContent = teach.meta || '';
+    metaEl.dataset.hvMeta = '';
     const teachBar = document.getElementById('teach');
     teachBar.hidden = false;
     const stepsEl = document.getElementById('steps');
     const guideEl = document.getElementById('guide');
+    const progFill = document.querySelector('#prog i');
+
+    // 讲解弹层：每个环节一段知识讲解（WeduLab 章节内容的对应物）
+    const noteEl = document.getElementById('note');
+    const hasNotes = teach.steps.some((s) => s.note && String(s.note).trim());
+    const noteBtn = document.getElementById('note-btn');
+    if (hasNotes) {
+      noteEl.dataset.hvNote = '';
+      overlays.push(noteEl);
+      noteBtn.hidden = false;
+      noteBtn.addEventListener('click', () => toggleOverlay(noteEl));
+    }
+
     const stepBtns = teach.steps.map((s, i) => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -118,19 +148,124 @@ export function init(opts) {
       stepsEl.appendChild(b);
       return b;
     });
-    function setStep(i) {
-      stepBtns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
-      guideEl.textContent = teach.steps[i].guide || '';
-      if (teach.steps[i].apply) teach.steps[i].apply();
+    let cur = 0;
+    function setStep(i, keepOverlays) {
+      cur = Math.max(0, Math.min(teach.steps.length - 1, i));
+      stepBtns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === cur)));
+      guideEl.textContent = teach.steps[cur].guide || '';
+      if (hasNotes) noteEl.textContent = teach.steps[cur].note || '';
+      if (progFill) progFill.style.width = ((cur + 1) / teach.steps.length * 100) + '%';
+      if (!keepOverlays) closeOverlays();
+      if (teach.steps[cur].apply) teach.steps[cur].apply();
     }
     // 首个环节的预设延迟到 mount 之后：资源场景对象在 mount 里才创建
     window.__hvApplyStep0 = () => setStep(0);
     const summaryEl = document.getElementById('summary');
     summaryEl.textContent = teach.summary || '';
     summaryEl.dataset.hvSummary = '';
-    document.getElementById('summary-btn').addEventListener('click', () => {
-      summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+    overlays.push(summaryEl);
+    document.getElementById('summary-btn').addEventListener('click', () => toggleOverlay(summaryEl));
+
+    // 键盘 ←/→ 翻环节（投屏讲解）；Esc 收起浮层
+    window.addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      if (document.getElementById('quiz-wrap').style.display === 'flex' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
+      if (e.key === 'ArrowRight') setStep(cur + 1);
+      else if (e.key === 'ArrowLeft') setStep(cur - 1);
+      else if (e.key === 'Escape') closeOverlays();
     });
+
+    buildQuiz();
+  }
+
+  // ---------- 随堂检测：逐题作答 + 解析 + 得分 ----------
+  function buildQuiz() {
+    const quiz = teach && teach.quiz;
+    if (!quiz || !quiz.length) return;
+    const wrap = document.getElementById('quiz-wrap');
+    const prog = document.getElementById('quiz-prog');
+    const qEl = document.getElementById('quiz-q');
+    const optsEl = document.getElementById('quiz-opts');
+    const whyEl = document.getElementById('quiz-why');
+    const scoreEl = document.getElementById('quiz-score');
+    const nextBtn = document.getElementById('quiz-next');
+    const redoBtn = document.getElementById('quiz-redo');
+    overlays.push(wrap);
+    document.getElementById('quiz-btn').hidden = false;
+    document.getElementById('quiz-btn').addEventListener('click', () => {
+      const open = wrap.style.display !== 'flex';
+      closeOverlays();
+      if (open) wrap.style.display = 'flex';
+    });
+    document.getElementById('quiz-close').addEventListener('click', () => { wrap.style.display = 'none'; });
+    let idx = 0, score = 0;
+    const answered = new Array(quiz.length).fill(false);
+    function renderQ() {
+      const q = quiz[idx];
+      nextBtn.hidden = true;
+      redoBtn.hidden = true;
+      whyEl.style.display = 'none';
+      scoreEl.textContent = '';
+      prog.textContent = `第 ${idx + 1} / ${quiz.length} 题`;
+      qEl.textContent = q.q;
+      qEl.dataset.hvQ = '';
+      optsEl.textContent = '';
+      q.opts.forEach((opt, k) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'qopt';
+        b.textContent = String.fromCharCode(65 + k) + '. ' + opt;
+        b.addEventListener('click', () => {
+          if (answered[idx]) return;
+          answered[idx] = true;
+          const right = k === q.a;
+          if (right) score++;
+          [...optsEl.children].forEach((c, j) => {
+            c.disabled = true;
+            if (j === q.a) c.classList.add('ok');
+            else if (j === k) c.classList.add('no');
+          });
+          whyEl.textContent = q.why || '';
+          whyEl.style.display = 'block';
+          scoreEl.textContent = right ? '答对了' : '答错了';
+          if (idx < quiz.length - 1) nextBtn.hidden = false;
+          else {
+            redoBtn.hidden = false;
+            scoreEl.textContent = `共 ${score} / ${quiz.length} 题答对`;
+          }
+        });
+        optsEl.appendChild(b);
+      });
+    }
+    nextBtn.addEventListener('click', () => { idx++; renderQ(); });
+    redoBtn.addEventListener('click', () => {
+      idx = 0; score = 0;
+      answered.fill(false);
+      renderQ();
+    });
+    wrap.style.display = 'none';
+    renderQ();
+    // 配置级自检：题目结构合法（缺项在这里暴露，harness 收集）
+    if (SELFTEST && typeof window.__hvPushCheck === 'function') {
+      const bad = [];
+      quiz.forEach((q, i) => {
+        if (!q.q || !Array.isArray(q.opts) || q.opts.length < 2) bad.push(`第${i + 1}题题干或选项缺失`);
+        if (!Number.isInteger(q.a) || q.a < 0 || !q.opts || q.a >= q.opts.length) bad.push(`第${i + 1}题答案下标越界`);
+        if (!q.why || q.why.length < 10) bad.push(`第${i + 1}题解析不足10字`);
+      });
+      if (quiz.length < 3) bad.push(`仅 ${quiz.length} 题，少于 3 题`);
+      window.__hvPushCheck('quiz-valid', bad.length === 0, bad.join('；') || `${quiz.length} 题结构合法，均含题干、选项、答案与解析`);
+      // 场景级：模拟作答第 1 题，解析必须真的显示出来（视觉级回归防线）
+      wrap.style.display = 'flex';
+      optsEl.children[0].click();
+      const whyShown = getComputedStyle(whyEl).display !== 'none' && whyEl.getBoundingClientRect().height > 0;
+      const feedback = scoreEl.textContent || '';
+      const allDisabled = [...optsEl.children].every((c) => c.disabled);
+      wrap.style.display = 'none';
+      window.__hvPushCheck('quiz-answer-flow', whyShown && feedback.length > 0 && allDisabled,
+        `作答后解析${whyShown ? '已显示' : '未显示'}，反馈「${feedback.slice(0, 12)}」，选项${allDisabled ? '已锁定' : '未锁定'}`);
+    }
   }
 
   const api = { onTheme: null, onResize: null };
