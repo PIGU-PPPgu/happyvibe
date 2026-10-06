@@ -330,6 +330,124 @@ function updatePanel() {
   }
 }
 
+// 教研员契约：定位行 / 教学环节 / 引导语 / 知识小结。环节预设真实切换场景（缩放、视口、选中卡片、因果连线）
+const TEACH_META = '历史·九年级｜统编版九下第 3-4 单元 · 两次世界大战与凡尔赛-华盛顿体系';
+const TEACH_STEPS = [
+  {
+    name: '通览全局',
+    span: null,
+    sel: null,
+    guide: '先不点卡片，整体读图：三条泳道各对应哪段历史？第一次世界大战和第二次世界大战各自的起止年份，谁能直接说出来？两条战争带之间的金色方框，又代表什么？',
+  },
+  {
+    name: '战间期探因',
+    span: [1918.5, 1939.5],
+    sel: '巴黎和会',
+    guide: '画面已聚焦一战结束到大战爆发前：对照金色方框，巴黎和会与华盛顿会议各签了什么条约、合称什么体系？再沿金色虚线读因果——对德苛刻埋下复仇种子、危机助长法西斯、绥靖纵容侵略，怎样一步步把世界推向新的大战？',
+  },
+  {
+    name: '转折与结局',
+    span: [1941, 1946.5],
+    sel: '斯大林格勒保卫战',
+    guide: '画面已定位到二战后段：点开卡片核对，转折点是哪场战役？1942 年的《联合国家宣言》、1945 年的雅尔塔会议各起了什么作用？最后比一比：一战后的凡尔赛-华盛顿体系与二战后的联合国，在维护和平上有何不同？',
+  },
+];
+const TEACH_SUMMARY =
+  '两次世界大战时间线小结：一战（1914-1918）由萨拉热窝事件引发，1918 年以同盟国失败告终，战后经巴黎和会与华盛顿会议形成凡尔赛-华盛顿体系。1929-1933 年经济大危机沉重打击资本主义世界，德国、日本先后建立法西斯专政，绥靖政策纵容侵略，1939 年德国闪击波兰，第二次世界大战全面爆发。1942 年《联合国家宣言》签署，世界反法西斯同盟正式形成；1942-1943 年斯大林格勒保卫战成为二战的重要转折点。1945 年德国、日本相继投降，二战结束，同年 10 月联合国正式成立。';
+
+// 把 [a, b] 年份段铺满视口
+function focusYears(a, b) {
+  const vis = W - LABEL_W - PAD;
+  const base = (W - PAD * 2 - LABEL_W) / (Y1 - Y0);
+  if (!(vis > 0) || !(base > 0)) return;
+  view.z = clamp(vis / ((b - a) * base), 1, 14);
+  const pp = base * view.z;
+  view.off = clamp((a - Y0) * pp, 0, Math.max(0, (Y1 - Y0) * pp - vis));
+}
+
+function setTeachStep(i) {
+  const s = TEACH_STEPS[i];
+  showLinks = true;
+  const lb = document.getElementById('links');
+  if (lb) lb.textContent = '连线';
+  sel = s.sel ? EVENTS.findIndex((e) => e.t === s.sel) : -1;
+  if (s.span) focusYears(s.span[0], s.span[1]);
+  else { view.z = 1; view.off = 0; }
+  updatePanel();
+  draw();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+
+// 自测：环节按钮确实切到预设视图（缩放倍率、目标卡片在视口内且被选中）
+function runSelfChecks() {
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  const fin = Number.isFinite;
+  push('初始全览', view.z === 1 && view.off === 0 && sel === -1, `z=${view.z} off=${view.off} sel=${sel}`);
+  setTeachStep(1);
+  const x1 = sel >= 0 ? xOf(EVENTS[sel].y) : NaN;
+  push(
+    '战间期探因-聚焦并选中巴黎和会',
+    sel >= 0 && EVENTS[sel].t === '巴黎和会' && view.z > 1 && fin(x1) && x1 > LABEL_W && x1 < W,
+    `z=${view.z} sel=${sel >= 0 ? EVENTS[sel].t : '无'} x=${fin(x1) ? x1.toFixed(0) : 'NaN'} W=${W}`
+  );
+  setTeachStep(2);
+  const x2 = sel >= 0 ? xOf(EVENTS[sel].y) : NaN;
+  push(
+    '转折与结局-选中斯大林格勒保卫战',
+    sel >= 0 && EVENTS[sel].t === '斯大林格勒保卫战' && view.z > 1 && fin(x2) && x2 > LABEL_W && x2 < W,
+    `z=${view.z} sel=${sel >= 0 ? EVENTS[sel].t : '无'} x=${fin(x2) ? x2.toFixed(0) : 'NaN'} W=${W}`
+  );
+  setTeachStep(0);
+}
+
+function buildTeachingPanel(stage) {
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = TEACH_META;
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+  panel.appendChild(metaEl);
+  panel.insertAdjacentHTML(
+    'beforeend',
+    TEACH_STEPS.map(
+      (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false" style="font-size:14px;padding:6px 12px;white-space:nowrap">${i + 1}. ${s.name}</button>`
+    ).join('') +
+      TEACH_STEPS.map(
+        (s, i) => `<span data-hv-guide style="flex:1;min-width:240px;font-size:14px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+      ).join('') +
+      '<button class="btn" id="summary-btn" type="button" style="margin-left:auto;font-size:14px;padding:6px 12px">小结</button>'
+  );
+  document.body.appendChild(panel);
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setTeachStep(i)));
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = TEACH_SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:15px;line-height:1.9;display:none';
+  document.body.appendChild(summaryEl);
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+
+  // 画面让位：舞台顶部移到环节条之下，画布随之重排（面板换行时跟随）
+  const fit = () => {
+    const top = 56 + panel.offsetHeight + 6;
+    stage.style.top = top + 'px';
+    summaryEl.style.top = top + 10 + 'px';
+  };
+  fit();
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(fit).observe(panel);
+  setTeachStep(0);
+}
+
 init({
   mount(stage, api) {
     canvas = document.createElement('canvas');
@@ -357,6 +475,9 @@ init({
     resize();
     api.onResize = resize;
     api.onTheme = draw;
+    buildTeachingPanel(stage);
+    resize(); // 环节条使舞台顶部下移，重算一次画布尺寸（后续换行由 ResizeObserver 链触发）
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     const clampOff = () => {
       view.off = clamp(view.off, 0, Math.max(0, (Y1 - Y0) * ppy() - (W - LABEL_W - PAD)));

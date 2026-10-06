@@ -142,6 +142,91 @@ function hitBand(mx) {
   return i >= 0 && i < DYNASTIES.length ? i : -1;
 }
 
+// 教学环节预设：缩放平移到指定朝代带区间（i0..i1），show 为取景带宽（含两侧余量）
+function focusBands(i0, i1, show) {
+  const span = show || i1 - i0 + 1;
+  const visibleW = Math.max(W - PAD * 2, 1);
+  const s = Math.max(1, Math.min(9, (visibleW * 0.8) / (span * 140)));
+  const bandW = 140 * s;
+  view.scale = s;
+  view.offset = Math.max(0, Math.min(Math.max(0, DYNASTIES.length * bandW - visibleW), ((i0 + i1 + 1) / 2) * bandW - (W / 2 - PAD)));
+  draw();
+}
+
+// 教学环节：预设状态 + 教师引导语（每步一条，激活的显示，其余隐藏但保留在 DOM 中供自测统计）
+// 环节对应条目「课堂用法」三步：整体浏览 → 分段辨析 → 大事核对
+const STEPS = [
+  {
+    name: '通览排序',
+    preset: () => { view.scale = 1; view.offset = 0; selected = -1; draw(); },
+    guide: '先整体读一遍：从夏到清二十格按时间排开。全班接龙朝代歌「夏商与西周，东周分两段，春秋和战国，一统秦两汉」，每念到一朝就在尺上指出来，先记住更替的顺序。',
+  },
+  {
+    name: '辨析并立',
+    preset: () => { selected = -1; focusBands(8, 11); },
+    guide: '放大到三国两晋南北朝：这近四百年不是一朝接一朝，而是几个政权同时并立。问一问：这四格的先后顺序是什么？西晋短暂统一之后，天下又是怎样变成东晋与南北朝并立的？',
+  },
+  {
+    name: '核对大事',
+    preset: () => { selected = 13; focusBands(11, 15, 5); },
+    guide: '已经点开唐的大事年表，对照核对：618 年李渊建唐，755 年安史之乱。练一练世纪换算——618 年读作几世纪？再翻回头去，约前 2070 年又读作公元前几世纪？',
+  },
+];
+const SUMMARY =
+  '朝代更替主线：夏—商—西周—东周（春秋、战国）—秦—汉—三国两晋南北朝—隋—唐—五代十国—宋—元—明—清。' +
+  '秦、汉、西晋、隋、唐、元、明、清出现过全国统一；春秋战国、三国、东晋十六国、南北朝、五代十国、辽宋夏金是政权并立时期。' +
+  '读时间线三步：先记顺序，再分「统一」与「并立」，最后点开朝代格子用大事年表核对年代。';
+
+function setStep(i) {
+  STEPS[i].preset();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '历史·七年级｜统编版七年级上、下册 · 中国古代史 · 朝代更替';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节导航 + 引导语 + 小结
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  const stepBtns = STEPS.map(
+    (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
+  ).join('');
+  const guides = STEPS.map(
+    (s, i) =>
+      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+  ).join('');
+  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:16;max-width:640px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
 init({
   mount(stage, api) {
     canvas = document.createElement('canvas');
@@ -160,6 +245,7 @@ init({
     resize();
     api.onResize = resize;
     api.onTheme = draw;
+    buildTeachingPanel();
 
     let dragging = false, lastX = 0, moved = 0;
     const pointers = new Map();

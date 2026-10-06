@@ -108,9 +108,35 @@ const CSS = `
 .kids>.nd{margin:7px 0;position:relative}
 .kids>.nd::before{content:'';position:absolute;left:-26px;top:22px;width:26px;height:2px;background:var(--line)}
 .nd.closed>.kids{display:none}
+.es-teach{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:12px 16px;display:flex;flex-direction:column;gap:8px;max-width:880px}
+.es-tsteps{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.es-tsteps .btn[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.es-tguide{display:block;font-size:15px;line-height:1.7;color:var(--text)}
+.es-sumbtn{margin-left:auto}
+.es-panel{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:30;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.9;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 `;
 
-let treeBox, cur = 0, selPath = '';
+// 教研员契约：三环节各对应一组预设场景（哪棵树、展开哪些一级分支、选中哪个节点）
+const STEPS = [
+  {
+    name: '认结构',
+    tree: 0, open: [0, 1, 2], focus: '',
+    guide: '先不急着动笔。看这棵「写景」结构树：一篇写景作文分成哪三大块？每一块的任务是什么？同桌互相说一遍，再对照树上的提示语检查。',
+  },
+  {
+    name: '读写法',
+    tree: 0, open: [1], focus: '0/1/1',
+    guide: '中间这一块是重头。逐个读四种写法的提示语：「移步换景」每换一处用什么词带出？「多感官写景」除了看到的还写什么？选一种，说说你打算写校园的哪处景。',
+  },
+  {
+    name: '搭提纲',
+    tree: 2, open: [0, 1, 2], focus: '',
+    guide: '换议论文验证一下：是不是还是「开头—中间—结尾」三块骨架？照树上顺序口头列一份提纲，每块至少选一种写法，再对照修改你自己已写的作文。',
+  },
+];
+const SUMMARY = '文章结构的通用骨架：开头引出、中间展开、结尾收束。写景文按一条顺序线（地点、时间或观察）展开，多感官落笔、景中融情；写人文以事写人，用典型事件和细节描写表现人物特点；议论文论点一句话说清，本论至少用两种论证方法层层推进，结尾回扣论点。列提纲就按这三块，每块至少选定一种写法。';
+
+let treeBox, barEl, cur = 0, selPath = '';
 
 function nodeCard(node, path, depth) {
   const el = document.createElement('div');
@@ -145,6 +171,80 @@ function render() {
   treeBox.appendChild(nodeCard(t, '0', 0));
 }
 
+function syncBar() {
+  [...barEl.children].forEach((x, j) => {
+    x.style.borderColor = j === cur ? 'var(--gold)' : 'var(--line)';
+    x.style.color = j === cur ? 'var(--gold)' : 'var(--text)';
+  });
+}
+
+function pickTree(i) {
+  cur = i;
+  selPath = '';
+  syncBar();
+  render();
+}
+
+function setStep(k) {
+  const st = STEPS[k];
+  cur = st.tree;
+  selPath = st.focus;
+  syncBar();
+  render();
+  // 预设状态：只展开本环节聚焦的一级分支
+  treeBox.querySelectorAll('.nd.l1').forEach((el, j) => el.classList.toggle('closed', !st.open.includes(j)));
+  document.querySelectorAll('[data-hv-step]').forEach((el, j) => el.setAttribute('aria-pressed', String(j === k)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, j) => { el.style.display = j === k ? '' : 'none'; });
+}
+
+function buildTeachingPanel() {
+  // 定位行进顶栏（提示语前）；顶栏缺失时落回场景顶部
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '语文·初中｜统编版七至九年级写作单元 · 文章结构与提纲';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+  const hintEl = document.getElementById('hint');
+  if (hintEl) hintEl.before(metaEl); else barEl.before(metaEl);
+
+  // 环节条 + 引导语（置于树按钮上方），小结浮层按钮唤出
+  const teach = document.createElement('div');
+  teach.className = 'es-teach';
+  teach.innerHTML =
+    '<div class="es-tsteps">' +
+    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`).join('') +
+    '<button class="btn es-sumbtn" id="es-sumbtn" type="button">小结</button>' +
+    '</div>' +
+    STEPS.map((s, i) => `<span data-hv-guide class="es-tguide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`).join('');
+  document.querySelector('.es-wrap').prepend(teach);
+
+  // display 只写在行内（类里不写 none），切换 '' / 'none' 两个方向都可靠
+  const panelEl = document.createElement('div');
+  panelEl.dataset.hvSummary = '';
+  panelEl.className = 'es-panel';
+  panelEl.textContent = SUMMARY;
+  panelEl.style.display = 'none';
+  document.body.appendChild(panelEl);
+
+  teach.querySelector('#es-sumbtn').addEventListener('click', () => {
+    panelEl.style.display = panelEl.style.display === 'none' ? '' : 'none';
+  });
+  teach.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+}
+
+// 自测断言：逐个点击环节，验证场景真的切到预设状态（哪棵树、展开几个一级分支、选中节点）
+function runSelfChecks() {
+  STEPS.forEach((st, k) => {
+    setStep(k);
+    const l1 = [...treeBox.querySelectorAll('.nd.l1')];
+    const openCnt = l1.filter((el) => !el.classList.contains('closed')).length;
+    const selOk = st.focus === '' ? !treeBox.querySelector('.nd.sel') : !!treeBox.querySelector('.nd.sel');
+    const treeOk = cur === st.tree;
+    const openOk = openCnt === st.open.length;
+    window.__hvPushCheck(`step-${k}-${st.name}`, treeOk && openOk && selOk, `tree=${cur}/${st.tree} 展开=${openCnt}/${st.open.length} 选中=${st.focus || '无'}`);
+  });
+  setStep(0);
+}
+
 init({
   mount(stage) {
     const style = document.createElement('style');
@@ -152,41 +252,38 @@ init({
     stage.appendChild(style);
     const wrap = document.createElement('div');
     wrap.className = 'es-wrap';
-    const bar = document.createElement('div');
-    bar.className = 'es-bar';
+    barEl = document.createElement('div');
+    barEl.className = 'es-bar';
     TREES.forEach((t, i) => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'btn';
       b.textContent = t.name;
-      b.addEventListener('click', () => {
-        cur = i; selPath = '';
-        bar.querySelectorAll('.btn').forEach((x, j) => {
-          x.style.borderColor = j === i ? 'var(--gold)' : 'var(--line)';
-          x.style.color = j === i ? 'var(--gold)' : 'var(--text)';
-        });
-        render();
-      });
-      bar.appendChild(b);
+      b.addEventListener('click', () => pickTree(i));
+      barEl.appendChild(b);
     });
     const all = document.createElement('button');
     all.type = 'button';
     all.className = 'btn';
     all.textContent = '全部展开';
     all.addEventListener('click', () => { selPath = ''; render(); });
-    bar.appendChild(all);
-    wrap.appendChild(bar);
+    barEl.appendChild(all);
+    wrap.appendChild(barEl);
     treeBox = document.createElement('div');
     treeBox.className = 'es-tree';
     wrap.appendChild(treeBox);
     stage.appendChild(wrap);
-    bar.children[0].click();
 
-    // 深链：?t=jing 直接选树
+    // 初始状态由教学环节 1 落定（须在 treeBox 就绪之后）
+    buildTeachingPanel();
+    setStep(0);
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
+
+    // 深链：?t=jing 直接选树（深链优先于环节预设）
     try {
       const t = new URLSearchParams(location.search).get('t');
       const i = TREES.findIndex((x) => x.id === t);
-      if (i >= 0) bar.children[i].click();
+      if (i >= 0) barEl.children[i].click();
     } catch (e) {}
   },
 });

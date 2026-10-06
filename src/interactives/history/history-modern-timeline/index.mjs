@@ -268,6 +268,114 @@ function buildPanel(stage) {
   updatePanel();
 }
 const LANES_TXT = ['屈辱', '探索', '抗争'];
+
+// 教研员契约：定位行 / 环节 / 引导语 / 小结。环节预设真实切换视图（缩放、视口、选中卡片）
+const TEACH_META = '历史·八年级｜统编版八上第 1-8 单元 · 中国近代史大事年表';
+const TEACH_STEPS = [
+  {
+    name: '认线索',
+    z: 1, center: 1894.5, sel: -1,
+    guide: '先不缩放，整体看三条泳道：红色是屈辱、金色是探索、绿色是抗争。谁能按 1840 到 1949 的顺序，只看点位把这段历史的主线口述一遍？',
+  },
+  {
+    name: '比道路',
+    z: 9, center: 1897.5, sel: -1,
+    guide: '画面已放大到 1894 到 1901 的密集段：同样面对甲午战败，戊戌变法主张变法图强，义和团提出「扶清灭洋」。点开两张卡片，比一比两条道路的主张与结局有何不同。',
+  },
+  {
+    name: '理转折',
+    z: 5, center: 1923, sel: 16,
+    guide: '画面已定位到 1919 年虚线：虚线前后革命的任务与领导力量发生了什么变化？结合卡片详情说一说，为什么把五四运动作为新民主主义革命的开端。',
+  },
+];
+const TEACH_SUMMARY =
+  '1840 年鸦片战争是中国近代史的开端，1949 年中华人民共和国成立为近代史画上句号。屈辱线：《南京条约》使中国开始沦为半殖民地半封建社会，《马关条约》大大加深了这一程度，《辛丑条约》使中国完全陷入半殖民地半封建社会的深渊。探索线：洋务运动、戊戌变法、辛亥革命、新文化运动先后学习西方的器物、制度与思想文化，但都未能改变中国的社会性质。抗争线：1919 年五四运动中工人阶级登上政治舞台，是新民主主义革命的开端；在中国共产党领导下，1949 年新民主主义革命取得胜利。';
+
+// 把 center 年份置于视口中央并选中指定卡片（sel 传 -1 表示清空选中）
+function focusYear(center, z, selIdx) {
+  view.z = clamp(z, 1, 14);
+  const visW = W - LABEL_W - PAD;
+  view.off = clamp((center - Y0) * ppy() - visW / 2, 0, Math.max(0, (Y1 - Y0 + 1) * ppy() - visW));
+  sel = typeof selIdx === 'number' ? selIdx : -1;
+  draw();
+  updatePanel();
+}
+
+function setTeachStep(i) {
+  const s = TEACH_STEPS[i];
+  focusYear(s.center, s.z, s.sel);
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+
+// 自测：环节按钮确实切到预设视图（缩放倍率、视口中心年份、选中卡片）
+function runSelfChecks() {
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  push('初始全览', view.z === 1 && view.off === 0, `z=${view.z} off=${view.off}`);
+  setTeachStep(1);
+  const visW = W - LABEL_W - PAD;
+  const cxYear = Y0 + (view.off + visW / 2) / ppy();
+  push(
+    '比道路-聚焦甲午段',
+    Number.isFinite(cxYear) && Math.abs(view.z - 9) < 1e-9 && Math.abs(cxYear - 1897.5) < 0.5,
+    `z=${view.z} 视口中心=${Number.isFinite(cxYear) ? cxYear.toFixed(1) : 'NaN'}`
+  );
+  setTeachStep(2);
+  push(
+    '理转折-选中五四',
+    sel === 16 && EVENTS[sel] && EVENTS[sel].t === '五四运动',
+    `sel=${sel} ${sel >= 0 && EVENTS[sel] ? EVENTS[sel].t : '无'}`
+  );
+  setTeachStep(0);
+}
+
+function buildTeachingPanel(stage) {
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = TEACH_META;
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+  panel.appendChild(metaEl);
+  panel.insertAdjacentHTML(
+    'beforeend',
+    TEACH_STEPS.map(
+      (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false" style="font-size:14px;padding:6px 12px;white-space:nowrap">${i + 1}. ${s.name}</button>`
+    ).join('') +
+      TEACH_STEPS.map(
+        (s, i) => `<span data-hv-guide style="flex:1;min-width:240px;font-size:14px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+      ).join('') +
+      '<button class="btn" id="summary-btn" type="button" style="margin-left:auto;font-size:14px;padding:6px 12px">小结</button>'
+  );
+  document.body.appendChild(panel);
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setTeachStep(i)));
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = TEACH_SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:15px;line-height:1.9;display:none';
+  document.body.appendChild(summaryEl);
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+
+  // 画面让位：舞台顶部移到环节条之下，画布随之重排（面板换行时跟随）
+  const fit = () => {
+    const top = 56 + panel.offsetHeight + 6;
+    stage.style.top = top + 'px';
+    summaryEl.style.top = top + 10 + 'px';
+  };
+  fit();
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(fit).observe(panel);
+  setTeachStep(0);
+}
+
 function updatePanel() {
   if (sel >= 0) {
     const e = EVENTS[sel];
@@ -310,6 +418,9 @@ init({
     resize();
     api.onResize = resize;
     api.onTheme = draw;
+    buildTeachingPanel(stage);
+    resize(); // 环节条使舞台顶部下移，重算一次画布尺寸（后续换行由 ResizeObserver 链触发）
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     const clampOff = () => {
       const span = (Y1 - Y0 + 1) * ppy();

@@ -73,7 +73,7 @@ const FLAT = [
 ];
 
 const CSS = `
-.py-wrap{position:absolute;inset:0;overflow:auto;padding:16px 22px 24px;display:flex;flex-direction:column;gap:6px}
+.py-wrap{position:absolute;inset:0;overflow:auto;padding:76px 22px 24px;display:flex;flex-direction:column;gap:6px}
 .py-sec{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .py-h{font-size:21px;font-weight:700;letter-spacing:.02em}
 .py-h .n{font-size:16px;font-weight:400;color:var(--muted);margin-left:10px}
@@ -104,6 +104,10 @@ const CSS = `
 .py-zi{font-size:46px;font-weight:700;line-height:1}
 .py-note{font-size:16px;color:var(--muted);text-align:center;margin-bottom:6px}
 .py-ctl{display:flex;justify-content:center;gap:10px;margin-top:4px}
+.hv-panel{position:fixed;top:56px;left:0;right:0;z-index:40;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.hv-panel .btn{font-size:15px;padding:7px 16px}
+.hv-guide{flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6}
+.hv-sum{position:fixed;top:112px;left:50%;transform:translateX(-50%);z-index:41;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:16px;line-height:1.8;display:none}
 `;
 
 let wrap, mask, cardEl, selBtn = null, curIdx = -1;
@@ -142,6 +146,98 @@ function closeCard() {
   curIdx = -1;
   if (selBtn) selBtn.classList.remove('sel');
   selBtn = null;
+}
+
+// 教学环节：点击后场景切到预设状态（打开对应字母卡），每步一句教师引导语
+// （未激活的留在 DOM 里隐藏），激活时按钮压下、卡片打开、引导语切换
+const STEPS = [
+  {
+    name: '认声母',
+    target: { l: 'b', kind: '声母' },
+    guide:
+      '先看 b 的口型要点：双唇闭紧，突然放开。老师示范一遍，大家对着口型读两遍，再点「下个」沿 b、p、m、f 一组往下认。',
+  },
+  {
+    name: '辨前后鼻音',
+    target: { l: 'an', kind: '韵母' },
+    guide:
+      '先读 an，再点开 ang 比一比：an 是舌尖抵住上牙床，ang 是舌根抬起。边读边用手在嘴边指一指舌头的位置，说说你发现了什么。',
+  },
+  {
+    name: '练拼读',
+    target: { l: 'ao', kind: '韵母' },
+    guide:
+      '复韵母要滑着读：先发 a，嘴唇渐渐拢圆就变成 ao。再照卡片上的 m-āo→māo，自己挑一个声母和一个韵母拼一拼，同桌互相听一听。',
+  },
+];
+// 小结口径与本表表头一致：《汉语拼音方案》声母表 21 个，教学另加 y、w；
+// 韵母 24 = 单 6 + 复 9（含 er）+ 前鼻 5 + 后鼻 4
+const SUMMARY =
+  '声母 23 个：《汉语拼音方案》声母表 21 个，小学教学另加 y、w。韵母 24 个：单韵母 6、复韵母 9（含特殊韵母 er）、前鼻韵母 5、后鼻韵母 4。发音看口型：前鼻音舌尖抵住上牙床，后鼻音舌根抬起，复韵母由一个音滑向另一个音。声母和韵母相拼组成音节，如 b-ā→bā。';
+
+const SELFTEST = new URLSearchParams(location.search).has('selftest');
+
+function runSelfChecks() {
+  const push = (name, pass, detail) => window.__hvPushCheck(name, pass, detail);
+  push('声母共 23 个', SM_GROUPS.flat().length === 23, String(SM_GROUPS.flat().length));
+  push('韵母共 24 个', YM_GROUPS.reduce((n, [, a]) => n + a.length, 0) === 24,
+    YM_GROUPS.map(([g, a]) => `${g}${a.length}`).join(' '));
+  push('韵母分类 6/9/5/4', JSON.stringify(YM_GROUPS.map(([, a]) => a.length)) === '[6,9,5,4]',
+    JSON.stringify(YM_GROUPS.map(([, a]) => a.length)));
+  push('每条卡片数据齐全', FLAT.every((it) => it.d.pt && it.d.p && it.d.z),
+    FLAT.filter((it) => !(it.d.pt && it.d.p && it.d.z)).map((it) => it.l).join(','));
+}
+
+function flatIndex(target) {
+  return FLAT.findIndex((x) => x.l === target.l && x.kind === target.kind);
+}
+
+function setStep(i, open = true) {
+  if (open) {
+    const idx = flatIndex(STEPS[i].target);
+    if (idx >= 0) openCard(idx);
+  }
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）：学科·学段年级｜教材版本册次 · 知识点
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '语文·一年级｜统编版一上 · 汉语拼音声母韵母';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  document.getElementById('hint').before(metaEl);
+
+  // 环节条 + 引导语 + 小结按钮（置于遮罩之上，卡片打开时也能切环节）
+  const panel = document.createElement('div');
+  panel.className = 'hv-panel';
+  panel.innerHTML =
+    STEPS.map(
+      (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`
+    ).join('') +
+    STEPS.map(
+      (s, i) => `<span data-hv-guide class="hv-guide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`
+    ).join('') +
+    '<button class="btn" id="hv-summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.className = 'hv-sum';
+  summaryEl.textContent = SUMMARY;
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#hv-summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0, false);
+  if (SELFTEST) runSelfChecks();
 }
 
 init({
@@ -225,5 +321,7 @@ init({
         if (i >= 0) openCard(i);
       }
     } catch (e) {}
+
+    buildTeachingPanel();
   },
 });

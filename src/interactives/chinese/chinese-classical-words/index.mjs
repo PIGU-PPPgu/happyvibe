@@ -57,7 +57,7 @@ const WORDS = [
 const GRADES = ['七上', '七下', '八上', '八下', '九上', '九下'];
 
 const CSS = `
-.cw-wrap{position:absolute;inset:0;overflow:auto;padding:16px 22px 26px;display:flex;flex-direction:column;gap:14px}
+.cw-wrap{position:absolute;inset:0;overflow:auto;padding:64px 22px 26px;display:flex;flex-direction:column;gap:14px}
 .cw-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .cw-cnt{font-size:16px;color:var(--muted);margin-left:6px}
 .cw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
@@ -109,6 +109,89 @@ function render() {
   }
 }
 
+// 教研员契约：定位行 / 教学环节 / 教师引导语 / 知识小结
+// 环节对应条目「课堂用法」三步：出示认读 → 翻面印证 → 盖面快答，每步真设册次与翻面状态
+function setGrade(g) {
+  const btn = [...document.querySelectorAll('.cw-bar .btn')].find((x) => x.textContent === g);
+  if (btn) btn.click();
+}
+
+const STEPS = [
+  {
+    name: '认一认',
+    preset: () => { setGrade('七上'); flipped.clear(); render(); },
+    guide: '第一轮认读。我点一张卡，全班齐读字音、说出义项：「说」这里读 yuè，同「悦」；「期」是约定。像这样把七上的七张过一遍，拿不准的记在积累本上。',
+  },
+  {
+    name: '翻一翻',
+    preset: () => {
+      setGrade('七上');
+      flipped = new Set(WORDS.filter((x) => x.g === '七上').map((x) => x.w));
+      render();
+    },
+    guide: '卡片已全部翻到背面，课文例句里的目标字金色高亮。齐读例句，再用现代话说说整句意思：刚记的义项放进句子里，通不通？',
+  },
+  {
+    name: '快问快答',
+    preset: () => { setGrade('全部'); flipped.clear(); render(); },
+    guide: '六册四十张全部盖住混在一起：我说例句，你们抢答字义；答不上的翻面看完例句再盖回去，接着抽下一张，看哪一组积累得多。',
+  },
+];
+const SUMMARY =
+  '文言实词积累三步：记义项、回课文例句印证、盖面快答自查。本库 40 个高频实词与例句均出自统编版七至九年级课文。' +
+  '判断词义要看句子：不少实词古今义不同，「走」古义是跑，「狱」指案件，「再」是第二次，不能拿现代义硬套；' +
+  '通假字按本字读，「说」同「悦」读 yuè，「反」同「返」读 fǎn。';
+
+function setStep(i) {
+  STEPS[i].preset();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '语文·初中七至九年级｜统编版 · 文言文 · 实词积累';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节导航 + 引导语 + 小结
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  const stepBtns = STEPS.map(
+    (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
+  ).join('');
+  const guides = STEPS.map(
+    (s, i) =>
+      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+  ).join('');
+  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:112px;left:50%;transform:translateX(-50%);z-index:16;max-width:640px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
 init({
   mount(stage) {
     const style = document.createElement('style');
@@ -149,6 +232,7 @@ init({
     wrap.appendChild(grid);
     stage.appendChild(wrap);
     bar.children[0].click();
+    buildTeachingPanel();
 
     // 深链：?g=七上 筛选册次，&f=1 全部翻开
     try {

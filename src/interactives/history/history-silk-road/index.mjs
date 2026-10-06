@@ -135,6 +135,19 @@ const STEPS = [
     text: '从徐闻、合浦出海，沿海岸经中南半岛、绕马来半岛、渡孟加拉湾，最远抵达印度半岛南端和斯里兰卡。唐宋以后瓷器成为大宗商品。' },
 ];
 
+// ———— 教研契约：教学环节（点击切到资源既有步骤的预设状态）/ 教师引导语 / 知识小结 ————
+const TEACH = [
+  { name: '引入·阻路', step: 0,
+    guide: '请到图上指认长安的位置，再说出匈奴控制了哪一段道路。想一想：汉武帝为什么要急着派人往西走？' },
+  { name: '探究·凿空', step: 1,
+    guide: '金色是去程、紫色是归程。请沿线复述张骞第一次出使：途中被扣在哪里、最远到了哪国？联合大月氏没有成功，为什么这一趟仍被称为凿空？' },
+  { name: '探究·贯通', step: 4,
+    guide: '沿金色主线，从长安一站一站说到大秦：河西走廊、玉门关、葱岭、安息各在哪里？再对照两条标签，说一说西去、东来各有什么物产。' },
+  { name: '归纳·海陆并举', step: 5,
+    guide: '再看蓝色航线：船从徐闻、合浦出海，最远到了哪里？对比陆海两路的起点与走向，说一说西域都护府为丝路畅通提供了什么保障。' },
+];
+const TEACH_SUMMARY = '张骞于公元前138年、前119年两次出使西域，开辟了沟通中西的道路，史称凿空。公元前60年，西汉设西域都护，今新疆地区正式归属中央政权管辖。陆上丝绸之路从长安出发，经河西走廊、西域、葱岭到安息，再转运到大秦；海上丝绸之路从徐闻、合浦出海，最远抵达印度半岛南端和斯里兰卡。丝绸、漆器、凿井技术西传，葡萄、苜蓿、核桃、石榴、良种马和佛教等传入中原，丝绸之路成为古代东西方经济文化交流的大动脉。';
+
 let canvas, ctx, W = 0, H = 0, dpr = 1;
 let base = { k: 1, cx: 0, cy: 0 };
 const view = { s: 1, tx: 0, ty: 0 };
@@ -154,7 +167,8 @@ const ease = (t) => t * t * (3 - 2 * t);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 function computeBase() {
-  const top = 10, bottom = Math.max(120, H - 158);
+  // 顶部让位给教学环节条，底部让位给步骤演示面板
+  const top = 112, bottom = Math.max(120, H - 158);
   const uW = (LON1 - LON0) * KX, uH = LAT1 - LAT0;
   base.k = Math.min((W - 16) / uW, (bottom - top) / uH);
   base.cx = W / 2;
@@ -543,6 +557,86 @@ function buildPanel(stage) {
   els.next.addEventListener('click', () => goStep(stepI + 1));
   updatePanel();
 }
+
+// ———— 教学面板：定位行进顶栏，环节条压顶栏下方（地图绘图区已下移让位），小结浮层按钮唤出 ————
+let teachBtns = [], teachGuides = [];
+function syncTeachActive() {
+  const i = TEACH.findIndex((t) => t.step === stepI);
+  teachBtns.forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+    el.style.borderColor = k === i ? 'var(--gold)' : '';
+  });
+  teachGuides.forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+function setTeachStep(i, instant) {
+  goStep(TEACH[i].step, instant);
+  syncTeachActive();
+}
+function buildTeachingPanel(stage) {
+  // 定位行（小屏隐藏 hint 让位）
+  const st = document.createElement('style');
+  st.textContent = '@media (max-width:1180px){#hint{display:none}}';
+  document.head.appendChild(st);
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '历史·初中七年级｜统编版七上第三单元第14课 · 丝绸之路的开通与经营西域';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0';
+  document.getElementById('hint').before(metaEl);
+
+  // 环节条 + 当前引导语（未激活的引导语留在 DOM）
+  const bar = document.createElement('div');
+  bar.style.cssText =
+    'position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:15;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;' +
+    'padding:8px 14px 10px;background:var(--panel);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;' +
+    'box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:calc(100% - 16px)';
+  bar.innerHTML =
+    TEACH.map((s, i) =>
+      `<button class="qb" data-hv-step type="button" aria-pressed="false" style="font-size:15px;padding:8px 13px">${s.name}</button>`).join('') +
+    '<button class="qb" id="tq-summary-btn" type="button" style="font-size:15px;padding:8px 13px">小结</button>' +
+    TEACH.map((s, i) =>
+      `<span data-hv-guide style="flex-basis:100%;font-size:15px;color:var(--text);line-height:1.55;text-align:center;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`).join('');
+  stage.appendChild(bar);
+  teachBtns = [...bar.querySelectorAll('[data-hv-step]')];
+  teachGuides = [...bar.querySelectorAll('[data-hv-guide]')];
+  teachBtns.forEach((el, i) => el.addEventListener('click', () => setTeachStep(i)));
+
+  const sumBtn = bar.querySelector('#tq-summary-btn');
+  const sum = document.createElement('div');
+  sum.dataset.hvSummary = '';
+  sum.textContent = TEACH_SUMMARY;
+  sum.style.cssText =
+    'position:fixed;top:172px;left:50%;transform:translateX(-50%);z-index:30;max-width:680px;margin:0 16px;padding:16px 20px;' +
+    'background:var(--panel);border:1px solid var(--gold);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.35);' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(sum);
+  sumBtn.addEventListener('click', () => {
+    sum.style.display = sum.style.display === 'none' ? '' : 'none';
+  });
+  setTeachStep(0, true);
+}
+
+// 自测：环节按钮/引导语/小结齐备，且每个环节点击后真的切到预设步骤、引导语单条显示
+function runSelfChecks() {
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  const nBtn = document.querySelectorAll('[data-hv-step]').length;
+  push('环节按钮数量', nBtn === TEACH.length, `data-hv-step=${nBtn}`);
+  teachGuides = [...document.querySelectorAll('[data-hv-guide]')];
+  push('引导语条数', teachGuides.length === TEACH.length, `data-hv-guide=${teachGuides.length}`);
+  const sumEl = document.querySelector('[data-hv-summary]');
+  const sumLen = sumEl ? sumEl.textContent.length : 0;
+  push('小结字数', sumLen >= 30, `summary=${sumLen}字`);
+  const bad = [];
+  TEACH.forEach((t, i) => {
+    setTeachStep(i, true);
+    if (stepI !== t.step || animT !== 1) bad.push(`环节${i}:${stepI}≠${t.step}`);
+    const shown = teachGuides.filter((el) => el.style.display !== 'none');
+    if (shown.length !== 1 || shown[0] !== teachGuides[i]) bad.push(`引导语${i}未单显`);
+  });
+  push('环节切换到预设步骤', bad.length === 0,
+    bad.join(' ') || TEACH.map((t) => `${t.name}→第${t.step + 1}步`).join('、'));
+  setTeachStep(0, true);
+}
 function updatePanel() {
   const s = STEPS[stepI];
   els.yr.textContent = s.year;
@@ -582,6 +676,8 @@ init({
     stage.appendChild(canvas);
     ctx = canvas.getContext('2d');
     buildPanel(stage);
+    buildTeachingPanel(stage);
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     const resize = () => {
       dpr = Math.min(devicePixelRatio || 1, 2);
@@ -653,5 +749,6 @@ init({
     const sp = new URLSearchParams(location.search).get('step');
     const sn = parseInt(sp, 10);
     if (!Number.isNaN(sn) && sn >= 0 && sn < STEPS.length && sn !== 0) goStep(sn, true);
+    syncTeachActive();
   },
 });

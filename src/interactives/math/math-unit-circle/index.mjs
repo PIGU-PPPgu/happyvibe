@@ -359,7 +359,7 @@ function draw() {
 
 // ---------- UI ----------
 const STYLE = `
-#panel{position:fixed;top:64px;right:14px;z-index:15;width:264px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#panel{position:fixed;top:112px;right:14px;z-index:15;width:264px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .fns{display:flex;gap:8px}
 .fns .btn{flex:1;padding:8px 4px}
 .btn.on{border-color:var(--gold);color:var(--gold)}
@@ -419,6 +419,102 @@ function buildUI(stage) {
   });
 }
 
+// 教学环节：预设状态（mode/theta/是否扫角）+ 教师引导语（每步一条，激活的显示，其余留在 DOM）
+const STEPS = [
+  {
+    name: '认一认',
+    mode: 'sin', theta: 60, play: false,
+    guide: '看圆里的金色竖段和紫色横段：它们分别是 P 点的哪个坐标？读出 θ = 60° 时 sin θ 与 cos θ 的值，再到右侧面板核对。',
+  },
+  {
+    name: '描一描',
+    mode: 'sin', theta: 30, play: true,
+    guide: '盯着粗轨迹描点：θ 从 30° 扫到 360°，sin θ 在哪里最高、哪里等于 0、哪里变成负？再点 cos、tan，同一段角扫出的曲线有什么不同？',
+  },
+  {
+    name: '辨一辨',
+    mode: 'tan', theta: 45, play: false,
+    guide: '拖动 P 慢慢经过 90° 和 270°：过 A 点的蓝色切线段发生了什么？说说这两个角的 tan θ 为什么不存在。',
+  },
+  {
+    name: '找规律',
+    mode: 'sin', theta: 150, play: false,
+    guide: 'sin 150° 与 sin 30° 相等吗？在圆上找出这一对对称的点，再说说四个象限里 sin θ 与 cos θ 的正负号规律。',
+  },
+];
+const SUMMARY = '单位圆定义：设角 θ 的终边与单位圆交于点 P(x, y)，则 sin θ = y，cos θ = x，tan θ = y/x（x ≠ 0）。θ 每增加 360°，P 绕圆一周，正弦值与余弦值重复出现；θ = 90° 或 270° 时 x = 0，tan θ 不存在。';
+
+function setStep(i) {
+  const s = STEPS[i];
+  mode = s.mode;
+  theta = s.theta;
+  playing = s.play;
+  document.querySelectorAll('.fns .btn').forEach((b) => b.classList.toggle('on', b.id === `f-${mode}`));
+  const pb = document.getElementById('play');
+  if (pb) pb.textContent = playing ? '暂停' : '播放';
+  renderPanel();
+  draw();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '数学·高中一年级｜人教A版必修第一册第五章 · 三角函数的概念与图像';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节导航 + 引导语 + 小结
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  const stepBtns = STEPS.map(
+    (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
+  ).join('');
+  const guides = STEPS.map(
+    (s, i) =>
+      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+  ).join('');
+  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--line-gold,var(--line));border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
+// 自测断言：特殊角精确值、诱导对称性、环节切换真的改状态（比较前判有限性）
+function runSelfChecks() {
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  const s60 = fmtVal('sin', 60), c60 = fmtVal('cos', 60), t90 = fmtVal('tan', 90);
+  push('special-values', s60.exact === '√3/2' && c60.exact === '1/2' && t90.none === true,
+    `sin60=${s60.exact} cos60=${c60.exact} tan90=${t90.none ? '不存在' : t90.exact}`);
+  push('sin-symmetry', Number.isFinite(sinV(150)) && Number.isFinite(sinV(30)) && Math.abs(sinV(150) - sinV(30)) < 1e-9,
+    `sin150=${sinV(150).toFixed(4)} vs sin30=${sinV(30).toFixed(4)}`);
+  push('step-switch', (setStep(2), mode === 'tan' && theta === 45), `setStep(2) 后 mode=${mode} theta=${theta}`);
+  push('step-restore', (setStep(0), mode === 'sin' && theta === 60), `复原 mode=${mode} theta=${theta}`);
+}
+
 function resize() {
   const dpr = Math.min(devicePixelRatio, 2);
   W = stageEl.clientWidth;
@@ -442,6 +538,8 @@ init({
     buildUI(stage);
     renderPanel();
     resize();
+    buildTeachingPanel();
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖动圆上动点（鼠标与触摸统一 pointer 通道）
     const angleAt = (x, y) => {

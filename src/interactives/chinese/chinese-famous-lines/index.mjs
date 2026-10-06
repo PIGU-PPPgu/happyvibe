@@ -41,7 +41,7 @@ const GROUPS = [
 ];
 
 const CSS = `
-.fl-wrap{position:absolute;inset:0;overflow:auto;padding:16px 22px 30px;display:flex;flex-direction:column;gap:14px}
+.fl-wrap{position:absolute;inset:0;overflow:auto;padding:64px 22px 30px;display:flex;flex-direction:column;gap:14px}
 .fl-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .fl-cnt{font-size:16px;color:var(--muted);margin-left:6px}
 .fl-card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:20px 24px;display:flex;flex-direction:column;gap:14px;max-width:820px}
@@ -63,6 +63,10 @@ const CSS = `
 .fl-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .fl-sum{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:26px;display:flex;flex-direction:column;gap:14px;align-items:flex-start;max-width:820px}
 .fl-sum .big{font-size:24px;font-weight:700}
+.hv-panel{position:fixed;top:56px;left:0;right:0;z-index:40;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.hv-panel .btn{font-size:15px;padding:7px 16px}
+.hv-guide{flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6}
+.hv-sum{position:fixed;top:112px;left:50%;transform:translateX(-50%);z-index:41;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.8}
 `;
 
 let wrap, bodyEl, gi = 0, qi = 0, groupRight = 0;
@@ -164,6 +168,113 @@ function startGroup(i) {
   render();
 }
 
+const SELFTEST = new URLSearchParams(location.search).has('selftest');
+
+// 自测断言：题库数据完整性（结构、字段、组内名句不重复）
+function runSelfChecks() {
+  const push = (name, pass, detail) => {
+    if (window.__hvPushCheck) window.__hvPushCheck(name, pass, detail);
+  };
+  const badStruct = GROUPS.filter(
+    (g) => g.qs.length !== 5 || g.extra.length !== 3 ||
+      g.qs.some((q) => !q.s || !q.a || !q.src)
+  ).map((g) => g.name);
+  push('每组 5 题 3 干扰句、情境/答案/出处齐全', badStruct.length === 0, badStruct.join(','));
+  const dup = GROUPS.filter((g) => {
+    const all = [...g.qs.map((q) => q.a), ...g.extra];
+    return new Set(all).size !== all.length;
+  }).map((g) => g.name);
+  push('同组名句与干扰句无重复', dup.length === 0, dup.join(','));
+}
+
+// 教学环节：点击后场景真的切到预设状态（复用已有的主题切换 + 题号定位 + 自动判定），
+// 每步一句教师引导语，未激活的留在 DOM 里隐藏供统计
+const STEPS = [
+  {
+    name: '读情境',
+    t: 0,
+    q: 0,
+    answer: false,
+    guide:
+      '先不忙看选项。把情境当题干读：谁、在什么时节、遇到什么事、怀着什么心情？心里先默背出那句诗，再点选项核对，看你想的和正确句是不是同一句。',
+  },
+  {
+    name: '辨干扰句',
+    t: 0,
+    q: 3,
+    answer: true,
+    guide:
+      '这一组四个选项都写了月亮，为什么只有一句贴合情境？把情境里的关键词和诗句逐字对应：谁被贬、谁牵挂、明月要送到哪里。再说说其余三句各写在什么场合。',
+  },
+  {
+    name: '归意象',
+    t: 1,
+    q: 0,
+    answer: true,
+    guide:
+      '判定后齐读全句与出处。再把做过的句子按意象归堆：哪些写月、哪些写山、哪些写水？每组里的句子抒发的情感有什么不同？归类积累，见到情境才有句可调。',
+  },
+];
+// 小结口径从月/山/水三组 15 句的事实归纳，量词留有余地（如「多寄」「常抒」）
+const SUMMARY =
+  '情境默写按三步作答：一抓情境关键词——人物、时间、地点、事件、情感；二凭关键词回想贴合的名句，警惕同意象的干扰句——意象相同，差别在具体情境；三回读防错——确定的句子回读全句，不添字、不漏字、不写错别字，并记牢篇名与作者。归类帮助记忆：写月的名句多寄思念与祝愿，写山的常抒登临豪情或观景悟理，写水的或状奇景、或载离情。';
+
+function setStep(i, apply = true) {
+  if (apply) {
+    const st = STEPS[i];
+    startGroup(st.t);
+    qi = st.q;
+    render();
+    if (st.answer) {
+      const btn = [...bodyEl.querySelectorAll('.fl-opt')].find((x) => x.textContent === GROUPS[st.t].qs[st.q].a);
+      if (btn) btn.click();
+    }
+  }
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）：学科·学段年级｜教材版本 · 知识点（版本册次与条目正文一致，不编造册次）
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '语文·六至九年级｜统编版必背古诗文 · 古诗文积累与默写';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  document.getElementById('hint').before(metaEl);
+
+  // 环节条 + 引导语 + 小结按钮
+  const panel = document.createElement('div');
+  panel.className = 'hv-panel';
+  panel.innerHTML =
+    STEPS.map(
+      (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`
+    ).join('') +
+    STEPS.map(
+      (s, i) => `<span data-hv-guide class="hv-guide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`
+    ).join('') +
+    '<button class="btn" id="hv-summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.className = 'hv-sum';
+  summaryEl.textContent = SUMMARY;
+  // 隐藏状态放行内样式：小结按钮靠比较 style.display 切换
+  summaryEl.style.display = 'none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#hv-summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  // 初始不强制切场景：默认状态（月主题第 1 题未作答）本就是环节 1 的预设，深链参数仍可用
+  setStep(0, false);
+}
+
 init({
   mount(stage) {
     const style = document.createElement('style');
@@ -190,6 +301,8 @@ init({
     wrap.appendChild(bodyEl);
     stage.appendChild(wrap);
     startGroup(0);
+    buildTeachingPanel();
+    if (SELFTEST) runSelfChecks();
 
     // 深链：?t=shan 选主题，&q=2 跳到第 2 题，&a=1 自动选正确项演示判定态
     try {

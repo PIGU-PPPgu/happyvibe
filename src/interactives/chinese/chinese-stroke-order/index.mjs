@@ -165,6 +165,7 @@ let canvas, ctx, W = 0, H = 0, dpr = 1;
 let ci = 0, step = -1; // step：当前展示的笔画下标（0 起），-1 为空格；两侧同一下标同步推进
 let anim = [0, 0], animStart = 0, raf = 0, replayToken = 0;
 let badgeHits = []; // {x,y,r,side,idx} 屏幕坐标，供点击跳转
+let teachPanel = null; // 教学面板（顶栏下方），田字格布局需为其让出高度
 const FONT = "'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif";
 
 function theme() {
@@ -177,7 +178,7 @@ function seqs() { return [cur().correct, cur().error]; }
 function maxStep() { return Math.max(cur().correct.length, cur().error.length); }
 
 function layout(ctlH) {
-  const top = 10, gap = 20;
+  const top = teachPanel ? teachPanel.offsetHeight + 8 : 10, gap = 20;
   const availW = W - gap * 3, availH = H - ctlH - top - 10;
   const side = availW >= availH; // 宽则并排，窄则上下
   const cell = side
@@ -334,6 +335,7 @@ function replay() {
   }
 }
 function userStep(n) { replayToken++; setStep(n); }
+function setChar(i) { replayToken++; ci = i; step = -1; anim = [1, 1]; draw(); updateUI(); }
 
 // ---------- UI ----------
 let ctlEl, noteEl, tabsEl, prevBtn, nextBtn;
@@ -358,7 +360,7 @@ function buildUI(stage) {
     b.className = 'btn';
     b.style.cssText = 'font-size:22px;line-height:1;padding:4px 12px';
     b.textContent = c.ch;
-    b.addEventListener('click', () => { replayToken++; ci = i; step = -1; anim = [1, 1]; draw(); updateUI(); });
+    b.addEventListener('click', () => setChar(i));
     tabsEl.appendChild(b);
   });
   row.appendChild(tabsEl);
@@ -388,12 +390,132 @@ function updateUI() {
   noteEl.textContent = `${cur().ch}：${cur().note}。`;
 }
 
+// 教学环节：每个环节把场景切到预设状态（指定汉字 + 推进到关键笔画），配教师引导语
+// ch+step 为预设：认一认停在空田字格；比一比、找规律停在规范与易错首个分歧笔（错侧红标）
+const STEPS = [
+  {
+    name: '认一认',
+    ch: '火',
+    step: -1,
+    guide: '先不看序号。这是「火」，伸出手指跟我书空：你的第一笔写什么、第二笔写什么？把答案记在心里，等下对照田字格。',
+  },
+  {
+    name: '比一比',
+    ch: '火',
+    step: 1,
+    guide: '逐笔点「下笔」：左格是规范笔顺，右格是常见错法。第二笔停一停，一边是点、一边是撇，红色序号圈出的就是写反的那一笔。刚才书空你写对了吗？',
+  },
+  {
+    name: '找规律',
+    ch: '里',
+    step: 4,
+    guide: '换「里」再验一次：写完上面的「日」，先写中间的长竖，再写底下两横。想一想「火、里、方、万」写错的都是哪一笔，用先横后竖、先撇后捺的规则说给同桌听。',
+  },
+];
+const SUMMARY =
+  '笔顺基本规则：先横后竖、先撇后捺、从上到下、从左到右、先中间后两边。本组易错点：火先点后撇；出的中间长竖一笔贯通，全字五画；里写完「日」先竖、再写两横；方、万都是最后写撇。';
+
+function teachGo(i) {
+  const s = STEPS[i];
+  setChar(CHARS.findIndex((c) => c.ch === s.ch));
+  userStep(s.step);
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '语文·小学一二三年级｜统编版一年级上·下册 · 识字与写字·笔顺';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节条（第一行按钮，第二行引导语）：叠在舞台顶部，layout() 已为其让位
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;flex-direction:column;gap:6px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)';
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap';
+  row.innerHTML =
+    STEPS.map(
+      (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
+    ).join('') + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  const guideRow = document.createElement('div');
+  guideRow.innerHTML = STEPS.map(
+    (s, i) =>
+      `<span data-hv-guide style="font-size:15px;line-height:1.6;color:var(--text);${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+  ).join('');
+  panel.appendChild(row);
+  panel.appendChild(guideRow);
+  document.body.appendChild(panel);
+  teachPanel = panel;
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:150px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => teachGo(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  teachGo(0);
+}
+
+// 自测：数据级断言——错例与规范确有分歧、环节预设停在分歧笔上（NaN 防护先判整型）
+function runSelfChecks() {
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  const bad = [];
+  for (const c of CHARS) {
+    const ok = (a) => Array.isArray(a) && a.length > 0 && a.every((i) => Number.isInteger(i) && i >= 0 && i < c.strokes.length);
+    if (!ok(c.correct) || !ok(c.error)) bad.push(c.ch + ':序号越界');
+    else {
+      const firstDiff = c.correct.findIndex((v, k) => c.error[k] !== undefined && c.error[k] !== v);
+      if (firstDiff < 0) bad.push(c.ch + ':错例与规范无分歧');
+    }
+  }
+  push('数据-易错分歧', bad.length === 0, bad.join(' '));
+  STEPS.forEach((s, i) => {
+    const c = CHARS.find((x) => x.ch === s.ch);
+    // 预设要么停在空格，要么停在两侧写法不同的那笔（错侧会亮红标）
+    const onDiff = c && Number.isInteger(c.correct[s.step]) && Number.isInteger(c.error[s.step]) &&
+      c.correct[s.step] !== c.error[s.step];
+    push(`环节预设-${i}-${s.name}`, !!c && (s.step === -1 || onDiff), `ch=${s ? s.ch : '?'} step=${s ? s.step : '?'}`);
+  });
+  // 行为自测：模拟点击环节按钮，验证场景真的切到预设状态（字与笔画推进），且只显示当前环节引导语
+  const btns = [...document.querySelectorAll('[data-hv-step]')];
+  const guides = [...document.querySelectorAll('[data-hv-guide]')];
+  btns.forEach((b, i) => {
+    b.click();
+    const s = STEPS[i] || {};
+    const stateOk = cur().ch === s.ch && step === s.step;
+    const guideOk = guides[i] && guides[i].style.display !== 'none' && guides.every((g, k) => k === i || g.style.display === 'none');
+    push(`环节切换-${i}-${s.name}`, stateOk && guideOk, `ch=${cur().ch} step=${step}`);
+  });
+  teachGo(0);
+}
+
 init({
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:pointer';
     stage.appendChild(canvas);
     ctx = canvas.getContext('2d');
+
+    buildUI(stage);
+    buildTeachingPanel();
 
     const resize = () => {
       dpr = Math.min(devicePixelRatio, 2);
@@ -406,8 +528,6 @@ init({
     resize();
     api.onResize = resize;
     api.onTheme = () => draw();
-
-    buildUI(stage);
 
     // 深链：?c=火&s=3 直接定位到某字某笔（s 从 1 数）
     try {
@@ -437,5 +557,6 @@ init({
     });
 
     draw();
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
   },
 });

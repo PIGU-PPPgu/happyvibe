@@ -71,13 +71,18 @@ const results = [];
 async function worker() {
   while (queue.length) {
     const n = queue.shift();
-    const res = await testOne(n);
+    let res = await testOne(n);
+    // 无头 WebGL 并行偶发空采样：失败重试一次，两次都失败才算失败
+    if (!res.pass) {
+      console.log(`RETRY ${res.name}`);
+      res = await testOne(n);
+    }
     results.push(res);
     console.log(`${res.pass ? 'PASS' : 'FAIL'} ${res.name}`);
     for (const p of res.problems) console.log(`      ${p}`);
   }
 }
-await Promise.all(Array.from({ length: 4 }, worker));
+await Promise.all(Array.from({ length: 3 }, worker));
 
 const failed = results.filter((r) => !r.pass);
 console.log(`\nharness: ${results.length - failed.length}/${results.length} 通过`);

@@ -84,6 +84,24 @@ const STEPS = [
 const KILL_STEP = {};
 STEPS.forEach((s, i) => { if (s.kill) KILL_STEP[s.kill] = i; });
 
+// 教研员契约：教学环节 = 映射到上方地图的预设状态（0 战国形势 / 1 灭韩开局 / 7 疆域四至），
+// 每个环节配一句教师课堂引导语（未激活的留在 DOM 里）；小结为结论性知识
+const TEACH = [
+  {
+    name: '认七雄', mapStep: 0,
+    guide: '先认一认战国形势：请对照地图说出齐、楚、燕、韩、赵、魏、秦七雄的方位与都城，再指一指秦国在哪里，想想它「远交近攻」为什么会先拿最近的韩开刀。',
+  },
+  {
+    name: '观进程', mapStep: 1,
+    guide: '公元前230年秦灭韩，统一战争开始。每点一次「下个」之前，先让学生猜下一个被灭的是谁、为什么，再核对年份与金色进攻路线：韩、赵、魏、楚、燕、齐，近者先亡。',
+  },
+  {
+    name: '看疆域', mapStep: 7,
+    guide: '到统一后的疆域了。请学生按图复述四至：东至东海、西到陇西、北至长城一带、南达南海；再指认长城（西起临洮、东到辽东）、灵渠与都城咸阳，说说这些建设对巩固统一的作用。',
+  },
+];
+const SUMMARY = '公元前230年至前221年，秦先后灭掉韩、赵、魏、楚、燕、齐，完成统一，定都咸阳，建立起我国历史上第一个统一的多民族的封建国家。秦朝疆域东至东海，西到陇西，北至长城一带，南达南海；为抵御匈奴修筑了西起临洮、东到辽东的长城，南平百越后开凿灵渠。秦的统一结束了春秋战国以来长期争战混战的局面。';
+
 const TRIBES = [
   { n: '匈奴', p: [105.5, 42.3] }, { n: '东胡', p: [121.6, 43.2] }, { n: '羌', p: [100.2, 33.4] },
   { n: '西南夷', p: [101.6, 26.6] }, { n: '百越', p: [110.6, 23.2] }, { n: '朝鲜', p: [126.3, 39.9] },
@@ -120,7 +138,8 @@ const ease = (t) => t * t * (3 - 2 * t);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 function computeBase() {
-  const top = 10, bottom = Math.max(120, H - 158);
+  // top 让出顶栏下方教学环节条的高度，避免压住地图北部族名
+  const top = 104, bottom = Math.max(120, H - 158);
   const uW = (LON1 - LON0) * KX, uH = LAT1 - LAT0;
   base.k = Math.min((W - 16) / uW, (bottom - top) / uH);
   base.cx = W / 2;
@@ -544,6 +563,63 @@ function goStep(i, instant) {
   }
 }
 
+// 教研员契约四标记：定位行（进顶栏）、环节按钮、引导语（未激活 display:none 留 DOM）、小结浮层
+let teachBarEl = null, sumEl = null;
+function placeTeachBar() {
+  // 环节条贴在顶栏下方（顶栏窄屏会换行变高，需动态跟随）；小结浮层再挂其下
+  const bar = document.getElementById('bar');
+  if (!teachBarEl || !bar) return;
+  teachBarEl.style.top = bar.offsetHeight + 2 + 'px';
+  if (sumEl) sumEl.style.top = teachBarEl.offsetTop + teachBarEl.offsetHeight + 8 + 'px';
+}
+function buildTeachingPanel() {
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '历史·七年级｜统编版七上 · 第9课 秦统一中国';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  const bar = document.createElement('div');
+  bar.style.cssText =
+    'position:fixed;top:58px;left:0;right:0;z-index:9;display:flex;align-items:center;gap:8px;' +
+    'padding:6px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  bar.innerHTML =
+    TEACH.map((s, i) =>
+      `<button class="btn" data-hv-step type="button" aria-pressed="${i === 0}" style="font-size:15px;padding:6px 12px;white-space:nowrap">${i + 1}. ${s.name}</button>`
+    ).join('') +
+    TEACH.map((s, i) =>
+      `<span data-hv-guide style="flex:1;min-width:240px;font-size:15px;color:var(--text);line-height:1.5;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+    ).join('') +
+    '<button class="btn" id="hv-sum-btn" type="button" style="margin-left:auto;white-space:nowrap">小结</button>';
+  document.body.appendChild(bar);
+  teachBarEl = bar;
+
+  const el = document.createElement('div');
+  el.dataset.hvSummary = '';
+  el.textContent = SUMMARY;
+  el.style.cssText =
+    'position:fixed;top:110px;left:50%;transform:translateX(-50%);z-index:20;max-width:600px;margin:0 12px;' +
+    'padding:14px 18px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:15px;line-height:1.8;display:none';
+  document.body.appendChild(el);
+  sumEl = el;
+  placeTeachBar();
+
+  const steps = [...bar.querySelectorAll('[data-hv-step]')];
+  const guides = [...bar.querySelectorAll('[data-hv-guide]')];
+  const setTeach = (i) => {
+    goStep(TEACH[i].mapStep);
+    steps.forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+    guides.forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+  };
+  steps.forEach((el, i) => el.addEventListener('click', () => setTeach(i)));
+  bar.querySelector('#hv-sum-btn').addEventListener('click', () => {
+    sumEl.style.display = sumEl.style.display === 'none' ? '' : 'none';
+  });
+  setTeach(0);
+}
+
 init({
   mount(stage, api) {
     canvas = document.createElement('canvas');
@@ -552,6 +628,7 @@ init({
     ctx = canvas.getContext('2d');
 
     buildPanel(stage);
+    buildTeachingPanel();
 
     const resize = () => {
       dpr = Math.min(devicePixelRatio || 1, 2);
@@ -563,7 +640,7 @@ init({
       draw();
     };
     resize();
-    api.onResize = resize;
+    api.onResize = () => { resize(); placeTeachBar(); };
     api.onTheme = draw;
 
     // 拖动平移 + 双指捏合缩放（鼠标/触摸统一 pointer 通道）

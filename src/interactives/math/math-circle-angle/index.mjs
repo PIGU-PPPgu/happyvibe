@@ -186,9 +186,64 @@ function draw() {
   ctx.fillText('O', cx + 14, cy + 22);
 }
 
+// ---------- 教学环节：预设状态 + 教师引导语（激活的显示，其余留在 DOM） ----------
+// 定位（条目 frontmatter + 正文教材版本）：数学·九年级｜人教版九上第二十四章《圆》· 圆周角
+const META = '数学·九年级｜人教版九上第二十四章《圆》· 圆周角';
+// 三环节对应课堂流程：猜一猜（引入：同弧变不变）→ 验一验（探究：等于圆心角一半）→ 用一用（推论：直径对直角）
+const STEPS = [
+  {
+    name: '猜一猜',
+    pts: { A: 200, B: 340, P: 60, Q: 130 }, // P、Q 同在优弧，相距很远，∠APB = ∠AQB = 70°
+    guide: 'P、Q 同在一条弧上，位置却一左一右。先别量：猜一猜 ∠APB 和 ∠AQB 谁大谁小？P 沿弧拖动时度数变不变？说说理由，再动手验证。',
+  },
+  {
+    name: '验一验',
+    pts: { A: 190, B: 350, P: 70, Q: 110 }, // 同弧：两圆周角相等，且为 ∠AOB=160° 的一半
+    guide: '读一读面板上的三个角：∠APB、∠AQB 和紫色的 ∠AOB。同弧上的两个圆周角有什么关系？圆心角是谁的两倍？换一组 A、B 再试一次。',
+  },
+  {
+    name: '用一用',
+    pts: { A: 180, B: 0, P: 90, Q: 270 }, // AB 为直径，P、Q 分居两个半圆，两角恒 90°
+    guide: 'AB 变成了直径。无论 P 拖到圆上哪个位置，∠APB 都是多少度？把 P 拖进另一个半圆再确认。谁能用一句话说出直径所对圆周角的结论？',
+  },
+];
+const SUMMARY =
+  '圆周角定理：同弧或等弧所对的圆周角相等，都等于这条弧所对的圆心角的一半。' +
+  '推论一：直径所对的圆周角是直角；反过来，90° 的圆周角所对的弦是直径。' +
+  '推论二：圆内接四边形的对角互补。';
+
+function setStep(i) {
+  Object.assign(pts, STEPS[i].pts);
+  renderPanel();
+  draw();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+
+// 定位行进顶栏（提示语过长时省略号收缩，窄屏隐藏提示语、缩小定位行）
+function buildTeachingPanel() {
+  const fit = document.createElement('style');
+  fit.textContent = [
+    '#bar #hint{min-width:0;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '@media (max-width:900px){#bar h1{font-size:17px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}',
+    '@media (max-width:760px){#bar #hint{display:none}[data-hv-meta]{font-size:12px}}',
+  ].join('');
+  document.head.appendChild(fit);
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = META;
+  metaEl.style.cssText = 'color:var(--gold);font-size:13px;white-space:nowrap';
+  document.getElementById('hint').before(metaEl);
+}
+
 // ---------- UI ----------
 const STYLE = `
-#panel{position:fixed;top:64px;right:14px;z-index:15;width:240px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#panel{position:fixed;top:64px;right:14px;z-index:15;width:260px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.steps .btn{font-size:14px;padding:7px 2px;text-align:center}
+.steps .btn[aria-pressed="true"]{border-color:var(--gold);background:var(--panel2)}
+.guide{font-size:15px;line-height:1.6;color:var(--text)}
+#hvsum{font-size:14px;line-height:1.75;color:var(--text);padding:10px 12px;background:var(--panel2);border:1px solid var(--gold);border-radius:8px;max-height:42vh;overflow:auto}
 #angles{display:flex;flex-direction:column;gap:6px;font-size:19px;font-weight:700;font-family:Georgia,'Times New Roman',serif}
 #angles .gold{color:var(--gold)}
 #angles .blue{color:#4FC3F7}
@@ -199,7 +254,7 @@ const STYLE = `
 .tip{font-size:14px;color:var(--muted)}
 .btns{display:flex;gap:8px}
 .btns .btn{flex:1}
-@media (max-width:760px){#panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;padding:10px 12px;gap:7px}#angles{font-size:18px;flex-direction:row;flex-wrap:wrap;gap:4px 12px}#concl{font-size:15px}.tip{display:none}}
+@media (max-width:760px){#panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;padding:10px 12px;gap:7px}#angles{font-size:18px;flex-direction:row;flex-wrap:wrap;gap:4px 12px}#concl{font-size:15px}.tip,.guide{display:none}}
 `;
 
 function buildUI(stage) {
@@ -209,6 +264,10 @@ function buildUI(stage) {
   const panel = document.createElement('div');
   panel.id = 'panel';
   panel.innerHTML = [
+    '<div class="steps">' +
+    STEPS.map((t, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${t.name}</button>`).join('') +
+    '</div>',
+    ...STEPS.map((t, i) => `<span class="guide" data-hv-guide${i ? ' style="display:none"' : ''}>${t.guide}</span>`),
     '<div id="angles"></div>',
     '<div id="rel"></div>',
     '<div id="concl"></div>',
@@ -216,9 +275,12 @@ function buildUI(stage) {
     '<div class="btns">',
     '<button class="btn" id="dia" type="button" aria-label="AB 设为直径">直径</button>',
     '<button class="btn" id="reset" type="button" aria-label="复位">复位</button>',
+    '<button class="btn" id="summary" type="button" aria-label="知识小结">小结</button>',
     '</div>',
+    `<div id="hvsum" data-hv-summary style="display:none">${SUMMARY}</div>`,
   ].join('');
   stage.appendChild(panel);
+  buildTeachingPanel();
   panel.querySelector('#dia').addEventListener('click', () => {
     pts.A = 180; pts.B = 0;
     renderPanel(); draw();
@@ -227,6 +289,38 @@ function buildUI(stage) {
     Object.assign(pts, { A: 190, B: 350, P: 80, Q: 120 });
     renderPanel(); draw();
   });
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary').addEventListener('click', () => {
+    const el = panel.querySelector('#hvsum');
+    el.style.display = el.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
+// 自检：逐环节核对预设的几何关系——同弧两圆周角相等且为圆心角一半、直径所对圆周角 90°（比较前先判有限性）
+function runSelfChecks() {
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  const bad = [];
+  STEPS.forEach((t, i) => {
+    setStep(i);
+    const pAng = inscribedDeg('P');
+    const qAng = inscribedDeg('Q');
+    const arc = arcDeg(oppositeArc('P'));
+    if (![pAng, qAng, arc].every(Number.isFinite)) {
+      bad.push(`环节${i + 1} 角度非有限值 p=${pAng} q=${qAng} arc=${arc}`);
+      return;
+    }
+    const dia = Math.abs(norm(pts.B - pts.A) - 180) < 0.5;
+    if (dia) {
+      if (Math.abs(pAng - 90) > 0.5 || Math.abs(qAng - 90) > 0.5) bad.push(`环节${i + 1} 直径圆周角 ${fmtDeg(pAng)}/${fmtDeg(qAng)} ≠ 90°`);
+    } else {
+      if (Math.abs(pAng - qAng) > 0.5) bad.push(`环节${i + 1} 同弧圆周角不相等 ${fmtDeg(pAng)} ≠ ${fmtDeg(qAng)}`);
+      if (Math.abs(pAng * 2 - arc) > 0.5) bad.push(`环节${i + 1} 圆周角 ≠ 圆心角一半 ${fmtDeg(pAng)}×2 ≠ ${fmtDeg(arc)}`);
+    }
+  });
+  setStep(0);
+  push('环节预设几何关系', bad.length === 0, bad.join(' ') || '猜一猜/验一验：同弧两角相等且为圆心角一半；用一用：直径所对圆周角 90°');
 }
 
 function resize() {
@@ -252,6 +346,7 @@ init({
     buildUI(stage);
     renderPanel();
     resize();
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖点：鼠标与触摸统一 pointer 通道，命中 22px 内的 A/B/P/Q
     const hit = (x, y) => {

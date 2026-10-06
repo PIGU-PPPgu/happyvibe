@@ -125,8 +125,15 @@ function theme() {
 const ease = (t) => t * t * (3 - 2 * t);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
+// 地图顶边让开教学环节条（顶栏 + 环节条的实际高度），防止盖住高纬陆地
+function uiTopInset() {
+  if (!teachPanel) return 0;
+  const barH = document.getElementById('bar').offsetHeight;
+  return Math.max(0, barH + teachPanel.offsetHeight + 8 - 56);
+}
+
 function computeBase() {
-  const top = 10, bottom = Math.max(120, H - 158);
+  const top = 10 + uiTopInset(), bottom = Math.max(120, H - 158);
   base.k = Math.min((W - 16) / ((LON1 - LON0) * KX), (bottom - top) / (LAT1 - LAT0));
   base.cx = W / 2;
   base.cy = (top + bottom) / 2;
@@ -398,6 +405,66 @@ function goStep(i, instant) {
   }
 }
 
+// ———— 教研员契约：课堂环节（真实切场景）+ 教师引导语 + 知识小结 ————
+const PHASES = [
+  { name: '探动因', step: 0, instant: true,
+    guide: '先别急着看航线。15 世纪的欧洲人为什么要冒死出海？从「想要什么」和「拦了什么」两头想：东方的香料与丝绸、被奥斯曼帝国控制的传统商路、罗盘与造船技术的进步、葡萄牙和西班牙王室的支持。请一位同学把这些原因连成一句话。' },
+  { name: '认航线', step: 1, instant: false,
+    guide: '每条航线都先猜再核对：船队从哪个港口出发、朝什么方向走、停在哪里？点「下个」逐条对照——迪亚士到好望角、哥伦布西航抵美洲、达·伽马绕非洲直达印度、麦哲伦船队环球一周。' },
+  { name: '论影响', step: 5, instant: false,
+    guide: '四条航线都走通了。请在图上依次指认大西洋、太平洋、印度洋，再用一句话概括新航路开辟的影响，说完与下方卡片核对：世界开始连成一个整体。' },
+];
+const SUMMARY = '1487-1488 年迪亚士沿非洲西海岸南下，抵达好望角；1492 年哥伦布在西班牙王室支持下横渡大西洋，到达美洲；1497-1499 年达·伽马绕过好望角，直达印度西海岸的卡利卡特；1519-1522 年麦哲伦船队完成人类首次环球航行，证明了地圆说。新航路开辟后，欧洲与亚洲、非洲、美洲建立起直接的商业联系，世界开始连成一个整体，欧洲大西洋沿岸工商业繁荣起来；随之而来的殖民扩张也给亚非拉人民带来深重灾难。';
+
+let teachPanel = null, phaseBtns = [], phaseGuides = [];
+
+function highlightPhase(i) {
+  phaseBtns.forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  phaseGuides.forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+// 环节切换 = 预设状态：复位平移缩放到全景，并跳到该环节对应的航海步骤
+function setPhase(i) {
+  view.s = 1; view.tx = 0; view.ty = 0;
+  goStep(PHASES[i].step, PHASES[i].instant);
+  highlightPhase(i);
+}
+function buildTeachingPanel() {
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '历史·九年级｜统编版九上 · 走向近代 · 新航路的开辟';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap;max-width:30vw;overflow:hidden;text-overflow:ellipsis';
+  document.getElementById('hint').before(metaEl);
+
+  teachPanel = document.createElement('div');
+  teachPanel.style.cssText =
+    'position:fixed;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  teachPanel.style.top = document.getElementById('bar').offsetHeight + 'px';
+  teachPanel.innerHTML =
+    PHASES.map((p, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false" style="font-size:15px;padding:7px 14px">${i + 1}. ${p.name}</button>`).join('') +
+    PHASES.map((p, i) => `<span data-hv-guide style="flex:1;min-width:240px;font-size:15px;line-height:1.6;${i === 0 ? '' : 'display:none'}">${p.guide}</span>`).join('') +
+    '<button class="btn" id="hv-summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(teachPanel);
+  phaseBtns = [...teachPanel.querySelectorAll('[data-hv-step]')];
+  phaseGuides = [...teachPanel.querySelectorAll('[data-hv-guide]')];
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;left:50%;transform:translateX(-50%);z-index:16;max-width:640px;margin:0 16px;' +
+    'padding:14px 18px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  summaryEl.style.top = teachPanel.offsetHeight + 64 + 'px';
+  document.body.appendChild(summaryEl);
+
+  phaseBtns.forEach((el, i) => el.addEventListener('click', () => setPhase(i)));
+  teachPanel.querySelector('#hv-summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  highlightPhase(0);
+}
+
 init({
   mount(stage, api) {
     canvas = document.createElement('canvas');
@@ -405,6 +472,7 @@ init({
     stage.appendChild(canvas);
     ctx = canvas.getContext('2d');
     buildPanel(stage);
+    buildTeachingPanel();
 
     const resize = () => {
       dpr = Math.min(devicePixelRatio || 1, 2);
@@ -412,6 +480,7 @@ init({
       canvas.width = W * dpr; canvas.height = H * dpr;
       canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (teachPanel) teachPanel.style.top = document.getElementById('bar').offsetHeight + 'px';
       computeBase();
       draw();
     };
@@ -475,6 +544,9 @@ init({
 
     const sp = new URLSearchParams(location.search).get('step');
     const sn = parseInt(sp, 10);
-    if (!Number.isNaN(sn) && sn >= 0 && sn < STEPS.length && sn !== 0) goStep(sn, true);
+    if (!Number.isNaN(sn) && sn >= 0 && sn < STEPS.length) {
+      if (sn !== 0) goStep(sn, true);
+      highlightPhase(sn === 0 ? 0 : sn === STEPS.length - 1 ? 2 : 1);
+    }
   },
 });

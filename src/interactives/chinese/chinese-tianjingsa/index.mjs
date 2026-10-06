@@ -26,6 +26,36 @@ const SCENES = [
 const WORLD_W = 4200;
 let canvas, ctx, cam = { x: 0 }, dusk = 0.35, selected = null, W = 0, H = 0, dpr = 1, groundY = 0;
 
+// 教研员契约：定位行 / 教学环节（每步设真实场景状态：镜头、暮色、选中意象）/ 知识小结
+// 定位信息取自资源条目 frontmatter（语文·初中·七年级·古代诗歌元曲意象）与正文（统编版七上课外古诗词诵读）
+const META = '语文·七年级｜统编版七上 · 课外古诗词诵读《天净沙·秋思》';
+const STEPS = [
+  {
+    name: '看画卷',
+    camX: 0, dusk: 0.35, word: null,
+    guide: '先不读诗句。从卷首慢慢往右看，用一句话说说：你看到了哪些景物？这幅画带给你怎样的感觉？',
+  },
+  {
+    name: '找意象',
+    camX: 0, dusk: 0.35, word: '枯藤',
+    guide: '逐个点击景物，看诗句里哪个词被点亮。数一数：前三句十八个字，一共并置了几种景物？一个动词都没有，画面为什么依然鲜明？',
+  },
+  {
+    name: '品暮色',
+    camX: 2650, dusk: 0.05, word: null,
+    guide: '把下方滑杆从晨拖到暮，观察天色怎么变。想一想：为什么九种景物都要放进「夕阳西下」的黄昏里？这时乌鸦归巢、人家亮灯，谁还在路上？',
+  },
+  {
+    name: '悟诗情',
+    camX: 3200, dusk: 0.95, word: '断肠人',
+    guide: '找到古道上的行人和天边的落日。景是眼前之景，情是心中之情——说说这首小令是怎样把秋景写成游子乡愁的？',
+  },
+];
+const SUMMARY =
+  '《天净沙·秋思》是元代马致远的小令，「天净沙」是曲牌名，「秋思」是题目，后人誉为「秋思之祖」。' +
+  '前三句十八字并列枯藤、老树、昏鸦、小桥、流水、人家、古道、西风、瘦马九种景物，不着一个动词而秋郊夕照图自成；' +
+  '「夕阳西下」点明黄昏时分，「断肠人在天涯」点出抒情主人公。全曲借秋郊夕照之景抒天涯游子之愁，是借景抒情、情景交融的典范。';
+
 function theme() {
   const cs = getComputedStyle(document.documentElement);
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
@@ -339,7 +369,7 @@ function drawWalker() {
 }
 
 // ---------- 诗句面板（HTML） ----------
-let verseEl;
+let verseEl, duskInput;
 function buildUI(stage) {
   const t = theme();
   const wrap = document.createElement('div');
@@ -352,11 +382,89 @@ function buildUI(stage) {
   ctl.innerHTML = '<span style="font-size:15px;color:var(--muted)">晨</span><input id="dusk" type="range" min="0" max="100" value="35" style="width:200px;accent-color:var(--gold)" aria-label="暮色"><span style="font-size:15px;color:var(--muted)">暮</span>';
   wrap.appendChild(ctl);
   stage.appendChild(wrap);
+  duskInput = ctl.querySelector('#dusk');
   ctl.querySelector('#dusk').addEventListener('input', (e) => {
     dusk = e.target.value / 100;
     draw();
   });
   renderVerse(null);
+}
+
+// 环节切换：镜头、暮色、选中意象一起切到预设状态；引导语只显示当前环节，其余留在 DOM
+function setStep(i) {
+  const s = STEPS[i];
+  cam.x = Math.max(0, Math.min(WORLD_W - W, s.camX));
+  dusk = s.dusk;
+  if (duskInput) duskInput.value = String(Math.round(dusk * 100));
+  selected = s.word ? SCENES.find((sc) => sc.word === s.word) || null : null;
+  renderVerse(selected ? selected.word : null);
+  draw();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示词前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = META;
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+  if (hintEl) hintEl.before(metaEl);
+  else document.getElementById('bar').appendChild(metaEl);
+
+  // 环节导航 + 引导语 + 小结按钮（长卷顶栏下方，盖在天空区，不挡地平线上的景物）
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  panel.innerHTML =
+    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`).join('') +
+    STEPS.map((s, i) => `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`).join('') +
+    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:130px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
+// 自测：逐环节验证预设真的写进场景状态；意象坐标与「九种景物」小结与数据一致（比较前先判 Number.isFinite）
+function runSelfChecks() {
+  const push = window.__hvPushCheck;
+  if (!push) return;
+  const bad = [];
+  STEPS.forEach((s, i) => {
+    setStep(i);
+    const camTarget = Math.max(0, Math.min(WORLD_W - W, s.camX));
+    const okCam = Number.isFinite(cam.x) && Math.abs(cam.x - camTarget) < 0.5;
+    const okDusk = Number.isFinite(dusk) && Math.abs(dusk - s.dusk) < 0.001;
+    const okWord = s.word ? !!selected && selected.word === s.word : !selected;
+    if (!okCam || !okDusk || !okWord) {
+      bad.push(`${i + 1}${s.name}: cam=${cam.x}≠${Math.round(camTarget)} dusk=${dusk}≠${s.dusk} word=${selected ? selected.word : '无'}`);
+    }
+  });
+  push('环节预设状态', bad.length === 0, bad.join(' '));
+  const out = SCENES.filter((s) => !Number.isFinite(s.x) || !Number.isFinite(s.y) || s.x < 0 || s.x > WORLD_W);
+  push('意象坐标在卷内', out.length === 0, out.length ? out.map((s) => s.word).join(',') : `${SCENES.length} 处均在 0-${WORLD_W}`);
+  const n = POEM.slice(0, 3).reduce((k, [, ws]) => k + ws.length, 0);
+  push('前三句九种景物', n === 9, `前三句并置意象数=${n}`);
+  setStep(0);
 }
 
 function renderVerse(word) {
@@ -403,6 +511,8 @@ init({
     api.onTheme = () => { draw(); };
 
     buildUI(stage);
+    buildTeachingPanel();
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     let dragging = false, lastX = 0, moved = 0;
     canvas.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; moved = 0; canvas.setPointerCapture(e.pointerId); });

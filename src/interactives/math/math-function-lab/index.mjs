@@ -5,6 +5,7 @@ import { init } from '../../_shared/runtime.mjs';
 const BLUE = '#4FC3F7';
 
 let cv, ctx, stageEl, W = 0, H = 0;
+let ui = null; // 控制面板元素引用（sk/sb/vk/vb/sync），供教学环节预设复用
 const view = { cx: 0, cy: 0, span: 8 };
 const state = { type: 'linear', linK: 2, linB: 1, invK: 6 };
 
@@ -209,19 +210,20 @@ function draw() {
   ctx.fillStyle = p.panel;
   ctx.strokeStyle = p.line;
   ctx.lineWidth = 1.5;
+  // 解析式贴片放在教学环节条（页面顶部 fixed）下方，避免被遮挡
   ctx.beginPath();
-  ctx.roundRect ? ctx.roundRect(16, 14, tw + 30, 42, 10) : ctx.rect(16, 14, tw + 30, 42);
+  ctx.roundRect ? ctx.roundRect(16, 58, tw + 30, 42, 10) : ctx.rect(16, 58, tw + 30, 42);
   ctx.fill(); ctx.stroke();
   ctx.fillStyle = state.type === 'linear' ? p.gold : p.purple;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillText(fs, 31, 36);
+  ctx.fillText(fs, 31, 80);
   ctx.textBaseline = 'alphabetic';
 }
 
 // ---------- UI ----------
 const STYLE = `
-#panel{position:fixed;top:64px;right:14px;z-index:15;width:296px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:11px}
+#panel{position:fixed;top:116px;right:14px;z-index:15;width:296px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:11px}
 .types{display:flex;gap:8px}
 .types .btn{flex:1}
 .btn.on{border-color:var(--gold);color:var(--gold)}
@@ -261,7 +263,8 @@ function buildUI(stage) {
 
   const sk = panel.querySelector('#sk'), sb = panel.querySelector('#sb');
   const vk = panel.querySelector('#vk'), vb = panel.querySelector('#vb');
-  const syncSlider = () => {
+  ui = { panel, sk, sb, vk, vb };
+  ui.sync = () => {
     const inv = state.type === 'inverse';
     sk.min = inv ? -12 : -5;
     sk.max = inv ? 12 : 5;
@@ -271,8 +274,8 @@ function buildUI(stage) {
     vb.textContent = state.linB;
     panel.querySelector('#row-b').classList.toggle('off', inv);
   };
-  panel.querySelector('#t-lin').addEventListener('click', () => { state.type = 'linear'; panel.querySelector('#t-lin').classList.add('on'); panel.querySelector('#t-inv').classList.remove('on'); syncSlider(); renderProps(); draw(); });
-  panel.querySelector('#t-inv').addEventListener('click', () => { state.type = 'inverse'; panel.querySelector('#t-inv').classList.add('on'); panel.querySelector('#t-lin').classList.remove('on'); syncSlider(); renderProps(); draw(); });
+  panel.querySelector('#t-lin').addEventListener('click', () => setType('linear'));
+  panel.querySelector('#t-inv').addEventListener('click', () => setType('inverse'));
   sk.addEventListener('input', () => {
     if (state.type === 'linear') state.linK = +sk.value; else state.invK = +sk.value;
     vk.textContent = sk.value;
@@ -285,10 +288,131 @@ function buildUI(stage) {
     renderProps();
     draw();
   });
-  panel.querySelector('#reset').addEventListener('click', () => {
-    view.cx = 0; view.cy = 0; view.span = 8;
-    draw();
+  panel.querySelector('#reset').addEventListener('click', resetView);
+}
+
+// 切换函数类型并同步按钮态、滑杆量程、解析式与性质表
+function setType(type) {
+  state.type = type;
+  ui.panel.querySelector('#t-lin').classList.toggle('on', type === 'linear');
+  ui.panel.querySelector('#t-inv').classList.toggle('on', type === 'inverse');
+  ui.sync();
+  renderProps();
+  draw();
+}
+
+function resetView() {
+  view.cx = 0; view.cy = 0; view.span = 8;
+  draw();
+}
+
+// ---------- 教学环节：预设状态 + 教师引导语（激活的显示，其余留在 DOM） ----------
+// 环节设计对应课堂用法：读图识 b → 变 k 看转向与增减性 → 变 b 看平移 → 迁移到反比例函数
+const STEPS = [
+  {
+    name: '读一读',
+    type: 'linear', k: 2, b: 1, invK: 6,
+    guide: '先看这条直线 y = 2x + 1。谁来说出它与 y 轴、x 轴的交点？式子里的 1 写到了图像的哪个位置？',
+  },
+  {
+    name: '变 k',
+    type: 'linear', k: -2, b: 1, invK: 6,
+    guide: '这条 y = -2x + 1 和刚才的 y = 2x + 1 相比哪里变了？拖 k 在 2 与 -2 之间来回，直线怎么转？性质表的增减性换了什么说法？',
+  },
+  {
+    name: '变 b',
+    type: 'linear', k: 2, b: -3, invK: 6,
+    guide: '回到 k = 2，把 b 从 1 拖到 -3。直线往哪边平移？两个蓝点交点怎么走？用自己的话说说 b 的几何意义。',
+  },
+  {
+    name: '反比例',
+    type: 'inverse', k: 2, b: 1, invK: 6,
+    guide: '换成 y = 6/x。k 为正时两支各在哪个象限？把 k 拖到负数，两支怎么换位置？再拖到 0——图像不见了，谁能解释为什么？',
+  },
+];
+const SUMMARY =
+  '一次函数 y = kx + b（k ≠ 0）的图像是一条直线：k > 0 时 y 随 x 增大而增大，k < 0 时 y 随 x 增大而减小；' +
+  'b 是直线与 y 轴交点的纵坐标，改变 b，直线上下平移；b = 0 时是正比例函数，图像过原点。' +
+  '反比例函数 y = k/x（k ≠ 0）的图像是双曲线：k > 0 时两支分别在第一、三象限，k < 0 时在第二、四象限；' +
+  'k > 0 时每一支上 y 随 x 增大而减小，k < 0 时每一支上 y 随 x 增大而增大；k = 0 时 y = k/x 无意义，没有图像。';
+
+function setStep(i) {
+  const s = STEPS[i];
+  state.linK = s.k; state.linB = s.b; state.invK = s.invK;
+  setType(s.type); // 同步类型按钮、滑杆量程与数值、解析式、性质表
+  resetView();
+  document.querySelectorAll('[data-hv-step]').forEach((el, kk) => el.setAttribute('aria-pressed', String(kk === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, kk) => { el.style.display = kk === i ? '' : 'none'; });
+}
+
+function buildTeachingPanel() {
+  // 顶栏排布兜底：定位行较长时提示语省略号收缩，窄屏隐藏提示语
+  const fit = document.createElement('style');
+  fit.textContent = [
+    '#bar #hint{min-width:0;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '@media (max-width:900px){#bar h1{font-size:17px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}',
+    '@media (max-width:760px){#bar #hint{display:none}[data-hv-meta]{font-size:12px}}',
+  ].join('');
+  document.head.appendChild(fit);
+
+  // 定位行（标题右侧）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '数学·八年级｜人教版八下第十九章《一次函数》· 图像与性质';
+  metaEl.style.cssText = 'color:var(--gold);font-size:13px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节条（顶栏下方）+ 引导语 + 小结按钮
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  panel.innerHTML =
+    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`).join('') +
+    STEPS.map((s, i) => `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`).join('') +
+    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:116px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
   });
+  setStep(0);
+}
+
+// 自测断言：验证每个环节按钮真的把场景切到预设状态（解析式、滑杆、性质表联动）
+function runSelfChecks() {
+  const push = (n, p, d) => window.__hvPushCheck(n, p, d);
+  const formula = () => document.getElementById('formula').textContent;
+  push('初始预设', state.type === 'linear' && state.linK === 2 && state.linB === 1 && formula() === 'y = 2x + 1', formula());
+  const expect = ['y = 2x + 1', 'y = -2x + 1', 'y = 2x - 3', 'y = 6/x'];
+  const bad = [];
+  STEPS.forEach((s, i) => {
+    setStep(i);
+    if (state.type !== s.type || formula() !== expect[i]) bad.push(`环节${i + 1}解析式=${formula()}`);
+    const want = s.type === 'linear' ? s.k : s.invK;
+    if (!Number.isFinite(+ui.sk.value) || +ui.sk.value !== want) bad.push(`环节${i + 1}滑杆=${ui.sk.value}≠${want}`);
+  });
+  setStep(0);
+  push('环节预设切换', bad.length === 0, bad.join(' ') || '四个环节的类型、解析式、k 滑杆均切换到位');
+  setStep(1);
+  const p1 = document.getElementById('props').textContent;
+  push('性质表联动(k<0)', p1.includes('减小') && p1.includes('(0, 1)'), p1.slice(0, 50));
+  setStep(3);
+  state.invK = 0; ui.sync(); renderProps(); draw();
+  const p3 = document.getElementById('props').textContent;
+  push('反比例k=0无图像', p3.includes('无意义'), p3.slice(0, 30));
+  setStep(0);
 }
 
 function resize() {
@@ -314,6 +438,8 @@ init({
     buildUI(stage);
     renderProps();
     resize();
+    buildTeachingPanel();
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖拽平移 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道，缩放以指针为焦点）
     const zoomAt = (sx, sy, factor) => {

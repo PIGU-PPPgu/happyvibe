@@ -165,10 +165,11 @@ function draw() {
 }
 
 let els = {};
+let ui = null;
 function buildUI(stage) {
   const st = document.createElement('style');
   st.textContent = `
-    #tabs{position:absolute;top:8px;left:12px;z-index:6;display:flex;gap:8px}
+    #tabs{position:absolute;top:84px;left:12px;z-index:6;display:flex;gap:8px}
     .tab{font:inherit;font-size:17px;padding:8px 16px;border-radius:8px;border:1px solid var(--line);
       background:var(--panel);color:var(--text);cursor:pointer;touch-action:manipulation}
     .tab.on{border-color:var(--gold);color:var(--gold);font-weight:700}
@@ -178,7 +179,7 @@ function buildUI(stage) {
     #rpanel .yr{color:var(--gold);font-weight:700;font-size:20px;margin-right:10px}
     #rpanel .tt{font-weight:700;font-size:19px}
     #rpanel .tx{font-size:16px;color:var(--muted);margin-top:4px;line-height:1.5}
-    #data{position:absolute;inset:56px 16px 16px 16px;z-index:4;display:none;overflow:auto}
+    #data{position:absolute;inset:128px 16px 16px 16px;z-index:4;display:none;overflow:auto}
     #data h2{text-align:center;font-size:22px;color:var(--gold);margin:6px 0 14px}
     #dgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1060px;margin:0 auto}
     @media (max-width:860px){#dgrid{grid-template-columns:1fr}}
@@ -293,13 +294,94 @@ function buildUI(stage) {
   return { setMode, updatePanel };
 }
 
+// 教研契约：环节预设真的切换场景状态（视图模式 / 缩放区间 / 选中卡片），引导语全部留在 DOM
+const STEPS = [
+  {
+    name: '理主线', mode: 'tl', range: null, sel: -1,
+    guide: '从 1978 年十一届三中全会出发：请按时间顺序说出你知道的改革开放大事，再点击时间线上的卡片，逐条核对内容与意义。',
+  },
+  {
+    name: '抓转折', mode: 'tl', range: [1977.5, 1983], sel: 0,
+    guide: '画面已聚焦在 1978 年前后。想一想：为什么说十一届三中全会是新中国成立以来党的历史上具有深远意义的伟大转折？请从「工作中心转移到哪里」「作出了什么决策」两个角度说一说。',
+  },
+  {
+    name: '分阶段', mode: 'tl', range: [1989, 1997], sel: 5,
+    guide: '放大到 1992 年前后：先读南方谈话的卡片，再点开中共十四大，说说两者之间有什么联系；再看下方色带，指认三个阶段并说出各自的起止年份。',
+  },
+  {
+    name: '看成就', mode: 'data',
+    guide: '先猜一猜 1980 年深圳的 GDP 大约是多少，再看数据：四十多年增长超万倍，背后发生了什么？结合全国 GDP 与城镇化率的对照，说说你感受到的变化。',
+  },
+];
+const SUMMARY =
+  '1978 年底，中共十一届三中全会作出把党和国家工作中心转移到经济建设上来、实行改革开放的历史性决策，是新中国成立以来党的历史上具有深远意义的伟大转折。改革从农村起步，家庭联产承包责任制逐步推广；开放从深圳、珠海、汕头、厦门四个经济特区起步，对外开放格局逐步扩大。1992 年南方谈话进一步解放了人们的思想，中共十四大明确提出建立社会主义市场经济体制。中共十八大以来中国特色社会主义进入新时代，2021 年我国全面建成小康社会，实现第一个百年奋斗目标。';
+
+function setStep(i, scene = true) {
+  const s = STEPS[i];
+  if (scene && ui) {
+    if (s.mode === 'data') {
+      ui.setMode('data');
+    } else {
+      ui.setMode('tl');
+      if (s.range) {
+        view.z = clamp((Y1 - Y0) / (s.range[1] - s.range[0]), 1, 12);
+        view.off = clamp((s.range[0] - Y0) * ppy(), 0, Math.max(0, (Y1 - Y0) * ppy() - (W - PAD * 2)));
+      } else {
+        view.z = 1;
+        view.off = 0;
+      }
+      sel = s.sel;
+      draw();
+      ui.updatePanel();
+    }
+  }
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+
+function buildTeachingPanel() {
+  // 定位行：进顶栏
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '历史·八年级｜统编版八下第三单元 · 中国特色社会主义道路：改革开放';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+  document.getElementById('hint').before(metaEl);
+
+  // 环节按钮 + 引导语 + 小结按钮
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:7;display:flex;align-items:center;gap:8px;flex-wrap:wrap;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)';
+  panel.innerHTML =
+    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 14px">${i + 1}. ${s.name}</button>`).join('') +
+    '<button class="btn" id="hv-summary-btn" type="button" style="font-size:15px;padding:7px 14px;margin-left:auto">小结</button>' +
+    STEPS.map((s, i) => `<span data-hv-guide style="flex-basis:100%;font-size:15px;color:var(--text);line-height:1.5;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`).join('');
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:148px;left:50%;transform:translateX(-50%);z-index:8;max-width:640px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#hv-summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  // ?mode=data 嵌入参数保留：只点亮环节条，不动场景
+  setStep(0, new URLSearchParams(location.search).get('mode') !== 'data');
+}
+
 init({
   mount(stage, api) {
     canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;touch-action:none;cursor:grab';
     stage.appendChild(canvas);
     ctx = canvas.getContext('2d');
-    const ui = buildUI(stage);
+    ui = buildUI(stage);
 
     const measure = () => {
       ctx.font = `700 17px ${FONT}`;
@@ -315,6 +397,18 @@ init({
       draw();
     };
     resize();
+    buildTeachingPanel();
+    if (new URLSearchParams(location.search).has('selftest')) {
+      // 断言「抓转折」环节真的把视口聚焦到 1978 年（比较前先判 Number.isFinite）
+      setStep(1);
+      const fx = xOf(EVENTS[0].y);
+      window.__hvPushCheck(
+        'step-focus-1978',
+        Number.isFinite(fx) && fx > 0 && fx < W && Number.isFinite(view.z) && view.z > 1 && sel === 0,
+        `fx=${fx.toFixed(0)} z=${view.z.toFixed(1)} sel=${sel} W=${W}`
+      );
+      setStep(0);
+    }
     api.onResize = resize;
     api.onTheme = draw;
 

@@ -97,7 +97,7 @@ const PUNCT = {
 };
 
 const CSS = `
-.pn-wrap{position:absolute;inset:0;overflow:auto;padding:18px 24px 28px;display:flex;flex-direction:column;gap:14px}
+.pn-wrap{position:absolute;inset:0;overflow:auto;padding:72px 24px 28px;display:flex;flex-direction:column;gap:14px}
 .pn-tabs{display:flex;gap:8px}
 .pn-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:16px;color:var(--muted)}
 .pn-crumb .sep{opacity:.6}
@@ -131,7 +131,7 @@ const CSS = `
 .pn-item:hover{border-color:var(--gold)}
 .pn-item .m{color:var(--gold);font-weight:700;min-width:34px;text-align:center}
 .pn-item .n{color:var(--muted);font-size:16px}
-@media (max-width:700px){.pn-ex{grid-template-columns:1fr}.pn-mark{font-size:48px;min-width:64px}}
+@media (max-width:700px){.pn-wrap{padding-top:150px}.pn-ex{grid-template-columns:1fr}.pn-mark{font-size:48px;min-width:64px}}
 `;
 
 let wrap, bodyEl, view = 'flow', branch = -1, endId = null;
@@ -277,6 +277,110 @@ function renderTabs() {
   wrap.querySelector('.pn-tabs').replaceWith(tabs);
 }
 
+// 教研员契约：定位行 / 教学环节 / 每环节引导语 / 知识小结
+// 环节预设与条目「课堂用法」一致：出示病句 → 走流程验证 → 全景归纳
+const META_TEXT = '语文·小学三至六年级｜统编版各册语文园地 · 标点符号正确使用';
+const STEPS = [
+  {
+    name: '病句会诊', view: 'flow', branch: 1, end: 'dunhao',
+    guide: '书包里那句红字病句，并列的文具之间点了逗号。先说一说这里该换成哪个标点、为什么，再对照金色对例检查你的判断。',
+  },
+  {
+    name: '走流程验证', view: 'flow', branch: -1, end: null,
+    guide: '换一个新句子自己走流程：先点它在句子里的位置，再点这里为什么要停顿，看流程把你带到哪个标点，和你的判断一致吗？',
+  },
+  {
+    name: '全景归纳', view: 'all', branch: -1, end: null,
+    guide: '对着全景把十一种标点分成句末、句中、引用与名称三类，同桌互相考一种标点的用法，并各说一个正确的例句。',
+  },
+];
+const SUMMARY =
+  '句末用句号、问号、感叹号：句子说完了用句号，提出问题（含反问）用问号，感情强烈用感叹号。' +
+  '句中停顿有长短：并列词语之间最短，用顿号；句中一般停顿用逗号；并列的几层意思之间用分号；提示下文或总结上文用冒号。' +
+  '标明引用与名称：直接引用别人的话加引号，作品名称用书名号，解释说明、话题转折用破折号，话没说完、列举未尽用省略号。' +
+  '判断口诀：先看位置，再看意图。';
+
+function setStep(i) {
+  view = STEPS[i].view;
+  branch = STEPS[i].branch;
+  endId = STEPS[i].end;
+  render();
+  renderTabs();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = META_TEXT;
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节条 + 引导语 + 小结浮层
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  const stepBtns = STEPS.map(
+    (s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
+  ).join('');
+  const guides = STEPS.map(
+    (s, i) =>
+      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+  ).join('');
+  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
+function runSelfChecks() {
+  if (typeof window.__hvPushCheck !== 'function') return;
+  // 数据级：决策树每个选项都有终点卡，终点卡字段齐全
+  const missing = [];
+  for (const b of TREE) for (const o of b.opts) if (!PUNCT[o.p]) missing.push(o.p);
+  window.__hvPushCheck('decision-tree-complete', missing.length === 0, missing.length ? '缺终点卡: ' + missing.join(',') : '11 个选项终点卡齐全');
+  const broken = [];
+  for (const id of Object.keys(PUNCT)) {
+    const p = PUNCT[id];
+    if (!p.mark || !p.name || !p.key || !p.why || p.ok.length === 0 || p.bad.length === 0) broken.push(id);
+  }
+  window.__hvPushCheck('end-card-fields', broken.length === 0, broken.length ? '字段缺失: ' + broken.join(',') : '11 张终点卡用法要点与对错例句齐全');
+  // 教研契约标记就位
+  const guides = [...document.querySelectorAll('[data-hv-guide]')].map((g) => g.textContent.trim());
+  window.__hvPushCheck(
+    'teaching-panel-ready',
+    document.querySelectorAll('[data-hv-step]').length === STEPS.length && guides.length === STEPS.length && guides.join('').length >= 60,
+    `${STEPS.length} 个环节、${guides.length} 条引导语共 ${guides.join('').length} 字`
+  );
+  // 场景级：环节按钮真的切换到预设状态
+  setStep(2);
+  const allGrid = bodyEl.querySelector('.pn-all');
+  window.__hvPushCheck('step-scene-all', view === 'all' && !!allGrid, allGrid ? '环节3切到全景网格' : '环节3未渲染全景网格');
+  setStep(1);
+  const q = bodyEl.querySelector('.pn-q');
+  window.__hvPushCheck('step-scene-flow', view === 'flow' && branch === -1 && endId === null && !!q, q ? '环节2回到流程根部提问' : '环节2未回到流程根部');
+  setStep(0);
+  const mark = bodyEl.querySelector('.pn-mark');
+  window.__hvPushCheck('step-scene-card', endId === 'dunhao' && !!mark && mark.textContent === PUNCT.dunhao.mark, mark ? '环节1出示顿号病句终点卡' : '环节1未出示病句卡');
+}
+
 init({
   mount(stage) {
     const style = document.createElement('style');
@@ -292,12 +396,13 @@ init({
     wrap.appendChild(bodyEl);
     stage.appendChild(wrap);
     renderTabs();
-    render();
+    buildTeachingPanel();
 
     // 深链：?p=dunhao 直达终点卡；?view=all 打开全景
     try {
       const q = new URLSearchParams(location.search);
       const pid = q.get('p');
+      const deep = pid && PUNCT[pid] ? true : q.get('view') === 'all';
       if (pid && PUNCT[pid]) {
         endId = pid;
         branch = TREE.findIndex((b) => b.opts.some((o) => o.p === pid));
@@ -307,6 +412,13 @@ init({
         render();
         renderTabs();
       }
+      if (deep) {
+        // 深链直接改场景，环节高亮与引导语一并取消
+        document.querySelectorAll('[data-hv-guide]').forEach((el) => { el.style.display = 'none'; });
+        document.querySelectorAll('[data-hv-step]').forEach((el) => el.setAttribute('aria-pressed', 'false'));
+      }
     } catch (e) {}
+
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
   },
 });

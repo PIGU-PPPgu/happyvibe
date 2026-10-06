@@ -112,6 +112,7 @@ const target = new THREE.Vector3(0, 0.1, 0);
 let spotState = -2; // -2 默认（未选），-1 无，>=0 热点
 let els = {};
 let cardRedraws = [];
+let defaultMode = '3d';
 
 function themeColors() {
   const cs = getComputedStyle(document.documentElement);
@@ -208,6 +209,129 @@ function setSpot(i) {
   }
 }
 
+function setMode(m) {
+  const is3d = m === '3d';
+  els.tab3d.classList.toggle('on', is3d);
+  els.tabCard.classList.toggle('on', !is3d);
+  els.bpanel.style.display = is3d ? 'flex' : 'none';
+  els.cbar.style.display = is3d ? 'none' : 'flex';
+  els.cards.style.display = is3d ? 'none' : 'grid';
+  renderer.domElement.style.display = is3d ? 'block' : 'none';
+}
+
+function setSpin(v) {
+  spinning = v;
+  els.spin.textContent = v ? '停转' : '转动';
+}
+
+function resetCards() {
+  [...els.cards.children].forEach((f) => f.classList.remove('on'));
+}
+
+// ———— 教学环节：每步把场景切到预设状态，配一句教师引导语（教研员契约） ————
+const STEPS = [
+  {
+    name: '观其器',
+    apply() {
+      setMode(defaultMode);
+      setSpin(false);
+      setSpot(-1);
+      Object.assign(spherical, { theta: 0.7, phi: 1.12, radius: 4.4 });
+    },
+    guide: '先整体看这尊鼎：数一数它有几只耳、几条足，通体是什么颜色。再猜一猜，三千多年前没有机器，工匠怎么把八百多千克的大家伙铸出来？',
+  },
+  {
+    name: '认其纹',
+    apply() {
+      setMode('3d');
+      setSpot(1);
+      setSpin(true);
+    },
+    guide: '看兽面纹放大图：找一找它的双眼、眉毛和鼻梁，说说这样的纹饰给人什么感受。鼎正在慢转，等它转过一圈，再想想祭祀用的鼎为什么要铸这种纹。',
+  },
+  {
+    name: '识其字',
+    apply() {
+      setMode('card');
+      resetCards();
+    },
+    guide: '先别翻面。看字形猜它今天是哪个字，说清你看的是哪个部位；翻面核对后，把八张卡分成两类：照着实物描画出来的，和把两三个字合起来表示新意思的。',
+  },
+];
+const SUMMARY =
+  '后母戊鼎重 832.84 千克，是迄今出土最重的青铜器，全器用多块陶范合铸而成，立耳、柱足与兽面纹体现商代青铜铸造工艺的高超水平。商朝人把文字刻在龟甲、兽骨上，称为甲骨文；它已具备汉字的基本结构，象形、会意等造字方法沿用至今，我国有文字可考的历史从商朝开始。';
+
+function setStep(i) {
+  STEPS[i].apply();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel(stage) {
+  // 定位行进顶栏
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '历史·七年级｜统编版七上第二单元第5课 · 青铜器与甲骨文';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:2px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节条：顶栏 tabs 行下方，按钮切预设状态，未激活的引导语留 DOM
+  const panel = document.createElement('div');
+  panel.id = 'teach';
+  panel.innerHTML =
+    STEPS.map(
+      (s) => `<button class="qb" data-hv-step type="button" aria-pressed="false" style="padding:9px 14px">${s.name}</button>`
+    ).join('') +
+    STEPS.map(
+      (s, i) => `<span class="guide" data-hv-guide style="${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+    ).join('') +
+    '<button class="qb" id="summaryBtn" type="button">小结</button>';
+  stage.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:172px;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summaryBtn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+}
+
+// 自测断言：验证环节按钮真的把场景切到预设状态（selftest 下 harness 采集）
+function runSelfChecks() {
+  const ok = (name, pass, detail) => window.__hvPushCheck && window.__hvPushCheck(name, pass, detail);
+  const snap = () => ({
+    canvasShown: renderer.domElement.style.display !== 'none',
+    cardsShown: els.cards.style.display === 'grid',
+    zoomShown: els.zoomWrap.style.display !== 'none',
+    spot: els.spotName.textContent,
+    spin: spinning,
+    flipped: els.cards.querySelectorAll('.flip.on').length,
+    pressed: [...document.querySelectorAll('[data-hv-step]')].map((b) => b.getAttribute('aria-pressed')),
+    guides: [...document.querySelectorAll('[data-hv-guide]')].map((g) => g.style.display !== 'none'),
+  });
+  setStep(1);
+  const s1 = snap();
+  ok('step2-认其纹', s1.spot === '兽面纹' && s1.spin === true && s1.zoomShown && s1.canvasShown && !s1.cardsShown && s1.guides[1] === true && s1.guides[0] === false, JSON.stringify(s1));
+  setStep(2);
+  const s2 = snap();
+  ok('step3-识其字', s2.cardsShown && !s2.canvasShown && s2.flipped === 0 && s2.pressed[2] === 'true' && s2.guides[2] === true, JSON.stringify(s2));
+  setStep(0);
+  const s0 = snap();
+  ok('step1-观其器', s0.canvasShown && !s0.cardsShown && s0.spin === false && s0.spot === '后母戊鼎' && s0.pressed[0] === 'true' && s0.guides[0] === true, JSON.stringify(s0));
+}
+
 function drawCards() {
   const t = themeColors();
   for (const rd of cardRedraws) rd(t);
@@ -233,6 +357,11 @@ function buildUI(stage) {
     .qb{font:inherit;font-size:17px;line-height:1;padding:9px 16px;border-radius:6px;border:1px solid var(--line);
       background:var(--panel2);color:var(--text);cursor:pointer;flex:0 0 auto}
     .qb:hover{border-color:var(--gold)}
+    .qb[aria-pressed=true]{border-color:var(--gold);color:var(--gold);font-weight:700}
+    #teach{position:absolute;left:12px;right:12px;top:56px;z-index:6;display:flex;flex-wrap:wrap;gap:8px 12px;
+      align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+      padding:9px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+    #teach .guide{flex:1;min-width:240px;font-size:15px;color:var(--text);line-height:1.55}
     #cards{position:absolute;inset:56px 0 96px 0;z-index:4;display:none;
       grid-template-columns:repeat(4,minmax(120px,150px));gap:14px;place-content:center;justify-content:center}
     .flip{aspect-ratio:3/4;perspective:700px;cursor:pointer}
@@ -306,29 +435,20 @@ function buildUI(stage) {
     <button class="qb" id="reset" type="button">重猜</button>`;
   stage.appendChild(cbar);
 
-  els = { spotName: bpanel.querySelector('#spotName'), spotText: bpanel.querySelector('#spotText'),
+  els = { bpanel, cards, cbar, tab3d: tabs.querySelector('#tab3d'), tabCard: tabs.querySelector('#tabCard'),
+    spotName: bpanel.querySelector('#spotName'), spotText: bpanel.querySelector('#spotText'),
     zoomWrap: bpanel.querySelector('#zoomWrap'), zoomCv: bpanel.querySelector('#zoomCv'), spin: bpanel.querySelector('#spin') };
 
-  els.spin.addEventListener('click', () => {
-    spinning = !spinning;
-    els.spin.textContent = spinning ? '停转' : '转动';
-  });
-  cbar.querySelector('#reset').addEventListener('click', () => {
-    [...cards.children].forEach((f) => f.classList.remove('on'));
-  });
-  const setMode = (m) => {
-    const is3d = m === '3d';
-    tabs.querySelector('#tab3d').classList.toggle('on', is3d);
-    tabs.querySelector('#tabCard').classList.toggle('on', !is3d);
-    bpanel.style.display = is3d ? 'flex' : 'none';
-    cbar.style.display = is3d ? 'none' : 'flex';
-    cards.style.display = is3d ? 'none' : 'grid';
-    renderer.domElement.style.display = is3d ? 'block' : 'none';
-  };
+  els.spin.addEventListener('click', () => setSpin(!spinning));
+  cbar.querySelector('#reset').addEventListener('click', resetCards);
+  defaultMode = new URLSearchParams(location.search).get('mode') === 'card' ? 'card' : '3d';
   tabs.querySelector('#tab3d').addEventListener('click', () => setMode('3d'));
   tabs.querySelector('#tabCard').addEventListener('click', () => setMode('card'));
-  setMode(new URLSearchParams(location.search).get('mode') === 'card' ? 'card' : '3d');
+  setMode(defaultMode);
   setSpot(-1);
+  buildTeachingPanel(stage);
+  setStep(0);
+  if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 }
 
 function updateCamera() {

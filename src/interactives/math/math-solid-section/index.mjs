@@ -360,6 +360,7 @@ const STYLE = `
 #ctrl b{min-width:2.6em;text-align:center;font-size:17px;font-weight:600}
 #shape{position:fixed;top:64px;left:16px;z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:21px;font-weight:700;color:var(--gold)}
 @media (max-width:760px){#ctrl{gap:8px;padding:8px 10px;bottom:10px}#ctrl input[type=range]{width:84px}#shape{font-size:18px;top:60px;left:10px;padding:6px 10px}}
+@media (max-width:1180px){#hint{display:none}}
 `;
 
 function buildUI(stage) {
@@ -413,6 +414,121 @@ function buildUI(stage) {
   });
 }
 
+// ---------- 教研员契约：定位行 / 教学环节 / 引导语 / 知识小结 ----------
+// 环节预设 = 真实场景状态（几何体 + 方位/倾角/平移/切开），expect 供自测断言对照
+const STEPS = [
+  {
+    name: '认一认', solid: 'cube', az: 30, el: 45, k: 0, gap: 0.3, expect: '六边形',
+    guide: '画面里平面正斜着切过正方体，左上角显示截面是六边形。请拖动画面旋转，从不同角度确认金色截面确实在正方体内部，再数一数它有几条边、每个顶点分别落在哪条棱上。',
+  },
+  {
+    name: '切一切', solid: 'cube', az: 30, el: 0, k: 0, gap: 0.3, expect: '正方形',
+    guide: '现在平面水平放置，截面是正方形。只动倾角滑杆慢慢加大，先猜一猜截面会依次出现什么形状，每次说出预测后，再对照左上角的形状名验证，注意边数怎样变化。',
+  },
+  {
+    name: '换圆锥', solid: 'cone', az: 30, el: 40, k: 0, gap: 0.3, expect: '椭圆',
+    guide: '换成圆锥再斜切，截面是椭圆。继续加大倾角，截面会依次出现抛物线、双曲线的一段；平面放平又变回圆。圆、椭圆、抛物线、双曲线统称圆锥曲线，这个名字就从圆锥的截面来。',
+  },
+];
+const SUMMARY =
+  '平面截正方体：截面可能是三角形、四边形、五边形或六边形。截面每一条边都落在正方体的一个面上，所以边数最多为六；水平切得正方形，斜切且与六个面都相交时得六边形。' +
+  '平面截圆锥：设母线与轴的夹角为 α、截面与轴的夹角为 β，则 β 大于 α 时截面为椭圆，等于 α 时为抛物线的一段，小于 α 时为双曲线的一段，β 等于 90 度时为圆。' +
+  '圆、椭圆、抛物线、双曲线统称圆锥曲线。';
+const META_TEXT = '数学·高一｜人教A版必修第二册第八章 · 截面';
+
+let teachPanel = null;
+
+function syncControls() {
+  const set = (id, vid, v, fmt) => {
+    const input = document.querySelector(id), out = document.querySelector(vid);
+    if (input) input.value = String(v);
+    if (out) out.textContent = fmt(v);
+  };
+  set('#raz', '#vaz', par.az, (v) => `${v}°`);
+  set('#rel', '#vel', par.el, (v) => `${v}°`);
+  set('#rk', '#vk', par.k, (v) => v.toFixed(2));
+  set('#rg', '#vg', par.gap, (v) => v.toFixed(2));
+  document.querySelectorAll('#ctrl [data-solid]').forEach((b) => b.classList.toggle('on', b.dataset.solid === par.solid));
+}
+
+function setStep(i) {
+  const s = STEPS[i];
+  if (s.solid !== par.solid) {
+    par.solid = s.solid;
+    buildSolid(par.solid);
+  }
+  par.az = s.az; par.el = s.el; par.k = s.k; par.gap = s.gap;
+  syncControls();
+  updateScene();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+
+// 形状读出框跟随教学面板下缘，避免被环节条遮挡
+function positionShape() {
+  const shape = document.getElementById('shape');
+  if (shape && teachPanel) shape.style.top = `${teachPanel.offsetTop + teachPanel.offsetHeight + 12}px`;
+}
+
+function buildTeachingPanel() {
+  const hintEl = document.getElementById('hint');
+  if (hintEl) {
+    const metaEl = document.createElement('span');
+    metaEl.dataset.hvMeta = '';
+    metaEl.textContent = META_TEXT;
+    metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+    hintEl.before(metaEl);
+  }
+
+  teachPanel = document.createElement('div');
+  teachPanel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;flex-direction:column;gap:6px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)';
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;align-items:center;gap:10px;flex-wrap:wrap';
+  row.innerHTML =
+    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`).join('') +
+    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  const guideRow = document.createElement('div');
+  guideRow.style.cssText = 'display:flex;align-items:baseline;gap:10px;flex-wrap:wrap';
+  guideRow.innerHTML = STEPS.map(
+    (s, i) => `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+  ).join('');
+  teachPanel.appendChild(row);
+  teachPanel.appendChild(guideRow);
+  document.body.appendChild(teachPanel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:150px;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  teachPanel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  teachPanel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+  positionShape();
+}
+
+// 自测断言：每个环节预设的截面顶点必须全是有限数，且形状分类与预期一致
+function runSelfChecks() {
+  const push = (name, pass, detail) => window.__hvPushCheck(name, pass, detail);
+  for (const s of STEPS) {
+    const az = s.az * D2R, el = s.el * D2R;
+    const n = new THREE.Vector3(Math.sin(el) * Math.cos(az), Math.cos(el), Math.sin(el) * Math.sin(az));
+    const sec = sectionPolygon(s.solid, n, s.k);
+    const finite = !!sec.pts && sec.pts.every((p) => p.every(Number.isFinite));
+    push(`环节-${s.name}-顶点有限`, finite, `pts=${sec.pts ? sec.pts.length : 0}`);
+    const shape = classify(s.solid, sec);
+    push(`环节-${s.name}-形状${s.expect}`, shape === s.expect, `实际=${shape}`);
+  }
+}
+
 init({
   mount(stage, api) {
     renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: new URLSearchParams(location.search).has('selftest') });
@@ -441,6 +557,9 @@ init({
     chip.renderOrder = 10;
     scene.add(chip);
     updateScene();
+
+    buildTeachingPanel();
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖拽旋转 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道）
     let dragging = false, px0 = 0, py0 = 0;
@@ -483,6 +602,7 @@ init({
       renderer.setSize(document.getElementById('stage').clientWidth, document.getElementById('stage').clientHeight);
       camera.aspect = document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight;
       camera.updateProjectionMatrix();
+      positionShape();
     };
     api.onTheme = () => {
       const p = palette();

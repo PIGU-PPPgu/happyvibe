@@ -282,7 +282,7 @@ const STYLE = `
 #vp canvas{display:block}
 #ctrl{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:max-content;max-width:94vw;display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;z-index:20;flex-wrap:wrap;justify-content:center}
 #ctrl .btn.on{border-color:var(--gold);color:var(--gold)}
-#panel{position:fixed;top:64px;right:14px;z-index:15;display:flex;flex-direction:column;gap:8px}
+#panel{position:fixed;top:126px;right:14px;z-index:15;display:flex;flex-direction:column;gap:8px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px 8px 6px;width:190px}
 .card-head{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:2px 2px 3px}
 .card .sw{width:12px;height:12px;border-radius:3px;flex:none}
@@ -335,6 +335,85 @@ function buildUI(stage) {
 // 每个几何体的默认相机距离：组合体更高，退远些才不裁顶
 const RADIUS = { cube: 6.5, cyl: 6.5, cone: 6.5, combo: 7.9 };
 
+// ---------- 教学环节：预设状态（几何体 + 卡片揭掩 + 相机位）+ 教师引导语（未激活的留 DOM） ----------
+const STEPS = [
+  {
+    name: '认方向',
+    solid: 'cube', open: false, theta: 0.785, phi: 1.05,
+    guide: '先认三支箭头：金色从正面看，紫色从左面看，蓝色从上面看。拖动转一转正方体，问一问学生：这三个方向看到的形状一样吗？',
+  },
+  {
+    name: '猜视图',
+    solid: 'cone', open: false, theta: 0.785, phi: 1.05,
+    guide: '换成圆锥，先不揭晓。请学生在纸上画出从正面、左面、上面看到的形状，再点卡片对照：正、左两面为什么都是等腰三角形？俯视图圆心那个点是什么？',
+  },
+  {
+    name: '说规律',
+    solid: 'combo', open: true, theta: 0.62, phi: 0.85,
+    guide: '组合体三视图已揭晓。看俯视图：圆落在正方形的哪个位置？从正面看为什么下面是正方形、上面是矩形？让学生试着说出三个视图之间的对应关系。',
+  },
+];
+const SUMMARY = '三视图是从正面、左面、上面正对着物体观察画出的三个平面图形（九年级教材中分别称主视图、左视图、俯视图）。圆柱从正面、左面看都是矩形，从上面看是圆；圆锥从正面、左面看都是等腰三角形，从上面看是带圆心的圆，圆心是锥顶的投影。画三视图时遵循「长对正、高平齐、宽相等」：主视图与俯视图长对正，主视图与左视图高平齐，左视图与俯视图宽相等。';
+
+function setCardsOpen(open) {
+  document.querySelectorAll('#panel .card').forEach((c) => {
+    if (c.classList.contains('open') !== open) c.querySelector('.view-wrap').click();
+  });
+}
+
+function setStep(i) {
+  const s = STEPS[i];
+  if (current !== s.solid) switchSolid(s.solid); // 初始已是 cube，避免重复重建
+  spherical.theta = s.theta;
+  spherical.phi = s.phi;
+  setCardsOpen(s.open);
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '数学·七年级｜人教版七年级上册 · 第四章 几何图形初步 · 三视图';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节条 + 引导语 + 小结按钮（悬浮条在顶栏下方，右侧卡片面板已下移让位）
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  panel.innerHTML =
+    STEPS.map(
+      (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
+    ).join('') +
+    STEPS.map(
+      (s, i) =>
+        `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+    ).join('') +
+    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:134px;left:50%;transform:translateX(-50%);z-index:16;max-width:620px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
 function vpSize() {
   const vp = document.getElementById('vp');
   return [vp.clientWidth, vp.clientHeight];
@@ -374,6 +453,7 @@ init({
     makeArrows();
     makeChips();
     switchSolid('cube');
+    buildTeachingPanel();
 
     // 拖拽旋转 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道）
     let dragging = false, px = 0, py = 0;

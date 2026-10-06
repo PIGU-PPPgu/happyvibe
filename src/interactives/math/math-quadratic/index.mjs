@@ -237,7 +237,9 @@ function draw() {
 
 // ---------- UI ----------
 const STYLE = `
-#panel{position:fixed;top:64px;right:14px;z-index:15;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#stage.pad{top:106px}
+@media (max-width:1120px){#hint{display:none}}
+#panel{position:fixed;top:114px;right:14px;z-index:15;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .slider-row{display:flex;align-items:center;gap:10px;font-size:18px}
 .slider-row .sym{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:20px;width:1.1em}
 .slider-row input{flex:1;accent-color:var(--gold)}
@@ -288,6 +290,101 @@ function buildUI(stage) {
   });
 }
 
+// 教研员契约：定位行 + 教学环节（预设真实参数状态）+ 教师引导语 + 知识小结
+const META = '数学·九年级｜人教版九上 · 二次函数的图像与系数';
+const STEPS = [
+  {
+    name: '看开口',
+    abc: { a: 1, b: -2, c: -3 },
+    guide: '先别动滑杆，看这条 y = x² - 2x - 3。预测一下：把 a 拖到 -1，开口会怎样翻？把 a 拖到 3，开口变宽还是变窄？说完再动手验证。',
+  },
+  {
+    name: '找顶点',
+    abc: { a: 1, b: 2, c: -3 },
+    guide: '对照右侧三行配方推导，读出顶点和对称轴。再把 b 从 -2 拖到 2，紫色虚线对称轴移到了哪边？用 x = -b/(2a) 解释这个移动规律。',
+  },
+  {
+    name: '数交点',
+    abc: { a: 1, b: -2, c: 1 },
+    guide: '现在抛物线与 x 轴只有一个公共点，顶点恰好落在 x 轴上，因为 Δ = b² - 4ac = 0。只拖 c 滑杆到 -3 再到 3，数一数交点个数，用 Δ 的符号总结三种情况。',
+  },
+];
+const SUMMARY =
+  '二次函数 y = ax² + bx + c（a ≠ 0）的图像是抛物线：a 定开口方向，a > 0 开口向上，a < 0 开口向下，|a| 越大开口越小；' +
+  '对称轴是直线 x = -b/(2a)，顶点为 (-b/(2a), (4ac - b²)/(4a))，把一般式配方成 y = a(x - h)² + k 就能直接读出顶点；' +
+  'c 决定图像与 y 轴的交点 (0, c)；判别式 Δ = b² - 4ac 决定与 x 轴交点个数：Δ > 0 有两个交点，Δ = 0 只有一个（顶点在 x 轴上），Δ < 0 没有。';
+
+function setStep(i) {
+  Object.assign(st, STEPS[i].abc);
+  for (const [sid, key, vid] of [['#sa', 'a', '#va'], ['#sb', 'b', '#vb'], ['#sc', 'c', '#vc']]) {
+    const el = document.querySelector(sid);
+    const out = document.querySelector(vid);
+    if (el) el.value = String(st[key]);
+    if (out) out.textContent = String(st[key]);
+  }
+  renderPanel();
+  draw();
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => el.setAttribute('aria-pressed', String(k === i)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => { el.style.display = k === i ? '' : 'none'; });
+}
+
+function buildTeachingPanel() {
+  // 定位行进顶栏（标题后）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = META;
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节条：贴在顶栏下方，舞台随之下移，不遮公式框
+  const bar = document.createElement('div');
+  bar.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  bar.innerHTML =
+    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`).join('') +
+    STEPS.map((s, i) =>
+      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+    ).join('') +
+    '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(bar);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:124px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  bar.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  bar.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
+}
+
+// 自检：逐环节核对预设的解析结果（一般式/对称轴/顶点纵坐标/判别式），比较前先判有限性
+function runSelfChecks() {
+  const expect = [
+    { gen: 'y = x² - 2x - 3', h: '1', k: '-4', d: 16 },
+    { gen: 'y = x² + 2x - 3', h: '-1', k: '-4', d: 16 },
+    { gen: 'y = x² - 2x + 1', h: '1', k: '0', d: 0 },
+  ];
+  STEPS.forEach((s, i) => {
+    setStep(i);
+    const h = -st.b / (2 * st.a);
+    const d = disc();
+    const ok =
+      Number.isFinite(h) && Number.isFinite(kNum()) && Number.isFinite(d) &&
+      generalStr() === expect[i].gen && hOf() === expect[i].h && kOf() === expect[i].k && d === expect[i].d;
+    window.__hvPushCheck(`环节${i + 1}预设`, ok, `gen=${generalStr()} h=${hOf()} k=${kOf()} Δ=${d}`);
+  });
+  setStep(0);
+}
+
 function resize() {
   const dpr = Math.min(devicePixelRatio, 2);
   W = stageEl.clientWidth;
@@ -309,8 +406,9 @@ init({
     ctx = cv.getContext('2d');
 
     buildUI(stage);
-    renderPanel();
+    buildTeachingPanel();
     resize();
+    if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
     // 拖拽平移 + 滚轮/双指缩放（鼠标与触摸统一 pointer 通道，缩放以指针为焦点）
     const zoomAt = (sx, sy, factor) => {

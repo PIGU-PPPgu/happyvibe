@@ -80,9 +80,15 @@ const CSS = `
 .rh-svg{position:absolute;inset:0;z-index:1;pointer-events:none}
 .rh-svg line{stroke-width:2.5;stroke-linecap:round}
 .rh-tip{font-size:17px;color:var(--muted)}
+.rh-teach{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:12px 16px;display:flex;flex-direction:column;gap:8px;max-width:880px}
+.rh-tsteps{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.rh-tsteps .btn[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.rh-tguide{display:block;font-size:15px;line-height:1.7;color:var(--text)}
+.rh-sumbtn{margin-left:auto}
+.rh-panel{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:30;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.9;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 `;
 
-let wrap, cardEl, quizEl, mi = 0, ii = 0, showMark = false;
+let wrap, cardEl, quizEl, tabsEl, mi = 0, ii = 0, showMark = false;
 let pickL = -1, doneCnt = 0;
 const ERR = '#e2543f';
 
@@ -195,6 +201,77 @@ function drawLine(a, b, color) {
   return line;
 }
 
+// 教学环节：按钮点击把场景切到预设状态（手法标签 mi、例句序号 ii、标注显隐 mk），并显示该环节引导语
+// 认手法：比喻第 1 句、标注隐藏，让学生先找成分；验标注：比喻第 3 句（暗喻）、标注显示对照检验；
+// 辨异同：切到排比《安塞腰鼓》、标注显示，与比喻对照归纳
+const STEPS = [
+  {
+    name: '认手法',
+    m: 0, i: 0, mk: false,
+    guide: '先读原句：红的像火，粉的像霞，白的像雪。作者把什么比作了什么？请你指出句中的本体、喻词和喻体，先不看标注。',
+  },
+  {
+    name: '验标注',
+    m: 0, i: 2, mk: true,
+    guide: '对照标注检验：金色是本体，紫色是喻体，虚线框是喻词。注意这句的喻词是「是」不是「像」，暗喻和明喻差别在哪里？点「下一句」连看三例。',
+  },
+  {
+    name: '辨异同',
+    m: 2, i: 1, mk: true,
+    guide: '换成《安塞腰鼓》再比一比：三个「……一样，是……」连排，读出一气呵成的气势。回头看《春》第一句，比喻兼排比的句子怎么辨？',
+  },
+];
+// 小结为结论性内容，与各手法标签页的释义一致
+const SUMMARY = '修辞辨析要点：比喻用相似的事物打比方，句中有本体、喻词、喻体，喻词用「像」是明喻、用「是」是暗喻；拟人把物当作人来写，给事物配上人的动作、情态或感情；排比是三个或更多结构相同、语气一致的短语或分句连排，读来一气呵成；夸张故意言过其实，放大或缩小事物的特征。辨析先找结构标志，再追问相似点在哪里。';
+
+function syncTabs() {
+  tabsEl.querySelectorAll('.btn').forEach((x, j) => {
+    x.style.borderColor = j === mi ? 'var(--gold)' : 'var(--line)';
+    x.style.color = j === mi ? 'var(--gold)' : 'var(--text)';
+  });
+}
+
+function setStep(k) {
+  const st = STEPS[k];
+  mi = st.m; ii = st.i; showMark = st.mk;
+  syncTabs();
+  render();
+  document.querySelectorAll('[data-hv-step]').forEach((el, j) => el.setAttribute('aria-pressed', String(j === k)));
+  document.querySelectorAll('[data-hv-guide]').forEach((el, j) => { el.style.display = j === k ? '' : 'none'; });
+}
+
+function buildTeachingPanel() {
+  // 定位行进顶栏（提示语前）；顶栏缺失时落回场景顶部
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '语文·初中七八年级｜统编版七上至八下 · 修辞手法辨析';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;white-space:nowrap';
+  const hintEl = document.getElementById('hint');
+  if (hintEl) hintEl.before(metaEl); else wrap.prepend(metaEl);
+
+  // 环节条 + 引导语（置于手法标签上方），小结浮层按钮唤出
+  const teach = document.createElement('div');
+  teach.className = 'rh-teach';
+  teach.innerHTML =
+    '<div class="rh-tsteps">' +
+    STEPS.map((s, i) => `<button class="btn" data-hv-step type="button" aria-pressed="false">${i + 1}. ${s.name}</button>`).join('') +
+    '<button class="btn rh-sumbtn" id="rh-sumbtn" type="button">小结</button>' +
+    '</div>' +
+    STEPS.map((s, i) => `<span data-hv-guide class="rh-tguide"${i === 0 ? '' : ' style="display:none"'}>${s.guide}</span>`).join('');
+  wrap.prepend(teach);
+
+  const panelEl = document.createElement('div');
+  panelEl.dataset.hvSummary = '';
+  panelEl.className = 'rh-panel';
+  panelEl.textContent = SUMMARY;
+  document.body.appendChild(panelEl);
+
+  teach.querySelector('#rh-sumbtn').addEventListener('click', () => {
+    panelEl.style.display = panelEl.style.display === 'none' ? '' : 'none';
+  });
+  teach.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+}
+
 init({
   mount(stage, api) {
     const style = document.createElement('style');
@@ -202,8 +279,8 @@ init({
     stage.appendChild(style);
     wrap = document.createElement('div');
     wrap.className = 'rh-wrap';
-    const tabs = document.createElement('div');
-    tabs.className = 'rh-tabs';
+    tabsEl = document.createElement('div');
+    tabsEl.className = 'rh-tabs';
     DATA.forEach((d, i) => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -211,15 +288,12 @@ init({
       b.textContent = d.name;
       b.addEventListener('click', () => {
         mi = i; ii = 0;
-        tabs.querySelectorAll('.btn').forEach((x, j) => {
-          x.style.borderColor = j === i ? 'var(--gold)' : 'var(--line)';
-          x.style.color = j === i ? 'var(--gold)' : 'var(--text)';
-        });
+        syncTabs();
         render();
       });
-      tabs.appendChild(b);
+      tabsEl.appendChild(b);
     });
-    wrap.appendChild(tabs);
+    wrap.appendChild(tabsEl);
     cardEl = document.createElement('div');
     cardEl.className = 'rh-card';
     wrap.appendChild(cardEl);
@@ -228,8 +302,9 @@ init({
     wrap.appendChild(quizEl);
     stage.appendChild(wrap);
     api.onResize = () => { if (DATA[mi].pairs) buildQuiz(DATA[mi]); };
-    // 初始触发须在 cardEl/quizEl 就绪之后，否则 render() 写 undefined.innerHTML
-    tabs.children[0].click();
+    buildTeachingPanel();
+    // 初始状态由教学环节 1 落定（须在 cardEl/quizEl 就绪之后，否则 render() 写 undefined.innerHTML）
+    setStep(0);
 
     // 深链：?m=by&i=2 选手法与例句，&mk=1 直接显示标注
     try {
@@ -237,7 +312,7 @@ init({
       const m = q.get('m');
       const idx = DATA.findIndex((d) => d.id === m);
       if (idx >= 0) {
-        tabs.children[idx].click();
+        tabsEl.children[idx].click();
         const it = parseInt(q.get('i') || '', 10);
         if (it >= 1 && it <= DATA[idx].items.length) ii = it - 1;
         if (q.get('mk') === '1') showMark = true;
