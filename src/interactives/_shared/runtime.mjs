@@ -13,6 +13,7 @@ export function init(opts) {
     window.__hvPushCheck = (name, pass, detail) => report.checks.push({ name, pass, detail: String(detail ?? '') });
     setTimeout(() => {
       try { report.canvas = sampleCanvas(); } catch (e) { report.errors.push('canvas-sample: ' + e.message); }
+      try { report.pedagogy = samplePedagogy(); } catch (e) { report.errors.push('pedagogy-sample: ' + e.message); }
       const pre = document.createElement('pre');
       pre.id = 'hv-selftest';
       pre.textContent = '__HV__' + JSON.stringify(report) + '__HV__';
@@ -69,6 +70,22 @@ export function init(opts) {
     return { regions, topColors: top, bbox };
   }
   function round2(v) { return Math.round(v * 100) / 100; }
+  // 教研员契约采集：定位行 / 教学环节 / 每环节引导语 / 知识小结
+  function samplePedagogy() {
+    const txt = (el) => (el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : '');
+    const meta = txt(document.querySelector('[data-hv-meta]'));
+    const steps = [...document.querySelectorAll('[data-hv-step]')];
+    const guides = [...document.querySelectorAll('[data-hv-guide]')].map(txt).filter(Boolean);
+    const summary = [...document.querySelectorAll('[data-hv-summary]')].map(txt).join(' ');
+    return {
+      metaChars: meta.length,
+      steps: steps.length,
+      stepNames: steps.slice(0, 6).map(txt),
+      guideCount: guides.length,
+      guideChars: guides.join('').length,
+      summaryChars: summary.length,
+    };
+  }
   let theme = param === 'light' || param === 'dark' ? param : 'dark';
   try {
     const saved = localStorage.getItem('hv-theme');

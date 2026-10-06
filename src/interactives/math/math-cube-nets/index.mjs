@@ -220,7 +220,7 @@ function runSelfChecks() {
     `r=${spherical.radius} phi=${spherical.phi} fov=${camera.fov} pos=${camera.position.toArray().map((v) => v.toFixed(2))} size=${box.getSize(new THREE.Vector3()).toArray().map((v) => v.toFixed(2))} canvas=${renderer.domElement.width}x${renderer.domElement.height}`);
 }
 
-let nameEl;
+let nameEl, foldInput;
 
 function buildUI(stage) {
   const bar = document.createElement('div');
@@ -234,12 +234,85 @@ function buildUI(stage) {
   ].join('');
   stage.appendChild(bar);
   nameEl = bar.querySelector('#netname');
+  foldInput = bar.querySelector('#fold');
   bar.querySelector('#prev').addEventListener('click', () => setNet(netIndex - 1));
   bar.querySelector('#next').addEventListener('click', () => setNet(netIndex + 1));
   bar.querySelector('#fold').addEventListener('input', (e) => {
     fold = e.target.value / 100;
     applyFold();
   });
+}
+
+// 教学环节：预设状态 + 教师引导语（每步一条，激活的显示，其余隐藏但保留在 DOM 中供自测统计）
+const STEPS = [
+  {
+    name: '认一认',
+    fold: 0,
+    guide: '先别折叠。把 11 种形态按 1-4-1、2-3-1、2-2-2、3-3 分分类，说说每一组长什么样、有什么共同点。',
+  },
+  {
+    name: '折一折',
+    fold: 0.35,
+    guide: '选一种展开图，先让学生预测能不能折回正方体，再拖滑杆验证。再追问：为什么「田」字形、「凹」字形折不回去？',
+  },
+  {
+    name: '找规律',
+    fold: 1,
+    guide: '折满后看颜色：相对的面同色。回到展开态数一数：相对的两个面之间隔着几个面？由此总结判断口诀。',
+  },
+];
+const SUMMARY = '正方体的展开图共 11 种：1-4-1 型 6 种、2-3-1 型 3 种、2-2-2 型 1 种、3-3 型 1 种。判断规律：对面不相邻——展开图上相对的两个面之间至少隔一个面；「田」字形、「凹」字形折不成正方体。';
+
+function setStep(i) {
+  fold = STEPS[i].fold;
+  applyFold();
+  if (foldInput) foldInput.value = String(Math.round(fold * 100));
+  document.querySelectorAll('[data-hv-step]').forEach((el, k) => {
+    el.setAttribute('aria-pressed', String(k === i));
+  });
+  document.querySelectorAll('[data-hv-guide]').forEach((el, k) => {
+    el.style.display = k === i ? '' : 'none';
+  });
+}
+
+function buildTeachingPanel() {
+  // 定位行（顶栏提示前）
+  const hintEl = document.getElementById('hint');
+  const metaEl = document.createElement('span');
+  metaEl.dataset.hvMeta = '';
+  metaEl.textContent = '数学·五年级｜人教版五下 · 展开与折叠';
+  metaEl.style.cssText = 'color:var(--gold);font-size:14px;margin-right:10px;white-space:nowrap';
+  hintEl.before(metaEl);
+
+  // 环节导航 + 引导语 + 小结
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'position:fixed;top:56px;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;' +
+    'padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap';
+  const stepBtns = STEPS.map(
+    (s, i) => `<button class="btn" data-hv-step type="button" style="font-size:15px;padding:7px 16px">${i + 1}. ${s.name}</button>`
+  ).join('');
+  const guides = STEPS.map(
+    (s, i) =>
+      `<span data-hv-guide style="flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6;${i === 0 ? '' : 'display:none'}">${s.guide}</span>`
+  ).join('');
+  panel.innerHTML = stepBtns + guides + '<button class="btn" id="summary-btn" type="button" style="margin-left:auto">小结</button>';
+  document.body.appendChild(panel);
+
+  const summaryEl = document.createElement('div');
+  summaryEl.dataset.hvSummary = '';
+  summaryEl.textContent = SUMMARY;
+  summaryEl.style.cssText =
+    'position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:16;max-width:560px;margin:0 16px;' +
+    'padding:16px 20px;background:var(--panel);border:1px solid var(--line-gold);border-radius:10px;' +
+    'font-size:16px;line-height:1.8;display:none';
+  document.body.appendChild(summaryEl);
+
+  panel.querySelectorAll('[data-hv-step]').forEach((el, i) => el.addEventListener('click', () => setStep(i)));
+  panel.querySelector('#summary-btn').addEventListener('click', () => {
+    summaryEl.style.display = summaryEl.style.display === 'none' ? '' : 'none';
+  });
+  setStep(0);
 }
 
 init({
@@ -261,6 +334,7 @@ init({
     scene.add(dir);
 
     buildUI(stage);
+    buildTeachingPanel();
     setNet(0);
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();
 
