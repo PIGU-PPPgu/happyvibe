@@ -154,8 +154,8 @@ UI 结构色为港中深品牌紫（与港中文「一个品牌，两个校园�
 
 ```bash
 npm run build:interactives     # 产出 public/interactives/<name>.html
-npm run check:interactives     # 十项闸门：体积（2D<100KB / 3D<1MB）、零外部请求、无 emoji、title、全屏、双主题、教材版本+章节锚点、操作提示 ≥6 字、预览图新鲜度（不得旧于产物）、交互绑定（≥2 类事件或 ≥5 处）
-node scripts/test_interactives.mjs <name>   # 自测 harness（只验单个资源；不带参数跑全部）
+npm run check:interactives     # 十二项闸门：体积（2D<100KB / 3D<1MB）、零外部请求、无 emoji、title、全屏、双主题、教材版本+章节锚点、锚点真伪（对照 scripts/textbook-index.mjs 教材目录库）、操作提示 ≥6 字、预览图新鲜度、交互绑定（≥2 类事件或 ≥5 处）、首次上手引导层
+node scripts/test_interactives.mjs <name>   # 自测 harness（深浅双主题各跑一遍；只验单个资源，不带参数跑全部）
 npm run build:previews         # 重生成卡片预览图（资源库卡片用实际界面实拍；改了界面必须重跑，闸门 G9 会拦旧图）
 npm run verify                 # 统一验收：上面四步一条命令跑完（--fast 跳过预览重生成），全绿才算完成
 

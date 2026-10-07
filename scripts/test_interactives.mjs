@@ -11,8 +11,8 @@ const report = JSON.parse(await readFile('scripts/.interactives-report.json', 'u
 const only = process.argv.slice(2);
 const names = only.length ? only : Object.keys(report);
 
-async function testOne(name) {
-  const url = `file://${process.cwd()}/public/interactives/${name}.html?selftest=1`;
+async function fetchReport(name, theme) {
+  const url = `file://${process.cwd()}/public/interactives/${name}.html?selftest=1${theme ? '&theme=light' : ''}`;
   let dom = '';
   try {
     const { stdout } = await run(
@@ -22,16 +22,22 @@ async function testOne(name) {
     );
     dom = stdout;
   } catch (e) {
-    return { name, pass: false, problems: ['chrome 运行失败: ' + String(e.message).slice(0, 120)] };
+    return { err: 'chrome 运行失败: ' + String(e.message).slice(0, 120), dom: '' };
   }
   const m = dom.match(/__HV__(\{[\s\S]*?\})__HV__/);
-  if (!m) return { name, pass: false, problems: ['无自测报告（页面未执行到 runtime 自测）'] };
-  let r;
+  if (!m) return { err: '无自测报告（页面未执行到 runtime 自测）', dom };
   try {
-    r = JSON.parse(m[1]);
+    return { report: JSON.parse(m[1]), dom };
   } catch {
-    return { name, pass: false, problems: ['自测报告解析失败'] };
+    return { err: '自测报告解析失败', dom };
   }
+}
+
+async function testOne(name) {
+  const dark = await fetchReport(name, false);
+  if (dark.err) return { name, pass: false, problems: [dark.err] };
+  const r = dark.report;
+  const dom = dark.dom;
   const problems = [];
   if (r.errors && r.errors.length) problems.push('报错: ' + r.errors.join(' | ').slice(0, 200));
   for (const c of r.checks || []) {
@@ -67,6 +73,25 @@ async function testOne(name) {
     if (ped.summaryChars < 30) problems.push(`缺知识小结 [data-hv-summary]（≥30 字结论，现 ${ped.summaryChars} 字）`);
     if (ped.quizCount < 4) problems.push(`随堂检测不足 [data-hv-quiz]（需 ≥4 题，现 ${ped.quizCount} 题）`);
     if (ped.quizCount > 0 && ped.quizChars < 120) problems.push(`检测题干与解析合计不足（≥120 字，现 ${ped.quizChars} 字）`);
+  }
+  // 浅色主题第二遍：报错、断言与画布主体必须同样干净（防「深色正常浅色糊/空」）
+  const light = await fetchReport(name, true);
+  if (light.err) problems.push(`浅色: ${light.err}`);
+  else {
+    const lr = light.report;
+    if (lr.errors && lr.errors.length) problems.push('浅色报错: ' + lr.errors.join(' | ').slice(0, 120));
+    for (const c of lr.checks || []) {
+      if (!c.pass) problems.push(`浅色断言失败 ${c.name}: ${String(c.detail).slice(0, 100)}`);
+    }
+    if (lr.canvas) {
+      const b = lr.canvas.bbox;
+      if (!b) problems.push('浅色画布无内容（包围盒为空）');
+      else {
+        const w = b[2] - b[0];
+        const h = b[3] - b[1];
+        if (w < 0.5 || h < 0.4) problems.push(`浅色主体过小：${Math.round(w * 100)}% 宽 × ${Math.round(h * 100)}% 高`);
+      }
+    }
   }
   return { name, pass: problems.length === 0, problems, quiz: ped ? ped.quizCount : 0 };
 }

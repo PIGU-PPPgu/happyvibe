@@ -32,6 +32,7 @@ for (const s of await readdir(SRC, { withFileTypes: true })) {
       target: ['es2019'],
       metafile: true,
       legalComments: 'none',
+      drop: ['console', 'debugger'],
     });
     const js = result.outputFiles[0].text;
     const is3d = Object.keys(result.metafile.inputs).some((i) => i.includes(`node_modules${path.sep}three`));

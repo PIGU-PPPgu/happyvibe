@@ -80,6 +80,17 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang
 @media (max-width:860px){
   #hint,#meta,#kbd{display:none}
 }
+/* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
+#onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
+#onboard[hidden]{display:none}
+.ob-card{width:min(430px,calc(100vw - 40px));padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+.ob-title{display:block;font-size:17px;margin-bottom:12px;color:var(--brand)}
+:root[data-theme=light] .ob-title{color:var(--cuhk)}
+.ob-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ob-card li{font-size:15px;line-height:1.7;color:var(--text)}
+.ob-card li b{color:var(--brand)}
+:root[data-theme=light] .ob-card li b{color:var(--cuhk)}
+.ob-card .btn{width:100%}
 </style>
 </head>
 <body>
@@ -119,6 +130,17 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang
   </div>
 </div>
 <div id="stage" class="pad"></div>
+<div id="onboard" hidden>
+  <div class="ob-card">
+    <b class="ob-title">第一次使用</b>
+    <ul>
+      <li><b>环节条</b>：点环节按钮或按键盘左右键换环节，底部细线显示进程</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，点开对照引导语</li>
+      <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
+    </ul>
+    <button class="btn primary" id="ob-ok" type="button">开始上课</button>
+  </div>
+</div>
 <script>__BUNDLE__</script>
 </body>
 </html>

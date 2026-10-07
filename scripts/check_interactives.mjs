@@ -5,6 +5,8 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
+import { validateTextbookAnchor } from './textbook-index.mjs';
+
 const only = process.argv.slice(2);
 
 async function findSource(name) {
@@ -87,7 +89,17 @@ for (const name of names) {
         bindings++;
       }
       if (kinds.size < 2 && bindings < 5) problems.push(`交互绑定不足（${kinds.size} 类 / ${bindings} 处；需 ≥2 类或 ≥5 处）`);
+      // G11 教材锚点真伪：meta 引用的版本/册/单元/课必须与教材目录索引吻合
+      const metaSrc = src.match(/meta:\s*['"]([^'"]+)['"]/);
+      if (metaSrc) {
+        const subjDir = srcPath.split('/')[2];
+        const SUBJ = { math: '数学', history: '历史', chinese: '语文' }[subjDir] || '';
+        const r = validateTextbookAnchor(SUBJ, metaSrc[1]);
+        if (!r.ok) problems.push(`教材锚点不实：${r.note}`);
+      }
     }
+    // G12 上手引导：首次访问的 30 秒上手层必须随模板内置
+    if (!html.includes('id="onboard"') || !html.includes('开始上课')) problems.push('缺首次上手引导层');
   }
   if (problems.length) { failed++; console.log(`FAIL ${name}: ${problems.join('；')}`); }
   else console.log(`PASS ${name}`);

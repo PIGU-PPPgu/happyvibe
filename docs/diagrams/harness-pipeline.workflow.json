@@ -123,8 +123,8 @@
       "lane": "verify",
       "col": 2,
       "type": "security",
-      "label": "十项产物闸门",
-      "sublabel": "含教材锚点·预览新鲜度",
+      "label": "十二项产物闸门",
+      "sublabel": "锚点真伪·引导·预览新鲜",
       "width": 152,
       "height": 56
     },
@@ -134,7 +134,7 @@
       "col": 3,
       "type": "security",
       "label": "无头自测 Harness",
-      "sublabel": "教研契约 v2 全项",
+      "sublabel": "双主题·教研契约 v2",
       "width": 158,
       "height": 56
     },

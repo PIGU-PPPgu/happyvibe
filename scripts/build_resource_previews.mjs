@@ -19,7 +19,7 @@ for (const name of names) {
       '--headless=new', '--disable-gpu-sandbox', '--no-sandbox', '--hide-scrollbars',
       '--window-size=1280,800', '--virtual-time-budget=9000',
       `--screenshot=${tmp}`,
-      `file://${process.cwd()}/public/interactives/${name}.html`,
+      `file://${process.cwd()}/public/interactives/${name}.html?pv=1`,
     ], { timeout: 60000 });
     await run('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '-Z', '720', tmp, '--out', `public/previews/${name}.jpg`], { timeout: 30000 });
     console.log(`preview ${name}.jpg`);

@@ -145,7 +145,7 @@ export function init(opts) {
       b.type = 'button';
       b.className = 'btn';
       b.dataset.hvStep = '';
-      b.textContent = s.name;
+      b.textContent = String(i + 1).padStart(2, '0') + ' ' + s.name;
       b.addEventListener('click', () => setStep(i));
       stepsEl.appendChild(b);
       return b;
@@ -267,6 +267,22 @@ export function init(opts) {
       wrap.style.display = 'none';
       window.__hvPushCheck('quiz-answer-flow', whyShown && feedback.length > 0 && allDisabled,
         `作答后解析${whyShown ? '已显示' : '未显示'}，反馈「${feedback.slice(0, 12)}」，选项${allDisabled ? '已锁定' : '未锁定'}`);
+    }
+  }
+
+  // 首次上手引导：只在正常访问且从未看过时出现（自测与预览截图一律抑制）
+  const ob = document.getElementById('onboard');
+  if (ob && !SELFTEST && !new URLSearchParams(location.search).has('pv')) {
+    let seen = false;
+    try { seen = localStorage.getItem('hv-onboard') === '1'; } catch (e) {}
+    if (!seen) {
+      ob.hidden = false;
+      const close = () => {
+        ob.hidden = true;
+        try { localStorage.setItem('hv-onboard', '1'); } catch (e) {}
+      };
+      document.getElementById('ob-ok').addEventListener('click', close);
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ob.hidden) close(); });
     }
   }
 
