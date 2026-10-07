@@ -7,6 +7,18 @@ description: 生产 K12 学科 3D/2D 交互教学资源（单文件 HTML，投�
 
 给 HappyVibe 资源库生产自产交互资源的完整规范。产物是**单文件 HTML**：教师下载后断网双击即可投屏。
 
+## Harness v2 工作流（2026-10-08 起，"发资料就能做"）
+
+```bash
+node scripts/new_interactive.mjs <subject> <slug> --title "课题" --anchor "北师大版七上第二章《有理数及其运算》· 2.4" [--archetype numberline]
+# 锚点先校验（textbook-index）；生成 index.mjs 薄壳 + spec.json + 教学设计 md 骨架
+# ① 先填 md 教学设计表（环节用教材动词）② 再填 TEACHING 与 SPEC ③ 数值读数必须有「同源-」自检断言
+npm run verify        # 五阶段验收，一处不过即止
+node scripts/ship.mjs "commit 信息"   # 一键发布：verify→build→deploy(CDN 重试)→字节验证→commit/push 双端确认
+```
+
+场景原型库 `src/interactives/_shared/scenes/`（构建期共享、产物仍单文件）：v1=numberline（sanys/free/mirror/add 四模式 + api.setNlMode/setNlAdd 环节预设钩 + 同源断言）。custom 逃生门保留。框架全案见 docs/specs/harness-v2.md。
+
 ## 黄金样例（照这个标准做）
 
 | 样例 | 学科 | 形态 | 路径 |

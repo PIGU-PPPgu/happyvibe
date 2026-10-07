@@ -30,6 +30,8 @@
 | `scripts/make_tutorial_gif.py` | 教程 GIF 加工（聚焦放大/波纹/高亮/字幕条）+ 静态图红框箭头标注（annotate） |
 | `scripts/build_material_packs.py` | 15 学科材料包生成（含二维码，MATERIALS_BASE_URL 可换域名） |
 | `scripts/build_m0_visuals.py` / `build_teaching_visuals.py` | 教学示意图生成（紫金风格） |
+| `scripts/new_interactive.mjs` | 脚手架：课题+锚点（先校验）→ 资源薄壳+spec+教学设计骨架（harness v2 入口） |
+| `scripts/ship.mjs` | 一键发布：verify→build→deploy(CDN 重试)→字节级验证→commit/push 双端确认 |
 | `scripts/extract_ppt.py` / `contact_sheet.py` / `build_lesson_images.mjs` | PPT 图片提取/审阅/压缩 |
 
 ## 站点事实
