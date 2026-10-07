@@ -66,7 +66,7 @@ sh('git add -A');
 try { sh(`git commit -m "${msg.replace(/"/g, '\\"')}"`); } catch { console.log('（无变更可提交）'); }
 sh('git push origin main', PROXY);
 const local = out('git rev-parse HEAD');
-const remote = out('git ls-remote origin main', PROXY).split('\\t')[0];
+const remote = out('git ls-remote origin main', PROXY).split('\t')[0].trim();
 console.log(`本地 ${local.slice(0, 8)} / 远端 ${remote.slice(0, 8)} ${local === remote ? '· 双端一致' : '· 不一致！'}`);
 if (local !== remote) process.exit(1);
 console.log('发布完成。');
