@@ -495,7 +495,7 @@ function runSelfChecks() {
     b.click();
     const s = STEPS[i] || {};
     const stateOk = cur().ch === s.ch && step === s.step;
-    const guideOk = (document.getElementById('guide').textContent || '').replace(/\s+/g, '') === (s.guide || '').replace(/\s+/g, '');
+    const guideOk = (document.getElementById('g-tip').textContent || '').replace(/\s+/g, '') === (s.guide || '').replace(/\s+/g, '');
     push(`环节切换-${i}-${s.name}`, stateOk && guideOk, `ch=${cur().ch} step=${step}`);
   });
   teachGo(0);

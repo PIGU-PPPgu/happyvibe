@@ -68,9 +68,9 @@ for (const name of names) {
     // G7 教材锚点：定位行必须落到具体教材版本 + 册次单元（教材联动不是口号）
     if (!/(人教版|人教A版|北师大版|统编版|苏科版|沪科版|浙教版|湘教版|华东师大版|外研版|译林版)/.test(noComments)) problems.push('缺教材版本锚点（人教版/北师大版/统编版等）');
     if (!/(第[一二三四五六七八九十]+[单章课]|《[^》]{2,24}》)/.test(noComments)) problems.push('缺单元/章节锚点（第X单元·章 或《课题》）');
-    // G8 操作提示：每页必须告诉老师怎么用（≥6 字）
-    const hint = noComments.match(/id="hint"[^>]*>([^<]+)</);
-    if (!hint || hint[1].trim().length < 6) problems.push('缺操作提示 #hint（≥6 字）');
+    // G8 操作提示：每页必须告诉老师怎么用（≥6 字；2026-10 壳重构后位于 #ops-tip）
+    const hint = noComments.match(/id="ops-tip"[^>]*>([^<]+)</);
+    if (!hint || hint[1].trim().length < 6) problems.push('缺操作提示 #ops-tip（≥6 字）');
     // G9 预览图新鲜度：资源库卡片用实拍图，图比产物旧即视为过期
     const pv = `public/previews/${name}.jpg`;
     if (!existsSync(pv)) problems.push('缺卡片预览图 public/previews/' + name + '.jpg');

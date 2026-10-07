@@ -33,7 +33,7 @@ export function init(opts) {
       return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : '';
     };
     const steps = [...document.querySelectorAll('[data-hv-step]')];
-    const guide = txt('#guide');
+    const guide = txt('#g-tip');
     const summary = txt('#summary');
     // 「合计」语义：面板 DOM 只含激活环节的引导语/讲解，从 teaching 配置取全量求和
     const allGuides = teach && teach.steps ? teach.steps.map((s) => s.guide || '').join('') : guide;
@@ -115,6 +115,8 @@ export function init(opts) {
   }
   function closeOverlays() {
     for (const n of overlays) n.style.display = 'none';
+    const tip = document.getElementById('guide-tip');
+    if (tip) tip.classList.remove('dim');
   }
 
   if (teach && teach.steps && teach.steps.length) {
@@ -125,8 +127,10 @@ export function init(opts) {
     metaEl.dataset.hvMeta = '';
     const teachBar = document.getElementById('teach');
     teachBar.hidden = false;
+    const tipEl = document.getElementById('guide-tip');
+    tipEl.hidden = false;
     const stepsEl = document.getElementById('steps');
-    const guideEl = document.getElementById('guide');
+    const guideEl = document.getElementById('g-tip');
     const progFill = document.querySelector('#prog i');
 
     // 讲解弹层：每个环节一段知识讲解（WeduLab 章节内容的对应物）
@@ -137,7 +141,10 @@ export function init(opts) {
       noteEl.dataset.hvNote = '';
       overlays.push(noteEl);
       noteBtn.hidden = false;
-      noteBtn.addEventListener('click', () => toggleOverlay(noteEl));
+      noteBtn.addEventListener('click', () => {
+      toggleOverlay(noteEl);
+      tipEl.classList.toggle('dim', noteEl.style.display === 'block');
+    });
     }
 
     const stepBtns = teach.steps.map((s, i) => {
@@ -160,6 +167,8 @@ export function init(opts) {
       if (!keepOverlays) closeOverlays();
       if (teach.steps[cur].apply) teach.steps[cur].apply();
     }
+    document.getElementById('step-prev').addEventListener('click', () => setStep(cur - 1));
+    document.getElementById('step-next').addEventListener('click', () => setStep(cur + 1));
     // 首个环节的预设延迟到 mount 之后：资源场景对象在 mount 里才创建
     window.__hvApplyStep0 = () => setStep(0);
     const summaryEl = document.getElementById('summary');
