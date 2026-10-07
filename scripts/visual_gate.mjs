@@ -40,6 +40,18 @@ for (const name of names) {
       } catch (e) {
         machineProblems.push(`${name} ${theme}-${tag} 截图失败: ${String(e.message).slice(0, 80)}`);
       }
+      // 空白/超小截图重拍一次（无头 WebGL 并行偶发空帧）
+      try {
+        const st = await stat(file);
+        if (st.size < 8000) {
+          await run(CHROME, [
+            '--headless=new', '--disable-gpu-sandbox', '--no-sandbox', '--hide-scrollbars',
+            '--window-size=1280,800', '--virtual-time-budget=9000',
+            `--screenshot=${path.resolve(file)}`,
+            `file://${process.cwd()}/public/interactives/${name}.html?pv=1&step=${step}${theme === 'light' ? '&theme=light' : ''}`,
+          ], { timeout: 60000 });
+        }
+      } catch (e) {}
     }
   }
 }

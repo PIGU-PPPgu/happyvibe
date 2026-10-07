@@ -378,7 +378,7 @@ function setStep(i) {
 
 // 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
 const TEACHING = {
-  meta: '数学·七年级｜人教版七年级上册第四章《几何图形初步》· 三视图',
+  meta: '数学·七年级｜北师大版七上第一章《丰富的图形世界》· 1.4 从三个方向看物体的形状',
   steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, note: s.note, apply: () => setStep(i) })),
   summary: SUMMARY,
   quiz: [

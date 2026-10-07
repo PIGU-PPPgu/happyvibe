@@ -24,8 +24,20 @@ for (const name of names) {
     await run('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '-Z', '720', tmp, '--out', `public/previews/${name}.jpg`], { timeout: 30000 });
     console.log(`preview ${name}.jpg`);
   } catch (e) {
-    fail++;
-    console.error(`FAIL ${name}: ${String(e.message).slice(0, 120)}`);
+    // 无头并行偶发失败：重试一次
+    try {
+      await run(CHROME, [
+        '--headless=new', '--disable-gpu-sandbox', '--no-sandbox', '--hide-scrollbars',
+        '--window-size=1280,800', '--virtual-time-budget=9000',
+        `--screenshot=${tmp}`,
+        `file://${process.cwd()}/public/interactives/${name}.html?pv=1`,
+      ], { timeout: 60000 });
+      await run('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '-Z', '720', tmp, '--out', `public/previews/${name}.jpg`], { timeout: 30000 });
+      console.log(`preview ${name}.jpg`);
+    } catch (e2) {
+      fail++;
+      console.error(`FAIL ${name}: ${String(e2.message).slice(0, 120)}`);
+    }
   } finally {
     await rm(tmp, { force: true });
   }

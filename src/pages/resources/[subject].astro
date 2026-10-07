@@ -42,6 +42,7 @@ const groups = [...topics.entries()]
   .sort((a, b) => a.order - b.order);
 
 const stageLabel = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
+const gradeSet = [...new Set(all.flatMap(({ r }) => r.data.grades))].sort((a, b) => a - b);
 const KIND_LABEL: Record<string, string> = {
   'interactive-3d': '3D 交互',
   'interactive-2d': '2D 交互',
@@ -59,6 +60,14 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
       <p class="res-sub text-muted">卡片即实拍界面。自产资源点击全屏打开，悬停卡片可看实时运行效果。</p>
     </TerminalWindow>
 
+    {gradeSet.length > 1 && (
+      <div class="gfilter" role="tablist" aria-label="按年级筛选">
+        <span class="glabel">年级</span>
+        <button class="gchip on" data-g="all" type="button">全部</button>
+        {gradeSet.map((g) => <button class="gchip" data-g={g} type="button">{g} 年级</button>)}
+      </div>
+    )}
+
     {groups.length === 0 && <p class="empty-note text-muted">该学科资源制作中。</p>}
 
     {groups.map((g) => (
@@ -66,7 +75,7 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
         <h2 class="topic-title">{g.topic}</h2>
         <div class="cards">
           {g.own.map(({ r, Content }) => (
-            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}`)}>
+            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}`)} data-grades={r.data.grades.join(",")}>
               <a
                 class="pv"
                 href={withBase(`/interactives/${r.data.file}`)}
@@ -114,6 +123,19 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
 </BaseLayout>
 
 <script>
+  // 年级筛选
+  const gchips = document.querySelectorAll<HTMLButtonElement>('.gchip');
+  if (gchips.length) {
+    gchips.forEach((c) =>
+      c.addEventListener('click', () => {
+        gchips.forEach((x) => x.classList.toggle('on', x === c));
+        const g = c.dataset.g;
+        document.querySelectorAll<HTMLElement>('.pcard[data-grades]').forEach((card) => {
+          card.style.display = !g || g === 'all' || card.dataset.grades.split(',').includes(g) ? '' : 'none';
+        });
+      })
+    );
+  }
   // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
   if (matchMedia('(pointer: fine)').matches) {
     for (const card of document.querySelectorAll<HTMLDivElement>('.pcard[data-live]')) {
@@ -145,6 +167,15 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
   .empty-note { padding: 30px 0; }
   .topic { display: flex; flex-direction: column; gap: 12px; }
   .topic-title { font-size: 19px; color: var(--gold-soft); border-left: 3px solid var(--gold); padding-left: 10px; }
+  .gfilter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .glabel { font-size: 13px; color: var(--text-faint); }
+  .gchip {
+    font: inherit; font-size: 13.5px; padding: 5px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: transparent; color: var(--text-muted);
+    cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  }
+  .gchip:hover { border-color: var(--gold); color: var(--text); }
+  .gchip.on { border-color: var(--gold); color: var(--gold); background: rgba(232, 176, 75, .12); font-weight: 600; }
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
 
   /* ---------- 自产资源：实拍效果图卡片 ---------- */

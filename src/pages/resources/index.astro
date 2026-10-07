@@ -11,6 +11,7 @@ const ext = all.filter((r) => r.data.kind === 'external');
 
 const ownSubjects = SUBJECTS.filter((s) => own.some((r) => r.data.subject === s.slug));
 const stageLabel = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
+const gradeSet = [...new Set(own.flatMap((r) => r.data.grades))].sort((a, b) => a - b);
 const subj = (slug: string) => subjectBySlug(slug);
 
 // 覆盖矩阵：subject × stage 的资源计数
@@ -43,16 +44,22 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
 
     <section aria-label="自产资源">
       <div class="filters" role="tablist" aria-label="按学科筛选">
+        <span class="glabel">学科</span>
         <button class="fchip on" data-f="all" type="button">全部</button>
         {ownSubjects.map((s) => (
           <button class="fchip" data-f={s.slug} type="button" style={`--accent:${s.accent}`}>{s.icon} {s.name}</button>
         ))}
       </div>
+      <div class="filters" role="tablist" aria-label="按年级筛选">
+        <span class="glabel">年级</span>
+        <button class="gchip on" data-g="all" type="button">全部</button>
+        {gradeSet.map((g) => <button class="gchip" data-g={g} type="button">{g} 年级</button>)}
+      </div>
       <div class="cards" id="own-cards">
         {own.map((r) => {
           const s = subj(r.data.subject);
           return (
-            <article class="pcard" data-subject={r.data.subject} data-live={withBase(`/interactives/${r.data.file}`)}>
+            <article class="pcard" data-subject={r.data.subject} data-grades={r.data.grades.join(",")} data-live={withBase(`/interactives/${r.data.file}`)}>
               <a class="pv" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener" aria-label={`打开 ${r.data.title}`}>
                 <img loading="lazy" src={withBase(`/previews/${r.data.file}.jpg`)} alt={`${r.data.title} 界面实拍`} />
                 <span class="pv-open">打开</span>
@@ -106,16 +113,29 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
 </BaseLayout>
 
 <script>
-  // 学科筛选
+  // 学科 + 年级双筛选（AND 组合）
+  const state = { subject: 'all', grade: 'all' };
+  const apply = () => {
+    document.querySelectorAll<HTMLElement>('.pcard[data-subject]').forEach((card) => {
+      const okS = state.subject === 'all' || card.dataset.subject === state.subject;
+      const okG = state.grade === 'all' || card.dataset.grades.split(',').includes(state.grade);
+      card.style.display = okS && okG ? '' : 'none';
+    });
+  };
   const chips = document.querySelectorAll<HTMLButtonElement>('.fchip');
-  const cards = document.querySelectorAll<HTMLElement>('.pcard[data-subject]');
   chips.forEach((c) =>
     c.addEventListener('click', () => {
       chips.forEach((x) => x.classList.toggle('on', x === c));
-      const f = c.dataset.f;
-      cards.forEach((card) => {
-        card.style.display = !f || f === 'all' || card.dataset.subject === f ? '' : 'none';
-      });
+      state.subject = c.dataset.f || 'all';
+      apply();
+    })
+  );
+  const gchips = document.querySelectorAll<HTMLButtonElement>('.gchip');
+  gchips.forEach((c) =>
+    c.addEventListener('click', () => {
+      gchips.forEach((x) => x.classList.toggle('on', x === c));
+      state.grade = c.dataset.g || 'all';
+      apply();
     })
   );
   // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
@@ -155,7 +175,15 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
   .stat-n { font-size: 26px; color: var(--gold); font-weight: 700; }
   .stat-l { font-size: 13px; color: var(--text-muted); }
 
-  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .glabel { font-size: 13px; color: var(--text-faint); }
+  .gchip {
+    font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: transparent; color: var(--text-muted);
+    cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  }
+  .gchip:hover { border-color: var(--gold); color: var(--text); }
+  .gchip.on { border-color: var(--gold); color: var(--gold); background: rgba(232, 176, 75, .12); font-weight: 600; }
   .fchip {
     font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 999px;
     border: 1px solid var(--line); background: transparent; color: var(--text-muted);
