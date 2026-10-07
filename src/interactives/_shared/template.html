@@ -22,6 +22,8 @@
   --shadow:0 8px 24px rgba(80,30,100,.14);
 }
 *{box-sizing:border-box;margin:0}
+/* 键盘可达性：Tab 焦点环（鼠标点击不显示，投屏遥控器/翻页笔友好） */
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
 html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
 /* 舞台底：港紫径向层次（背景实现，不盖 canvas） */

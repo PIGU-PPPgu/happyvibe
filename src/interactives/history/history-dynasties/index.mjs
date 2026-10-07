@@ -192,7 +192,7 @@ function setStep(i) {
 
 // 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
 const TEACHING = {
-  meta: '历史·七年级｜统编版七年级上、下册 · 中国古代史 · 朝代更替',
+  meta: '历史·七年级｜统编版七年级上、下册《中国古代史》· 朝代更替',
   steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, note: s.note, apply: () => setStep(i) })),
   summary: SUMMARY,
   quiz: [

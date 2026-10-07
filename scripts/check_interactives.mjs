@@ -1,10 +1,20 @@
-// 质量闸门：体积上限、零外部请求、无 emoji、title、全屏按钮、双主题变量
+// 质量闸门：体积上限、零外部请求、无 emoji、title、全屏按钮、双主题变量、
+// 教材锚点、操作提示、预览图新鲜度、可操作性（输入事件 ≥2 类）
 // 可选：node scripts/check_interactives.mjs <slug>... 只校验指定资源
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 const only = process.argv.slice(2);
+
+async function findSource(name) {
+  for (const s of await readdir('src/interactives', { withFileTypes: true })) {
+    if (!s.isDirectory()) continue;
+    const p = `src/interactives/${s.name}/${name}/index.mjs`;
+    if (existsSync(p)) return p;
+  }
+  return null;
+}
 const report = JSON.parse(await readFile('scripts/.interactives-report.json', 'utf8'));
 
 // 单资源模式下报告可能缺该条目（并行构建竞态）：从源码 import 检测 kind 兜底
@@ -43,13 +53,41 @@ for (const name of names) {
     const html = await readFile(file, 'utf8');
     const limit = kind === 'interactive-3d' ? 1024 * 1024 : 100 * 1024;
     if (bytes > limit) problems.push(`体积 ${(bytes / 1024).toFixed(0)}KB 超限 ${limit / 1024}KB`);
-    const noComments = html.replace(/<!--[\s\S]*?-->/g, '');
+    const noComments = html
+      .replace(/<!--[\s\S]*?-->/g, '')
+      // esbuild 默认把非 ASCII 字符串转成 \uXXXX 转义，检查前先还原
+      .replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
     if (EXT_URL.test(noComments)) problems.push('存在外部 URL 引用');
     const m = noComments.match(EMOJI);
     if (m) problems.push(`含 emoji: ${m.map((c) => c.codePointAt(0).toString(16)).join(',')}`);
     if (!/<title>[^<]+<\/title>/.test(html) || html.includes('<title>__')) problems.push('title 缺失');
     if (!html.includes('id="fs"')) problems.push('缺全屏按钮');
     if (!html.includes('data-theme') || !html.includes(':root[data-theme=light]')) problems.push('缺双主题');
+    // G7 教材锚点：定位行必须落到具体教材版本 + 册次单元（教材联动不是口号）
+    if (!/(人教版|人教A版|北师大版|统编版|苏科版|沪科版|浙教版|湘教版|华东师大版|外研版|译林版)/.test(noComments)) problems.push('缺教材版本锚点（人教版/北师大版/统编版等）');
+    if (!/(第[一二三四五六七八九十]+[单章课]|《[^》]{2,24}》)/.test(noComments)) problems.push('缺单元/章节锚点（第X单元·章 或《课题》）');
+    // G8 操作提示：每页必须告诉老师怎么用（≥6 字）
+    const hint = noComments.match(/id="hint"[^>]*>([^<]+)</);
+    if (!hint || hint[1].trim().length < 6) problems.push('缺操作提示 #hint（≥6 字）');
+    // G9 预览图新鲜度：资源库卡片用实拍图，图比产物旧即视为过期
+    const pv = `public/previews/${name}.jpg`;
+    if (!existsSync(pv)) problems.push('缺卡片预览图 public/previews/' + name + '.jpg');
+    else {
+      const [htmlStat, pvStat] = await Promise.all([stat(file), stat(pv)]);
+      if (pvStat.mtimeMs < htmlStat.mtimeMs - 60_000) problems.push(`预览图过期（先于产物构建，重跑 npm run build:previews ${name}）`);
+    }
+    // G10 可操作性：≥2 类输入事件，或同一类（如纯点击型）≥5 处真实绑定
+    const srcPath = await findSource(name);
+    if (srcPath) {
+      const src = await readFile(srcPath, 'utf8');
+      const kinds = new Set();
+      let bindings = 0;
+      for (const mm of src.matchAll(/addEventListener\(\s*['"](click|pointerdown|pointermove|pointerup|input|wheel|keydown|touchstart|change)['"]/g)) {
+        kinds.add(mm[1]);
+        bindings++;
+      }
+      if (kinds.size < 2 && bindings < 5) problems.push(`交互绑定不足（${kinds.size} 类 / ${bindings} 处；需 ≥2 类或 ≥5 处）`);
+    }
   }
   if (problems.length) { failed++; console.log(`FAIL ${name}: ${problems.join('；')}`); }
   else console.log(`PASS ${name}`);

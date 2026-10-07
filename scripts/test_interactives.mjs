@@ -53,17 +53,20 @@ async function testOne(name) {
       .replace(/<[^>]+>/g, ' ');
     if (stageText.replace(/\s+/g, '').length < 60) problems.push('DOM 内容过少（<60 字符）');
   }
-  // 教研员契约：定位 / 环节 / 引导 / 讲解 / 小结 / 检测（external 无产物不适用；引导语为单元素随环节切换，只查总量）
+  // 教研员契约 v2：定位 / 环节 / 引导 / 讲解 / 小结 / 检测，全部硬性（无过渡豁免）
   const ped = r.pedagogy;
   if (ped) {
     if (ped.metaChars < 8) problems.push(`缺定位行 [data-hv-meta]（学科·年级 + 教材章节知识点，现 ${ped.metaChars} 字）`);
-    if (ped.steps < 2) problems.push(`教学环节不足 [data-hv-step]（需 ≥2 个，如引入/探究/归纳，现 ${ped.steps} 个）`);
-    if (ped.guideChars < 60) {
-      problems.push(`引导语不足 [data-hv-guide]（环节引导话术合计 ≥60 字；现 ${ped.guideChars} 字）`);
-    }
+    if (ped.steps < 3) problems.push(`教学环节不足（需 ≥3 个完整课堂环节，现 ${ped.steps} 个）`);
+    if (ped.guideChars < 90) problems.push(`引导语合计不足（≥90 字，现 ${ped.guideChars} 字）`);
+    const shortGuide = (ped.guideLens || []).findIndex((n) => n < 15);
+    if (shortGuide >= 0) problems.push(`第 ${shortGuide + 1} 环节引导语仅 ${(ped.guideLens || [])[shortGuide]} 字（每环节 ≥15 字）`);
+    if (ped.noteChars < 120) problems.push(`讲解词合计不足（≥120 字，现 ${ped.noteChars} 字）`);
+    const shortNote = (ped.noteLens || []).findIndex((n) => n < 40);
+    if (shortNote >= 0) problems.push(`第 ${shortNote + 1} 环节讲解词仅 ${(ped.noteLens || [])[shortNote]} 字（每环节 ≥40 字）`);
     if (ped.summaryChars < 30) problems.push(`缺知识小结 [data-hv-summary]（≥30 字结论，现 ${ped.summaryChars} 字）`);
-    // 检测题：配置了就按结构标准验收（题目结构合法性由 runtime 的 quiz-valid 断言注入 checks）；过渡期未配置不判失败
-    if (ped.quizCount > 0 && ped.quizCount < 3) problems.push(`检测题不足 [data-hv-quiz]（配置了检测需 ≥3 题，现 ${ped.quizCount} 题）`);
+    if (ped.quizCount < 4) problems.push(`随堂检测不足 [data-hv-quiz]（需 ≥4 题，现 ${ped.quizCount} 题）`);
+    if (ped.quizCount > 0 && ped.quizChars < 120) problems.push(`检测题干与解析合计不足（≥120 字，现 ${ped.quizChars} 字）`);
   }
   return { name, pass: problems.length === 0, problems, quiz: ped ? ped.quizCount : 0 };
 }

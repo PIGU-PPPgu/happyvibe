@@ -87,6 +87,7 @@ function render() {
   for (const it of list) {
     const card = document.createElement('div');
     card.className = 'cw-card' + (flipped.has(it.w) ? ' flip' : '');
+    card.dataset.w = it.w;
     card.innerHTML = `
       <div class="cw-in">
         <div class="cw-f">
@@ -107,6 +108,23 @@ function render() {
     });
     grid.appendChild(card);
   }
+  // 翻页笔/键盘支持：→ 翻到下一张并亮面，← 回上一张（教师拿翻页笔远程操作）
+  window.addEventListener('keydown', (e) => {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.isContentEditable)) return;
+    const cards = [...grid.children];
+    if (!cards.length) return;
+    const cur = cards.findIndex((c) => c.classList.contains('flip'));
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const next = e.key === 'ArrowRight' ? Math.min(cards.length - 1, cur + 1) : Math.max(0, cur - 1);
+      cards.forEach((c, i) => {
+        c.classList.toggle('flip', i === next);
+        const w = WORDS.find((x) => x.w === c.dataset.w);
+        if (w) { if (i === next) flipped.add(w.w); else flipped.delete(w.w); }
+      });
+      cards[next].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
 }
 
 // 教研员契约：定位行 / 教学环节 / 教师引导语 / 知识小结

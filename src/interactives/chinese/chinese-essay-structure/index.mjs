@@ -114,6 +114,9 @@ const CSS = `
 .es-tguide{display:block;font-size:15px;line-height:1.7;color:var(--text)}
 .es-sumbtn{margin-left:auto}
 .es-panel{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:30;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.9;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+
+.kw-hit .nm{color:var(--gold);font-weight:700}
+.kw-dim{opacity:.38}
 `;
 
 // 教研员契约：三环节各对应一组预设场景（哪棵树、展开哪些一级分支、选中哪个节点）
@@ -144,7 +147,9 @@ let treeBox, barEl, cur = 0, selPath = '';
 function nodeCard(node, path, depth) {
   const el = document.createElement('div');
   const hasKids = !!node.kids;
-  el.className = 'nd open' + (depth === 0 ? ' root' : depth === 1 ? ' l1' : '') + (selPath === path ? ' sel' : '');
+  const kw = (barEl && barEl.querySelector('input'))?.dataset.kw || '';
+  const hit = kw && node.name.includes(kw);
+  el.className = 'nd open' + (depth === 0 ? ' root' : depth === 1 ? ' l1' : '') + (selPath === path ? ' sel' : '') + (kw ? (hit ? ' kw-hit' : ' kw-dim') : '');
   const hd = document.createElement('div');
   hd.className = 'hd';
   hd.innerHTML = (hasKids ? '<span class="tg"></span>' : '<span style="display:inline-block;width:16px"></span>') + `<span class="nm">${node.name}</span>`;
@@ -202,7 +207,7 @@ function setStep(k) {
 
 // 教学面板配置（模板渲染；环节设计见条目 md「教学设计」）
 const TEACHING = {
-  meta: '语文·初中｜统编版七至九年级写作单元 · 文章结构与提纲',
+  meta: '语文·初中｜统编版七至九年级各册写作单元 · 课题《文章结构与提纲》',
   steps: STEPS.map((s, i) => ({ name: s.name, guide: s.guide, note: s.note, apply: () => setStep(i) })),
   summary: SUMMARY,
   quiz: [
@@ -279,6 +284,17 @@ init({
     all.textContent = '全部展开';
     all.addEventListener('click', () => { selPath = ''; render(); });
     barEl.appendChild(all);
+    const filter = document.createElement('input');
+    filter.type = 'search';
+    filter.placeholder = '筛选写法关键词';
+    filter.setAttribute('aria-label', '筛选写法关键词');
+    filter.style.cssText = 'font:inherit;font-size:14px;padding:7px 12px;border-radius:8px;border:1px solid var(--line2);background:var(--inset);color:var(--text);outline:none;width:150px;margin-left:6px';
+    filter.addEventListener('input', () => {
+      const kw = filter.value.trim();
+      filter.dataset.kw = kw;
+      render();
+    });
+    barEl.appendChild(filter);
     wrap.appendChild(barEl);
     treeBox = document.createElement('div');
     treeBox.className = 'es-tree';
