@@ -17,13 +17,18 @@ const stages = [
         cmd: ['node', 'scripts/build_resource_previews.mjs'],
       }]),
   {
-    name: '十项产物闸门',
-    desc: '体积 / 零外链 / 无 emoji / title / 全屏 / 双主题 / 教材锚点 / 操作提示 / 预览新鲜度 / 交互绑定',
+    name: '十二项产物闸门',
+    desc: '体积 / 零外链 / 无 emoji / title / 全屏 / 双主题 / 教材锚点真伪 / 操作提示 / 预览新鲜度 / 交互绑定 / 上手引导',
     cmd: ['node', 'scripts/check_interactives.mjs'],
   },
   {
+    name: '视觉闸门',
+    desc: '截图取证（双主题×首末帧）+ 像素规则（非空白/双主题生效）+ 目检册新鲜度（过期即挡，provisional 显式列出）',
+    cmd: ['node', 'scripts/visual_gate.mjs'],
+  },
+  {
     name: '无头自测 harness',
-    desc: '真浏览器加载 ?selftest=1：JS 零报错 / 场景断言 / 画布主体占比 / 教研契约 v2 / 检测作答流程',
+    desc: '真浏览器加载 ?selftest=1 深浅双主题：JS 零报错 / 场景断言 / 画布主体占比 / 教研契约 v2 / 检测作答流程',
     cmd: ['node', 'scripts/test_interactives.mjs'],
   },
 ];

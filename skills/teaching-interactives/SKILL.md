@@ -157,7 +157,8 @@ npm run build:interactives     # 产出 public/interactives/<name>.html
 npm run check:interactives     # 十二项闸门：体积（2D<100KB / 3D<1MB）、零外部请求、无 emoji、title、全屏、双主题、教材版本+章节锚点、锚点真伪（对照 scripts/textbook-index.mjs 教材目录库）、操作提示 ≥6 字、预览图新鲜度、交互绑定（≥2 类事件或 ≥5 处）、首次上手引导层
 node scripts/test_interactives.mjs <name>   # 自测 harness（深浅双主题各跑一遍；只验单个资源，不带参数跑全部）
 npm run build:previews         # 重生成卡片预览图（资源库卡片用实际界面实拍；改了界面必须重跑，闸门 G9 会拦旧图）
-npm run verify                 # 统一验收：上面四步一条命令跑完（--fast 跳过预览重生成），全绿才算完成
+npm run verify                 # 统一验收：构建→预览→十二项闸门→视觉闸门→双主题 harness 一条命令跑完，全绿才算完成
+node scripts/visual_gate.mjs   # 视觉闸门：截图取证到 scripts/.visual-evidence/ + 像素规则 + 目检册检查；改完内容后需重目检拼图并更新 scripts/.visual-review.json（verdict: pass/provisional，buildHash 必须等于当次报告哈希），AI 视觉服务可用时逐张补检升 pass
 
 **harness 教研契约 v2（全部硬性，无过渡豁免）**：环节 ≥3（环节名优先用教材固有栏目动词：北师大「想一想/做一做/议一议/随堂练习」，人教「探究/练习」，统编语文「默读/精读/积累」）；引导语合计 ≥90 字且单环节 ≥15 字；讲解词合计 ≥120 字且单环节 ≥40 字；小结 ≥30 字；随堂检测 ≥4 题且题干+解析合计 ≥120 字。
 ```

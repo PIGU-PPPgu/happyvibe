@@ -13,3 +13,6 @@ public/interactives/*
 !public/interactives/harness-pipeline.html
 scripts/.interactives-report.json
 public/previews/*
+
+scripts/.visual-evidence/
+scripts/.visual-review.json

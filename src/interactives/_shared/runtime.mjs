@@ -304,5 +304,12 @@ export function init(opts) {
   }
   opts.mount(el, api);
   if (window.__hvApplyStep0) window.__hvApplyStep0();
+  // 视觉取证用：?step=N 在挂载后切到指定环节（越界自动收敛到最后一个）
+  const stepParam = new URLSearchParams(location.search).get('step');
+  if (stepParam !== null && teach && teach.steps && teach.steps.length) {
+    const n = Math.max(0, Math.min(teach.steps.length - 1, parseInt(stepParam, 10) || 0));
+    const btns = [...document.querySelectorAll('[data-hv-step]')];
+    if (btns[n]) btns[n].click();
+  }
   return api;
 }
