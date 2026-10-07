@@ -11,3 +11,4 @@ public/interactives/*
 !public/interactives/site-map.html
 !public/interactives/topic-roadmap.html
 scripts/.interactives-report.json
+public/previews/*

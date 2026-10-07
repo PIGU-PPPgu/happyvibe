@@ -30,13 +30,15 @@ for (const item of all) {
   topics.set(item.r.data.topic, list);
 }
 const groups = [...topics.entries()]
-  .map(([topic, items]) => ({
-    topic,
-    items: items.sort((a, b) =>
-      a.r.data.kind === b.r.data.kind ? a.r.data.order - b.r.data.order : a.r.data.kind === 'external' ? 1 : -1
-    ),
-    order: Math.min(...items.map((i) => i.r.data.order)),
-  }))
+  .map(([topic, items]) => {
+    const sorted = [...items].sort((a, b) => a.r.data.order - b.r.data.order);
+    return {
+      topic,
+      own: sorted.filter((i) => i.r.data.kind !== 'external'),
+      ext: sorted.filter((i) => i.r.data.kind === 'external'),
+      order: Math.min(...items.map((i) => i.r.data.order)),
+    };
+  })
   .sort((a, b) => a.order - b.order);
 
 const stageLabel = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
@@ -54,7 +56,7 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
     <TerminalWindow title={`happyvibe resources / ${meta.slug}`}>
       <p class="kicker mono">// {meta.name} · 自产 {own.length} · 外链 {ext.length}</p>
       <h1 class="res-title"><span class="mono" style={`color:${meta.accent}`}>{meta.icon}</span> {meta.name}教学资源</h1>
-      <p class="res-sub text-muted">按教材章节排列。自产资源点击全屏打开，可下载后断网使用。</p>
+      <p class="res-sub text-muted">卡片即实拍界面。自产资源点击全屏打开，悬停卡片可看实时运行效果。</p>
     </TerminalWindow>
 
     {groups.length === 0 && <p class="empty-note text-muted">该学科资源制作中。</p>}
@@ -63,34 +65,78 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
       <section class="topic">
         <h2 class="topic-title">{g.topic}</h2>
         <div class="cards">
-          {g.items.map(({ r, Content }) => (
-            <article class="card" data-kind={r.data.kind}>
-              <div class="card-head">
-                {r.data.kind === 'external' ? (
-                  <a class="card-title" href={r.data.url} target="_blank" rel="noopener">{r.data.title}</a>
-                ) : (
-                  <a class="card-title" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">{r.data.title}</a>
-                )}
+          {g.own.map(({ r, Content }) => (
+            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}`)}>
+              <a
+                class="pv"
+                href={withBase(`/interactives/${r.data.file}`)}
+                target="_blank"
+                rel="noopener"
+                aria-label={`打开 ${r.data.title}`}
+              >
+                <img loading="lazy" src={withBase(`/previews/${r.data.file}.jpg`)} alt={`${r.data.title} 界面实拍`} />
+                <span class="pv-open">打开</span>
+              </a>
+              <div class="pcard-head">
+                <a class="card-title" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">{r.data.title}</a>
                 <span class="badge kind" data-kind={r.data.kind}>{KIND_LABEL[r.data.kind]}</span>
               </div>
-              <p class="card-usage">{r.data.usage}</p>
               <div class="card-meta">
                 <span class="badge">{stageLabel[r.data.stage]}</span>
                 <span class="badge mono">{r.data.grades.join('、')} 年级</span>
-                {r.data.kind === 'external' && SOURCE_LABEL[r.data.source] && <span class="badge src">{SOURCE_LABEL[r.data.source]}</span>}
                 {r.data.status === 'draft' && <span class="badge draft">校对中</span>}
               </div>
+              <p class="card-usage">{r.data.usage}</p>
               <details class="card-body">
-                <summary>使用步骤</summary>
+                <summary>教学设计与使用步骤</summary>
                 <div class="body-md"><Content /></div>
               </details>
             </article>
           ))}
         </div>
+        {g.ext.length > 0 && (
+          <div class="elist">
+            {g.ext.map(({ r }) => (
+              <a class="ecard" href={r.data.url} target="_blank" rel="noopener">
+                <span class="ecard-title">{r.data.title}</span>
+                <span class="ecard-meta">
+                  {SOURCE_LABEL[r.data.source] && <span class="esrc">{SOURCE_LABEL[r.data.source]}</span>}
+                  <span>{stageLabel[r.data.stage]}</span>
+                  <span class="earrow" aria-hidden="true">↗</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
       </section>
     ))}
   </div>
 </BaseLayout>
+
+<script>
+  // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
+  if (matchMedia('(pointer: fine)').matches) {
+    for (const card of document.querySelectorAll<HTMLDivElement>('.pcard[data-live]')) {
+      const pv = card.querySelector<HTMLElement>('.pv');
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      card.addEventListener('mouseenter', () => {
+        timer = setTimeout(() => {
+          const f = document.createElement('iframe');
+          f.loading = 'lazy';
+          f.title = '实时预览';
+          f.src = card.dataset.live!;
+          pv!.appendChild(f);
+          pv!.classList.add('live');
+        }, 350);
+      });
+      card.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+        pv?.classList.remove('live');
+        pv?.querySelector('iframe')?.remove();
+      });
+    }
+  }
+</script>
 
 <style>
   .res-page { padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 26px; }
@@ -99,29 +145,74 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
   .empty-note { padding: 30px 0; }
   .topic { display: flex; flex-direction: column; gap: 12px; }
   .topic-title { font-size: 19px; color: var(--gold-soft); border-left: 3px solid var(--gold); padding-left: 10px; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-  .card {
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+  /* ---------- 自产资源：实拍效果图卡片 ---------- */
+  .pcard {
     display: flex; flex-direction: column; gap: 10px;
-    padding: 16px; background: var(--bg-panel);
+    background: var(--bg-panel);
     border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
   }
-  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .pcard:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.35); }
+  .pv { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; text-decoration: none; }
+  .pv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .35s ease; }
+  .pcard:hover .pv img { transform: scale(1.03); }
+  .pv iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--bg); pointer-events: none; }
+  .pv.live img { opacity: 0; }
+  .pv.live iframe { pointer-events: auto; }
+  .pv::after {
+    content: '悬停实时预览';
+    position: absolute; right: 10px; bottom: 10px; z-index: 2;
+    font-size: 12px; color: var(--text); padding: 3px 9px; border-radius: 999px;
+    background: rgba(10, 6, 16, .62); border: 1px solid var(--line);
+    backdrop-filter: blur(4px); pointer-events: none;
+    transition: opacity .2s;
+  }
+  .pv.live::after { opacity: 0; }
+  .pv-open {
+    position: absolute; left: 10px; top: 10px; z-index: 2;
+    font-size: 12px; padding: 3px 10px; border-radius: 999px;
+    color: #fff; background: var(--cuhk, #6b2077); border: 1px solid rgba(255,255,255,.25);
+    opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  .pv:hover .pv-open { opacity: 1; }
+  .pcard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 2px 14px 0; }
   .card-title { color: var(--text); font-weight: 600; font-size: 16px; text-decoration: none; line-height: 1.5; }
   .card-title:hover { color: var(--gold-soft); }
-  .card-usage { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
-  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px; }
+  .card-usage { font-size: 14px; color: var(--text-muted); line-height: 1.7; padding: 0 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .badge {
     font-size: 12px; padding: 2px 8px; border-radius: 999px;
     border: 1px solid var(--line); color: var(--text-muted); white-space: nowrap;
   }
-  .badge.kind[data-kind='external'] { color: var(--purple-soft); border-color: var(--line-strong); }
   .badge.kind[data-kind='interactive-3d'] { color: #6EC1FF; border-color: rgba(110, 193, 255, 0.4); }
   .badge.kind[data-kind='interactive-2d'] { color: #7CE38B; border-color: rgba(124, 227, 139, 0.4); }
-  .badge.src { color: var(--gold-soft); border-color: var(--line-gold); }
   .badge.draft { color: var(--gold); }
-  .card-body { font-size: 14px; }
+  .card-body { font-size: 14px; padding: 0 14px 14px; }
   .card-body summary { cursor: pointer; color: var(--text-faint); font-size: 13px; }
   .card-body .body-md { margin-top: 8px; color: var(--text-muted); line-height: 1.8; }
   .card-body .body-md :global(p) { margin: 0 0 6px; }
   .card-body .body-md :global(ol), .card-body .body-md :global(ul) { padding-left: 18px; }
+  .card-body .body-md :global(table) { font-size: 13px; }
+  .card-body .body-md :global(th), .card-body .body-md :global(td) { padding: 4px 8px; }
+
+  /* ---------- 外链资源：紧凑行 ---------- */
+  .elist { display: flex; flex-direction: column; gap: 8px; }
+  .ecard {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 11px 16px; background: var(--bg-panel);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    text-decoration: none; transition: border-color .2s;
+  }
+  .ecard:hover { border-color: var(--line-strong); }
+  .ecard-title { color: var(--text); font-size: 15px; font-weight: 500; line-height: 1.5; }
+  .ecard:hover .ecard-title { color: var(--gold-soft); }
+  .ecard-meta { display: flex; align-items: baseline; gap: 10px; font-size: 12.5px; color: var(--text-faint); white-space: nowrap; }
+  .esrc { color: var(--purple-soft); }
+  .earrow { color: var(--text-faint); }
+  @media (max-width: 640px) {
+    .ecard { flex-direction: column; gap: 4px; }
+  }
 </style>

@@ -2,12 +2,16 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TerminalWindow from '../../components/TerminalWindow.astro';
-import { SUBJECTS, STAGES } from '../../data/subjects';
+import { SUBJECTS, STAGES, subjectBySlug } from '../../data/subjects';
 import { withBase } from '../../lib/urls';
 
 const all = await getCollection('resources');
-const own = all.filter((r) => r.data.kind !== 'external');
+const own = all.filter((r) => r.data.kind !== 'external').sort((a, b) => a.data.order - b.data.order);
 const ext = all.filter((r) => r.data.kind === 'external');
+
+const ownSubjects = SUBJECTS.filter((s) => own.some((r) => r.data.subject === s.slug));
+const stageLabel = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
+const subj = (slug: string) => subjectBySlug(slug);
 
 // 覆盖矩阵：subject × stage 的资源计数
 const cell = new Map<string, number>();
@@ -26,8 +30,8 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
       <p class="kicker mono">// RESOURCES · {all.length} 条资源 · {covered}/{SUBJECTS.length} 学科已上线</p>
       <h1 class="res-title">教学资源库</h1>
       <p class="res-sub text-muted">
-        自产资源是单文件网页，下载后断网双击即可投屏；外链资源以国家中小学智慧教育平台为主。
-        按学科进入，按教材章节找知识点。
+        自产资源是单文件网页，下载后断网双击即可投屏；每张卡片就是资源实拍界面，悬停可看实时运行效果。
+        外链资源以国家中小学智慧教育平台为主。
       </p>
     </TerminalWindow>
 
@@ -36,6 +40,38 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
       <div class="stat"><span class="stat-n mono">{ext.length}</span><span class="stat-l">精选外链</span></div>
       <div class="stat"><span class="stat-n mono">{SUBJECTS.length}</span><span class="stat-l">学科规划</span></div>
     </div>
+
+    <section aria-label="自产资源">
+      <div class="filters" role="tablist" aria-label="按学科筛选">
+        <button class="fchip on" data-f="all" type="button">全部</button>
+        {ownSubjects.map((s) => (
+          <button class="fchip" data-f={s.slug} type="button" style={`--accent:${s.accent}`}>{s.icon} {s.name}</button>
+        ))}
+      </div>
+      <div class="cards" id="own-cards">
+        {own.map((r) => {
+          const s = subj(r.data.subject);
+          return (
+            <article class="pcard" data-subject={r.data.subject} data-live={withBase(`/interactives/${r.data.file}`)}>
+              <a class="pv" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener" aria-label={`打开 ${r.data.title}`}>
+                <img loading="lazy" src={withBase(`/previews/${r.data.file}.jpg`)} alt={`${r.data.title} 界面实拍`} />
+                <span class="pv-open">打开</span>
+              </a>
+              <div class="pcard-head">
+                <a class="card-title" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">{r.data.title}</a>
+              </div>
+              <div class="card-meta">
+                <a class="badge subj-badge" href={withBase(`/resources/${r.data.subject}/`)} style={`--accent:${s?.accent}`}>
+                  {s?.icon} {s?.name}
+                </a>
+                <span class="badge">{stageLabel[r.data.stage]}</span>
+                <span class="badge mono">{r.data.grades.join('、')} 年级</span>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
 
     <section class="matrix-wrap" aria-label="学科与学段覆盖矩阵">
       <table class="matrix">
@@ -69,10 +105,47 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
   </div>
 </BaseLayout>
 
+<script>
+  // 学科筛选
+  const chips = document.querySelectorAll<HTMLButtonElement>('.fchip');
+  const cards = document.querySelectorAll<HTMLElement>('.pcard[data-subject]');
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      chips.forEach((x) => x.classList.toggle('on', x === c));
+      const f = c.dataset.f;
+      cards.forEach((card) => {
+        card.style.display = !f || f === 'all' || card.dataset.subject === f ? '' : 'none';
+      });
+    })
+  );
+  // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
+  if (matchMedia('(pointer: fine)').matches) {
+    for (const card of document.querySelectorAll<HTMLDivElement>('.pcard[data-live]')) {
+      const pv = card.querySelector<HTMLElement>('.pv');
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      card.addEventListener('mouseenter', () => {
+        timer = setTimeout(() => {
+          const f = document.createElement('iframe');
+          f.loading = 'lazy';
+          f.title = '实时预览';
+          f.src = card.dataset.live!;
+          pv!.appendChild(f);
+          pv!.classList.add('live');
+        }, 350);
+      });
+      card.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+        pv?.classList.remove('live');
+        pv?.querySelector('iframe')?.remove();
+      });
+    }
+  }
+</script>
+
 <style>
   .res-page { padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 22px; }
   .res-title { font-size: 28px; margin: 4px 0 6px; }
-  .res-sub { max-width: 720px; line-height: 1.7; }
+  .res-sub { max-width: 760px; line-height: 1.7; }
   .res-stats { display: flex; gap: 14px; flex-wrap: wrap; }
   .stat {
     display: flex; flex-direction: column; gap: 2px;
@@ -81,6 +154,59 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
   }
   .stat-n { font-size: 26px; color: var(--gold); font-weight: 700; }
   .stat-l { font-size: 13px; color: var(--text-muted); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .fchip {
+    font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: transparent; color: var(--text-muted);
+    cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  }
+  .fchip:hover { border-color: var(--accent, var(--line-strong)); color: var(--text); }
+  .fchip.on { border-color: var(--accent, var(--gold)); color: var(--accent, var(--gold)); background: color-mix(in srgb, var(--accent, var(--gold)) 12%, transparent); font-weight: 600; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .pcard {
+    display: flex; flex-direction: column; gap: 10px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .pcard:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.35); }
+  .pv { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; text-decoration: none; }
+  .pv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .35s ease; }
+  .pcard:hover .pv img { transform: scale(1.03); }
+  .pv iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--bg); pointer-events: none; }
+  .pv.live img { opacity: 0; }
+  .pv.live iframe { pointer-events: auto; }
+  .pv::after {
+    content: '悬停实时预览';
+    position: absolute; right: 10px; bottom: 10px; z-index: 2;
+    font-size: 12px; color: var(--text); padding: 3px 9px; border-radius: 999px;
+    background: rgba(10, 6, 16, .62); border: 1px solid var(--line);
+    backdrop-filter: blur(4px); pointer-events: none;
+    transition: opacity .2s;
+  }
+  .pv.live::after { opacity: 0; }
+  .pv-open {
+    position: absolute; left: 10px; top: 10px; z-index: 2;
+    font-size: 12px; padding: 3px 10px; border-radius: 999px;
+    color: #fff; background: var(--cuhk, #6b2077); border: 1px solid rgba(255,255,255,.25);
+    opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  .pv:hover .pv-open { opacity: 1; }
+  .pcard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 2px 14px 0; }
+  .card-title { color: var(--text); font-weight: 600; font-size: 15.5px; text-decoration: none; line-height: 1.5; }
+  .card-title:hover { color: var(--gold-soft); }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 14px; }
+  .badge {
+    font-size: 12px; padding: 2px 8px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--text-muted); white-space: nowrap;
+    text-decoration: none;
+  }
+  .subj-badge { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .subj-badge:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
   .matrix-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
   .matrix { width: 100%; border-collapse: collapse; min-width: 560px; }
   .matrix th, .matrix td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); font-size: 15px; }

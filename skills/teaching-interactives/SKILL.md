@@ -156,6 +156,7 @@ UI 结构色为港中深品牌紫（与港中文「一个品牌，两个校园�
 npm run build:interactives     # 产出 public/interactives/<name>.html
 npm run check:interactives     # 六项闸门：体积（2D<100KB / 3D<1MB）、零外部请求、无 emoji、title、全屏按钮、双主题
 node scripts/test_interactives.mjs <name>   # 自测 harness（只验单个资源；不带参数跑全部）
+npm run build:previews <name>  # 重生成卡片预览图（资源库卡片用实际界面实拍；改了界面必须重跑，否则线上卡片是旧图）
 ```
 
 **harness 是验收的最终标准**，无头浏览器加载 `?selftest=1` 检查三类内容：

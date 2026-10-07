@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build:interactives": "node scripts/build_interactives.mjs",
+    "build:previews": "node scripts/build_resource_previews.mjs",
     "build": "node scripts/build_interactives.mjs && astro build && pagefind --site dist",
     "check:interactives": "node scripts/check_interactives.mjs",
     "preview": "astro preview",
