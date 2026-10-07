@@ -271,8 +271,10 @@ export function init(opts) {
   }
 
   // 首次上手引导：只在正常访问且从未看过时出现（自测与预览截图一律抑制）
+  const EMBED = new URLSearchParams(location.search).has('embed');
+  if (EMBED) document.body.classList.add('embed');
   const ob = document.getElementById('onboard');
-  if (ob && !SELFTEST && !new URLSearchParams(location.search).has('pv')) {
+  if (ob && !SELFTEST && !EMBED && !new URLSearchParams(location.search).has('pv')) {
     let seen = false;
     try { seen = localStorage.getItem('hv-onboard') === '1'; } catch (e) {}
     if (!seen) {

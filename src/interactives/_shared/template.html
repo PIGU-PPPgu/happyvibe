@@ -80,6 +80,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang
 @media (max-width:860px){
   #hint,#meta,#kbd{display:none}
 }
+/* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
+body.embed #bar, body.embed #teach, body.embed #note, body.embed #summary, body.embed #quiz-wrap { display: none !important; }
+body.embed #stage.pad, body.embed #stage.pad2 { inset: 0; }
+
 /* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
 #onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
 #onboard[hidden]{display:none}

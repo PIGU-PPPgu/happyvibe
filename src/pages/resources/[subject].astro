@@ -75,7 +75,7 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
         <h2 class="topic-title">{g.topic}</h2>
         <div class="cards">
           {g.own.map(({ r, Content }) => (
-            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}`)} data-grades={r.data.grades.join(",")}>
+            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}?embed=1`)} data-grades={r.data.grades.join(",")}>
               <a
                 class="pv"
                 href={withBase(`/interactives/${r.data.file}`)}
@@ -147,8 +147,8 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
           f.loading = 'lazy';
           f.title = '实时预览';
           f.src = card.dataset.live!;
+          f.addEventListener('load', () => pv!.classList.add('live'));
           pv!.appendChild(f);
-          pv!.classList.add('live');
         }, 350);
       });
       card.addEventListener('mouseleave', () => {
@@ -191,6 +191,7 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
   .pv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .35s ease; }
   .pcard:hover .pv img { transform: scale(1.03); }
   .pv iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--bg); pointer-events: none; }
+  .pv img { transition: opacity .25s ease, transform .35s ease; }
   .pv.live img { opacity: 0; }
   .pv.live iframe { pointer-events: auto; }
   .pv::after {
