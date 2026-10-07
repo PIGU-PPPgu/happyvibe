@@ -104,10 +104,10 @@ const CSS = `
 .py-zi{font-size:46px;font-weight:700;line-height:1}
 .py-note{font-size:16px;color:var(--muted);text-align:center;margin-bottom:6px}
 .py-ctl{display:flex;justify-content:center;gap:10px;margin-top:4px}
-.hv-panel{position:fixed;top:56px;left:0;right:0;z-index:40;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.hv-panel{position:fixed;top:var(--shell-top);left:0;right:0;z-index:40;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .hv-panel .btn{font-size:15px;padding:7px 16px}
 .hv-guide{flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6}
-.hv-sum{position:fixed;top:112px;left:50%;transform:translateX(-50%);z-index:41;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:16px;line-height:1.8;display:none}
+.hv-sum{position:fixed;top:calc(var(--shell-top) + 56px);left:50%;transform:translateX(-50%);z-index:41;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:16px;line-height:1.8;display:none}
 `;
 
 let wrap, mask, cardEl, selBtn = null, curIdx = -1;

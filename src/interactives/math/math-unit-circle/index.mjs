@@ -359,7 +359,7 @@ function draw() {
 
 // ---------- UI ----------
 const STYLE = `
-#panel{position:fixed;top:112px;right:14px;z-index:15;width:264px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#panel{position:fixed;top:calc(var(--shell-top) + 12px);right:14px;z-index:15;width:264px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .fns{display:flex;gap:8px}
 .fns .btn{flex:1;padding:8px 4px}
 .btn.on{border-color:var(--gold);color:var(--gold)}

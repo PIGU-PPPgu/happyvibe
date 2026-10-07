@@ -84,18 +84,21 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
                 aria-label={`打开 ${r.data.title}`}
               >
                 <img loading="lazy" src={withBase(`/previews/${r.data.file}.jpg`)} alt={`${r.data.title} 界面实拍`} />
+                <span class="grade-tag mono">{r.data.grades.join('、')} 年级 · {stageLabel[r.data.stage]}</span>
                 <span class="pv-open">打开</span>
               </a>
-              <div class="pcard-head">
+              <div class="pcard-body">
                 <a class="card-title" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">{r.data.title}</a>
-                <span class="badge kind" data-kind={r.data.kind}>{KIND_LABEL[r.data.kind]}</span>
+                <p class="card-sub">{r.data.topic}</p>
+                <p class="card-desc">{r.data.usage}</p>
+                {r.data.tags && r.data.tags.length > 0 && (
+                  <div class="chips">{r.data.tags.slice(0, 4).map((t) => <span class="chip">{t}</span>)}</div>
+                )}
               </div>
-              <div class="card-meta">
-                <span class="badge">{stageLabel[r.data.stage]}</span>
-                <span class="badge mono">{r.data.grades.join('、')} 年级</span>
-                {r.data.status === 'draft' && <span class="badge draft">校对中</span>}
+              <div class="pcard-foot">
+                <span class="badge mono">{r.data.status === 'ready' ? 'READY' : '校对中'}</span>
+                <a class="go" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">进入教室 <i>→</i></a>
               </div>
-              <p class="card-usage">{r.data.usage}</p>
               <details class="card-body">
                 <summary>教学设计与使用步骤</summary>
                 <div class="body-md"><Content /></div>
@@ -176,17 +179,43 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
   }
   .gchip:hover { border-color: var(--gold); color: var(--text); }
   .gchip.on { border-color: var(--gold); color: var(--gold); background: rgba(232, 176, 75, .12); font-weight: 600; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px; }
 
   /* ---------- 自产资源：实拍效果图卡片 ---------- */
   .pcard {
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: column;
     background: var(--bg-panel);
     border: 1px solid var(--line); border-radius: var(--radius);
     overflow: hidden;
     transition: border-color .2s, transform .2s, box-shadow .2s;
   }
   .pcard:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.35); }
+  .grade-tag {
+    position: absolute; right: 10px; bottom: 10px; z-index: 2;
+    font-size: 11.5px; padding: 3px 9px; border-radius: 999px;
+    color: var(--text); background: rgba(10, 6, 16, .62); border: 1px solid var(--line);
+    backdrop-filter: blur(4px); pointer-events: none;
+  }
+  .pcard-body { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px 4px; flex: 1; }
+  .card-sub { font-size: 13px; color: var(--gold-soft); letter-spacing: .02em; }
+  .card-desc {
+    font-size: 13.5px; color: var(--text-muted); line-height: 1.62;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+  .chip {
+    font-size: 12px; padding: 2px 9px; border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--cuhk, #8a3d99) 40%, transparent);
+    color: var(--text-muted); white-space: nowrap;
+  }
+  .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 12px; }
+  .pcard-foot .badge { font-size: 11.5px; letter-spacing: .1em; }
+  .go {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 600; color: var(--gold-soft); text-decoration: none;
+  }
+  .go i { font-style: normal; transition: transform .18s; }
+  .go:hover i { transform: translateX(4px); }
   .pv { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; text-decoration: none; }
   .pv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .35s ease; }
   .pcard:hover .pv img { transform: scale(1.03); }

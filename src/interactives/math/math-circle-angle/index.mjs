@@ -265,7 +265,7 @@ const TEACHING = {
 
 // ---------- UI ----------
 const STYLE = `
-#panel{position:fixed;top:64px;right:14px;z-index:15;width:260px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#panel{position:fixed;top:calc(var(--shell-top) + 12px);right:14px;z-index:15;width:260px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .steps .btn{font-size:14px;padding:7px 2px;text-align:center}
 .steps .btn[aria-pressed="true"]{border-color:var(--gold);background:var(--panel2)}

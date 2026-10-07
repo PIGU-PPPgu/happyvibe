@@ -113,7 +113,7 @@ const CSS = `
 .es-tsteps .btn[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
 .es-tguide{display:block;font-size:15px;line-height:1.7;color:var(--text)}
 .es-sumbtn{margin-left:auto}
-.es-panel{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:30;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.9;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.es-panel{position:fixed;top:calc(var(--shell-top) + 12px);left:50%;transform:translateX(-50%);z-index:30;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.9;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 
 .kw-hit .nm{color:var(--gold);font-weight:700}
 .kw-dim{opacity:.38}

@@ -12,6 +12,7 @@
   --gold:#e8b04b;--gold-soft:#f0c470;--wrong:#c97b7b;--ok:#7fbf9e;
   --line:rgba(186,136,212,.16);--line2:rgba(186,136,212,.3);--line-gold:rgba(232,176,75,.4);
   --shadow:0 10px 32px rgba(0,0,0,.5);
+  --shell-top:44px;--rail-w:216px;--rail-h:0px;
 }
 :root[data-theme=light]{
   --cuhk:#6b2077;--brand:#6b2077;--brand-line:rgba(107,32,119,.32);
@@ -26,49 +27,55 @@
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
 html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
-/* 舞台底：港紫径向层次（背景实现，不盖 canvas） */
-#stage{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
-#stage.pad{inset:54px 0 0 0}
-#stage.pad2{inset:112px 0 0 0}
-/* ---------- 顶栏（54px）：返回 | 标题 | 教材锚点 …… 窗口控制 ---------- */
-#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:12px;height:54px;padding:0 14px 0 10px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-#back{display:flex;align-items:center;gap:7px;min-height:34px;padding:0 12px;font-size:13.5px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s}
-#back::before{content:'←';font-size:15px;line-height:1}
+/* 舞台底：港紫径向层次（背景实现，不盖 canvas）；左轨/顶栏让位由变量驱动 */
+#stage{position:absolute;inset:calc(var(--shell-top) + var(--rail-h)) 0 0 var(--rail-w);background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
+/* ---------- 薄顶栏（44px）：返回 | 标题 | 教材锚点 …… 翻页/主操作/窗口控制 ---------- */
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#back{display:flex;align-items:center;gap:7px;min-height:32px;padding:0 11px;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+#back::before{content:'←';font-size:14px;line-height:1}
 #back:hover{color:var(--text);border-color:var(--line2);background:var(--panel2)}
-#bar h1{font-size:19px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
-#meta{font-size:13px;color:var(--gold);white-space:nowrap;padding:4px 11px;border:1px solid var(--line-gold);border-radius:999px}
+#bar h1{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+#meta{font-size:12.5px;color:var(--gold);white-space:nowrap;padding:3px 10px;border:1px solid var(--line-gold);border-radius:999px}
 #bar .grow{flex:1}
-/* ---------- 按钮系统：统一 34px 高；sq=方钮；primary=主操作实底 ---------- */
-.btn{font:inherit;font-size:14px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 15px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+/* ---------- 按钮系统：统一 32px 高；sq=方钮；primary=主操作实底 ---------- */
+.btn{font:inherit;font-size:13.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
 .btn:hover{border-color:var(--brand-line);color:var(--text)}
 .btn[aria-pressed=true]{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
 .btn.primary{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
 .btn.primary:hover{background:var(--brand);border-color:var(--brand);color:#fff}
-.btn.sq{min-width:34px;padding:0;font-size:16px}
-/* ---------- 环节行（58px）：分段 tab + 翻页 …… 讲解/检测/小结 ---------- */
-#teach{position:fixed;top:54px;left:0;right:0;z-index:9;display:flex;align-items:center;gap:10px;height:58px;padding:0 14px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-#steps{display:flex;gap:6px;flex-shrink:0}
-#steps .btn{min-height:36px;padding:0 16px;font-size:14.5px;border-radius:9px}
-#teach .btn{min-height:36px}
-#pgroup{display:flex;gap:6px;flex-shrink:0}
-#teach .grow{flex:1}
-#prog{position:absolute;left:0;right:0;bottom:-1px;height:2px}
-#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
-/* ---------- 教学引导浮层：常驻画面左上（引导语 + 操作提示） ---------- */
-#guide-tip{position:fixed;left:16px;top:120px;z-index:6;max-width:min(600px,62vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
+.btn.sq{min-width:32px;padding:0;font-size:15px}
+/* ---------- 左轨章节导航（宽屏 216px；WeduLab 范式：编号+名称，检测/小结入列） ---------- */
+#rail{position:fixed;top:var(--shell-top);left:0;bottom:0;z-index:9;width:var(--rail-w);display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-right:1px solid var(--line);padding:10px 10px 8px;gap:2px}
+#rail .rail-title{font-size:11.5px;color:var(--faint);letter-spacing:.22em;padding:2px 8px 8px}
+.rail-step{display:flex;align-items:baseline;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.rail-step .no{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;font-weight:700;color:var(--faint);min-width:24px;transition:color .15s}
+.rail-step:hover{color:var(--text);background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+.rail-step[aria-pressed=true]{background:color-mix(in srgb,var(--cuhk) 20%,transparent);border-color:var(--brand-line);color:var(--text);font-weight:600}
+.rail-step[aria-pressed=true] .no{color:var(--gold)}
+#rail .rail-split{height:1px;background:var(--line);margin:8px 6px}
+#rail .rail-foot{margin-top:auto;padding:10px 8px 2px;font-size:11px;color:var(--faint);line-height:1.9;letter-spacing:.03em}
+#rail .rail-foot b{font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:2px;font-size:10.5px}
+#rail-prog{position:absolute;left:0;right:0;bottom:0;height:2px}
+#rail-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
+/* ---------- 舞台章节标头：01 / 03 · 环节名（印在画面上） ---------- */
+#stage-head{position:fixed;top:calc(var(--shell-top) + var(--rail-h) + 14px);left:calc(var(--rail-w) + 20px);z-index:5;display:flex;align-items:baseline;gap:10px;pointer-events:none}
+#stage-head .frac{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+#stage-head .sname{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--text);opacity:.92}
+/* ---------- 教学引导浮层：章节标头之下（引导语 + 操作提示） ---------- */
+#guide-tip{position:fixed;left:calc(var(--rail-w) + 20px);top:calc(var(--shell-top) + var(--rail-h) + 56px);z-index:6;max-width:min(600px,58vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
 #guide-tip.dim{opacity:.35}
-#g-tip{font-size:15.5px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#g-tip{font-size:15px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #ops-tip{margin-top:5px;font-size:12.5px;color:var(--faint);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-/* ---------- 讲解弹层 ---------- */
-#note{position:fixed;top:118px;left:16px;z-index:20;width:min(520px,calc(100vw - 40px));padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
+/* ---------- 讲解覆盖卡（顶栏/章节栏呼出，WeduLab 右栏的覆盖式实现） ---------- */
+#note{position:fixed;top:calc(var(--shell-top) + 14px);right:16px;z-index:22;width:min(400px,calc(100vw - 40px));max-height:calc(100vh - var(--shell-top) - 40px);overflow:auto;padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
 #note::before{content:'讲解';display:block;font-size:12.5px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px}
 :root[data-theme=light] #note::before{color:var(--cuhk)}
 /* ---------- 小结浮层 ---------- */
-#summary{position:fixed;top:132px;left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
+#summary{position:fixed;top:calc(var(--shell-top) + 14px);left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
 #summary::before{content:'小结';display:block;font-size:12.5px;color:var(--gold);letter-spacing:.12em;margin-bottom:6px}
 /* ---------- 随堂检测 ---------- */
 #quiz-wrap{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(4px)}
-#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 120px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 100px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
 #quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 #quiz-head b{font-size:17px}
 #quiz-prog{font-size:13px;color:var(--faint)}
@@ -86,13 +93,27 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang
 #quiz-score{font-size:15px}
 #quiz-score b{font-size:22px;color:var(--brand)}
 :root[data-theme=light] #quiz-score b{color:var(--cuhk)}
-@media (max-width:860px){
-  #back span,#meta{display:none}
-  #guide-tip{left:10px;right:10px;max-width:none}
+/* ---------- 窄屏（<1080px）：左轨收成顶部横排环节条 ---------- */
+@media (max-width:1079px){
+  :root{--rail-w:0px;--rail-h:52px}
+  #rail{top:var(--shell-top);left:0;right:0;bottom:auto;width:auto;height:var(--rail-h);flex-direction:row;align-items:center;gap:6px;padding:0 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
+  #rail .rail-title,#rail .rail-split,#rail .rail-foot{display:none}
+  .rail-step{flex:none;width:auto;padding:6px 12px;gap:7px}
+  .rail-step .no{font-size:15px;min-width:0}
+  #rail-prog{bottom:0;left:0}
+  #meta{display:none}
+  #guide-tip{left:12px;right:12px;max-width:none}
+  #stage-head{left:16px}
+}
+@media (max-width:760px){
+  #back span{display:none}
+  #bar h1{font-size:15px}
+  #note-btn-top,#sum-btn-top{display:none}
 }
 /* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
-body.embed #bar, body.embed #teach, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip { display: none !important; }
-body.embed #stage.pad, body.embed #stage.pad2 { inset: 0; }
+body.embed #bar, body.embed #rail, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip, body.embed #stage-head { display: none !important; }
+body.embed { --shell-top:0px; --rail-w:0px; --rail-h:0px; }
+body.embed #stage { inset: 0; }
 
 /* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
 #onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
@@ -113,20 +134,25 @@ body.embed #stage.pad, body.embed #stage.pad2 { inset: 0; }
   <h1>__TITLE__</h1>
   <span id="meta"></span>
   <span class="grow"></span>
+  <button class="btn sq" id="step-prev" type="button" aria-label="上一环节" hidden>‹</button>
+  <button class="btn sq" id="step-next" type="button" aria-label="下一环节" hidden>›</button>
+  <button class="btn" id="note-btn-top" type="button" hidden>讲解</button>
+  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
+  <button class="btn" id="sum-btn-top" type="button">小结</button>
   <button class="btn sq" id="theme" type="button" aria-label="切换深浅色">◐</button>
   <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
 </div>
-<div id="teach" hidden>
+<nav id="rail" hidden aria-label="章节">
+  <div class="rail-title">章节</div>
   <div id="steps"></div>
-  <div id="pgroup">
-    <button class="btn sq" id="step-prev" type="button" aria-label="上一环节">‹</button>
-    <button class="btn sq" id="step-next" type="button" aria-label="下一环节">›</button>
-  </div>
-  <span class="grow"></span>
-  <button class="btn" id="note-btn" type="button" hidden>讲解</button>
-  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
-  <button class="btn" id="summary-btn" type="button">小结</button>
-  <span id="prog"><i></i></span>
+  <div class="rail-split"></div>
+  <div id="rail-extra"></div>
+  <div class="rail-foot"><b>←</b><b>→</b> 切换环节<br><b>Esc</b> 收起浮层</div>
+  <span id="rail-prog"><i></i></span>
+</nav>
+<div id="stage-head" hidden>
+  <span class="frac">01 / 03</span>
+  <span class="sname"></span>
 </div>
 <div id="guide-tip" hidden>
   <p id="g-tip"></p>
@@ -156,8 +182,8 @@ body.embed #stage.pad, body.embed #stage.pad2 { inset: 0; }
   <div class="ob-card">
     <b class="ob-title">第一次使用</b>
     <ul>
-      <li><b>环节条</b>：点环节按钮或按键盘左右键换环节，底部细线显示进程</li>
-      <li><b>讲解</b>：每个环节配一段知识讲解，点开对照引导语</li>
+      <li><b>左栏章节</b>：点章节或按键盘左右键换环节，当前环节高亮并印在画面左上</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，从顶栏或章节栏打开</li>
       <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
     </ul>
     <button class="btn primary" id="ob-ok" type="button">开始上课</button>

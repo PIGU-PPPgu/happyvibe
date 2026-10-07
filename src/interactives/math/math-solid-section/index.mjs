@@ -358,8 +358,8 @@ const STYLE = `
 #ctrl .dim{display:flex;align-items:center;gap:7px;font-size:17px}
 #ctrl input[type=range]{width:110px;accent-color:var(--gold)}
 #ctrl b{min-width:2.6em;text-align:center;font-size:17px;font-weight:600}
-#shape{position:fixed;top:64px;left:16px;z-index:15;background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:10px 18px;font-size:26px;font-weight:700;color:var(--gold);box-shadow:0 6px 22px rgba(0,0,0,.3)}
-@media (max-width:760px){#ctrl{gap:8px;padding:8px 10px;bottom:10px}#ctrl input[type=range]{width:84px}#shape{font-size:18px;top:60px;left:10px;padding:6px 10px}}
+#shape{position:fixed;top:calc(var(--shell-top) + 12px);right:16px;z-index:15;background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:10px 18px;font-size:26px;font-weight:700;color:var(--gold);box-shadow:0 6px 22px rgba(0,0,0,.3)}
+@media (max-width:760px){#ctrl{gap:8px;padding:8px 10px;bottom:10px}#ctrl input[type=range]{width:84px}#shape{font-size:18px;top:calc(var(--shell-top) + 10px);right:10px;padding:6px 10px}}
 @media (max-width:1180px){#hint{display:none}}
 `;
 

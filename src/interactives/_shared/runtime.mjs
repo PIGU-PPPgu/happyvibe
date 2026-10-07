@@ -120,23 +120,23 @@ export function init(opts) {
   }
 
   if (teach && teach.steps && teach.steps.length) {
-    el.classList.remove('pad');
-    el.classList.add('pad2');
     const metaEl = document.getElementById('meta');
     metaEl.textContent = teach.meta || '';
     metaEl.dataset.hvMeta = '';
-    const teachBar = document.getElementById('teach');
-    teachBar.hidden = false;
+    const rail = document.getElementById('rail');
+    rail.hidden = false;
+    const headEl = document.getElementById('stage-head');
+    headEl.hidden = false;
     const tipEl = document.getElementById('guide-tip');
     tipEl.hidden = false;
     const stepsEl = document.getElementById('steps');
     const guideEl = document.getElementById('g-tip');
-    const progFill = document.querySelector('#prog i');
+    const progFill = document.querySelector('#rail-prog i');
 
     // 讲解弹层：每个环节一段知识讲解（WeduLab 章节内容的对应物）
     const noteEl = document.getElementById('note');
     const hasNotes = teach.steps.some((s) => s.note && String(s.note).trim());
-    const noteBtn = document.getElementById('note-btn');
+    const noteBtn = document.getElementById('note-btn-top');
     if (hasNotes) {
       noteEl.dataset.hvNote = '';
       overlays.push(noteEl);
@@ -150,9 +150,13 @@ export function init(opts) {
     const stepBtns = teach.steps.map((s, i) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'btn';
+      b.className = 'rail-step';
       b.dataset.hvStep = '';
-      b.textContent = String(i + 1).padStart(2, '0') + ' ' + s.name;
+      const no = document.createElement('b');
+      no.className = 'no';
+      no.textContent = String(i + 1).padStart(2, '0');
+      b.appendChild(no);
+      b.appendChild(document.createTextNode(' ' + s.name));
       b.addEventListener('click', () => setStep(i));
       stepsEl.appendChild(b);
       return b;
@@ -164,18 +168,41 @@ export function init(opts) {
       guideEl.textContent = teach.steps[cur].guide || '';
       if (hasNotes) noteEl.textContent = teach.steps[cur].note || '';
       if (progFill) progFill.style.width = ((cur + 1) / teach.steps.length * 100) + '%';
+      const frac = headEl.querySelector('.frac');
+      if (frac) frac.textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(teach.steps.length).padStart(2, '0');
+      const sname = headEl.querySelector('.sname');
+      if (sname) sname.textContent = teach.steps[cur].name || '';
       if (!keepOverlays) closeOverlays();
       if (teach.steps[cur].apply) teach.steps[cur].apply();
     }
-    document.getElementById('step-prev').addEventListener('click', () => setStep(cur - 1));
-    document.getElementById('step-next').addEventListener('click', () => setStep(cur + 1));
+    const prevBtn = document.getElementById('step-prev');
+    const nextBtn = document.getElementById('step-next');
+    prevBtn.hidden = false; nextBtn.hidden = false;
+    prevBtn.addEventListener('click', () => setStep(cur - 1));
+    nextBtn.addEventListener('click', () => setStep(cur + 1));
     // 首个环节的预设延迟到 mount 之后：资源场景对象在 mount 里才创建
     window.__hvApplyStep0 = () => setStep(0);
     const summaryEl = document.getElementById('summary');
     summaryEl.textContent = teach.summary || '';
     summaryEl.dataset.hvSummary = '';
     overlays.push(summaryEl);
-    document.getElementById('summary-btn').addEventListener('click', () => toggleOverlay(summaryEl));
+    const sumBtn = document.getElementById('sum-btn-top');
+    sumBtn.addEventListener('click', () => toggleOverlay(summaryEl));
+    // 章节栏专项：检测 / 小结（教学流程的收口环节入列，WeduLab 08 随堂检测范式）
+    const extra = document.getElementById('rail-extra');
+    const mkExtra = (label, fn) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rail-step';
+      const no = document.createElement('b');
+      no.className = 'no';
+      no.textContent = label.no;
+      b.appendChild(no);
+      b.appendChild(document.createTextNode(' ' + label.name));
+      b.addEventListener('click', fn);
+      extra.appendChild(b);
+      return b;
+    };
 
     // 键盘 ←/→ 翻环节（投屏讲解）；Esc 收起浮层
     window.addEventListener('keydown', (e) => {
@@ -188,6 +215,9 @@ export function init(opts) {
     });
 
     buildQuiz();
+    const quizTop = document.getElementById('quiz-btn');
+    if (!quizTop.hidden) mkExtra({ no: '◆', name: '随堂检测' }, () => quizTop.click());
+    mkExtra({ no: '≡', name: '课堂小结' }, () => sumBtn.click());
   }
 
   // ---------- 随堂检测：逐题作答 + 解析 + 得分 ----------
