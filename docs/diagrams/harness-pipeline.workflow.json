@@ -94,7 +94,7 @@
       "col": 0,
       "type": "frontend",
       "label": "教学设计先行",
-      "sublabel": "目标 · 环节 · 检测题",
+      "sublabel": "环节用教材栏目动词",
       "width": 150,
       "height": 56
     },
@@ -104,7 +104,7 @@
       "col": 1,
       "type": "backend",
       "label": "资源源码",
-      "sublabel": "index.mjs·teaching",
+      "sublabel": "teaching + 断言配置",
       "width": 148,
       "height": 56
     },
@@ -123,8 +123,8 @@
       "lane": "verify",
       "col": 2,
       "type": "security",
-      "label": "六项质量闸门",
-      "sublabel": "六项静态检查",
+      "label": "十项产物闸门",
+      "sublabel": "含教材锚点·预览新鲜度",
       "width": 152,
       "height": 56
     },
@@ -134,7 +134,7 @@
       "col": 3,
       "type": "security",
       "label": "无头自测 Harness",
-      "sublabel": "四类运行时采样",
+      "sublabel": "教研契约 v2 全项",
       "width": 158,
       "height": 56
     },

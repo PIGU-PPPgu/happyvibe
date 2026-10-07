@@ -11,7 +11,9 @@
     "check:interactives": "node scripts/check_interactives.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "optimize:images": "node scripts/optimize_images.mjs"
+    "optimize:images": "node scripts/optimize_images.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:fast": "node scripts/verify.mjs --fast"
   },
   "dependencies": {
     "@pagefind/default-ui": "^1.3.0",

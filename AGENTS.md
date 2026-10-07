@@ -26,6 +26,7 @@
 |---|---|
 | `scripts/build_interactives.mjs` / `check_interactives.mjs` | 教学交互资源单文件构建与六项质量闸门（体积/零外链/无 emoji/双主题/title/全屏） |
 | `scripts/build_resource_previews.mjs` | 资源卡片预览图生成（无头截图到 public/previews/）；交互资源内容改动后必须重跑，否则资源库卡片是旧界面 |
+| `scripts/verify.mjs` | 统一验收入口（`npm run verify`）：构建 → 预览图 → 十项闸门 → 无头自测，一条命令全链路，任一环失败即中止 |
 | `scripts/make_tutorial_gif.py` | 教程 GIF 加工（聚焦放大/波纹/高亮/字幕条）+ 静态图红框箭头标注（annotate） |
 | `scripts/build_material_packs.py` | 15 学科材料包生成（含二维码，MATERIALS_BASE_URL 可换域名） |
 | `scripts/build_m0_visuals.py` / `build_teaching_visuals.py` | 教学示意图生成（紫金风格） |
