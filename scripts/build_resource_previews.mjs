@@ -5,7 +5,7 @@
 // 用法：node scripts/build_resource_previews.mjs [name...]（不带参数跑全部）
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { readFile, mkdir, rm } from 'node:fs/promises';
+import { readFile, mkdir, rm, readdir } from 'node:fs/promises';
 
 const run = promisify(execFile);
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -60,5 +60,9 @@ for (const name of names) {
     await rm(tmp, { force: true });
   }
 }
+// 清理 macOS 复制副本垃圾（"name 2.jpg"）：它们会被部署且 URL 带空格，线上永远 404
+const junk = (await readdir('public/previews')).filter((f) => / \d+\.jpg$/.test(f));
+for (const j of junk) await rm(`public/previews/${j}`, { force: true });
+if (junk.length) console.log(`清理副本垃圾 ${junk.length} 个`);
 console.log(`previews: ${names.length - fail}/${names.length}`);
 if (fail) process.exit(1);

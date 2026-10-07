@@ -82,9 +82,16 @@ for (const name of names) {
     const srcPath = await findSource(name);
     if (srcPath) {
       const src = await readFile(srcPath, 'utf8');
+      // 场景原型的绑定在 _shared/scenes/*.mjs 中，一并计入（harness v2）
+      const sceneImports = [...src.matchAll(/from\s+['"]\.\.\/\.\.\/_shared\/scenes\/([a-z0-9-]+)\.mjs['"]/g)].map((m) => m[1]);
+      let srcAll = src;
+      for (const sc of sceneImports) {
+        const sp = `src/interactives/_shared/scenes/${sc}.mjs`;
+        if (existsSync(sp)) srcAll += '\n' + await readFile(sp, 'utf8');
+      }
       const kinds = new Set();
       let bindings = 0;
-      for (const mm of src.matchAll(/addEventListener\(\s*['"](click|pointerdown|pointermove|pointerup|input|wheel|keydown|touchstart|change)['"]/g)) {
+      for (const mm of srcAll.matchAll(/addEventListener\(\s*['"](click|pointerdown|pointermove|pointerup|input|wheel|keydown|touchstart|change)['"]/g)) {
         kinds.add(mm[1]);
         bindings++;
       }
