@@ -21,7 +21,7 @@ const SOLIDS = {
 };
 const clipPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 const clipPlaneNeg = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-const spherical = { theta: 0.85, phi: 1.08, radius: 6.8 };
+const spherical = { theta: 0.85, phi: 1.08, radius: 5.4 };
 const target = new THREE.Vector3(0, 0, 0);
 
 function css(name, fallback) {
@@ -191,7 +191,7 @@ function buildSolid(id) {
   edgeMats = [];
   const p = palette();
   const mkEdge = () => {
-    const m = new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.4, clippingPlanes: [clipPlane] });
+    const m = new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.62, clippingPlanes: [clipPlane] });
     edgeMats.push(m);
     return m;
   };
@@ -209,7 +209,7 @@ function buildSolid(id) {
 
   solidA = new THREE.Group();
   const mA = new THREE.Mesh(geo, faceMatA);
-  const eA = edgeLines(geo, new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.4, clippingPlanes: [clipPlane] }));
+  const eA = edgeLines(geo, new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.62, clippingPlanes: [clipPlane] }));
   edgeMats.push(eA.material);
   mA.add(eA);
   solidA.add(mA);
@@ -217,7 +217,7 @@ function buildSolid(id) {
 
   solidB = new THREE.Group();
   const mB = new THREE.Mesh(geo.clone(), faceMatB);
-  const eB = edgeLines(geo.clone(), new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.4, clippingPlanes: [clipPlaneNeg] }));
+  const eB = edgeLines(geo.clone(), new THREE.LineBasicMaterial({ color: p.text, transparent: true, opacity: 0.62, clippingPlanes: [clipPlaneNeg] }));
   edgeMats.push(eB.material);
   mB.add(eB);
   solidB.add(mB);
@@ -324,7 +324,7 @@ function updateScene() {
     g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
     g.computeVertexNormals();
     sectionMesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({
-      color: p.gold, transparent: true, opacity: 0.42, side: THREE.DoubleSide, depthWrite: false,
+      color: p.gold, transparent: true, opacity: 0.58, side: THREE.DoubleSide, depthWrite: false,
     }));
     sectionGroup.add(sectionMesh);
 
@@ -358,7 +358,7 @@ const STYLE = `
 #ctrl .dim{display:flex;align-items:center;gap:7px;font-size:17px}
 #ctrl input[type=range]{width:110px;accent-color:var(--gold)}
 #ctrl b{min-width:2.6em;text-align:center;font-size:17px;font-weight:600}
-#shape{position:fixed;top:64px;left:16px;z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:21px;font-weight:700;color:var(--gold)}
+#shape{position:fixed;top:64px;left:16px;z-index:15;background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:10px 18px;font-size:26px;font-weight:700;color:var(--gold);box-shadow:0 6px 22px rgba(0,0,0,.3)}
 @media (max-width:760px){#ctrl{gap:8px;padding:8px 10px;bottom:10px}#ctrl input[type=range]{width:84px}#shape{font-size:18px;top:60px;left:10px;padding:6px 10px}}
 @media (max-width:1180px){#hint{display:none}}
 `;
@@ -540,7 +540,7 @@ init({
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(palette().bg);
-    camera = new THREE.PerspectiveCamera(40, document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight, 0.1, 60);
+    camera = new THREE.PerspectiveCamera(47, document.getElementById('stage').clientWidth / document.getElementById('stage').clientHeight, 0.1, 60);
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x443355, 1.15));
     const dir = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -553,7 +553,7 @@ init({
     buildSectionGroup();
 
     chip = new THREE.Sprite(new THREE.SpriteMaterial({ map: makeChip('截面'), transparent: true, depthTest: false }));
-    chip.scale.set(1.05, 0.385, 1);
+    chip.scale.set(1.55, 0.57, 1);
     chip.renderOrder = 10;
     scene.add(chip);
     updateScene();

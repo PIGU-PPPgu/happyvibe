@@ -105,7 +105,7 @@ function draw() {
   // 网格
   const step = niceStep(view.span / 5);
   ctx.strokeStyle = p.line;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   for (let gx = Math.ceil(wx(0) / step) * step; px(gx) <= W; gx += step) { const s = px(gx); ctx.moveTo(s, 0); ctx.lineTo(s, H); }
   for (let gy = Math.ceil(wy(H) / step) * step; py(gy) >= 0; gy += step) { const s = py(gy); ctx.moveTo(0, s); ctx.lineTo(W, s); }
@@ -116,10 +116,23 @@ function draw() {
   ctx.fillStyle = p.text;
   ctx.lineWidth = 2;
   const ax = px(0), ay = py(0);
+  ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(0, ay); ctx.lineTo(W, ay);
   ctx.moveTo(ax, 0); ctx.lineTo(ax, H);
   ctx.stroke();
+  // 四个象限的大字标注（淡而醒目，撑起构图也服务"经过象限"性质）
+  if (!narrow()) {
+    ctx.save();
+    ctx.font = '700 36px Georgia,serif';
+    ctx.fillStyle = p.muted; ctx.globalAlpha = .32;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const quads = [['Ⅰ', (ax + W) / 2, ay / 2], ['Ⅱ', ax / 2, ay / 2], ['Ⅲ', ax / 2, (ay + H) / 2], ['Ⅳ', (ax + W) / 2, (ay + H) / 2]];
+    for (const [t, qx, qy] of quads) {
+      if (qx > 40 && qx < W - 40 && qy > 40 && qy < H - 40) ctx.fillText(t, qx, qy);
+    }
+    ctx.restore();
+  }
   ctx.beginPath();
   ctx.moveTo(W - 14, ay); ctx.lineTo(W - 2, ay); ctx.lineTo(W - 14, ay - 5); ctx.lineTo(W - 14, ay + 5); ctx.closePath();
   ctx.moveTo(ax, 12); ctx.lineTo(ax, 2); ctx.moveTo(ax, 2); ctx.lineTo(ax - 5, 13); ctx.lineTo(ax + 5, 13); ctx.closePath();
@@ -130,7 +143,7 @@ function draw() {
   ctx.fillText('y', ax + 10, 16);
 
   // 刻度数字（跳过 0）
-  ctx.font = '16px "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+  ctx.font = '600 18px "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
   ctx.fillStyle = p.muted;
   ctx.textAlign = 'center';
   for (let gx = Math.ceil(wx(0) / step) * step; px(gx) <= W; gx += step) {
@@ -144,31 +157,43 @@ function draw() {
   }
 
   const label = (tx, ty, txt, alignRight) => {
-    ctx.font = 'bold 17px "Noto Sans SC","PingFang SC",sans-serif';
-    ctx.fillStyle = BLUE;
+    ctx.font = 'bold 20px "Noto Sans SC","PingFang SC",sans-serif';
     ctx.textAlign = alignRight ? 'right' : 'left';
+    ctx.lineWidth = 5; ctx.lineJoin = 'round';
+    ctx.strokeStyle = p.bg;
+    ctx.strokeText(txt, tx, ty);
+    ctx.fillStyle = BLUE;
     ctx.fillText(txt, tx, ty);
   };
 
   if (state.type === 'linear') {
     const { linK: k, linB: b } = state;
     // 直线
+    ctx.save();
     ctx.strokeStyle = p.gold;
-    ctx.lineWidth = 3.5;
+    ctx.lineWidth = 5;
+    ctx.shadowColor = p.gold; ctx.shadowBlur = 14;
     ctx.beginPath();
     const xa = view.cx - view.span - 2, xb = view.cx + view.span + 2;
     ctx.moveTo(px(xa), py(k * xa + b));
     ctx.lineTo(px(xb), py(k * xb + b));
     ctx.stroke();
+    ctx.restore();
     // 与两轴交点
     if (k !== 0) {
       const mark = (x, y, txt) => {
         const sx0 = px(x), sy0 = py(y);
         if (sx0 < -30 || sx0 > W + 30 || sy0 < -30 || sy0 > H + 30) return;
+        ctx.save();
+        ctx.shadowColor = BLUE; ctx.shadowBlur = 12;
         ctx.fillStyle = BLUE;
         ctx.beginPath();
-        ctx.arc(sx0, sy0, 5.5, 0, Math.PI * 2);
+        ctx.arc(sx0, sy0, 9, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
+        ctx.beginPath();
+        ctx.arc(sx0, sy0, 6, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 2; ctx.stroke();
         const right = sx0 < W - 110;
         label(sx0 + (right ? 12 : -12), sy0 - 12, txt, !right);
       };
@@ -187,8 +212,10 @@ function draw() {
       ctx.fillText('k = 0 时 y = k/x 无意义', ox, oy - 20);
     } else {
       // 双曲线两支：按像素采样，超出视野断开
+      ctx.save();
       ctx.strokeStyle = p.purple;
-      ctx.lineWidth = 3.5;
+      ctx.lineWidth = 5;
+      ctx.shadowColor = p.purple; ctx.shadowBlur = 14;
       ctx.beginPath();
       let pen = false;
       for (let s = 0; s <= W; s += 2) {
@@ -200,24 +227,25 @@ function draw() {
         if (!pen) { ctx.moveTo(s, t); pen = true; } else ctx.lineTo(s, t);
       }
       ctx.stroke();
+      ctx.restore();
     }
   }
 
   // 左上角解析式贴片
   const fs = formulaStr();
-  ctx.font = 'bold 23px "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+  ctx.font = 'bold 26px "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
   const tw = ctx.measureText(fs).width;
   ctx.fillStyle = p.panel;
   ctx.strokeStyle = p.line;
   ctx.lineWidth = 1.5;
   // 解析式贴片放在教学环节条（页面顶部 fixed）下方，避免被遮挡
   ctx.beginPath();
-  ctx.roundRect ? ctx.roundRect(16, 58, tw + 30, 42, 10) : ctx.rect(16, 58, tw + 30, 42);
+  ctx.roundRect ? ctx.roundRect(16, 56, tw + 34, 48, 12) : ctx.rect(16, 56, tw + 34, 48);
   ctx.fill(); ctx.stroke();
   ctx.fillStyle = state.type === 'linear' ? p.gold : p.purple;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillText(fs, 31, 80);
+  ctx.fillText(fs, 33, 81);
   ctx.textBaseline = 'alphabetic';
 }
 

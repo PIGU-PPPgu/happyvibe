@@ -44,20 +44,23 @@ const CSS = `
 .fl-wrap{position:absolute;inset:0;overflow:auto;padding:64px 22px 30px;display:flex;flex-direction:column;gap:14px}
 .fl-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .fl-cnt{font-size:16px;color:var(--muted);margin-left:6px}
-.fl-card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:20px 24px;display:flex;flex-direction:column;gap:14px;max-width:820px}
-.fl-s{font-size:20px;line-height:1.8;font-weight:500}
-.fl-s .th{color:var(--gold);font-weight:700;margin-right:8px}
-.fl-opts{display:flex;flex-direction:column;gap:10px}
-.fl-opt{font:inherit;font-size:18px;text-align:left;padding:13px 16px;border:1.5px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);cursor:pointer;touch-action:manipulation;line-height:1.6}
+.fl-card{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:24px 28px;display:flex;flex-direction:column;gap:16px;max-width:860px;box-shadow:0 10px 34px rgba(0,0,0,.28)}
+.fl-s{font-size:23px;line-height:1.8;font-weight:500}
+.fl-s .th{color:var(--gold);font-weight:700;margin-right:10px;font-size:19px;border:1.5px solid var(--gold);border-radius:8px;padding:2px 10px;vertical-align:2px}
+.fl-opts{display:flex;flex-direction:column;gap:12px}
+.fl-opt{font:inherit;font-size:21px;text-align:left;padding:15px 18px;border:1.5px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);cursor:pointer;touch-action:manipulation;line-height:1.6;display:flex;gap:12px;align-items:baseline}
 .fl-opt:hover{border-color:var(--gold)}
+.fl-opt .no{flex:none;font-style:normal;font-size:16px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 8px;translate:0 -2px}
+.fl-opt.ok .no{border-color:var(--gold);color:var(--gold)}
+.fl-opt.bad .no{border-color:#e2543f;color:#e2543f}
 .fl-opt.ok{border-color:var(--gold);color:var(--gold);font-weight:700}
 .fl-opt.bad{border-color:${ERR};color:${ERR}}
 .fl-opt:disabled{cursor:default}
-.fl-src{border-left:4px solid var(--gold);background:var(--panel2);border-radius:8px;padding:12px 16px;display:none;flex-direction:column;gap:6px}
+.fl-src{border-left:5px solid var(--gold);background:var(--panel2);border-radius:10px;padding:16px 20px;display:none;flex-direction:column;gap:8px}
 .fl-src.on{display:flex}
-.fl-line{font-size:20px;font-weight:700;line-height:1.7}
-.fl-from{font-size:17px;color:var(--muted)}
-.fl-judge{font-size:17px;font-weight:700}
+.fl-line{font-size:27px;font-weight:700;line-height:1.6;letter-spacing:.02em}
+.fl-from{font-size:19px;color:var(--muted)}
+.fl-judge{font-size:19px;font-weight:700}
 .fl-judge.ok{color:var(--gold)}
 .fl-judge.bad{color:${ERR}}
 .fl-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -115,11 +118,13 @@ function render() {
   const srcBox = document.createElement('div');
   srcBox.className = 'fl-src';
   let judged = false;
+  let oi = 0;
   for (const o of options(g, q)) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'fl-opt';
-    b.textContent = o;
+    b.dataset.val = o;
+    b.innerHTML = `<i class="no">${'甲乙丙丁'[oi++]}</i><span>${o}</span>`;
     b.addEventListener('click', () => {
       if (judged) return;
       judged = true;
@@ -127,7 +132,7 @@ function render() {
       if (correct) { b.classList.add('ok'); groupRight++; }
       else {
         b.classList.add('bad');
-        opts.querySelectorAll('.fl-opt').forEach((x) => { if (x.textContent === q.a) x.classList.add('ok'); });
+        opts.querySelectorAll('.fl-opt').forEach((x) => { if (x.dataset.val === q.a) x.classList.add('ok'); });
       }
       opts.querySelectorAll('.fl-opt').forEach((x) => (x.disabled = true));
       srcBox.classList.add('on');

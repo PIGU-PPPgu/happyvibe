@@ -26,7 +26,7 @@ const DYNASTIES = [
 
 const BAND_COLORS = ['#E8B04B', '#A66BA6', '#6FA8C9', '#7FBF9E', '#D99A6C', '#9D8FD1'];
 
-let canvas, ctx, view = { scale: 1, offset: 0 }; // offset：视口左缘对应的带索引坐标
+let canvas, ctx, view = { scale: 1.45, offset: 0 }; // offset：视口左缘对应的带索引坐标
 let selected = -1;
 let W = 0, H = 0, dpr = 1;
 
@@ -37,7 +37,7 @@ function theme() {
 }
 
 const BAND_H_MIN = 150;
-function bandH() { return Math.max(BAND_H_MIN, Math.round(H * 0.46)); }
+function bandH() { return Math.max(BAND_H_MIN, Math.round(H * 0.5)); }
 function bandTop() { return H * 0.5 - bandH() / 2; }
 const PAD = 60;
 
@@ -80,7 +80,7 @@ function draw() {
     if (bandW > 95) {
       ctx.fillStyle = t.bg;
       ctx.globalAlpha = 0.8;
-      ctx.font = `13px 'Noto Sans SC','PingFang SC',sans-serif`;
+      ctx.font = `600 15px 'Noto Sans SC','PingFang SC',sans-serif`;
       ctx.fillText(d.s, x + bandW / 2, top + BH * 0.62, bandW - 10);
       ctx.fillText('至 ' + d.e, x + bandW / 2, top + BH * 0.76, bandW - 10);
       ctx.globalAlpha = 1;
@@ -90,7 +90,7 @@ function draw() {
     if (bandW > 150) {
       for (let k = 0; k < d.events.length; k++) {
         ctx.beginPath();
-        ctx.arc(x + bandW / 2, top + BH + 18 + k * 16, 3.5, 0, Math.PI * 2);
+        ctx.arc(x + bandW / 2, top + BH + 14 + k * 15, 3.5, 0, Math.PI * 2);
         ctx.fillStyle = t.gold;
         ctx.fill();
       }
@@ -113,11 +113,11 @@ function draw() {
     ctx.stroke();
     ctx.textAlign = 'left';
     ctx.fillStyle = t.gold;
-    ctx.font = `700 18px 'Noto Sans SC','PingFang SC',sans-serif`;
-    ctx.fillText(`${d.name}（${d.s} 至 ${d.e}）`, px + 18, py + 32);
+    ctx.font = `700 21px 'Noto Sans SC','PingFang SC',sans-serif`;
+    ctx.fillText(`${d.name}（${d.s} 至 ${d.e}）`, px + 18, py + 34);
     ctx.fillStyle = t.text;
-    ctx.font = `15px 'Noto Sans SC','PingFang SC',sans-serif`;
-    lines.forEach((l, i) => ctx.fillText(l, px + 18, py + 60 + i * 26, pw - 36));
+    ctx.font = `16.5px 'Noto Sans SC','PingFang SC',sans-serif`;
+    lines.forEach((l, i) => ctx.fillText(l, px + 18, py + 62 + i * 27, pw - 36));
   }
 
   // 缩放提示

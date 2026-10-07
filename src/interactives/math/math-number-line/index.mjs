@@ -9,16 +9,19 @@ let drag = false;
 
 const RANGE = 6; // 数轴 -6..6
 const STYLE = `
-#nl-ui{position:absolute;top:64px;left:14px;z-index:6;display:flex;flex-direction:column;gap:10px;
-  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-width:230px}
-#nl-read{display:flex;flex-direction:column;gap:6px;font-size:16px}
-#nl-read .row{display:flex;justify-content:space-between;gap:14px}
-#nl-read .row b{font-family:Georgia,'Times New Roman',serif;font-size:18px}
+#nl-ui{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;z-index:6;display:flex;gap:26px;align-items:center;
+  background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:16px;
+  padding:12px 28px;backdrop-filter:blur(6px);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+#nl-read{display:flex;gap:26px}
+#nl-read .stat{display:flex;flex-direction:column;gap:5px;align-items:center;min-width:68px}
+#nl-read .lab{font-size:13.5px;color:var(--text-faint);letter-spacing:.05em;white-space:nowrap}
+#nl-read .val{font-family:Georgia,'Times New Roman',serif;font-size:27px;font-weight:700;line-height:1.1}
 #nl-read .pos{color:var(--gold)}
-#nl-read .opp{color:#9D8FD1}
-#nl-read .abs{color:#7FBF9E}
-#nl-tip{font-size:13.5px;color:var(--text-faint);line-height:1.6}
-@media (max-width:760px){#nl-ui{left:10px;right:10px;flex-direction:row;flex-wrap:wrap;min-width:0}}
+#nl-read .opp{color:#B49BE3}
+#nl-read .abs{color:#8FD4B0}
+#nl-read .cmp{font-size:20px}
+#nl-tip{display:none}
+@media (max-width:760px){#nl-ui{left:10px;right:10px;transform:none;gap:14px;padding:10px 14px}#nl-read{gap:14px}#nl-read .val{font-size:22px}}
 `;
 
 const TEACHING = {
@@ -85,103 +88,178 @@ function theme() {
   const v = (k, f) => cs.getPropertyValue(k).trim() || f;
   return {
     text: v('--text', '#f2ecf8'), muted: v('--muted', '#a99cc0'), faint: v('--faint', '#7d7099'),
-    gold: v('--gold', '#E8B04B'), purple: v('--purple', '#A66BA6'), green: v('--ok', '#7FBF9E'),
+    gold: v('--gold', '#E8B04B'), purple: v('--purple', '#A66BA6'),
     line: v('--line', 'rgba(180,130,210,.3)'), panel2: v('--panel2', '#271a42'),
+    back: v('--bg', '#140b20'), green: v('--ok', '#7FBF9E'),
+    purpleHi: document.documentElement.dataset.theme === 'light' ? '#8A4FB0' : '#C9A0E8',
+    goldHi: document.documentElement.dataset.theme === 'light' ? '#A66E10' : '#E8B04B',
+    greenHi: document.documentElement.dataset.theme === 'light' ? '#2E7D52' : '#7FBF9E',
+    light: document.documentElement.dataset.theme === 'light',
   };
 }
 
 function draw() {
   const t = theme();
-  const axisY = H * 0.62;
-  const x = (v) => W / 2 + (v / RANGE) * (W * 0.42);
+  const axisY = H * 0.63;
+  const SCALE = W * 0.44;                     // 单位长度像素：满幅构图，两端各留 50px
+  const x = (v) => W / 2 + v / RANGE * SCALE;
   ctx.clearRect(0, 0, W, H);
-  ctx.font = '14px "Noto Sans SC","PingFang SC",sans-serif';
+  const F = (w, px) => `${w} ${px}px "Noto Sans SC","PingFang SC",sans-serif`;
 
-  // 正数区 / 负数区半透明分区带（纵向撑起画面，也是"右正左负"的教学要点）
-  const topY = H * 0.12;
-  ctx.fillStyle = 'rgba(232,176,75,.05)';
-  ctx.fillRect(x(0), topY, x(RANGE + 0.2) - x(0), axisY - topY);
-  ctx.fillStyle = 'rgba(166,107,166,.06)';
-  ctx.fillRect(x(-RANGE - 0.2), topY, x(0) - x(-RANGE - 0.2), axisY - topY);
-  ctx.strokeStyle = t.line; ctx.lineWidth = 1; ctx.setLineDash([4, 5]);
-  ctx.beginPath(); ctx.moveTo(x(0), topY); ctx.lineTo(x(0), axisY - 10); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.font = '600 16px "Noto Sans SC","PingFang SC",sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillStyle = t.gold; ctx.fillText('正数区（大于 0）', (x(0) + x(RANGE)) / 2, topY + 8);
-  ctx.fillStyle = t.purple; ctx.fillText('负数区（小于 0）', (x(0) + x(-RANGE)) / 2, topY + 8);
-
-  // 数轴
-  ctx.strokeStyle = t.text; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(x(-RANGE - 0.4), axisY); ctx.lineTo(x(RANGE + 0.4), axisY); ctx.stroke();
-  // 正方向箭头
-  ctx.beginPath();
-  ctx.moveTo(x(RANGE + 0.4), axisY);
-  ctx.lineTo(x(RANGE + 0.4) - 12, axisY - 6);
-  ctx.lineTo(x(RANGE + 0.4) - 12, axisY + 6);
-  ctx.closePath(); ctx.fillStyle = t.text; ctx.fill();
-  // 刻度与数字
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  // ── 正数区 / 负数区：可见色带撑满上半幅（右正左负的教学要点） ──
+  const topY = H * 0.075, bandH = axisY - topY;
+  const pa = t.light ? 0.32 : 0.16, pb = t.light ? 0.10 : 0.04;   // 浅色纸面需更浓的色带
+  const gradPos = ctx.createLinearGradient(0, topY, 0, axisY);
+  gradPos.addColorStop(0, `rgba(232,176,75,${pa})`); gradPos.addColorStop(1, `rgba(232,176,75,${pb})`);
+  ctx.fillStyle = gradPos; ctx.fillRect(x(0), topY, x(RANGE + 0.25) - x(0), bandH);
+  const na = t.light ? 0.28 : 0.17, nb = t.light ? 0.09 : 0.04;
+  const gradNeg = ctx.createLinearGradient(0, topY, 0, axisY);
+  gradNeg.addColorStop(0, `rgba(150,90,180,${na})`); gradNeg.addColorStop(1, `rgba(150,90,180,${nb})`);
+  ctx.fillStyle = gradNeg; ctx.fillRect(x(-RANGE - 0.25), topY, x(0) - x(-RANGE - 0.25), bandH);
+  // 整数竖向网格线：撑起分区带，也强化"每格相等"的单位感
+  ctx.strokeStyle = t.line; ctx.lineWidth = 1; ctx.globalAlpha = .38;
   for (let v = -RANGE; v <= RANGE; v += 1) {
-    ctx.strokeStyle = t.text; ctx.lineWidth = v === 0 ? 2.5 : 1.5;
-    ctx.beginPath(); ctx.moveTo(x(v), axisY - (v === 0 ? 9 : 6)); ctx.lineTo(x(v), axisY + (v === 0 ? 9 : 6)); ctx.stroke();
-    if (v !== 0) { ctx.fillStyle = t.muted; ctx.fillText(String(v), x(v), axisY + 13); }
-    // 半格小刻度
-    ctx.strokeStyle = t.line; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(x(v + 0.5), axisY - 3); ctx.lineTo(x(v + 0.5), axisY + 3); ctx.stroke();
+    if (v === 0) continue; // 原点处已有分区界虚线
+    ctx.beginPath(); ctx.moveTo(x(v), topY + 4); ctx.lineTo(x(v), axisY - 8); ctx.stroke();
   }
-  ctx.fillStyle = t.text; ctx.fillText('0', x(0), axisY + 13);
+  ctx.globalAlpha = 1;
+  // 分区标签：大字号居中 + 背板描边保证对比度
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = F(700, 24);
+  ctx.strokeStyle = t.back; ctx.lineWidth = 6; ctx.lineJoin = 'round';
+  const posLab = '正数区 · 大于 0', negLab = '负数区 · 小于 0';
+  ctx.strokeText(posLab, (x(0) + x(RANGE)) / 2, topY + bandH * 0.26);
+  ctx.strokeText(negLab, (x(0) + x(-RANGE)) / 2, topY + bandH * 0.26);
+  ctx.fillStyle = t.goldHi; ctx.fillText(posLab, (x(0) + x(RANGE)) / 2, topY + bandH * 0.26);
+  ctx.fillStyle = t.purpleHi; ctx.fillText(negLab, (x(0) + x(-RANGE)) / 2, topY + bandH * 0.26);
+  ctx.font = F(400, 15); ctx.globalAlpha = .85;
+  ctx.strokeText('点在原点右边', (x(0) + x(RANGE)) / 2, topY + bandH * 0.26 + 28);
+  ctx.strokeText('点在原点左边', (x(0) + x(-RANGE)) / 2, topY + bandH * 0.26 + 28);
+  ctx.fillStyle = t.goldHi; ctx.fillText('点在原点右边', (x(0) + x(RANGE)) / 2, topY + bandH * 0.26 + 28);
+  ctx.fillStyle = t.purpleHi; ctx.fillText('点在原点左边', (x(0) + x(-RANGE)) / 2, topY + bandH * 0.26 + 28);
+  ctx.globalAlpha = 1;
+  // 原点竖直虚线（分区界）
+  ctx.strokeStyle = t.line; ctx.lineWidth = 1.5; ctx.setLineDash([5, 6]);
+  ctx.beginPath(); ctx.moveTo(x(0), topY); ctx.lineTo(x(0), axisY - 12); ctx.stroke();
+  ctx.setLineDash([]);
 
-  // 想一想：三要素标注
+  // ── 数轴主体：粗轴 + 大箭头 ──
+  ctx.strokeStyle = t.text; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x(-RANGE - 0.35), axisY); ctx.lineTo(x(RANGE + 0.35), axisY); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x(RANGE + 0.35) + 2, axisY);
+  ctx.lineTo(x(RANGE + 0.35) - 16, axisY - 9);
+  ctx.lineTo(x(RANGE + 0.35) - 16, axisY + 9);
+  ctx.closePath(); ctx.fillStyle = t.text; ctx.fill();
+
+  // ── 刻度：整数长刻度 + 半格短刻度，数字大而粗 ──
+  for (let v = -RANGE; v <= RANGE; v += 1) {
+    const major = v === 0;
+    ctx.strokeStyle = t.text; ctx.lineWidth = major ? 3.5 : 2.5;
+    const th = major ? 15 : 10;
+    ctx.beginPath(); ctx.moveTo(x(v), axisY - th); ctx.lineTo(x(v), axisY + th); ctx.stroke();
+    ctx.strokeStyle = t.line; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x(v + 0.5), axisY - 5); ctx.lineTo(x(v + 0.5), axisY + 5); ctx.stroke();
+    const near = v !== 0 && v === Math.round(p);
+    ctx.font = F(near || major ? 700 : 600, near ? 21 : 19);
+    if (major) { ctx.fillStyle = t.green; }
+    else if (near) { ctx.fillStyle = t.goldHi; }
+    else ctx.fillStyle = t.muted;
+    ctx.textBaseline = 'top';
+    ctx.fillText(String(v), x(v), axisY + 20);
+  }
+
+  // ── 想一想：三要素标注（带背板芯片，字号加大） ──
   if (mode === 'sanys') {
-    ctx.fillStyle = t.gold; ctx.font = '600 15px "Noto Sans SC","PingFang SC",sans-serif';
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText('原点', x(0) + 6, axisY - 34);
-    ctx.fillText('单位长度（每格相等）', x(2.6), axisY + 44);
-    ctx.fillText('正方向', x(RANGE - 0.2), axisY - 34);
-    ctx.strokeStyle = t.gold; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(x(0), axisY - 26); ctx.lineTo(x(0), axisY - 12); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x(2.6), axisY + 38); ctx.lineTo(x(2.6), axisY + 10); ctx.stroke();
+    ctx.strokeStyle = t.gold; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x(0), axisY - 15); ctx.lineTo(x(0), axisY - 44); ctx.stroke();
+    callout('原点 · 0', x(0), axisY - 62, t.gold, t.back);
+    callout('正方向（向右为正）', x(RANGE - 0.55), axisY + 76, t.gold, t.back);
+    ctx.beginPath(); ctx.moveTo(x(RANGE - 0.55), axisY + 64); ctx.lineTo(x(RANGE - 0.55), axisY + 15); ctx.stroke();
+    // 单位长度：两格之间的量尺跨度
+    const sy = axisY - 96;
+    ctx.strokeStyle = t.gold; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x(1), sy + 10); ctx.lineTo(x(1), sy); ctx.lineTo(x(2), sy); ctx.lineTo(x(2), sy + 10); ctx.stroke();
+    callout('单位长度 · 每格相等', x(1.5), sy - 16, t.gold, t.back);
   }
 
-  // 议一议：对称点 + 等距弧线
+  // ── 议一议：对称紫点 + 等距量尺跨度（箭头双向） ──
   if (mode === 'mirror') {
     const r = Math.abs(p) || 0.5;
-    // 镜像点 -p
-    dot(x(-p), axisY, 9, t.purple);
-    ctx.fillStyle = t.purple; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    ctx.font = '600 15px "Noto Sans SC","PingFang SC",sans-serif';
-    ctx.fillText(fmt(-p), x(-p), axisY + 13);
-    // 等距弧线（原点两侧）
-    ctx.strokeStyle = t.green; ctx.lineWidth = 3;
-    arc(x(0), axisY, x(p), r, true);
-    arc(x(0), axisY, x(-p), r, false);
-    ctx.fillStyle = t.green; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-    ctx.fillText('|' + fmt(p) + '| = ' + fmt(Math.abs(p)), x(p / 2), axisY - 30);
-    ctx.fillText('|' + fmt(-p) + '| = ' + fmt(Math.abs(p)), x(-p / 2), axisY - 30);
+    // 镜像点
+    glowDot(x(-p), axisY, 13, t.purple, 12);
+    pill(fmt(-p), x(-p), axisY + 56, t.purple, '#1c0f2a');
+    // 两条等距跨度（绿色量尺线 + 双箭头 + 大标签）——高位，避开数值药丸
+    span(x(0), x(p), axisY - 100, t.greenHi, '|' + fmt(p) + '| = ' + fmt(r));
+    span(x(0), x(-p), axisY - 100, t.greenHi, '|' + fmt(-p) + '| = ' + fmt(r));
+    // 对称虚线连接两点
+    ctx.strokeStyle = t.purple; ctx.lineWidth = 2; ctx.setLineDash([6, 6]);
+    ctx.beginPath(); ctx.moveTo(x(p), axisY - 16); ctx.lineTo(x(-p), axisY - 16); ctx.stroke();
+    ctx.setLineDash([]);
   }
 
-  // 金点 P
-  dot(x(p), axisY, 11, t.gold);
-  ctx.fillStyle = t.gold; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.font = '700 16px "Noto Sans SC","PingFang SC",sans-serif';
-  ctx.fillText(fmt(p), x(p), axisY - 34);
+  // ── 金点 P：大圆 + 光晕 + 呼吸圈 + 数值药丸 ──
+  const px = x(p);
+  const breathe = 6 + 3 * Math.sin(pulseT / 480);
+  ctx.beginPath(); ctx.arc(px, axisY, 22 + breathe, 0, Math.PI * 2);
+  ctx.strokeStyle = t.light ? 'rgba(166,110,16,.45)' : 'rgba(232,176,75,.35)'; ctx.lineWidth = 2.5; ctx.stroke();
+  glowDot(px, axisY, 15, t.gold, 22);
+  ctx.strokeStyle = t.gold; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(px, axisY - 15); ctx.lineTo(px, axisY - 40); ctx.stroke();
+  pill(fmt(p), px, axisY - 58, t.gold, '#221430');
 }
 
-function dot(px, py, r, color) {
+let pulseT = 0;
+// 发光大圆点：外圈辉光 + 白色内环，投屏最后一排也看得清
+function glowDot(px, py, r, color, blur) {
+  ctx.save();
+  ctx.shadowColor = color; ctx.shadowBlur = blur;
   ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2);
   ctx.fillStyle = color; ctx.fill();
-  ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(px, py, r - 3.5, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 2; ctx.stroke();
 }
-function arc(cx, cy, tx, r, upper) {
-  ctx.beginPath();
-  ctx.arc(cx, cy, Math.abs(tx - cx), upper ? Math.PI * 1.5 : Math.PI * 0.5, upper ? Math.PI * 2 : Math.PI * 1.5, upper);
-  ctx.stroke();
+// 数值药丸：实底圆角胶囊 + 深色大数字
+function pill(text, cx, cy, bg, fg) {
+  ctx.font = '700 20px "Noto Sans SC","PingFang SC",sans-serif';
+  const w = ctx.measureText(text).width + 30, h = 34;
+  ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - h / 2, w, h, h / 2);
+  ctx.fillStyle = bg; ctx.fill();
+  ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, cx, cy + 1);
+}
+// 标注芯片：描边背板保证双主题下都清晰
+function callout(text, cx, cy, color, back) {
+  ctx.font = '700 16px "Noto Sans SC","PingFang SC",sans-serif';
+  const w = ctx.measureText(text).width + 22, h = 30;
+  ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 8);
+  ctx.fillStyle = back; ctx.globalAlpha = .82; ctx.fill(); ctx.globalAlpha = 1;
+  ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, cx, cy + 1);
+}
+// 等距量尺跨度：两端下针脚 + 双向箭头 + 中点大标签
+function span(x1, x2, y, color, label) {
+  const L = Math.min(x1, x2), R = Math.max(x1, x2);
+  ctx.strokeStyle = color; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(L, y + 8); ctx.lineTo(L, y); ctx.lineTo(R, y); ctx.lineTo(R, y + 8); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(R, y); ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.moveTo(R, y); ctx.lineTo(R - 9, y - 5); ctx.lineTo(R - 9, y + 5); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + 9, y - 5); ctx.lineTo(L + 9, y + 5); ctx.closePath(); ctx.fill();
+  ctx.font = '700 20px "Noto Sans SC","PingFang SC",sans-serif';
+  const ly = y - 22;
+  ctx.strokeStyle = 'rgba(0,0,0,.55)'; ctx.lineWidth = 5; ctx.lineJoin = 'round';
+  ctx.strokeText(label, (L + R) / 2, ly);
+  ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(label, (L + R) / 2, ly);
 }
 function fmt(v) {
   const s = Math.abs(v % 1) < 1e-9 ? String(Math.round(v)) : v.toFixed(1);
   return s === '-0' ? '0' : s;
 }
+
 
 function readout() {
   const el = document.getElementById('nl-read');
@@ -191,7 +269,7 @@ function readout() {
   q('nl-opp').textContent = fmt(-p);
   q('nl-abs').textContent = fmt(Math.abs(p));
   const cmp = q('nl-cmp');
-  cmp.textContent = p > 0 ? '> 0（原点右侧）' : p < 0 ? '< 0（原点左侧）' : '= 0（在原点上）';
+  cmp.textContent = p > 0 ? '> 0 · 右侧' : p < 0 ? '< 0 · 左侧' : '= 0 · 原点';
 }
 
 function buildUI(stage) {
@@ -202,12 +280,11 @@ function buildUI(stage) {
   ui.id = 'nl-ui';
   ui.innerHTML = `
     <div id="nl-read">
-      <div class="row"><span>点表示的数</span><b class="pos" id="nl-p"></b></div>
-      <div class="row"><span>相反数</span><b class="opp" id="nl-opp"></b></div>
-      <div class="row"><span>到原点距离 |数|</span><b class="abs" id="nl-abs"></b></div>
-      <div class="row"><span>与 0 比较</span><b class="pos" id="nl-cmp"></b></div>
-    </div>
-    <div id="nl-tip">拖动金点改变位置；键盘 ←/→ 半格微调。</div>`;
+      <div class="stat"><span class="lab">点表示的数</span><b class="val pos" id="nl-p"></b></div>
+      <div class="stat"><span class="lab">相反数</span><b class="val opp" id="nl-opp"></b></div>
+      <div class="stat"><span class="lab">到原点距离</span><b class="val abs" id="nl-abs"></b></div>
+      <div class="stat"><span class="lab">与 0 比较</span><b class="val pos cmp" id="nl-cmp"></b></div>
+    </div>`;
   stage.appendChild(ui);
   readout();
 }
@@ -256,7 +333,7 @@ init({
     resize();
 
     // 拖动金点：按 x 反算最接近的半格
-    const toVal = (sx) => Math.max(-RANGE, Math.min(RANGE, Math.round(((sx - W / 2) / (W * 0.42)) * 2) / 2));
+    const toVal = (sx) => Math.max(-RANGE, Math.min(RANGE, Math.round(((sx - W / 2) / (W * 0.44)) * 2) / 2));
     cv.addEventListener('pointerdown', (e) => { drag = true; cv.setPointerCapture(e.pointerId); p = toVal(e.offsetX); readout(); draw(); });
     cv.addEventListener('pointermove', (e) => { if (drag) { p = toVal(e.offsetX); readout(); draw(); } });
     cv.addEventListener('pointerup', () => { drag = false; });
@@ -267,6 +344,8 @@ init({
       else if (e.key === 'ArrowLeft') { p = Math.max(-RANGE, p - 0.5); readout(); draw(); }
     });
 
+    const loop = (t) => { pulseT = t; if (!document.hidden) draw(); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
     api.onResize = resize;
     api.onTheme = draw;
     if (new URLSearchParams(location.search).has('selftest')) runSelfChecks();

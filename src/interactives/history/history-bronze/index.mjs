@@ -107,7 +107,7 @@ function makeBronzeTexture() {
 
 let renderer, scene, camera, ding, spotSprites = [], texCanvas;
 let spinning = false, spinEl;
-const spherical = { theta: 0.7, phi: 1.12, radius: 4.4 };
+const spherical = { theta: 0.7, phi: 1.12, radius: 3.6 };
 const target = new THREE.Vector3(0, 0.1, 0);
 let spotState = -2; // -2 默认（未选），-1 无，>=0 热点
 let els = {};
@@ -139,8 +139,8 @@ function buildDing() {
   const tex = new THREE.CanvasTexture(texCanvas);
   tex.wrapS = THREE.RepeatWrapping;
   tex.repeat.set(4, 1);
-  const bronze = new THREE.MeshStandardMaterial({ map: tex, bumpMap: tex, bumpScale: 0.03, metalness: 0.55, roughness: 0.52 });
-  const bronzePlain = new THREE.MeshStandardMaterial({ color: 0x4a5c4a, metalness: 0.5, roughness: 0.55 });
+  const bronze = new THREE.MeshStandardMaterial({ map: tex, bumpMap: tex, bumpScale: 0.05, metalness: 0.72, roughness: 0.4 });
+  const bronzePlain = new THREE.MeshStandardMaterial({ color: 0x5a7258, metalness: 0.62, roughness: 0.45 });
 
   // 鼎身：四棱台，上宽下窄
   const body = new THREE.Mesh(new THREE.CylinderGeometry(1.14, 0.92, 1.3, 4, 1), bronze);
@@ -186,7 +186,7 @@ function buildDing() {
   SPOTS.forEach((s) => {
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: spTex, depthTest: false }));
     sp.position.set(s.pos[0], s.pos[1], s.pos[2]);
-    sp.scale.setScalar(0.14);
+    sp.scale.setScalar(0.19);
     sp.renderOrder = 10;
     sp.userData.index = SPOTS.indexOf(s);
     g.add(sp);
@@ -352,11 +352,11 @@ function buildUI(stage) {
       padding:12px 18px;max-width:min(720px,calc(100% - 20px));box-shadow:0 6px 24px rgba(0,0,0,.3);
       display:flex;gap:16px;align-items:center}
     #bpanel .col{flex:1}
-    #spotName{color:var(--gold);font-weight:700;font-size:20px}
-    #spotText{font-size:16px;color:var(--muted);line-height:1.5;margin-top:4px}
+    #spotName{color:var(--gold);font-weight:700;font-size:24px}
+    #spotText{font-size:18px;color:var(--muted);line-height:1.5;margin-top:4px}
     #zoomWrap{display:none;flex:0 0 auto}
     #zoomCv{display:block;border:1px solid var(--line);border-radius:8px;width:210px;height:126px}
-    #zoomCap{font-size:15px;color:var(--muted);text-align:center;margin-top:4px}
+    #zoomCap{font-size:17px;color:var(--muted);text-align:center;margin-top:4px}
     .qb{font:inherit;font-size:17px;line-height:1;padding:9px 16px;border-radius:6px;border:1px solid var(--line);
       background:var(--panel2);color:var(--text);cursor:pointer;flex:0 0 auto}
     .qb:hover{border-color:var(--gold)}
@@ -472,10 +472,10 @@ init({
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(themeColors().bg);
-    camera = new THREE.PerspectiveCamera(40, 1, 0.1, 50);
+    camera = new THREE.PerspectiveCamera(47, 1, 0.1, 50);
 
-    scene.add(new THREE.HemisphereLight(0xfff8e8, 0x2a2233, 1.15));
-    const dir = new THREE.DirectionalLight(0xffffff, 1.1);
+    scene.add(new THREE.HemisphereLight(0xfff8e8, 0x2a2233, 1.35));
+    const dir = new THREE.DirectionalLight(0xffffff, 1.4);
     dir.position.set(3, 6, 4);
     scene.add(dir);
     const dir2 = new THREE.DirectionalLight(0xffd9a0, 0.45);
@@ -561,7 +561,7 @@ init({
       if (spinning) ding.rotation.y += dt * 0.5;
       const pulse = 1 + Math.sin(now * 0.004) * 0.12;
       spotSprites.forEach((sp, i) => {
-        sp.scale.setScalar(0.14 * (spotState === i ? 1.35 * pulse : pulse));
+        sp.scale.setScalar(0.19 * (spotState === i ? 1.35 * pulse : pulse));
       });
       updateCamera();
       renderer.render(scene, camera);

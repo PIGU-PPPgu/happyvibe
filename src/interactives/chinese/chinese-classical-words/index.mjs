@@ -59,7 +59,7 @@ const GRADES = ['七上', '七下', '八上', '八下', '九上', '九下'];
 const CSS = `
 .cw-wrap{position:absolute;inset:0;overflow:auto;padding:64px 22px 26px;display:flex;flex-direction:column;gap:14px}
 .cw-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.cw-cnt{font-size:16px;color:var(--muted);margin-left:6px}
+.cw-cnt{font-size:17px;color:var(--muted);margin-left:6px}
 .cw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
 .cw-card{position:relative;height:198px;perspective:900px;cursor:pointer;touch-action:manipulation}
 .cw-in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .45s}
@@ -67,13 +67,13 @@ const CSS = `
 .cw-f{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.5px solid var(--line);border-radius:14px;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 12px}
 .cw-card:hover .cw-f{border-color:var(--gold)}
 .cw-back{transform:rotateY(180deg);justify-content:flex-start;padding-top:16px;background:var(--panel2)}
-.cw-z{font-size:42px;font-weight:700;line-height:1.1}
-.cw-py{font-size:16px;color:var(--muted)}
-.cw-ys{font-size:16.5px;line-height:1.55;text-align:center}
+.cw-z{font-size:56px;font-weight:700;line-height:1.1;color:var(--gold);text-shadow:0 0 24px rgba(232,176,75,.25)}
+.cw-py{font-size:19px;color:var(--muted);letter-spacing:.04em}
+.cw-ys{font-size:19px;line-height:1.6;text-align:center}
 .cw-gr{position:absolute;top:8px;right:10px;font-size:16px;color:var(--muted);opacity:.8}
-.cw-ex{font-size:16.5px;line-height:1.7;text-align:center}
+.cw-ex{font-size:19px;line-height:1.7;text-align:center;color:var(--text)}
 .cw-ex b{color:var(--gold);font-weight:700}
-.cw-src{margin-top:auto;font-size:16px;color:var(--muted);text-align:center;padding-bottom:2px}
+.cw-src{margin-top:auto;font-size:17px;color:var(--muted);text-align:center;padding-bottom:2px}
 `;
 
 let grid, grade = '全部', flipped = new Set();
