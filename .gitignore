@@ -10,5 +10,6 @@ public/interactives/*
 !public/interactives/contest-tracks.html
 !public/interactives/site-map.html
 !public/interactives/topic-roadmap.html
+!public/interactives/harness-pipeline.html
 scripts/.interactives-report.json
 public/previews/*

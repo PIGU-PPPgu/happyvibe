@@ -1,0 +1,252 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "HappyVibe 教学交互资源验收管线",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "output": "public/interactives/harness-pipeline.html",
+    "views": [
+      {
+        "id": "full-line",
+        "label": "全链路",
+        "focus": [
+          "design",
+          "author",
+          "build",
+          "gate",
+          "harness",
+          "preview",
+          "deploy",
+          "probe"
+        ],
+        "note": "从教学设计到线上字节核验的主路径。"
+      },
+      {
+        "id": "acceptance",
+        "label": "验收与返工",
+        "focus": [
+          "gate",
+          "harness",
+          "fail_fix",
+          "author"
+        ],
+        "note": "两道关口；FAIL 只许修内容，不许改规则。"
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "id": "build",
+      "label": "设计与构建"
+    },
+    {
+      "id": "verify",
+      "label": "机器验收"
+    },
+    {
+      "id": "ship",
+      "label": "上线核验"
+    },
+    {
+      "id": "fix",
+      "label": "返工回路",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "create",
+      "label": "教学设计与编写",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "accept",
+      "label": "构建与机器验收",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "online",
+      "label": "上线",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "groups": [],
+  "mainPath": [
+    "design",
+    "author",
+    "build",
+    "gate",
+    "harness",
+    "preview",
+    "deploy",
+    "probe"
+  ],
+  "nodes": [
+    {
+      "id": "design",
+      "lane": "build",
+      "col": 0,
+      "type": "frontend",
+      "label": "教学设计先行",
+      "sublabel": "目标 · 环节 · 检测题",
+      "width": 150,
+      "height": 56
+    },
+    {
+      "id": "author",
+      "lane": "build",
+      "col": 1,
+      "type": "backend",
+      "label": "资源源码",
+      "sublabel": "index.mjs·teaching",
+      "width": 148,
+      "height": 56
+    },
+    {
+      "id": "build",
+      "lane": "build",
+      "col": 2,
+      "type": "backend",
+      "label": "esbuild 单文件构建",
+      "sublabel": "three 按需 · 模板",
+      "width": 150,
+      "height": 56
+    },
+    {
+      "id": "gate",
+      "lane": "verify",
+      "col": 2,
+      "type": "security",
+      "label": "六项质量闸门",
+      "sublabel": "六项静态检查",
+      "width": 152,
+      "height": 56
+    },
+    {
+      "id": "harness",
+      "lane": "verify",
+      "col": 3,
+      "type": "security",
+      "label": "无头自测 Harness",
+      "sublabel": "四类运行时采样",
+      "width": 158,
+      "height": 56
+    },
+    {
+      "id": "preview",
+      "lane": "ship",
+      "col": 3,
+      "type": "database",
+      "label": "卡片预览图",
+      "sublabel": "build:previews",
+      "width": 138,
+      "height": 56
+    },
+    {
+      "id": "deploy",
+      "lane": "ship",
+      "col": 4,
+      "type": "cloud",
+      "label": "wrangler 直传",
+      "sublabel": "Cloudflare Pages",
+      "width": 142,
+      "height": 56
+    },
+    {
+      "id": "probe",
+      "lane": "ship",
+      "col": 5,
+      "type": "backend",
+      "label": "线上字节核验",
+      "sublabel": "curl 特征串",
+      "width": 140,
+      "height": 56
+    },
+    {
+      "id": "fail_fix",
+      "lane": "fix",
+      "col": 2,
+      "type": "security",
+      "label": "修内容返工",
+      "sublabel": "只改内容不放水",
+      "width": 150,
+      "height": 56
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "design",
+      "to": "author",
+      "label": "驱动"
+    },
+    {
+      "id": "e2",
+      "from": "author",
+      "to": "build"
+    },
+    {
+      "id": "e3",
+      "from": "build",
+      "to": "gate"
+    },
+    {
+      "id": "e4",
+      "from": "gate",
+      "to": "harness",
+      "label": "全绿",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e5",
+      "from": "harness",
+      "to": "preview",
+      "label": "实拍"
+    },
+    {
+      "id": "e6",
+      "from": "preview",
+      "to": "deploy",
+      "label": "dist 含卡片"
+    },
+    {
+      "id": "e7",
+      "from": "deploy",
+      "to": "probe",
+      "label": "别名切换"
+    },
+    {
+      "id": "e8",
+      "from": "gate",
+      "to": "fail_fix",
+      "label": "不过",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e9",
+      "from": "harness",
+      "to": "fail_fix",
+      "label": "重试仍败",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e10",
+      "from": "fail_fix",
+      "to": "author",
+      "label": "返工",
+      "variant": "dashed",
+      "role": "return",
+      "route": "bottom-channel",
+      "fromSide": "bottom",
+      "toSide": "bottom"
+    }
+  ]
+}
