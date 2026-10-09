@@ -3,6 +3,8 @@ title: 正方体的11种展开图
 subject: math
 stage: primary
 grades: [5, 6]
+book: 北师大版七年级上册
+unit: 第一章 丰富的图形世界
 topic: 丰富的图形世界 · 展开与折叠
 kind: interactive-3d
 file: math-cube-nets

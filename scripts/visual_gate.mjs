@@ -63,11 +63,13 @@ if (names.length) {
     const py = spawn('python3', ['-']);
     let out = '';
     py.stdout.on('data', (d) => (out += d));
-    py.stderr.on('data', (d) => (out += d));
+    // stderr 只入控制台不入 JSON（Pillow 弃用告警曾混入 stdout 导致解析失败）
+    py.stderr.on('data', (d) => process.stderr.write(d));
     py.on('close', () => { try { resolve(JSON.parse(out)); } catch { resolve(null); } });
     py.stdin.write(`
 from PIL import Image
 import sys, json
+import warnings; warnings.filterwarnings('ignore')
 files = ${JSON.stringify(files)}
 ev = ${JSON.stringify(evidence)}
 def stats(p):

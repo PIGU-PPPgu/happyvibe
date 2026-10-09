@@ -3,6 +3,8 @@ title: 立体几何截面演示
 subject: math
 stage: senior
 grades: [10]
+book: 人教A版必修第二册
+unit: 第八章 立体几何初步
 topic: 立体几何 · 截面
 kind: interactive-3d
 file: math-solid-section

@@ -3,6 +3,8 @@ title: 天净沙·秋思 意境长卷
 subject: chinese
 stage: junior
 grades: [7]
+book: 统编版七年级上册
+unit: 课外古诗词诵读
 topic: 古代诗歌 · 元曲意象
 kind: interactive-2d
 file: chinese-tianjingsa

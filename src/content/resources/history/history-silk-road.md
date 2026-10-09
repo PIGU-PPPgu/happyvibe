@@ -3,6 +3,8 @@ title: 丝绸之路
 subject: history
 stage: junior
 grades: [7]
+book: 统编版七年级上册
+unit: 第三单元 秦汉时期
 topic: 秦汉时期 · 沟通中外文明的丝路
 kind: interactive-2d
 file: history-silk-road

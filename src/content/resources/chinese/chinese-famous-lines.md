@@ -3,6 +3,8 @@ title: 古诗文名句情境填空
 subject: chinese
 stage: junior
 grades: [6, 7, 8, 9]
+book: 统编版小学至初中
+unit: 古诗文积累
 topic: 古诗文积累 · 默写
 kind: interactive-2d
 file: chinese-famous-lines

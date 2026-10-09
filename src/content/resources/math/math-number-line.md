@@ -3,6 +3,8 @@ title: 数轴动点实验室
 subject: math
 stage: junior
 grades: [7]
+book: 北师大版七年级上册
+unit: 第二章 有理数及其运算
 topic: 有理数及其运算 · 数轴与绝对值
 kind: interactive-2d
 file: math-number-line

@@ -3,6 +3,8 @@ title: 长方体与正方体表面积与体积
 subject: math
 stage: primary
 grades: [5]
+book: 人教版五年级下册
+unit: 第三单元 长方体和正方体
 topic: 长方体和正方体 · 表面积
 kind: interactive-3d
 file: math-rect-volume

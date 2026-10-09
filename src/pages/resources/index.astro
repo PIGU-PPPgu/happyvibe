@@ -50,16 +50,21 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
           <button class="fchip" data-f={s.slug} type="button" style={`--accent:${s.accent}`}>{s.icon} {s.name}</button>
         ))}
       </div>
-      <div class="filters" role="tablist" aria-label="按年级筛选">
-        <span class="glabel">年级</span>
-        <button class="gchip on" data-g="all" type="button">全部</button>
-        {gradeSet.map((g) => <button class="gchip" data-g={g} type="button">{g} 年级</button>)}
+      <div class="filters" role="tablist" aria-label="按教材筛选">
+        <span class="glabel">教材</span>
+        <button class="gchip on" data-b="all" type="button">全部</button>
+        {[...new Set(own.map((r) => r.data.book).filter(Boolean))].sort().map((b) => <button class="gchip" data-b={b} type="button">{b}</button>)}
+      </div>
+      <div class="filters" role="tablist" aria-label="按章节筛选">
+        <span class="glabel">章节</span>
+        <button class="gchip on" data-u="all" type="button">全部</button>
+        {[...new Set(own.map((r) => r.data.unit).filter(Boolean))].sort().map((u) => <button class="gchip" data-u={u} type="button">{u}</button>)}
       </div>
       <div class="cards" id="own-cards">
         {own.map((r) => {
           const s = subj(r.data.subject);
           return (
-            <article class="pcard" data-subject={r.data.subject} data-grades={r.data.grades.join(",")} data-live={withBase(`/interactives/${r.data.file}?embed=1`)}>
+            <article class="pcard" data-subject={r.data.subject} data-grades={r.data.grades.join(",")} data-book={r.data.book || ""} data-unit={r.data.unit || ""} data-live={withBase(`/interactives/${r.data.file}?embed=1`)}>
               <a class="pv" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener" aria-label={`打开 ${r.data.title}`}>
                 <img loading="lazy" src={withBase(`/previews/${r.data.file}.jpg`)} alt={`${r.data.title} 界面实拍`} />
                 <span class="subj-tag" style={`--accent:${s?.accent}`}>{s?.icon} {s?.name}</span>
@@ -118,14 +123,28 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
 
 <script>
   // 学科 + 年级双筛选（AND 组合）
-  const state = { subject: 'all', grade: 'all' };
+  const state = { subject: 'all', grade: 'all', book: 'all', unit: 'all' };
   const apply = () => {
     document.querySelectorAll<HTMLElement>('.pcard[data-subject]').forEach((card) => {
       const okS = state.subject === 'all' || card.dataset.subject === state.subject;
       const okG = state.grade === 'all' || card.dataset.grades.split(',').includes(state.grade);
-      card.style.display = okS && okG ? '' : 'none';
+      const okB = state.book === 'all' || card.dataset.book === state.book;
+      const okU = state.unit === 'all' || card.dataset.unit === state.unit;
+      card.style.display = okS && okG && okB && okU ? '' : 'none';
     });
   };
+  const bindChips = (sel, key, attr) => {
+    const chips = document.querySelectorAll<HTMLButtonElement>(sel);
+    chips.forEach((c) =>
+      c.addEventListener('click', () => {
+        chips.forEach((x) => x.classList.toggle('on', x === c));
+        state[key] = c.dataset[attr] || 'all';
+        apply();
+      })
+    );
+  };
+  bindChips('.gchip[data-b]', 'book', 'b');
+  bindChips('.gchip[data-u]', 'unit', 'u');
   const chips = document.querySelectorAll<HTMLButtonElement>('.fchip');
   chips.forEach((c) =>
     c.addEventListener('click', () => {

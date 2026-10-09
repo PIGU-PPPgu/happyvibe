@@ -3,6 +3,8 @@ title: 圆周角动态演示
 subject: math
 stage: junior
 grades: [9]
+book: 人教版九年级上册
+unit: 第二十四章 圆
 topic: 圆 · 圆周角
 kind: interactive-2d
 file: math-circle-angle

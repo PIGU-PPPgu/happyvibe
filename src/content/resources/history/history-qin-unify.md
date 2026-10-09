@@ -3,6 +3,8 @@ title: 秦统一多民族国家建立
 subject: history
 stage: junior
 grades: [7]
+book: 统编版七年级上册
+unit: 第三单元 秦汉时期
 topic: 秦汉时期 · 统一多民族国家建立
 kind: interactive-2d
 file: history-qin-unify

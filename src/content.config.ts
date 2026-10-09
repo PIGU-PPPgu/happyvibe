@@ -53,6 +53,8 @@ const resources = defineCollection({
       stage: z.enum(['primary', 'junior', 'senior']),
       grades: z.array(z.number().int().min(1).max(12)).nonempty(),
       topic: z.string(),
+      book: z.string().optional(),
+      unit: z.string().optional(),
       kind: z.enum(RESOURCE_KINDS),
       file: z.string().optional(),
       url: z.string().url().optional(),

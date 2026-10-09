@@ -3,6 +3,8 @@ title: 中国朝代时间线
 subject: history
 stage: junior
 grades: [7]
+book: 统编版七年级上册
+unit: 中国古代史
 topic: 中国古代史 · 朝代更替
 kind: interactive-2d
 file: history-dynasties

@@ -3,6 +3,8 @@ title: 文言实词翻面卡片
 subject: chinese
 stage: junior
 grades: [7, 8, 9]
+book: 统编版初中通用
+unit: 文言文阅读
 topic: 文言文 · 实词积累
 kind: interactive-2d
 file: chinese-classical-words

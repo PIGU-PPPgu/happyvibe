@@ -3,6 +3,8 @@ title: 三视图与直观图
 subject: math
 stage: junior
 grades: [7]
+book: 北师大版七年级上册
+unit: 第一章 丰富的图形世界
 topic: 几何图形初步 · 三视图
 kind: interactive-3d
 file: math-views

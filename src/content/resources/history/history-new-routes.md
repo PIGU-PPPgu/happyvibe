@@ -3,6 +3,8 @@ title: 新航路开辟
 subject: history
 stage: junior
 grades: [9]
+book: 统编版九年级上册
+unit: 第五单元 走向近代
 topic: 走向近代 · 新航路的开辟
 kind: interactive-2d
 file: history-new-routes

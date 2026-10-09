@@ -3,6 +3,8 @@ title: 文章结构思维导图
 subject: chinese
 stage: junior
 grades: [7, 8, 9]
+book: 统编版初中通用
+unit: 写作单元
 topic: 写作 · 结构
 kind: interactive-2d
 file: chinese-essay-structure

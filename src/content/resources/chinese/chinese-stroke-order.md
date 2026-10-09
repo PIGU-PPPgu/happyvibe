@@ -3,6 +3,8 @@ title: 易错字笔顺对比
 subject: chinese
 stage: primary
 grades: [1, 2, 3]
+book: 统编版一年级上下册
+unit: 识字与写字
 topic: 识字与写字 · 笔顺
 kind: interactive-2d
 file: chinese-stroke-order

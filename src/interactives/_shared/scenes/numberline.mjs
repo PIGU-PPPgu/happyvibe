@@ -2,13 +2,14 @@
 // 模式：sanys 三要素标注 | free 自由拖点 | mirror 相反数对称 | add 加法行程（两次移动）
 // 数值同源：读数卡的每个值都由 fmt()/求值函数唯一产出，selftest 以「同源-」断言绑定。
 export function mountNumberLine(stage, api, SPEC) {
-  const CFG = Object.assign({ range: 6, step: 0.5, modes: ['sanys', 'free', 'mirror'], readouts: ['p', 'opp', 'abs', 'cmp'], bands: true, grid: true, labels: {} }, SPEC);
+  const CFG = Object.assign({ range: 6, step: 0.5, modes: ['sanys', 'free', 'mirror'], readouts: ['p', 'opp', 'abs', 'cmp'], bands: true, grid: true, labels: {}, thermo: { hi: 3, lo: -2 } }, SPEC);
   const RANGE = CFG.range;
   let cv, ctx, W = 0, H = 0;
   let mode = CFG.modes[0];
   let p = 2;                 // free/mirror/sanys：金点表示的数
   let a = 3, b = -5;         // add：两次移动
   let drag = null;           // 'p' | 'a' | 'b'
+  let scenario = SPEC.scenario || null;   // 情景层：'thermo' 温度计 | 'walker' 行走小人 | null
   let pulseT = 0;
 
   const STYLE = `
@@ -156,8 +157,86 @@ export function mountNumberLine(stage, api, SPEC) {
       ctx.beginPath(); ctx.moveTo(px, axisY - 15); ctx.lineTo(px, axisY - 40); ctx.stroke();
       pill(fmt(p), px, axisY - 58, t.gold, '#221430');
     }
+
+    // ── 情景层：把引导语里的情景画出来（温差=双温度计；行程=行走小人+脚印） ──
+    if (scenario === 'thermo' && W > 900) drawThermo(t, x);
+    if (scenario === 'walker' && mode === 'add') drawWalker(t, x, axisY);
   }
 
+  // 温度计面板：两支温度计（最高/最低）+ 温差括弧与算式
+  function drawThermo(t, x) {
+    const { hi, lo } = CFG.thermo;
+    const pw = 210, ph = H * 0.42;
+    const px0 = x(-RANGE) + 34, py0 = H * 0.30;
+    ctx.beginPath(); ctx.roundRect(px0, py0, pw, ph, 14);
+    ctx.fillStyle = t.light ? 'rgba(255,255,255,.72)' : 'rgba(21,11,32,.55)';
+    ctx.strokeStyle = t.line; ctx.lineWidth = 1.5; ctx.fill(); ctx.stroke();
+    ctx.font = '700 15px "Noto Sans SC","PingFang SC",sans-serif';
+    ctx.fillStyle = t.muted; ctx.textAlign = 'center';
+    ctx.fillText('当日气温', px0 + pw / 2, py0 + 24);
+    const tubeH = ph - 76;
+    for (let k = 0; k < 2; k++) {
+      const cx = px0 + pw / 2 + (k === 0 ? -44 : 44);
+      const v = k === 0 ? hi : lo;
+      const vTop = py0 + 44 + tubeH * (1 - (v + 6) / 12);
+      // 玻璃管 + 底球
+      ctx.strokeStyle = t.muted; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(cx - 7, py0 + 44, 14, tubeH, 7); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, py0 + 48 + tubeH, 11, 0, Math.PI * 2); ctx.stroke();
+      // 水银柱（金=最高 / 紫=最低）
+      const col = k === 0 ? t.gold : t.purple;
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(cx, py0 + 48 + tubeH, 7.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillRect(cx - 3.5, vTop, 7, py0 + 48 + tubeH - vTop);
+      // 刻度与读数
+      ctx.fillStyle = t.muted; ctx.font = '600 12.5px "Noto Sans SC",sans-serif';
+      ctx.fillText(fmt(v) + '℃', cx, vTop - 8);
+      ctx.fillStyle = t.faint; ctx.font = '12px "Noto Sans SC",sans-serif';
+      ctx.fillText(k === 0 ? '最高' : '最低', cx, py0 + ph - 10);
+    }
+    // 温差括弧 + 算式（与数轴读数同源：hi − lo）
+    const diff = Math.round((hi - lo) * 100) / 100;
+    const yA = py0 + 44 + tubeH * (1 - (hi + 6) / 12);
+    const yB = py0 + 44 + tubeH * (1 - (lo + 6) / 12);
+    const bx = px0 + pw / 2;
+    ctx.strokeStyle = t.greenHi; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(bx - 14, yA); ctx.lineTo(bx - 22, yA); ctx.lineTo(bx - 22, yB); ctx.lineTo(bx - 14, yB); ctx.stroke();
+    ctx.font = '700 15px "Noto Sans SC",sans-serif';
+    ctx.fillStyle = t.greenHi; ctx.textAlign = 'center';
+    ctx.fillText(fmt(diff) + '℃', bx, (yA + yB) / 2 + 5);
+  }
+  // 行走小人 + 脚印：沿 0→a→sum 的实际路径走，终点站定（腿随呼吸摆动）
+  function drawWalker(t, x, axisY) {
+    const path = [];
+    const push = (from, to, col) => {
+      const dir = Math.sign(to - from) || 1;
+      for (let v = from; dir > 0 ? v <= to + 1e-9 : v >= to - 1e-9; v += dir * CFG.step) path.push([v, col, dir]);
+    };
+    push(0, a, t.gold); push(a, sum(), t.purple);
+    // 脚印：每半格一枚小椭圆，走过哪段染哪段色
+    ctx.save();
+    for (const [v, col] of path) {
+      ctx.beginPath();
+      ctx.ellipse(x(v), axisY + 14, 3.2, 2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = col; ctx.globalAlpha = 0.4; ctx.fill();
+    }
+    ctx.restore();
+    // 小人（终点，朝向最后一步方向）
+    const end = path.length ? path[path.length - 1] : [0, t.gold, 1];
+    const wx = x(end[0]), dir = end[2];
+    const swing = Math.sin(pulseT / 260) * 4;
+    ctx.save();
+    ctx.translate(wx, axisY);
+    ctx.scale(dir, 1);
+    ctx.strokeStyle = t.text; ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(2, -46, 7.5, 0, Math.PI * 2); ctx.stroke();       // 头
+    ctx.beginPath(); ctx.moveTo(0, -38); ctx.lineTo(0, -16); ctx.stroke();     // 身
+    ctx.beginPath(); ctx.moveTo(0, -16); ctx.lineTo(-5 + swing, -2); ctx.stroke(); // 腿1
+    ctx.beginPath(); ctx.moveTo(0, -16); ctx.lineTo(5 - swing, -2); ctx.stroke();  // 腿2
+    ctx.beginPath(); ctx.moveTo(0, -32); ctx.lineTo(9, -24); ctx.stroke();     // 臂（指向前方）
+    ctx.beginPath(); ctx.moveTo(0, -32); ctx.lineTo(-8, -22); ctx.stroke();
+    ctx.restore();
+  }
   function glowDot(px, py, r, color, blur) {
     ctx.save();
     ctx.shadowColor = color; ctx.shadowBlur = blur;
@@ -306,6 +385,7 @@ export function mountNumberLine(stage, api, SPEC) {
   api.setNlMode = (m) => { if (CFG.modes.includes(m)) { mode = m; readout(); draw(); } };
   // 环节预设：设置两次移动的值（供「议一议」等环节做换序/对比演示）
   api.setNlAdd = (x, y) => { a = Math.round(x / CFG.step) * CFG.step; b = Math.round(y / CFG.step) * CFG.step; readout(); draw(); };
+  api.setNlScenario = (sc) => { scenario = sc; draw(); };
 
   // 数值同源断言：读数卡全部值必须与 fmt/求值函数一致（edulab 原则）
   if (new URLSearchParams(location.search).has('selftest')) {
@@ -336,6 +416,12 @@ export function mountNumberLine(stage, api, SPEC) {
       const modes = [];
       for (const m of CFG.modes) { api.setNlMode(m); modes.push(m === mode); }
       api.setNlMode(CFG.modes[0]);
+      if (api.setNlScenario) {
+        api.setNlScenario('walker'); const w = scenario === 'walker';
+        api.setNlScenario('thermo'); const th = scenario === 'thermo';
+        api.setNlScenario(SPEC.scenario || null);
+        push('情景层切换', w && th, '温度计与行走小人情景可挂卸');
+      }
       push('环节模式切换', modes.every(Boolean), `${CFG.modes.join('/')} 随环节生效`);
       readout(); draw();
     }

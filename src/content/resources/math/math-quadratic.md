@@ -3,6 +3,8 @@ title: 二次函数的图像与系数
 subject: math
 stage: junior
 grades: [9]
+book: 人教版九年级上册
+unit: 第二十二章 二次函数
 topic: 二次函数 · 系数与图像
 kind: interactive-2d
 file: math-quadratic

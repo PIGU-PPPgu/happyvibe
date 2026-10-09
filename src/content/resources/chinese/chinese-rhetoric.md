@@ -3,6 +3,8 @@ title: 修辞手法例句对比
 subject: chinese
 stage: junior
 grades: [7, 8]
+book: 统编版初中通用
+unit: 词句品析
 topic: 词句品析 · 修辞
 kind: interactive-2d
 file: chinese-rhetoric

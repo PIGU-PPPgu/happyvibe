@@ -67,6 +67,20 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
         {gradeSet.map((g) => <button class="gchip" data-g={g} type="button">{g} 年级</button>)}
       </div>
     )}
+    {[...new Set(own.map(({ r }) => r.data.book).filter(Boolean))].length > 1 && (
+      <div class="filters" role="tablist" aria-label="按教材筛选">
+        <span class="glabel">教材</span>
+        <button class="gchip on" data-b="all" type="button">全部</button>
+        {[...new Set(own.map(({ r }) => r.data.book).filter(Boolean))].sort().map((b) => <button class="gchip" data-b={b} type="button">{b}</button>)}
+      </div>
+    )}
+    {[...new Set(own.map(({ r }) => r.data.unit).filter(Boolean))].length > 1 && (
+      <div class="filters" role="tablist" aria-label="按章节筛选">
+        <span class="glabel">章节</span>
+        <button class="gchip on" data-u="all" type="button">全部</button>
+        {[...new Set(own.map(({ r }) => r.data.unit).filter(Boolean))].sort().map((u) => <button class="gchip" data-u={u} type="button">{u}</button>)}
+      </div>
+    )}
 
     {groups.length === 0 && <p class="empty-note text-muted">该学科资源制作中。</p>}
 
@@ -75,7 +89,7 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
         <h2 class="topic-title">{g.topic}</h2>
         <div class="cards">
           {g.own.map(({ r, Content }) => (
-            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}?embed=1`)} data-grades={r.data.grades.join(",")}>
+            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}?embed=1`)} data-grades={r.data.grades.join(",")} data-book={r.data.book || ""} data-unit={r.data.unit || ""}>
               <a
                 class="pv"
                 href={withBase(`/interactives/${r.data.file}`)}
@@ -127,18 +141,28 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
 
 <script>
   // 年级筛选
-  const gchips = document.querySelectorAll<HTMLButtonElement>('.gchip');
-  if (gchips.length) {
-    gchips.forEach((c) =>
+  const fstate = { grade: 'all', book: 'all', unit: 'all' };
+  const applyF = () => {
+    document.querySelectorAll<HTMLElement>('.pcard[data-grades]').forEach((card) => {
+      const okG = fstate.grade === 'all' || card.dataset.grades.split(',').includes(fstate.grade);
+      const okB = fstate.book === 'all' || card.dataset.book === fstate.book;
+      const okU = fstate.unit === 'all' || card.dataset.unit === fstate.unit;
+      card.style.display = okG && okB && okU ? '' : 'none';
+    });
+  };
+  const bindF = (sel, key, attr) => {
+    const chips = document.querySelectorAll<HTMLButtonElement>(sel);
+    chips.forEach((c) =>
       c.addEventListener('click', () => {
-        gchips.forEach((x) => x.classList.toggle('on', x === c));
-        const g = c.dataset.g;
-        document.querySelectorAll<HTMLElement>('.pcard[data-grades]').forEach((card) => {
-          card.style.display = !g || g === 'all' || card.dataset.grades.split(',').includes(g) ? '' : 'none';
-        });
+        chips.forEach((x) => x.classList.toggle('on', x === c));
+        fstate[key] = c.dataset[attr] || 'all';
+        applyF();
       })
     );
-  }
+  };
+  bindF('.gchip[data-g]', 'grade', 'g');
+  bindF('.gchip[data-b]', 'book', 'b');
+  bindF('.gchip[data-u]', 'unit', 'u');
   // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
   if (matchMedia('(pointer: fine)').matches) {
     for (const card of document.querySelectorAll<HTMLDivElement>('.pcard[data-live]')) {

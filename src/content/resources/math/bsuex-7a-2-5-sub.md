@@ -3,6 +3,8 @@ title: 有理数减法·数轴逆行
 subject: math
 stage: junior
 grades: [7]
+book: 北师大版七年级上册
+unit: 第二章 有理数及其运算
 topic: 有理数及其运算 · 有理数的减法
 kind: interactive-2d
 file: bsuex-7a-2-5-sub

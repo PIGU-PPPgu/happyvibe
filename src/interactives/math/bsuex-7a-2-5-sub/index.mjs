@@ -7,6 +7,7 @@ const SPEC = {
   archetype: 'numberline', range: 6, step: 0.5, bands: true, grid: true,
   modes: ['sanys', 'add', 'add'], readouts: ['a', 'b', 'sum', 'cmp'],
   labels: { a: '被减数 a', b: '位移 −b', sum: '差 a − b' },
+  thermo: { hi: 3, lo: -2 },
 };
 
 let api;
@@ -17,19 +18,19 @@ const TEACHING = {
       name: '想一想',
       guide: '冬天最高气温 3 ℃，最低气温 −2 ℃，温差是多少？列出的算式 3 − (−2) 里，减数是个负数——在数轴上「减去 −2」该往哪边走？',
       note: '减法在数轴上仍是移动：从被减数对应的点出发，减去正数就向西走，减去负数就向东走。3 − (−2) 就是从 3 出发向东走 2 个单位，终点在 5，所以 3 − (−2) = 5。也可以用温差倒推：3 比 −2 高 5 ℃。两种途径得到同一个结果，正说明「减去一个负数 = 加上它的相反数」。',
-      apply: () => { api.setNlMode('sanys'); api.setNlAdd(3, 2); },
+      apply: () => { api.setNlMode('add'); api.setNlScenario('thermo'); api.setNlAdd(3, 2); },
     },
     {
       name: '做一做',
       guide: '画面已换成 3 − 5：拖紫色箭头，把减数换成 −5、0、−1.5 各试一次，看「位移 −b」一栏和差怎么变。减正数和减负数，方向有什么规律？',
       note: '法则：减去一个数，等于加上这个数的相反数，a − b = a + (−b)。把 b 拖成正数，位移 −b 为负，紫箭头向西，差比被减数小；把 b 拖成负数，位移 −b 为正，紫箭头向东，差比被减数大。拖到 0 时紫箭头消失，差就等于被减数——任何数减 0 不变。先读方向再数距离，与加法是同一套本领。',
-      apply: () => api.setNlMode('add'),
+      apply: () => { api.setNlMode('add'); api.setNlScenario('walker'); },
     },
     {
       name: '议一议',
       guide: '现在演示 0 − 5：从原点出发向西走 5 个单位。小学里「不够减」的算式，现在都有答案了吗？小组说说为什么有理数范围内减法永远可以做。',
       note: '有了负数，减法不再有「不够减」：0 − 5 = −5，终点落在原点左侧，负数正是为「不够减」而生的。有理数范围内，任意两个有理数相减，差仍是唯一的有理数，减法运算永远封闭。把减法统一转化成加法后，加减混合运算就只剩一种运算，为下一节「加减混合运算」统一成连加铺路。',
-      apply: () => { api.setNlMode('add'); api.setNlAdd(0, -5); },
+      apply: () => { api.setNlMode('add'); api.setNlScenario('walker'); api.setNlAdd(0, -5); },
     },
   ],
   summary: '有理数减法法则：减去一个数，等于加上这个数的相反数，即 a − b = a + (−b)。数轴上从被减数出发，减正数向西走、减负数向东走，终点就是差。有了负数，任何两个有理数都能相减，小学「不够减」的限制不复存在。',

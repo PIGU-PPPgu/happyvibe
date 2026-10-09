@@ -3,6 +3,8 @@ title: 一次函数与反比例函数图像实验室
 subject: math
 stage: junior
 grades: [8]
+book: 人教版八年级下册
+unit: 第十九章 一次函数
 topic: 一次函数 / 反比例函数 · 图像与性质
 kind: interactive-2d
 file: math-function-lab

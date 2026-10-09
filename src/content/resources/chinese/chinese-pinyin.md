@@ -3,6 +3,8 @@ title: 拼音声母韵母表
 subject: chinese
 stage: primary
 grades: [1]
+book: 统编版一年级上册
+unit: 第二单元 汉语拼音
 topic: 汉语拼音 · 声母韵母
 kind: interactive-2d
 file: chinese-pinyin

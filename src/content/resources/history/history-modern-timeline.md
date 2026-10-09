@@ -3,6 +3,8 @@ title: 中国近代史大事年表
 subject: history
 stage: junior
 grades: [8]
+book: 统编版八年级上册
+unit: 中国近代史
 topic: 中国近代史 · 大事年表
 kind: interactive-2d
 file: history-modern-timeline

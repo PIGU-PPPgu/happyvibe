@@ -3,6 +3,8 @@ title: 青铜器与甲骨文
 subject: history
 stage: junior
 grades: [7]
+book: 统编版七年级上册
+unit: 第二单元 夏商周时期
 topic: 夏商周时期 · 青铜器与甲骨文
 kind: interactive-3d
 file: history-bronze

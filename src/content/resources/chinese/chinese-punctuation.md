@@ -3,6 +3,8 @@ title: 标点符号用法决策图
 subject: chinese
 stage: primary
 grades: [3, 4, 5, 6]
+book: 统编版小学通用
+unit: 语文园地
 topic: 标点符号 · 正确使用
 kind: interactive-2d
 file: chinese-punctuation

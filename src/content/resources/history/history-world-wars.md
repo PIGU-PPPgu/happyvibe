@@ -3,6 +3,8 @@ title: 两次世界大战时间线
 subject: history
 stage: junior
 grades: [9]
+book: 统编版九年级下册
+unit: 两次世界大战
 topic: 经济大危机与第二次世界大战
 kind: interactive-2d
 file: history-world-wars

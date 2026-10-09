@@ -3,6 +3,8 @@ title: 改革开放历程
 subject: history
 stage: junior
 grades: [8]
+book: 统编版八年级下册
+unit: 第三单元 中国特色社会主义道路
 topic: 中国特色社会主义道路 · 改革开放
 kind: interactive-2d
 file: history-reform-open

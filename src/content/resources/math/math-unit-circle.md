@@ -3,6 +3,8 @@ title: 单位圆与三角函数
 subject: math
 stage: senior
 grades: [10]
+book: 人教A版必修第一册
+unit: 第五章 三角函数
 topic: 三角函数 · 定义与图像
 kind: interactive-2d
 file: math-unit-circle
