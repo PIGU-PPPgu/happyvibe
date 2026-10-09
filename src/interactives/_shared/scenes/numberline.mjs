@@ -2,7 +2,7 @@
 // 模式：sanys 三要素标注 | free 自由拖点 | mirror 相反数对称 | add 加法行程（两次移动）
 // 数值同源：读数卡的每个值都由 fmt()/求值函数唯一产出，selftest 以「同源-」断言绑定。
 export function mountNumberLine(stage, api, SPEC) {
-  const CFG = Object.assign({ range: 6, step: 0.5, modes: ['sanys', 'free', 'mirror'], readouts: ['p', 'opp', 'abs', 'cmp'], bands: true, grid: true }, SPEC);
+  const CFG = Object.assign({ range: 6, step: 0.5, modes: ['sanys', 'free', 'mirror'], readouts: ['p', 'opp', 'abs', 'cmp'], bands: true, grid: true, labels: {} }, SPEC);
   const RANGE = CFG.range;
   let cv, ctx, W = 0, H = 0;
   let mode = CFG.modes[0];
@@ -238,7 +238,8 @@ export function mountNumberLine(stage, api, SPEC) {
     ui.id = 'nl-ui';
     ui.innerHTML = `<div id="nl-read">${CFG.readouts.map((k) => {
       const r = READOUTS[k];
-      return `<div class="stat"><span class="lab">${r.lab}</span><b class="val ${r.cls}" id="${r.id}"></b></div>`;
+      const lab = CFG.labels[k] || r.lab;   // 课题可覆盖读数标签（如减法课显示「差」）
+      return `<div class="stat"><span class="lab">${lab}</span><b class="val ${r.cls}" id="${r.id}"></b></div>`;
     }).join('')}</div>`;
     stage.appendChild(ui);
     readout();

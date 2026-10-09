@@ -1,0 +1,23 @@
+{
+  "archetype": "numberline",
+  "range": 6,
+  "step": 0.5,
+  "bands": true,
+  "grid": true,
+  "modes": [
+    "sanys",
+    "add",
+    "add"
+  ],
+  "readouts": [
+    "a",
+    "b",
+    "sum",
+    "cmp"
+  ],
+  "labels": {
+    "a": "被减数 a",
+    "b": "位移 −b",
+    "sum": "差 a − b"
+  }
+}
