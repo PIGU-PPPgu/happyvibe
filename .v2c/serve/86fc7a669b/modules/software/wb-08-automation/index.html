@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>第 8 课 · 自动化实战：让任务定时自己跑 · HappyVibe 数智学园</title><meta name="description" content="手把手系列。三个班主任真实场景：每日晨报、周五周报、考试次日分析——设一次，跑一学期。"><meta property="og:title" content="第 8 课 · 自动化实战：让任务定时自己跑 · HappyVibe 数智学园"><meta property="og:description" content="手把手系列。三个班主任真实场景：每日晨报、周五周报、考试次日分析——设一次，跑一学期。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> software </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>wb-08-automation</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（6 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先搞懂两种触发方式" data-astro-cid-5y7t3r35>先搞懂两种触发方式</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#实战-1--每日晨报10-分钟设好天天受益" data-astro-cid-5y7t3r35>实战 1 · 每日晨报（10 分钟设好，天天受益）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#实战-2--周五周报配合第-6-课的-skill" data-astro-cid-5y7t3r35>实战 2 · 周五周报（配合第 6 课的 Skill）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#实战-3--条件触发新文件进来自动处理" data-astro-cid-5y7t3r35>实战 3 · 条件触发：新文件进来自动处理</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#自动化的三条安全线" data-astro-cid-5y7t3r35>自动化的三条安全线</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#检查点" data-astro-cid-5y7t3r35>检查点</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/software/" style="color:#e8935e" data-astro-cid-5y7t3r35>T2 · WorkBuddy 实操</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>第 8 课 · 自动化实战：让任务定时自己跑</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>手把手系列。三个班主任真实场景：每日晨报、周五周报、考试次日分析——设一次，跑一学期。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>实机操作（v5.4.5）</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="software/wb-08-automation" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：自动化 = 「到点自动干」+「条件触发才干」。设好一次，这个活就从你的清单上永远消失。</strong></p>
+</blockquote>
+<h2 id="先搞懂两种触发方式">先搞懂两种触发方式</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方式</th><th>意思</th><th>例子</th></tr></thead><tbody><tr><td><strong>定时</strong></td><td>每天固定时间跑</td><td>每天 7:00 推晨报</td></tr><tr><td><strong>条件</strong></td><td>满足条件才跑</td><td>收到含「成绩」的文件就自动分析</td></tr></tbody></table>
+<p>第 5 课教过最小版（每日晨报），这一课上三个<strong>班主任真实场景</strong>。</p>
+<h2 id="实战-1--每日晨报10-分钟设好天天受益">实战 1 · 每日晨报（10 分钟设好，天天受益）</h2>
+<p>左侧 <strong>自动化</strong> → 新建，照填：</p>
+<p><img src="/images/lessons/wbz-auto-tab.webp" alt="左侧「自动化」入口"></p>
+<pre><code>任务名：教师晨报
+触发：每天 07:00
+动作：
+  1. 查今天深圳天气
+  2. 读取我的课表（放在工作空间里）
+  3. 综合天气 + 今天的课，给我 3 条提醒
+  4. 发到我绑定的微信小程序
+</code></pre>
+<p>第二天早上 7 点，手机「叮」一声——它上班了，你还没起。</p>
+<h2 id="实战-2--周五周报配合第-6-课的-skill">实战 2 · 周五周报（配合第 6 课的 Skill）</h2>
+<p>第 6 课任务 C 教过「出周报」三字触发。再进一步，让它<strong>每周五 16:00 主动来问你要关键词</strong>：</p>
+<pre><code>任务名：周报提醒
+触发：每周五 16:00
+动作：
+  1. 给我发消息：「发本周关键词（考勤/大事/提醒）」
+  2. 收到我的回复后，调用 weekly-report 技能生成周报
+  3. 生成的稿子发我确认，确认后存到桌面 周报 文件夹
+</code></pre>
+<p>你只负责每周五回三行字，其余全自动。</p>
+<h2 id="实战-3--条件触发新文件进来自动处理">实战 3 · 条件触发：新文件进来自动处理</h2>
+<p>适合考试后收成绩表：</p>
+<pre><code>任务名：成绩表自动分析
+触发：监测桌面「待处理」文件夹出现新 Excel
+动作：
+  1. 读取新文件
+  2. 按班级统计平均分、前 10 名（化名）
+  3. 生成分析页放入同文件夹
+  4. 完成后小程序通知我
+</code></pre>
+<p>下次月考，各科老师把成绩丢进「待处理」——分析自己长出来。</p>
+<h2 id="自动化的三条安全线">自动化的三条安全线</h2>
+<ol>
+<li><strong>先手动跑 3 次再自动化</strong>：流程没跑顺就定时，等于定时出错；</li>
+<li><strong>产出物先「发我确认」再对外</strong>：自动发给家长/群的东西，前两周一定加确认步骤；</li>
+<li><strong>每周瞄一眼运行记录</strong>：自动化页能看到每次执行结果，发现失败立刻修。</li>
+</ol>
+<h2 id="检查点">检查点</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 设好了 1 个定时任务并收到过至少 2 次推送</li>
+<li class="task-list-item"><input type="checkbox" disabled> 理解「定时」和「条件」的区别</li>
+<li class="task-list-item"><input type="checkbox" disabled> 记住了三条安全线</li>
+</ul>
+<p>下一课：<a href="/modules/software/wb-09-troubleshooting/">第 9 课 · 排错手册</a></p> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="第 8 课 · 自动化实战：让任务定时自己跑" data-module="WorkBuddy 实操" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script>  <a class="btn btn-ghost back-btn" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 T2 WorkBuddy 实操 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/software/wb-07-connectors/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>第 7 课 · 连接器与手机派单：不在电脑前也能干活</span> </a> <a class="btn btn-ghost nav-next" href="/modules/software/wb-09-troubleshooting/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>下一课 →</span> <span data-astro-cid-5y7t3r35>第 9 课 · 排错手册：卡住了怎么办（10 种常见情况）</span> </a> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先搞懂两种触发方式" data-toc-link="先搞懂两种触发方式" data-astro-cid-5y7t3r35>先搞懂两种触发方式</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#实战-1--每日晨报10-分钟设好天天受益" data-toc-link="实战-1--每日晨报10-分钟设好天天受益" data-astro-cid-5y7t3r35>实战 1 · 每日晨报（10 分钟设好，天天受益）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#实战-2--周五周报配合第-6-课的-skill" data-toc-link="实战-2--周五周报配合第-6-课的-skill" data-astro-cid-5y7t3r35>实战 2 · 周五周报（配合第 6 课的 Skill）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#实战-3--条件触发新文件进来自动处理" data-toc-link="实战-3--条件触发新文件进来自动处理" data-astro-cid-5y7t3r35>实战 3 · 条件触发：新文件进来自动处理</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#自动化的三条安全线" data-toc-link="自动化的三条安全线" data-astro-cid-5y7t3r35>自动化的三条安全线</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#检查点" data-toc-link="检查点" data-astro-cid-5y7t3r35>检查点</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>

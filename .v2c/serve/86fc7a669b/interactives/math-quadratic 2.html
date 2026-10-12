@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>二次函数的图像与系数</title>
+<style>
+:root{
+  --cuhk:#6b2077;--brand:#8a3d99;--brand-line:rgba(178,120,196,.34);
+  --bg:#1a0e26;--bg2:#241233;--panel:#251337;--panel2:#2e1a43;--inset:#150b20;
+  --text:#f4edf9;--muted:#b3a4c9;--faint:#82729e;
+  --gold:#e8b04b;--gold-soft:#f0c470;--wrong:#c97b7b;--ok:#7fbf9e;
+  --line:rgba(186,136,212,.16);--line2:rgba(186,136,212,.3);--line-gold:rgba(232,176,75,.4);
+  --shadow:0 10px 32px rgba(0,0,0,.5);
+  --shell-top:44px;--rail-w:216px;--rail-h:0px;
+}
+:root[data-theme=light]{
+  --cuhk:#6b2077;--brand:#6b2077;--brand-line:rgba(107,32,119,.32);
+  --bg:#f8f5fb;--bg2:#f0e9f7;--panel:#ffffff;--panel2:#f4eef9;--inset:#fbf9fd;
+  --text:#2a1a35;--muted:#5e4d70;--faint:#8b7ca0;
+  --gold:#8a6a1f;--gold-soft:#8a6a1f;--wrong:#b35b5b;--ok:#4d8a68;
+  --line:rgba(107,32,119,.16);--line2:rgba(107,32,119,.32);--line-gold:rgba(138,106,31,.45);
+  --shadow:0 8px 24px rgba(80,30,100,.14);
+}
+*{box-sizing:border-box;margin:0}
+/* 键盘可达性：Tab 焦点环（鼠标点击不显示，投屏遥控器/翻页笔友好） */
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+/* 舞台底：港紫径向层次（背景实现，不盖 canvas）；左轨/顶栏让位由变量驱动 */
+#stage{position:absolute;inset:calc(var(--shell-top) + var(--rail-h)) 0 0 var(--rail-w);background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
+/* ---------- 薄顶栏（44px）：返回 | 标题 | 教材锚点 …… 翻页/主操作/窗口控制 ---------- */
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#back{display:flex;align-items:center;gap:7px;min-height:32px;padding:0 11px;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+#back::before{content:'←';font-size:14px;line-height:1}
+#back:hover{color:var(--text);border-color:var(--line2);background:var(--panel2)}
+#bar h1{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+#meta{font-size:12.5px;color:var(--gold);white-space:nowrap;padding:3px 10px;border:1px solid var(--line-gold);border-radius:999px}
+#bar .grow{flex:1}
+/* ---------- 按钮系统：统一 32px 高；sq=方钮；primary=主操作实底 ---------- */
+.btn{font:inherit;font-size:13.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+.btn:hover{border-color:var(--brand-line);color:var(--text)}
+.btn[aria-pressed=true]{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sq{min-width:32px;padding:0;font-size:15px}
+/* ---------- 左轨章节导航（宽屏 216px；WeduLab 范式：编号+名称，检测/小结入列） ---------- */
+#rail{position:fixed;top:var(--shell-top);left:0;bottom:0;z-index:9;width:var(--rail-w);display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-right:1px solid var(--line);padding:10px 10px 8px;gap:2px}
+#rail .rail-title{font-size:11.5px;color:var(--faint);letter-spacing:.22em;padding:2px 8px 8px}
+.rail-step{display:flex;align-items:baseline;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.rail-step .no{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;font-weight:700;color:var(--faint);min-width:24px;transition:color .15s}
+.rail-step:hover{color:var(--text);background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+.rail-step[aria-pressed=true]{background:color-mix(in srgb,var(--cuhk) 20%,transparent);border-color:var(--brand-line);color:var(--text);font-weight:600}
+.rail-step[aria-pressed=true] .no{color:var(--gold)}
+#rail .rail-split{height:1px;background:var(--line);margin:8px 6px}
+#rail .rail-foot{margin-top:auto;padding:10px 8px 2px;font-size:11px;color:var(--faint);line-height:1.9;letter-spacing:.03em}
+#rail .rail-foot b{font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:2px;font-size:10.5px}
+#rail-prog{position:absolute;left:0;right:0;bottom:0;height:2px}
+#rail-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
+/* ---------- 舞台章节标头：01 / 03 · 环节名（印在画面上） ---------- */
+#stage-head{position:fixed;top:calc(var(--shell-top) + var(--rail-h) + 14px);left:calc(var(--rail-w) + 20px);z-index:5;display:flex;align-items:baseline;gap:10px;pointer-events:none}
+#stage-head .frac{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+#stage-head .sname{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--text);opacity:.92}
+/* ---------- 教学引导浮层：章节标头之下（引导语 + 操作提示） ---------- */
+#guide-tip{position:fixed;left:calc(var(--rail-w) + 20px);top:calc(var(--shell-top) + var(--rail-h) + 56px);z-index:6;max-width:min(600px,58vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
+#guide-tip.dim{opacity:.35}
+#g-tip{font-size:15px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ops-tip{margin-top:5px;font-size:12.5px;color:var(--faint);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* ---------- 讲解覆盖卡（顶栏/章节栏呼出，WeduLab 右栏的覆盖式实现） ---------- */
+#note{position:fixed;top:calc(var(--shell-top) + 14px);right:16px;z-index:22;width:min(400px,calc(100vw - 40px));max-height:calc(100vh - var(--shell-top) - 40px);overflow:auto;padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
+#note::before{content:'讲解';display:block;font-size:12.5px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px}
+:root[data-theme=light] #note::before{color:var(--cuhk)}
+/* ---------- 小结浮层 ---------- */
+#summary{position:fixed;top:calc(var(--shell-top) + 14px);left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
+#summary::before{content:'小结';display:block;font-size:12.5px;color:var(--gold);letter-spacing:.12em;margin-bottom:6px}
+/* ---------- 随堂检测 ---------- */
+#quiz-wrap{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(4px)}
+#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 100px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+#quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#quiz-head b{font-size:17px}
+#quiz-prog{font-size:13px;color:var(--faint)}
+#quiz-close{margin-left:auto}
+#quiz-q{font-size:16.5px;line-height:1.7;margin-bottom:14px}
+#quiz-opts{display:flex;flex-direction:column;gap:10px}
+.qopt{font:inherit;font-size:15px;line-height:1.6;text-align:left;padding:11px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--inset);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s}
+.qopt:not(:disabled):hover{border-color:var(--brand)}
+.qopt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--inset))}
+.qopt.no{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 14%,var(--inset))}
+.qopt:disabled{cursor:default}
+#quiz-why{margin-top:14px;padding:12px 16px;border-left:3px solid var(--gold);background:var(--inset);border-radius:0 10px 10px 0;font-size:14.5px;line-height:1.8;color:var(--muted);display:none}
+#quiz-why::before{content:'解析';display:block;font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+#quiz-foot{display:flex;align-items:center;gap:10px;margin-top:16px}
+#quiz-score{font-size:15px}
+#quiz-score b{font-size:22px;color:var(--brand)}
+:root[data-theme=light] #quiz-score b{color:var(--cuhk)}
+/* ---------- 窄屏（<1080px）：左轨收成顶部横排环节条 ---------- */
+@media (max-width:1079px){
+  :root{--rail-w:0px;--rail-h:52px}
+  #rail{top:var(--shell-top);left:0;right:0;bottom:auto;width:auto;height:var(--rail-h);flex-direction:row;align-items:center;gap:6px;padding:0 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
+  #rail .rail-title,#rail .rail-split,#rail .rail-foot{display:none}
+  .rail-step{flex:none;width:auto;padding:6px 12px;gap:7px}
+  .rail-step .no{font-size:15px;min-width:0}
+  #rail-prog{bottom:0;left:0}
+  #meta{display:none}
+  #guide-tip{left:12px;right:12px;max-width:none}
+  #stage-head{left:16px}
+}
+@media (max-width:760px){
+  #back span{display:none}
+  #bar h1{font-size:15px}
+  #note-btn-top,#sum-btn-top{display:none}
+}
+/* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
+body.embed #bar, body.embed #rail, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip, body.embed #stage-head { display: none !important; }
+body.embed { --shell-top:0px; --rail-w:0px; --rail-h:0px; }
+body.embed #stage { inset: 0; }
+
+/* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
+#onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
+#onboard[hidden]{display:none}
+.ob-card{width:min(430px,calc(100vw - 40px));padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+.ob-title{display:block;font-size:17px;margin-bottom:12px;color:var(--brand)}
+:root[data-theme=light] .ob-title{color:var(--cuhk)}
+.ob-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ob-card li{font-size:15px;line-height:1.7;color:var(--text)}
+.ob-card li b{color:var(--brand)}
+:root[data-theme=light] .ob-card li b{color:var(--cuhk)}
+.ob-card .btn{width:100%}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a id="back" href="/resources/" aria-label="返回资源库"><span>资源库</span></a>
+  <h1>二次函数的图像与系数</h1>
+  <span id="meta"></span>
+  <span class="grow"></span>
+  <button class="btn sq" id="step-prev" type="button" aria-label="上一环节" hidden>‹</button>
+  <button class="btn sq" id="step-next" type="button" aria-label="下一环节" hidden>›</button>
+  <button class="btn" id="note-btn-top" type="button" hidden>讲解</button>
+  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
+  <button class="btn" id="sum-btn-top" type="button">小结</button>
+  <button class="btn sq" id="theme" type="button" aria-label="切换深浅色">◐</button>
+  <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
+</div>
+<nav id="rail" hidden aria-label="章节">
+  <div class="rail-title">章节</div>
+  <div id="steps"></div>
+  <div class="rail-split"></div>
+  <div id="rail-extra"></div>
+  <div class="rail-foot"><b>←</b><b>→</b> 切换环节<br><b>Esc</b> 收起浮层</div>
+  <span id="rail-prog"><i></i></span>
+</nav>
+<div id="stage-head" hidden>
+  <span class="frac">01 / 03</span>
+  <span class="sname"></span>
+</div>
+<div id="guide-tip" hidden>
+  <p id="g-tip"></p>
+  <p id="ops-tip">拖 a、b、c 滑杆，看开口、对称轴、顶点联动</p>
+</div>
+<div id="note"></div>
+<div id="summary"></div>
+<div id="quiz-wrap">
+  <div id="quiz" data-hv-quiz>
+    <div id="quiz-head">
+      <b>随堂检测</b>
+      <span id="quiz-prog"></span>
+      <button class="btn" id="quiz-close" type="button">关闭</button>
+    </div>
+    <div id="quiz-q"></div>
+    <div id="quiz-opts"></div>
+    <div id="quiz-why"></div>
+    <div id="quiz-foot">
+      <span id="quiz-score"></span>
+      <button class="btn primary" id="quiz-next" type="button" hidden>下一题</button>
+      <button class="btn primary" id="quiz-redo" type="button" hidden>重做</button>
+    </div>
+  </div>
+</div>
+<div id="stage" class="pad"></div>
+<div id="onboard" hidden>
+  <div class="ob-card">
+    <b class="ob-title">第一次使用</b>
+    <ul>
+      <li><b>左栏章节</b>：点章节或按键盘左右键换环节，当前环节高亮并印在画面左上</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，从顶栏或章节栏打开</li>
+      <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
+    </ul>
+    <button class="btn primary" id="ob-ok" type="button">开始上课</button>
+  </div>
+</div>
+<script>"use strict";(()=>{var te=new URLSearchParams(location.search).has("selftest");function re(t){let s=document.getElementById("stage"),o=new URLSearchParams(location.search).get("theme"),m=o==="light"||o==="dark"?o:"dark";try{let a=localStorage.getItem("hv-theme");(a==="light"||a==="dark")&&!o&&(m=a)}catch{}if(document.documentElement.dataset.theme=m,te){let a={errors:[],checks:[],canvas:null,pedagogy:null};window.addEventListener("error",e=>a.errors.push(String(e.message).slice(0,200))),window.addEventListener("unhandledrejection",e=>a.errors.push("rejection: "+String(e.reason).slice(0,200))),window.__hvPushCheck=(e,r,f)=>a.checks.push({name:e,pass:r,detail:String(f!=null?f:"")}),setTimeout(()=>{try{a.canvas=E()}catch(r){a.errors.push("canvas-sample: "+r.message)}try{a.pedagogy=l()}catch(r){a.errors.push("pedagogy-sample: "+r.message)}let e=document.createElement("pre");e.id="hv-selftest",e.textContent="__HV__"+JSON.stringify(a)+"__HV__",document.body.appendChild(e)},2500)}function l(){let a=g=>{let j=document.querySelector(g);return j?(j.textContent||"").replace(/\s+/g," ").trim():""},e=[...document.querySelectorAll("[data-hv-step]")],r=a("#g-tip"),f=a("#summary"),w=i&&i.steps?i.steps.map(g=>g.guide||"").join(""):r,B=i&&i.steps?i.steps.map(g=>g.note||"").join(""):"",_=i&&i.quiz?i.quiz:null;return{metaChars:a("#meta").length,steps:e.length,stepNames:e.slice(0,6).map(g=>g.textContent.trim()),guideCount:e.length?1:0,guideChars:w.length,guideLens:i&&i.steps?i.steps.map(g=>(g.guide||"").length):[],noteChars:B.length,noteLens:i&&i.steps?i.steps.map(g=>(g.note||"").length):[],summaryChars:f.length,quizCount:_?_.length:0,quizChars:_?_.map(g=>(g.q||"")+(g.why||"")).join("").length:0}}function E(){let a=[...document.querySelectorAll("canvas")].sort((u,p)=>p.width*p.height-u.width*p.height)[0];if(!a)return null;let e=document.createElement("canvas");e.width=360,e.height=225;let r=e.getContext("2d");r.drawImage(a,0,0,e.width,e.height);let f=r.getImageData(0,0,e.width,e.height).data,w=[],B=new Map;for(let u=0;u<3;u++)for(let p=0;p<3;p++){let S=0,R=0,H=0;for(let v=u*75;v<(u+1)*75;v+=3)for(let A=p*120;A<(p+1)*120;A+=3){let x=(v*e.width+A)*4,Y=(f[x]+f[x+1]+f[x+2])/3;S+=Y,R+=Y*Y,H++;let Z=f[x]>>5<<10|f[x+1]>>5<<5|f[x+2]>>5;B.set(Z,(B.get(Z)||0)+1)}w.push(Math.round(Math.sqrt(R/H-(S/H)**2)))}let _=[...B.entries()].sort((u,p)=>p[1]-u[1]).slice(0,6).map(([u,p])=>[u.toString(16),p]),g=[...B.entries()].sort((u,p)=>p[1]-u[1])[0][0],j=((g>>10&31)*8+(g>>5&31)*8+(g&31)*8)/3,F=1,W=1,T=0,N=0,I=0;for(let u=0;u<e.height;u+=2)for(let p=0;p<e.width;p+=2){let S=(u*e.width+p)*4,R=(f[S]+f[S+1]+f[S+2])/3;if(Math.abs(R-j)>14){I++;let H=p/e.width,v=u/e.height;H<F&&(F=H),H>T&&(T=H),v<W&&(W=v),v>N&&(N=v)}}let G=I?[b(F),b(W),b(T),b(N)]:null;return{regions:w,topColors:_,bbox:G}}function b(a){return Math.round(a*100)/100}let i=t.teaching,d=[];function c(a){let e=a.style.display==="none"||!a.style.display;return y(),e&&(a.style.display="block"),e}function y(){for(let e of d)e.style.display="none";let a=document.getElementById("guide-tip");a&&a.classList.remove("dim")}if(i&&i.steps&&i.steps.length){let N=function(v,A){T=Math.max(0,Math.min(i.steps.length-1,v)),W.forEach((Z,ge)=>Z.setAttribute("aria-pressed",String(ge===T))),B.textContent=i.steps[T].guide||"",j&&(g.textContent=i.steps[T].note||""),_&&(_.style.width=(T+1)/i.steps.length*100+"%");let x=r.querySelector(".frac");x&&(x.textContent=String(T+1).padStart(2,"0")+" / "+String(i.steps.length).padStart(2,"0"));let Y=r.querySelector(".sname");Y&&(Y.textContent=i.steps[T].name||""),A||y(),i.steps[T].apply&&i.steps[T].apply()};var K=N;let a=document.getElementById("meta");a.textContent=i.meta||"",a.dataset.hvMeta="";let e=document.getElementById("rail");e.hidden=!1;let r=document.getElementById("stage-head");r.hidden=!1;let f=document.getElementById("guide-tip");f.hidden=!1;let w=document.getElementById("steps"),B=document.getElementById("g-tip"),_=document.querySelector("#rail-prog i"),g=document.getElementById("note"),j=i.steps.some(v=>v.note&&String(v.note).trim()),F=document.getElementById("note-btn-top");j&&(g.dataset.hvNote="",d.push(g),F.hidden=!1,F.addEventListener("click",()=>{c(g),f.classList.toggle("dim",g.style.display==="block")}));let W=i.steps.map((v,A)=>{let x=document.createElement("button");x.type="button",x.className="rail-step",x.dataset.hvStep="";let Y=document.createElement("b");return Y.className="no",Y.textContent=String(A+1).padStart(2,"0"),x.appendChild(Y),x.appendChild(document.createTextNode(" "+v.name)),x.addEventListener("click",()=>N(A)),w.appendChild(x),x}),T=0,I=document.getElementById("step-prev"),G=document.getElementById("step-next");I.hidden=!1,G.hidden=!1,I.addEventListener("click",()=>N(T-1)),G.addEventListener("click",()=>N(T+1)),window.__hvApplyStep0=()=>N(0);let u=document.getElementById("summary");u.textContent=i.summary||"",u.dataset.hvSummary="",d.push(u);let p=document.getElementById("sum-btn-top");p.addEventListener("click",()=>c(u));let S=document.getElementById("rail-extra"),R=(v,A)=>{let x=document.createElement("button");x.type="button",x.className="rail-step";let Y=document.createElement("b");return Y.className="no",Y.textContent=v.no,x.appendChild(Y),x.appendChild(document.createTextNode(" "+v.name)),x.addEventListener("click",A),S.appendChild(x),x};window.addEventListener("keydown",v=>{let A=v.target;A&&(A.tagName==="INPUT"||A.tagName==="TEXTAREA"||A.tagName==="SELECT"||A.isContentEditable)||document.getElementById("quiz-wrap").style.display==="flex"&&(v.key==="ArrowLeft"||v.key==="ArrowRight")||(v.key==="ArrowRight"?N(T+1):v.key==="ArrowLeft"?N(T-1):v.key==="Escape"&&y())}),k();let H=document.getElementById("quiz-btn");H.hidden||R({no:"\u25C6",name:"\u968F\u5802\u68C0\u6D4B"},()=>H.click()),R({no:"\u2261",name:"\u8BFE\u5802\u5C0F\u7ED3"},()=>p.click())}function k(){let a=i&&i.quiz;if(!a||!a.length)return;let e=document.getElementById("quiz-wrap"),r=document.getElementById("quiz-prog"),f=document.getElementById("quiz-q"),w=document.getElementById("quiz-opts"),B=document.getElementById("quiz-why"),_=document.getElementById("quiz-score"),g=document.getElementById("quiz-next"),j=document.getElementById("quiz-redo");d.push(e),document.getElementById("quiz-btn").hidden=!1,document.getElementById("quiz-btn").addEventListener("click",()=>{let I=e.style.display!=="flex";y(),I&&(e.style.display="flex")}),document.getElementById("quiz-close").addEventListener("click",()=>{e.style.display="none"});let F=0,W=0,T=new Array(a.length).fill(!1);function N(){let I=a[F];g.hidden=!0,j.hidden=!0,B.style.display="none",_.textContent="",r.textContent=`\u7B2C ${F+1} / ${a.length} \u9898`,f.textContent=I.q,f.dataset.hvQ="",w.textContent="",I.opts.forEach((G,u)=>{let p=document.createElement("button");p.type="button",p.className="qopt",p.textContent=String.fromCharCode(65+u)+". "+G,p.addEventListener("click",()=>{if(T[F])return;T[F]=!0;let S=u===I.a;S&&W++,[...w.children].forEach((R,H)=>{R.disabled=!0,H===I.a?R.classList.add("ok"):H===u&&R.classList.add("no")}),B.textContent=I.why||"",B.style.display="block",_.textContent=S?"\u7B54\u5BF9\u4E86":"\u7B54\u9519\u4E86",F<a.length-1?g.hidden=!1:(j.hidden=!1,_.textContent=`\u5171 ${W} / ${a.length} \u9898\u7B54\u5BF9`)}),w.appendChild(p)})}if(g.addEventListener("click",()=>{F++,N()}),j.addEventListener("click",()=>{F=0,W=0,T.fill(!1),N()}),e.style.display="none",N(),te&&typeof window.__hvPushCheck=="function"){let I=[];a.forEach((S,R)=>{(!S.q||!Array.isArray(S.opts)||S.opts.length<2)&&I.push(`\u7B2C${R+1}\u9898\u9898\u5E72\u6216\u9009\u9879\u7F3A\u5931`),(!Number.isInteger(S.a)||S.a<0||!S.opts||S.a>=S.opts.length)&&I.push(`\u7B2C${R+1}\u9898\u7B54\u6848\u4E0B\u6807\u8D8A\u754C`),(!S.why||S.why.length<10)&&I.push(`\u7B2C${R+1}\u9898\u89E3\u6790\u4E0D\u8DB310\u5B57`)}),a.length<3&&I.push(`\u4EC5 ${a.length} \u9898\uFF0C\u5C11\u4E8E 3 \u9898`),window.__hvPushCheck("quiz-valid",I.length===0,I.join("\uFF1B")||`${a.length} \u9898\u7ED3\u6784\u5408\u6CD5\uFF0C\u5747\u542B\u9898\u5E72\u3001\u9009\u9879\u3001\u7B54\u6848\u4E0E\u89E3\u6790`),e.style.display="flex",w.children[0].click();let G=getComputedStyle(B).display!=="none"&&B.getBoundingClientRect().height>0,u=_.textContent||"",p=[...w.children].every(S=>S.disabled);e.style.display="none",window.__hvPushCheck("quiz-answer-flow",G&&u.length>0&&p,`\u4F5C\u7B54\u540E\u89E3\u6790${G?"\u5DF2\u663E\u793A":"\u672A\u663E\u793A"}\uFF0C\u53CD\u9988\u300C${u.slice(0,12)}\u300D\uFF0C\u9009\u9879${p?"\u5DF2\u9501\u5B9A":"\u672A\u9501\u5B9A"}`)}}let C=new URLSearchParams(location.search).has("embed");C&&document.body.classList.add("embed");let L=document.getElementById("onboard");if(L&&!te&&!C&&!new URLSearchParams(location.search).has("pv")){let a=!1;try{a=localStorage.getItem("hv-onboard")==="1"}catch{}if(!a){L.hidden=!1;let e=()=>{L.hidden=!0;try{localStorage.setItem("hv-onboard","1")}catch{}};document.getElementById("ob-ok").addEventListener("click",e),window.addEventListener("keydown",r=>{r.key==="Escape"&&!L.hidden&&e()})}}let z={onTheme:null,onResize:null};document.getElementById("theme").addEventListener("click",()=>{m=document.documentElement.dataset.theme==="light"?"dark":"light",document.documentElement.dataset.theme=m;try{localStorage.setItem("hv-theme",m)}catch{}z.onTheme&&z.onTheme(m)}),document.getElementById("fs").addEventListener("click",()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}),window.addEventListener("resize",()=>{z.onResize&&z.onResize()}),typeof ResizeObserver!="undefined"&&new ResizeObserver(()=>{z.onResize&&z.onResize()}).observe(s),t.mount(s,z),window.__hvApplyStep0&&window.__hvApplyStep0();let M=new URLSearchParams(location.search).get("step");if(M!==null&&i&&i.steps&&i.steps.length){let a=Math.max(0,Math.min(i.steps.length-1,parseInt(M,10)||0)),e=[...document.querySelectorAll("[data-hv-step]")];e[a]&&e[a].click()}return z}var fe="#6FA8C9",P,n,ne,$=0,U=0,q={cx:0,cy:0,span:8},h={a:1,b:-2,c:-3};function Q(t,s){return getComputedStyle(document.documentElement).getPropertyValue(t).trim()||s}function ye(){return{bg:Q("--bg","#150e22"),text:Q("--text","#f2ecf8"),muted:Q("--muted","#a99cc0"),line:Q("--line","rgba(180,130,210,.16)"),panel:Q("--panel","#1e1433"),gold:Q("--gold","#E8B04B"),purple:Q("--purple","#A66BA6")}}var pe=()=>$<760,se=()=>pe()?$/2:($-320)/2,oe=()=>pe()?(U-400)/2:U/2,ee=()=>$/(2*q.span);function xe(t,s){for(t=Math.abs(t),s=Math.abs(s);s;){let o=t%s;t=s,s=o}return t||1}function X(t,s){s<0&&(t=-t,s=-s);let o=xe(t,s);return t/=o,s/=o,s===1?`${t}`:`${t}/${s}`}var O=()=>X(-h.b,2*h.a),D=()=>X(4*h.a*h.c-h.b*h.b,4*h.a),ue=()=>(4*h.a*h.c-h.b*h.b)/(4*h.a),ce=()=>h.b*h.b-4*h.a*h.c,ae=t=>t<0?` - ${-t}`:` + ${t}`;function J(){let{a:t,b:s,c:o}=h;if(t===0)return s===0?o===0?"y = 0":`y = ${o}`:`y = ${s===1?"":s===-1?"-":`${s}`}x${o===0?"":ae(o)}`;let m=t===1?"":t===-1?"-":`${t}`,l=s===0?"":s>0?` + ${s===1?"":s}x`:` - ${s===-1?"":-s}x`;return`y = ${m}x\xB2${l}${o===0?"":ae(o)}`}function he(){let{a:t,b:s}=h;if(s===0)return"x";let o=X(Math.abs(s),Math.abs(2*t));return t*s<0?`x - ${o}`:`x + ${o}`}function be(){let{a:t,b:s}=h,o=t===1?"":t===-1?"-":`${t}`,m=D(),l=m==="0"?"":m.startsWith("-")?` - ${m.slice(1)}`:` + ${m}`;return`y = ${o}(${he()})\xB2${l}`}function ve(t){let s=Math.pow(10,Math.floor(Math.log10(t)));for(let o of[1,2,5,10])if(o*s>=t)return o*s;return 10*s}function me(){let{a:t,b:s,c:o}=h,m=document.getElementById("gen"),l=document.getElementById("vtx"),E=document.getElementById("derive"),b=document.getElementById("props");m.textContent=J();let i=[],d=(c,y)=>i.push(`<div class="row"><span class="k">${c}</span><span class="v">${y}</span></div>`);if(t===0)l.textContent="",E.innerHTML="",d("\u8BF4\u660E","a = 0\uFF0C\u4E0D\u662F\u4E8C\u6B21\u51FD\u6570\uFF0C\u56FE\u50CF\u9000\u5316\u4E3A\u76F4\u7EBF"),s===0?d("\u56FE\u50CF",`y = ${o}\uFF0C\u6C34\u5E73\u7EBF`):d("\u56FE\u50CF",`\u4E00\u6B21\u51FD\u6570 y = ${J().slice(4)}`);else{l.textContent=be();let c=X(Math.abs(s),Math.abs(t)),y=c==="1"?"":Math.abs(s)%Math.abs(t)===0?c:`(${c})`,k=s===0?"x\xB2":`${s>0?"x\xB2 + ":"x\xB2 - "}${y}x`,C=t===1?"":t===-1?"-":`${t}`,L=D(),z=L==="0"?"":L.startsWith("-")?` - ${L.slice(1)}`:` + ${L}`;E.innerHTML=s===0?"<div>b = 0\uFF0C\u5BF9\u79F0\u8F74\u5C31\u662F y \u8F74\uFF0C\u9876\u70B9\u5728 y \u8F74\u4E0A</div>":[`<div>${J().slice(4)}</div>`,`<div>= ${C}(${k})${o===0?"":ae(o)}</div>`,`<div>= ${C}(${he()})\xB2${z}</div>`].join(""),d("\u5F00\u53E3\u65B9\u5411",t>0?"a > 0\uFF0C\u5F00\u53E3\u5411\u4E0A":"a < 0\uFF0C\u5F00\u53E3\u5411\u4E0B"),d("\u5F00\u53E3\u5927\u5C0F",`|a| = ${Math.abs(t)}\uFF0C|a| \u8D8A\u5927\u5F00\u53E3\u8D8A\u5C0F`),d("\u5BF9\u79F0\u8F74",`x = -b/(2a) = ${O()}`),d("\u9876\u70B9",`(${O()}, ${D()})`),d("\u6700\u503C",`x = ${O()} \u65F6\uFF0C${t>0?`\u6700\u5C0F\u503C ${D()}`:`\u6700\u5927\u503C ${D()}`}`),d("\u4E0E y \u8F74\u4EA4\u70B9",`(0, ${o})`);let M=ce(),K=M>0?Number.isInteger(Math.sqrt(M))?`\u4E24\u4E2A\uFF1A(${X(-h.b-Math.sqrt(M),2*t)}, 0)\u3001(${X(-h.b+Math.sqrt(M),2*t)}, 0)`:"\u4E24\u4E2A\u4EA4\u70B9":M===0?`\u4E00\u4E2A\uFF1A(${O()}, 0)`:"\u6CA1\u6709";d("\u4E0E x \u8F74\u4EA4\u70B9",`\u0394 = ${M} ${M>0?">":M===0?"=":"<"} 0\uFF0C${K}`)}b.innerHTML=i.join("")}function V(){let t=ye();n.fillStyle=t.bg,n.fillRect(0,0,$,U);let s=ee(),o=se(),m=oe(),l=e=>o+(e-q.cx)*s,E=e=>m-(e-q.cy)*s,b=e=>q.cx+(e-o)/s,i=e=>q.cy-(e-m)/s,d=ve(q.span/5);n.strokeStyle=t.line,n.lineWidth=1,n.beginPath();for(let e=Math.ceil(b(0)/d)*d;l(e)<=$;e+=d){let r=l(e);n.moveTo(r,0),n.lineTo(r,U)}for(let e=Math.ceil(i(U)/d)*d;E(e)>=0;e+=d){let r=E(e);n.moveTo(0,r),n.lineTo($,r)}n.stroke(),n.strokeStyle=t.text,n.fillStyle=t.text,n.lineWidth=2;let c=l(0),y=E(0);n.beginPath(),n.moveTo(0,y),n.lineTo($,y),n.moveTo(c,0),n.lineTo(c,U),n.stroke(),n.beginPath(),n.moveTo($-14,y),n.lineTo($-2,y),n.lineTo($-14,y-5),n.lineTo($-14,y+5),n.closePath(),n.moveTo(c,12),n.lineTo(c,2),n.lineTo(c-5,13),n.lineTo(c+5,13),n.closePath(),n.fill(),n.font="italic bold 19px serif",n.textAlign="left",n.fillText("x",$-20,y+22),n.fillText("y",c+10,16),n.font='16px "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif',n.fillStyle=t.muted,n.textAlign="center";for(let e=Math.ceil(b(0)/d)*d;l(e)<=$;e+=d)Math.abs(e)<1e-9||n.fillText(`${+e.toFixed(6)}`,l(e),Math.min(Math.max(y+20,20),U-8));n.textAlign="right";for(let e=Math.ceil(i(U)/d)*d;E(e)>=0;e+=d)Math.abs(e)<1e-9||n.fillText(`${+e.toFixed(6)}`,Math.min(Math.max(c-10,34),$-8),E(e)+5);let{a:k,b:C,c:L}=h,z=e=>k*e*e+C*e+L;n.strokeStyle=t.gold,n.lineWidth=3.5,n.beginPath();for(let e=0;e<=$;e+=2){let r=E(z(b(e)));e===0?n.moveTo(e,r):n.lineTo(e,r)}n.stroke();let M=(e,r,f)=>{let w=l(e),B=E(r);w<10||w>$-10||B<10||B>U-10||(n.fillStyle=fe,n.beginPath(),n.arc(w,B,5.5,0,Math.PI*2),n.fill(),n.font='bold 17px "Noto Sans SC","PingFang SC",sans-serif',n.textAlign=w<$-120?"left":"right",n.fillText(f,w+(w<$-120?12:-12),B-12))};if(k!==0){let e=-C/(2*k),r=ue();n.strokeStyle=t.purple,n.lineWidth=2,n.setLineDash([7,6]),n.beginPath(),n.moveTo(l(e),0),n.lineTo(l(e),U),n.stroke(),n.setLineDash([]),n.fillStyle=t.purple,n.font='bold 17px "Noto Sans SC","PingFang SC",sans-serif',n.textAlign=l(e)<$-80?"left":"right",n.fillText(`x = ${O()}`,l(e)+(l(e)<$-80?8:-8),30),M(e,r,`\u9876\u70B9 (${O()}, ${D()})`),C!==0&&M(0,L,`(0, ${L})`);let f=ce();if(f>0&&Number.isInteger(Math.sqrt(f))){let w=Math.sqrt(f);M((-C-w)/(2*k),0,`(${X(-C-w,2*k)}, 0)`),M((-C+w)/(2*k),0,`(${X(-C+w,2*k)}, 0)`)}}let K=J();n.font='bold 23px "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';let a=n.measureText(K).width;n.fillStyle=t.panel,n.strokeStyle=t.line,n.lineWidth=1.5,n.beginPath(),n.roundRect?n.roundRect(16,14,a+30,42,10):n.rect(16,14,a+30,42),n.fill(),n.stroke(),n.fillStyle=t.gold,n.textAlign="left",n.textBaseline="middle",n.fillText(K,31,36),n.textBaseline="alphabetic"}var Ee=`
+#stage.pad{top:106px}
+@media (max-width:1120px){#hint{display:none}}
+#panel{position:fixed;top:114px;right:14px;z-index:15;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;align-items:center;gap:10px;font-size:18px}
+.slider-row .sym{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:20px;width:1.1em}
+.slider-row input{flex:1;accent-color:var(--gold)}
+.slider-row b{min-width:2em;text-align:center;font-size:19px}
+#gen{font-size:22px;font-weight:700;text-align:center;padding:7px 6px;background:var(--panel2);border-radius:8px;color:var(--gold);font-family:Georgia,'Times New Roman',serif}
+#vtx{font-size:19px;font-weight:700;text-align:center;color:var(--purple);font-family:Georgia,'Times New Roman',serif;min-height:1.2em}
+#derive{font-size:16px;line-height:1.7;color:var(--text);background:var(--panel2);border-radius:8px;padding:8px 10px;font-family:Georgia,'Times New Roman',serif}
+#derive div{white-space:nowrap;overflow-x:auto}
+#props{display:flex;flex-direction:column;gap:7px;font-size:16.5px;line-height:1.5}
+#props .row{display:flex;gap:8px}
+#props .k{color:var(--muted);flex:none;width:6em}
+#props .v{font-weight:600}
+#reset{align-self:stretch}
+@media (max-width:760px){#panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;padding:10px 12px;gap:8px}#props{font-size:15.5px}#derive{display:none}}
+`;function we(t){let s=document.createElement("style");s.textContent=Ee,t.appendChild(s);let o=document.createElement("div");o.id="panel",o.innerHTML=['<label class="slider-row"><span class="sym">a</span><input id="sa" type="range" min="-3" max="3" step="1" value="1" aria-label="a \u503C"><b id="va">1</b></label>','<label class="slider-row"><span class="sym">b</span><input id="sb" type="range" min="-6" max="6" step="1" value="-2" aria-label="b \u503C"><b id="vb">-2</b></label>','<label class="slider-row"><span class="sym">c</span><input id="sc" type="range" min="-6" max="6" step="1" value="-3" aria-label="c \u503C"><b id="vc">-3</b></label>','<div id="gen"></div>','<div id="vtx"></div>','<div id="derive"></div>','<div id="props"></div>','<button class="btn" id="reset" type="button" aria-label="\u590D\u4F4D\u89C6\u56FE">\u590D\u4F4D</button>'].join(""),t.appendChild(o);for(let[m,l,E]of[["#sa","a","#va"],["#sb","b","#vb"],["#sc","c","#vc"]]){let b=o.querySelector(m),i=o.querySelector(E);b.addEventListener("input",()=>{h[l]=+b.value,i.textContent=b.value,me(),V()})}o.querySelector("#reset").addEventListener("click",()=>{q.cx=0,q.cy=0,q.span=8,V()})}var le=[{name:"\u770B\u5F00\u53E3",abc:{a:1,b:-2,c:-3},guide:"\u5148\u522B\u52A8\u6ED1\u6746\uFF0C\u770B\u8FD9\u6761 y = x\xB2 - 2x - 3\u3002\u9884\u6D4B\u4E00\u4E0B\uFF1A\u628A a \u62D6\u5230 -1\uFF0C\u5F00\u53E3\u4F1A\u600E\u6837\u7FFB\uFF1F\u628A a \u62D6\u5230 3\uFF0C\u5F00\u53E3\u53D8\u5BBD\u8FD8\u662F\u53D8\u7A84\uFF1F\u8BF4\u5B8C\u518D\u52A8\u624B\u9A8C\u8BC1\u3002",note:"a \u51B3\u5B9A\u629B\u7269\u7EBF\u7684\u5F00\u53E3\u65B9\u5411\u4E0E\u5BBD\u7A84\uFF1Aa > 0 \u5F00\u53E3\u5411\u4E0A\uFF0Ca < 0 \u5F00\u53E3\u5411\u4E0B\uFF0Ca \u4ECE\u6B63\u53D8\u8D1F\uFF0C\u56FE\u50CF\u7ED5\u9876\u70B9\u4E0A\u4E0B\u7FFB\u8F6C\u3002|a| \u8D8A\u5927\u5F00\u53E3\u8D8A\u5C0F\uFF08\u8D8A\u7A84\uFF09\uFF0C|a| \u8D8A\u5C0F\u5F00\u53E3\u8D8A\u5927\uFF08\u8D8A\u5BBD\uFF09\u3002\u6CE8\u610F a \u7BA1\u5F00\u53E3\uFF0Cc \u624D\u7BA1\u4E0E y \u8F74\u7684\u4EA4\u70B9\uFF0C\u4E24\u8005\u4E0D\u80FD\u6DF7\u3002"},{name:"\u627E\u9876\u70B9",abc:{a:1,b:2,c:-3},guide:"\u5BF9\u7167\u53F3\u4FA7\u4E09\u884C\u914D\u65B9\u63A8\u5BFC\uFF0C\u8BFB\u51FA\u9876\u70B9\u548C\u5BF9\u79F0\u8F74\u3002\u518D\u628A b \u4ECE -2 \u62D6\u5230 2\uFF0C\u7D2B\u8272\u865A\u7EBF\u5BF9\u79F0\u8F74\u79FB\u5230\u4E86\u54EA\u8FB9\uFF1F\u7528 x = -b/(2a) \u89E3\u91CA\u8FD9\u4E2A\u79FB\u52A8\u89C4\u5F8B\u3002",note:"\u5BF9\u79F0\u8F74\u662F\u76F4\u7EBF x = -b/(2a)\uFF0C\u9876\u70B9\u4E3A (-b/(2a), (4ac - b\xB2)/(4a))\u3002a\u3001b \u540C\u53F7\u65F6\u8F74\u5728 y \u8F74\u5DE6\u4FA7\uFF0C\u5F02\u53F7\u65F6\u5728\u53F3\u4FA7\uFF08\u300C\u5DE6\u540C\u53F3\u5F02\u300D\uFF09\u3002\u628A\u4E00\u822C\u5F0F\u914D\u65B9\u6210 y = a(x - h)\xB2 + k\uFF0Ch\u3001k \u5C31\u662F\u5BF9\u79F0\u8F74\u4E0E\u9876\u70B9\u7EB5\u5750\u6807\uFF0C\u914D\u65B9\u662F\u8BFB\u9876\u70B9\u7684\u901A\u7528\u529E\u6CD5\u3002"},{name:"\u6570\u4EA4\u70B9",abc:{a:1,b:-2,c:1},guide:"\u73B0\u5728\u629B\u7269\u7EBF\u4E0E x \u8F74\u53EA\u6709\u4E00\u4E2A\u516C\u5171\u70B9\uFF0C\u9876\u70B9\u6070\u597D\u843D\u5728 x \u8F74\u4E0A\uFF0C\u56E0\u4E3A \u0394 = b\xB2 - 4ac = 0\u3002\u53EA\u62D6 c \u6ED1\u6746\u5230 -3 \u518D\u5230 3\uFF0C\u6570\u4E00\u6570\u4EA4\u70B9\u4E2A\u6570\uFF0C\u7528 \u0394 \u7684\u7B26\u53F7\u603B\u7ED3\u4E09\u79CD\u60C5\u51B5\u3002",note:"c \u51B3\u5B9A\u56FE\u50CF\u4E0E y \u8F74\u7684\u4EA4\u70B9 (0, c)\uFF0C\u53EA\u62D6 c \u629B\u7269\u7EBF\u6574\u4F53\u4E0A\u4E0B\u5E73\u79FB\uFF0C\u5F62\u72B6\u4E0D\u53D8\u3002\u4E0E x \u8F74\u4EA4\u70B9\u4E2A\u6570\u7531\u5224\u522B\u5F0F \u0394 = b\xB2 - 4ac \u51B3\u5B9A\uFF1A\u0394 > 0 \u4E24\u4E2A\u4EA4\u70B9\uFF0C\u0394 = 0 \u4E00\u4E2A\uFF08\u9876\u70B9\u843D\u5728 x \u8F74\u4E0A\uFF0C\u76F8\u5207\uFF09\uFF0C\u0394 < 0 \u6CA1\u6709\u3002\u0394 \u672C\u8D28\u4E0A\u6765\u81EA\u914D\u65B9\u540E (x - h)\xB2 \u9879\u80FD\u5426\u7B49\u4E8E\u96F6\u3002"}],Se="\u4E8C\u6B21\u51FD\u6570 y = ax\xB2 + bx + c\uFF08a \u2260 0\uFF09\u7684\u56FE\u50CF\u662F\u629B\u7269\u7EBF\uFF1Aa \u5B9A\u5F00\u53E3\u65B9\u5411\uFF0Ca > 0 \u5F00\u53E3\u5411\u4E0A\uFF0Ca < 0 \u5F00\u53E3\u5411\u4E0B\uFF0C|a| \u8D8A\u5927\u5F00\u53E3\u8D8A\u5C0F\uFF1B\u5BF9\u79F0\u8F74\u662F\u76F4\u7EBF x = -b/(2a)\uFF0C\u9876\u70B9\u4E3A (-b/(2a), (4ac - b\xB2)/(4a))\uFF0C\u628A\u4E00\u822C\u5F0F\u914D\u65B9\u6210 y = a(x - h)\xB2 + k \u5C31\u80FD\u76F4\u63A5\u8BFB\u51FA\u9876\u70B9\uFF1Bc \u51B3\u5B9A\u56FE\u50CF\u4E0E y \u8F74\u7684\u4EA4\u70B9 (0, c)\uFF1B\u5224\u522B\u5F0F \u0394 = b\xB2 - 4ac \u51B3\u5B9A\u4E0E x \u8F74\u4EA4\u70B9\u4E2A\u6570\uFF1A\u0394 > 0 \u6709\u4E24\u4E2A\u4EA4\u70B9\uFF0C\u0394 = 0 \u53EA\u6709\u4E00\u4E2A\uFF08\u9876\u70B9\u5728 x \u8F74\u4E0A\uFF09\uFF0C\u0394 < 0 \u6CA1\u6709\u3002";function ie(t){Object.assign(h,le[t].abc);for(let[s,o,m]of[["#sa","a","#va"],["#sb","b","#vb"],["#sc","c","#vc"]]){let l=document.querySelector(s),E=document.querySelector(m);l&&(l.value=String(h[o])),E&&(E.textContent=String(h[o]))}me(),V(),document.querySelectorAll("[data-hv-step]").forEach((s,o)=>s.setAttribute("aria-pressed",String(o===t))),document.querySelectorAll("[data-hv-guide]").forEach((s,o)=>{s.style.display=o===t?"":"none"})}var $e={meta:"\u6570\u5B66\xB7\u4E5D\u5E74\u7EA7\uFF5C\u4EBA\u6559\u7248\u4E5D\u5E74\u7EA7\u4E0A\u518C\u7B2C\u4E8C\u5341\u4E8C\u7AE0\u300A\u4E8C\u6B21\u51FD\u6570\u300B\xB7 \u56FE\u50CF\u4E0E\u7CFB\u6570",steps:le.map((t,s)=>({name:t.name,guide:t.guide,note:t.note,apply:()=>ie(s)})),summary:Se,quiz:[{q:"\u629B\u7269\u7EBF y = -2x\xB2 + 3 \u7684\u5F00\u53E3\u65B9\u5411\u548C\u4E0E y \u8F74\u7684\u4EA4\u70B9\u5206\u522B\u662F\uFF1F",opts:["\u5F00\u53E3\u5411\u4E0A\uFF0C\u4EA4\u70B9 (0, 3)","\u5F00\u53E3\u5411\u4E0B\uFF0C\u4EA4\u70B9 (0, 3)","\u5F00\u53E3\u5411\u4E0B\uFF0C\u4EA4\u70B9 (0, -2)","\u5F00\u53E3\u5411\u4E0A\uFF0C\u4EA4\u70B9 (0, -2)"],a:1,why:"a = -2 < 0 \u5F00\u53E3\u5411\u4E0B\uFF1Bc = 3 \u51B3\u5B9A\u4E0E y \u8F74\u4EA4\u70B9 (0, 3)\u3002\u5F00\u53E3\u770B a\u3001\u4EA4\u70B9\u770B c\uFF0C\u4E24\u4E2A\u7CFB\u6570\u5404\u7BA1\u4E00\u4EF6\u4E8B\uFF0C\u4E0D\u80FD\u6DF7\u3002"},{q:"\u4E8C\u6B21\u51FD\u6570 y = ax\xB2 + bx + c \u7684\u5BF9\u79F0\u8F74\u662F\uFF1F",opts:["\u76F4\u7EBF x = b/(2a)","\u76F4\u7EBF x = -b/(2a)","\u76F4\u7EBF x = -c/(2a)","y \u8F74"],a:1,why:"\u914D\u65B9\u5F97 y = a(x + b/(2a))\xB2 + (4ac - b\xB2)/(4a)\uFF0C\u5BF9\u79F0\u8F74 x = -b/(2a)\u3002a\u3001b \u5F02\u53F7\u65F6\u8F74\u5728 y \u8F74\u53F3\u4FA7\uFF0C\u540C\u53F7\u65F6\u5728\u5DE6\u4FA7\u3002"},{q:"a\u3001b \u6EE1\u8DB3\u4EC0\u4E48\u5173\u7CFB\u65F6\uFF0C\u5BF9\u79F0\u8F74\u843D\u5728 y \u8F74\u53F3\u4FA7\uFF1F",opts:["a\u3001b \u540C\u53F7","a\u3001b \u5F02\u53F7","b = 0","a > 0 \u5C31\u884C"],a:1,why:"\u8F74 x = -b/(2a) > 0 \u9700\u8981 -b \u4E0E a \u540C\u53F7\uFF0C\u5373 a\u3001b \u5F02\u53F7\u2014\u2014\u300C\u5DE6\u540C\u53F3\u5F02\u300D\u3002b = 0 \u65F6\u8F74\u5C31\u662F y \u8F74\u3002"},{q:"\u629B\u7269\u7EBF\u4E0E x \u8F74\u53EA\u6709\u4E00\u4E2A\u516C\u5171\u70B9\uFF0C\u5224\u522B\u5F0F \u0394 \u6EE1\u8DB3\uFF1F",opts:["\u0394 > 0","\u0394 = 0","\u0394 < 0","\u0394 \u2260 0"],a:1,why:"\u0394 = b\xB2 - 4ac = 0 \u65F6\u914D\u65B9\u540E\u7684\u5E73\u65B9\u9879\u6070\u597D\u4E3A\u96F6\uFF0C\u9876\u70B9\u843D\u5728 x \u8F74\u4E0A\uFF0C\u53EA\u6709\u4E00\u4E2A\u516C\u5171\u70B9\uFF08\u76F8\u5207\uFF09\uFF1B\u0394 > 0 \u4E24\u4E2A\uFF0C\u0394 < 0 \u6CA1\u6709\u3002"},{q:"\u53EA\u628A c \u4ECE -3 \u62D6\u5230 3\uFF0C\u56FE\u50CF\u600E\u4E48\u53D8\uFF1F",opts:["\u5F00\u53E3\u53D8\u5927","\u5BF9\u79F0\u8F74\u79FB\u52A8","\u6574\u4F53\u4E0A\u4E0B\u5E73\u79FB\uFF0C\u4E0E y \u8F74\u4EA4\u70B9\u53D8\u4E3A (0, 3)","\u4E0E x \u8F74\u4EA4\u70B9\u4E2A\u6570\u4E0D\u53D8"],a:2,why:"c \u662F\u4E0E y \u8F74\u4EA4\u70B9\u7684\u7EB5\u5750\u6807\uFF0C\u53EA\u62D6 c \u629B\u7269\u7EBF\u6574\u4F53\u4E0A\u4E0B\u5E73\u79FB\uFF0C\u5F00\u53E3\u548C\u5BF9\u79F0\u8F74\u90FD\u4E0D\u53D8\uFF1B\u5E73\u79FB\u4F1A\u6539\u53D8\u4E0E x \u8F74\u4EA4\u70B9\u4E2A\u6570\uFF0C\u9009\u9879\u56DB\u8BF4\u6CD5\u9519\u8BEF\u3002"}]};function ke(){let t=[{gen:"y = x\xB2 - 2x - 3",h:"1",k:"-4",d:16},{gen:"y = x\xB2 + 2x - 3",h:"-1",k:"-4",d:16},{gen:"y = x\xB2 - 2x + 1",h:"1",k:"0",d:0}];le.forEach((s,o)=>{ie(o);let m=-h.b/(2*h.a),l=ce(),E=Number.isFinite(m)&&Number.isFinite(ue())&&Number.isFinite(l)&&J()===t[o].gen&&O()===t[o].h&&D()===t[o].k&&l===t[o].d;window.__hvPushCheck(`\u73AF\u8282${o+1}\u9884\u8BBE`,E,`gen=${J()} h=${O()} k=${D()} \u0394=${l}`)}),ie(0)}function de(){let t=Math.min(devicePixelRatio,2);$=ne.clientWidth,U=ne.clientHeight,P.width=Math.round($*t),P.height=Math.round(U*t),P.style.width=$+"px",P.style.height=U+"px",n.setTransform(t,0,0,t,0,0),V()}re({teaching:$e,mount(t,s){ne=t,P=document.createElement("canvas"),P.style.cssText="position:absolute;inset:0;touch-action:none;cursor:grab",t.appendChild(P),n=P.getContext("2d"),we(t),de(),new URLSearchParams(location.search).has("selftest")&&ke();let o=(c,y,k)=>{let C=ee(),L=q.cx+(c-se())/C,z=q.cy-(y-oe())/C;q.span=Math.min(40,Math.max(1.5,q.span*k));let M=ee();q.cx=L-(c-se())/M,q.cy=z+(y-oe())/M,V()},m=!1,l=0,E=0,b=new Map,i=0;P.addEventListener("pointerdown",c=>{if(b.set(c.pointerId,[c.clientX,c.clientY]),b.size===1&&(m=!0,l=c.clientX,E=c.clientY,P.style.cursor="grabbing"),b.size===2){let[y,k]=[...b.values()];i=Math.hypot(y[0]-k[0],y[1]-k[1])}P.setPointerCapture(c.pointerId)}),P.addEventListener("pointermove",c=>{if(!b.has(c.pointerId))return;if(b.set(c.pointerId,[c.clientX,c.clientY]),b.size===2){let[k,C]=[...b.values()],L=Math.hypot(k[0]-C[0],k[1]-C[1]),z=(k[0]+C[0])/2,M=(k[1]+C[1])/2;i>0&&o(z,M,i/Math.max(L,1)),i=L;return}if(!m)return;let y=ee();q.cx-=(c.clientX-l)/y,q.cy+=(c.clientY-E)/y,l=c.clientX,E=c.clientY,V()});let d=c=>{b.delete(c.pointerId),b.size===0&&(m=!1,P.style.cursor="grab")};P.addEventListener("pointerup",d),P.addEventListener("pointercancel",d),P.addEventListener("wheel",c=>{c.preventDefault(),o(c.clientX,c.clientY,1+Math.sign(c.deltaY)*.12)},{passive:!1}),s.onResize=de,s.onTheme=V}});})();
+</script>
+</body>
+</html>

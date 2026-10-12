@@ -1,0 +1,732 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>语文教学资源 · HappyVibe 数智学园</title><meta name="description" content="语文学科 3D/2D 交互教学资源，按教材章节知识点组织，单文件可投屏"><meta property="og:title" content="语文教学资源 · HappyVibe 数智学园"><meta property="og:description" content="语文学科 3D/2D 交互教学资源，按教材章节知识点组织，单文件可投屏"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<style>.terminal[data-astro-cid-iemgukeu]{background:var(--terminal-bg);border:1px solid var(--line-strong);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}.terminal-bar[data-astro-cid-iemgukeu]{display:flex;align-items:center;gap:7px;padding:9px 14px;background:var(--bg-panel);border-bottom:1px solid var(--line)}.dot[data-astro-cid-iemgukeu]{width:11px;height:11px;border-radius:50%}.dot-r[data-astro-cid-iemgukeu]{background:#ff5f57}.dot-y[data-astro-cid-iemgukeu]{background:var(--gold)}.dot-g[data-astro-cid-iemgukeu]{background:#28c840}.terminal-title[data-astro-cid-iemgukeu]{margin-inline:auto;font-size:12px;color:var(--text-faint);letter-spacing:.04em}.terminal-body[data-astro-cid-iemgukeu]{padding:22px 24px}.terminal-body[data-astro-cid-iemgukeu] .mono,.terminal-body[data-astro-cid-iemgukeu] code{font-family:var(--mono)}
+</style>
+<link rel="stylesheet" href="/_astro/_subject_.CgnHcko-.css"></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link active" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container res-page" data-astro-cid-4gjpevom> <div class="terminal" data-astro-cid-iemgukeu> <div class="terminal-bar" aria-hidden="true" data-astro-cid-iemgukeu> <span class="dot dot-r" data-astro-cid-iemgukeu></span> <span class="dot dot-y" data-astro-cid-iemgukeu></span> <span class="dot dot-g" data-astro-cid-iemgukeu></span> <span class="terminal-title mono" data-astro-cid-iemgukeu>happyvibe resources / chinese</span> </div> <div class="terminal-body" data-astro-cid-iemgukeu>  <p class="kicker mono" data-astro-cid-4gjpevom>// 语文 · 自产 8 · 外链 18</p> <h1 class="res-title" data-astro-cid-4gjpevom><span class="mono" style="color:#FF8FA3" data-astro-cid-4gjpevom>语</span> 语文教学资源</h1> <p class="res-sub text-muted" data-astro-cid-4gjpevom>卡片即实拍界面。自产资源点击全屏打开，悬停卡片可看实时运行效果。</p>  </div> </div>  <div class="gfilter" role="tablist" aria-label="按年级筛选" data-astro-cid-4gjpevom> <span class="glabel" data-astro-cid-4gjpevom>年级</span> <button class="gchip on" data-g="all" type="button" data-astro-cid-4gjpevom>全部</button> <button class="gchip" data-g="1" type="button" data-astro-cid-4gjpevom>1 年级</button><button class="gchip" data-g="2" type="button" data-astro-cid-4gjpevom>2 年级</button><button class="gchip" data-g="3" type="button" data-astro-cid-4gjpevom>3 年级</button><button class="gchip" data-g="4" type="button" data-astro-cid-4gjpevom>4 年级</button><button class="gchip" data-g="5" type="button" data-astro-cid-4gjpevom>5 年级</button><button class="gchip" data-g="6" type="button" data-astro-cid-4gjpevom>6 年级</button><button class="gchip" data-g="7" type="button" data-astro-cid-4gjpevom>7 年级</button><button class="gchip" data-g="8" type="button" data-astro-cid-4gjpevom>8 年级</button><button class="gchip" data-g="9" type="button" data-astro-cid-4gjpevom>9 年级</button> </div> <div class="filters" role="tablist" aria-label="按教材筛选" data-astro-cid-4gjpevom> <span class="glabel" data-astro-cid-4gjpevom>教材</span> <button class="gchip on" data-b="all" type="button" data-astro-cid-4gjpevom>全部</button> <button class="gchip" data-b="统编版一年级上下册" type="button" data-astro-cid-4gjpevom>统编版一年级上下册</button><button class="gchip" data-b="统编版一年级上册" type="button" data-astro-cid-4gjpevom>统编版一年级上册</button><button class="gchip" data-b="统编版七年级上册" type="button" data-astro-cid-4gjpevom>统编版七年级上册</button><button class="gchip" data-b="统编版初中通用" type="button" data-astro-cid-4gjpevom>统编版初中通用</button><button class="gchip" data-b="统编版小学至初中" type="button" data-astro-cid-4gjpevom>统编版小学至初中</button><button class="gchip" data-b="统编版小学通用" type="button" data-astro-cid-4gjpevom>统编版小学通用</button> </div> <div class="filters" role="tablist" aria-label="按章节筛选" data-astro-cid-4gjpevom> <span class="glabel" data-astro-cid-4gjpevom>章节</span> <button class="gchip on" data-u="all" type="button" data-astro-cid-4gjpevom>全部</button> <button class="gchip" data-u="写作单元" type="button" data-astro-cid-4gjpevom>写作单元</button><button class="gchip" data-u="古诗文积累" type="button" data-astro-cid-4gjpevom>古诗文积累</button><button class="gchip" data-u="文言文阅读" type="button" data-astro-cid-4gjpevom>文言文阅读</button><button class="gchip" data-u="第二单元 汉语拼音" type="button" data-astro-cid-4gjpevom>第二单元 汉语拼音</button><button class="gchip" data-u="识字与写字" type="button" data-astro-cid-4gjpevom>识字与写字</button><button class="gchip" data-u="词句品析" type="button" data-astro-cid-4gjpevom>词句品析</button><button class="gchip" data-u="语文园地" type="button" data-astro-cid-4gjpevom>语文园地</button><button class="gchip" data-u="课外古诗词诵读" type="button" data-astro-cid-4gjpevom>课外古诗词诵读</button> </div>  <section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>古代诗歌 · 元曲意象</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-tianjingsa?embed=1" data-grades="7" data-book="统编版七年级上册" data-unit="课外古诗词诵读" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-tianjingsa" target="_blank" rel="noopener" aria-label="打开 天净沙·秋思 意境长卷" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-tianjingsa.jpg" alt="天净沙·秋思 意境长卷 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>7 年级 · 初中</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-tianjingsa" target="_blank" rel="noopener" data-astro-cid-4gjpevom>天净沙·秋思 意境长卷</a> <p class="card-sub" data-astro-cid-4gjpevom>古代诗歌 · 元曲意象</p> <p class="card-desc" data-astro-cid-4gjpevom>诗文精读投屏：逐景品意象，学生先说画面再点出诗句印证；滑杆推移暮色体会氛围。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>元曲</span><span class="chip" data-astro-cid-4gjpevom>意象</span><span class="chip" data-astro-cid-4gjpevom>情境教学</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-tianjingsa" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>找出曲中九个意象，说出意象叠加营造的萧瑟氛围。</li>
+<li>结合「夕阳西下」体会游子的「断肠」之情，理解景中含情的写法。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>只罗列景物说不出氛围：要引导学生给景物「加温度」——枯、老、昏、古、瘦都是修饰语。</li>
+<li>把「小桥流水人家」当成温馨闲笔——以乐景衬哀情，反衬游子无家可归。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>看画卷（约 4 分）</td><td>拖动长卷整体浏览，用一句话说看到的画面</td><td>「这幅画给你什么感觉？从哪里看出来？」</td><td>camX=0，dusk=0.35</td></tr><tr><td>找意象（约 7 分）</td><td>点击枯藤、老树、昏鸦等景物，对照高亮的曲句</td><td>「哪个字让老树有了萧瑟感？」</td><td>定位枯藤处，选中「枯藤」</td></tr><tr><td>品暮色（约 5 分）</td><td>拖暮色滑杆从清晨拉到黄昏，观察画面变化</td><td>「为什么这九种景物放在黄昏里最合适？」</td><td>camX=2650，dusk=0.05（晨）</td></tr><tr><td>悟诗情（约 5 分）</td><td>走到断肠人前，结合暮色最深处读末句</td><td>「夕阳西下了，他还在天涯——他在想什么？」</td><td>camX=3200，dusk=0.95，选中「断肠人」</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>《天净沙·秋思》（马致远）：枯藤、老树、昏鸦、小桥、流水、人家、古道、西风、瘦马九个意象直接叠加，再以「夕阳西下」点明时刻，末句「断肠人在天涯」直抒胸臆。写法：景中含情、以乐景衬哀情。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>曲牌与题目的区分</td><td>基础常识辨析</td></tr><tr><td>2</td><td>「列锦」手法识别</td><td>干扰项混入比喻、对偶</td></tr><tr><td>3</td><td>「夕阳西下」的作用</td><td>直击「时间选择即抒情」</td></tr><tr><td>4</td><td>乐景写哀情</td><td>干扰项「缓和悲凉」反方向陷阱</td></tr><tr><td>5</td><td>核心手法与答题路径</td><td>干扰项混入托物言志、用典</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开长卷，只看画面不出示诗句，请学生用一句话描述看到了什么。</li>
+<li>点击「枯藤」「老树」等景物，诗句中对应词高亮，对照画面品词。</li>
+<li>拖动暮色滑杆，讨论：为什么把九种景物放在黄昏里？</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给意象、列锦、景中含情与答题三步法；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版七年级上册课外古诗词诵读；写景散文意象教学通用。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>识字与写字 · 笔顺</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-stroke-order?embed=1" data-grades="1,2,3" data-book="统编版一年级上下册" data-unit="识字与写字" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-stroke-order" target="_blank" rel="noopener" aria-label="打开 易错字笔顺对比" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-stroke-order.jpg" alt="易错字笔顺对比 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>1、2、3 年级 · 小学</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-stroke-order" target="_blank" rel="noopener" data-astro-cid-4gjpevom>易错字笔顺对比</a> <p class="card-sub" data-astro-cid-4gjpevom>识字与写字 · 笔顺</p> <p class="card-desc" data-astro-cid-4gjpevom>写字课投屏：逐笔对照规范笔顺与易错笔顺，学生先说差异再揭示，最后跟笔顺书空。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>识字写字</span><span class="chip" data-astro-cid-4gjpevom>笔顺</span><span class="chip" data-astro-cid-4gjpevom>田字格</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-stroke-order" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>写对「火、出、里、方、万」等常见易错字的笔顺。</li>
+<li>归纳笔顺基本规则（从上到下、先中间后两边、先外后内再封口等）。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>「火」：先写两边点撇、再写中间「人」——学生常先写「人」。</li>
+<li>「万」：先写横折钩再写撇——学生常把撇写在折钩前。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>认一认（约 4 分）</td><td>观察「火」的空格，口头说笔顺再演示</td><td>「火的第一笔是哪一笔？为什么？」</td><td>ch=火，停在空格（step=-1）</td></tr><tr><td>比一比（约 7 分）</td><td>逐笔推进到分歧笔（第 2 笔），左右并排看正误</td><td>「两种写法差在哪一笔？错的那种错在哪？」</td><td>ch=火，step=1（分歧笔处）</td></tr><tr><td>找规律（约 4 分）</td><td>看「里」写到第 5 笔，归纳「先横后竖」等规则</td><td>「里字的横和竖谁先写？这是什么规则？」</td><td>ch=里，step=4</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>笔顺基本规则：从上到下、从左到右、先横后竖、先撇后捺、先中间后两边、先外后内再封口。易错字记忆：火（点、撇、人）、万（横、折钩、撇）、里（日字加两横一竖，先横后竖）。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>「火」第二笔</td><td>点撇之争直击错例</td></tr><tr><td>2</td><td>「里」的笔画数</td><td>断竖、漏横导致数错的干扰</td></tr><tr><td>3</td><td>「里」的先竖后横</td><td>跨部件与部件内规则的优先级</td></tr><tr><td>4</td><td>「方」最后写撇</td><td>与「万」同类易错迁移</td></tr><tr><td>5</td><td>笔顺规则的范围</td><td>干扰项「先难后易」非规则</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开，点选要教的字（如火），先请学生举起手指书空，说说自己第几笔写什么。</li>
+<li>点「下笔」逐步对照：左格是规范笔顺，右格是常见错误笔顺，红色序号标出错在哪一笔，请学生说出两边不同。</li>
+<li>点「重播」完整看一遍，全班跟着左格书空；再点下一个字换字练习。也可以点格子里的序号直接跳到某一笔。</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给规则的适用层次与错例分析；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版小学语文一年级：火、里、方见一年级上册写字表，出、万在一年级下册要求会写；各版本低年段识字写字教学通用（以所用教材当期生字表为准）。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>汉语拼音 · 声母韵母</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-pinyin?embed=1" data-grades="1" data-book="统编版一年级上册" data-unit="第二单元 汉语拼音" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-pinyin" target="_blank" rel="noopener" aria-label="打开 拼音声母韵母表" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-pinyin.jpg" alt="拼音声母韵母表 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>1 年级 · 小学</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-pinyin" target="_blank" rel="noopener" data-astro-cid-4gjpevom>拼音声母韵母表</a> <p class="card-sub" data-astro-cid-4gjpevom>汉语拼音 · 声母韵母</p> <p class="card-desc" data-astro-cid-4gjpevom>拼音新授与复习投屏：点开声母韵母放大卡，带读口型要点，用拼读示例练两拼音节。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>拼音</span><span class="chip" data-astro-cid-4gjpevom>声母</span><span class="chip" data-astro-cid-4gjpevom>韵母</span><span class="chip" data-astro-cid-4gjpevom>一年级</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-pinyin" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>认读 23 个声母、24 个韵母，能按组分类。</li>
+<li>区分前鼻音与后鼻音韵母，练习两拼、三拼音节的拼读。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>b、d、p、q 四个声母形近混淆——靠半圆朝向辨别。</li>
+<li>en/eng、in/ing 前后鼻音读混——口型与舌位要点要讲清。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>认声母（约 5 分）</td><td>点开 b 卡放大，读字形要点与示例字</td><td>「b 的半圆朝哪边？和 d 怎么区分？」</td><td>选中 b（声母）</td></tr><tr><td>辨前后鼻音（约 6 分）</td><td>对照 an 与 ao、an 与 ang 的卡片，读口型要点</td><td>「an 和 ang 舌尖位置有什么不同？」</td><td>选中 an 与 ao/ang 组</td></tr><tr><td>练拼读（约 6 分）</td><td>抽 ao 等韵母与声母拼读示例</td><td>「b—ao 拼出来是什么？」</td><td>选中 ao（韵母）</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>声母 23 个：b p m f、d t n l、g k h、j q x、zh ch sh r、z c s、y w。韵母 24 个：单韵母 6 个（a o e i u ü）、复韵母 18 个（含前鼻音 an en in un ün、后鼻音 ang eng ing ong）。前鼻音舌尖抵上牙龈，后鼻音舌根后缩。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>声母数量口径</td><td>干扰项 21/24/26 三种混数</td></tr><tr><td>2</td><td>b、p 送气之别</td><td>用纸条实验情境出题</td></tr><tr><td>3</td><td>前后鼻音舌位</td><td>直击方言区最大易错点</td></tr><tr><td>4</td><td>前后鼻韵母数量</td><td>4 与 5 的对调陷阱</td></tr><tr><td>5</td><td>拼读口诀的所指</td><td>干扰项混入复韵母滑读、标调</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开，点「b」格子弹出放大卡：老师照「口型要点」示范发音，学生对着口型跟读两遍。</li>
+<li>看拼读示例 b-ā→bā，带全班拼读；点「下个」沿表内顺序连过 b p m f 一组。</li>
+<li>复习时点韵母区对比易混音：先点 an 再点 ang，看口型要点里「舌尖抵上牙床」与「舌根抬起」的差别，学生边读边做手势区分。</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给发音部位、舌位自检法与拼读口诀；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版小学语文一年级上册汉语拼音单元；一年级期末复习与入学衔接阶段通用。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>标点符号 · 正确使用</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-punctuation?embed=1" data-grades="3,4,5,6" data-book="统编版小学通用" data-unit="语文园地" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-punctuation" target="_blank" rel="noopener" aria-label="打开 标点符号用法决策图" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-punctuation.jpg" alt="标点符号用法决策图 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>3、4、5、6 年级 · 小学</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-punctuation" target="_blank" rel="noopener" data-astro-cid-4gjpevom>标点符号用法决策图</a> <p class="card-sub" data-astro-cid-4gjpevom>标点符号 · 正确使用</p> <p class="card-desc" data-astro-cid-4gjpevom>标点讲评与习作修改投屏：学生先判断该用什么标点，再走决策流程验证，对照对错例句找错因。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>标点符号</span><span class="chip" data-astro-cid-4gjpevom>句子训练</span><span class="chip" data-astro-cid-4gjpevom>习作修改</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-punctuation" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>会根据句子位置与表达意图选择正确标点（问号、顿号、引号、分号等）。</li>
+<li>通过对错例句对照，说出常见标点误用的原因。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>该用问号的语气疑问句末误用句号——「你到底去不去。」。</li>
+<li>并列词语之间用逗号不用顿号——「苹果，橘子，香蕉」。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>病句会诊（约 5 分）</td><td>读示例病句，判断顿号误用处</td><td>「这三个水果之间该用什么？为什么不是逗号？」</td><td>view=flow，定位顿号终点卡</td></tr><tr><td>走流程验证（约 8 分）</td><td>从位置到意图走决策流程，自行选择标点</td><td>「先看位置还是先看语气？下一步怎么走？」</td><td>view=flow，流程起点</td></tr><tr><td>全景归纳（约 5 分）</td><td>切全景网格总览 11 种标点，各读一张要点卡</td><td>「引号和书名号的区别是什么？」</td><td>view=all 全景</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>选择标点先看句子位置再看语气意图：陈述句末用句号，语气疑问句末用问号，感叹句末用叹号；句内并列词语用顿号，分句之间用逗号，复句内部再用分号；提示语在后用句号加引号，提示语在中间用逗号；书名用书名号，特定称谓、引用、反语用引号。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>顿号的适用层级</td><td>用真实语境考「停顿长短」</td></tr><tr><td>2</td><td>反问句句末标点</td><td>直击「语气强就该感叹号」误区</td></tr><tr><td>3</td><td>分号的层级</td><td>与顿号、逗号级别互串</td></tr><tr><td>4</td><td>冒号的职能</td><td>与破折号、省略号分工辨析</td></tr><tr><td>5</td><td>判断口诀的方法本身</td><td>干扰项「凭语感」检验流程意识</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开，出示一个病句（如并列词语间用了逗号），请学生先说这里该用什么标点、为什么。</li>
+<li>点「走流程」沿「句子中间 → 并列的词语之间」走到顿号卡，用流程验证学生的判断。</li>
+<li>看对错两栏例句：金色是正确用法、红色是错误用法，请学生说出错例错在哪里；点「全景」总览 11 种标点按位置的分布，再换句练习。</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给停顿链条与分类框架；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版小学语文三至六年级各册语文园地「词句段运用」及习作讲评课通用；用法依据 GB/T 15834—2011《标点符号用法》。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>词句品析 · 修辞</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-rhetoric?embed=1" data-grades="7,8" data-book="统编版初中通用" data-unit="词句品析" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-rhetoric" target="_blank" rel="noopener" aria-label="打开 修辞手法例句对比" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-rhetoric.jpg" alt="修辞手法例句对比 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>7、8 年级 · 初中</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-rhetoric" target="_blank" rel="noopener" data-astro-cid-4gjpevom>修辞手法例句对比</a> <p class="card-sub" data-astro-cid-4gjpevom>词句品析 · 修辞</p> <p class="card-desc" data-astro-cid-4gjpevom>修辞新授与复习投屏：先看原句辨手法，再点显示标注验证，最后做本体喻体连线。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>修辞</span><span class="chip" data-astro-cid-4gjpevom>比喻</span><span class="chip" data-astro-cid-4gjpevom>拟人</span><span class="chip" data-astro-cid-4gjpevom>排比</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-rhetoric" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>辨认比喻、拟人、排比、夸张四种修辞，说出各自的判断特征。</li>
+<li>在例句中指出本体、喻体（比喻三要素），体会修辞的表达效果。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>把「像」字句都当比喻——「他像他爸爸」是同类比较，不是比喻。</li>
+<li>拟人与比喻混淆：拟人是直接把物当人写，不出现喻体。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>认手法（约 4 分）</td><td>读第 1 组例句（比喻），判断修辞类型</td><td>「这句话把什么比作什么？」</td><td>m=0 比喻，例句 1，无标注</td></tr><tr><td>验标注（约 7 分）</td><td>开启标注，看本体金色、喻体紫色、喻词虚线框</td><td>「本体和喻体必须是同类事物吗？」</td><td>m=0，例句 3，标注开</td></tr><tr><td>辨异同（约 6 分）</td><td>对比排比与夸张例句，说与比喻的区别</td><td>「三个句子排在一起，效果多了什么？」</td><td>m=2 排比，例句 2，标注开</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>比喻 = 本体 + 喻词 + 喻体，本体喻体必须是不同类事物且有相似点；拟人把物当人直接写（有人的动作情态）；排比三个及以上结构相似的句子并列，增强气势；夸张故意「言过其实」以突出特征（飞流直下三千尺）。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>本体喻体的识别</td><td>干扰项把喻体当本体</td></tr><tr><td>2</td><td>明喻暗喻的分界</td><td>喻词类型辨析</td></tr><tr><td>3</td><td>「像」字句的非比喻情况</td><td>同类相比陷阱</td></tr><tr><td>4</td><td>排比的构成要件</td><td>干扰项两项、字数相等</td></tr><tr><td>5</td><td>兼用修辞的完整判断</td><td>非此即彼误区</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开，选「比喻」出示《春》的例句，先隐藏标注，请学生说出本体、喻词、喻体。</li>
+<li>点「显示标注」：金色为本体、紫色为喻体、虚线框为喻词，全班对照检验；点「下一句」连看三例。</li>
+<li>换「排比」「夸张」照此辨析；最后回到比喻，做本体喻体连连看，请学生说出每对相似在哪里。</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给三要素、喻词分界与兼用判断法；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版语文七年级上册《春》《济南的冬天》（比喻、拟人、排比），七年级下册《紫藤萝瀑布》《木兰诗》（比喻、夸张），八年级下册《安塞腰鼓》（排比）；李白《望庐山瀑布》为小学学过篇目，初中复习引用。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>文言文 · 实词积累</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-classical-words?embed=1" data-grades="7,8,9" data-book="统编版初中通用" data-unit="文言文阅读" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-classical-words" target="_blank" rel="noopener" aria-label="打开 文言实词翻面卡片" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-classical-words.jpg" alt="文言实词翻面卡片 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>7、8、9 年级 · 初中</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-classical-words" target="_blank" rel="noopener" data-astro-cid-4gjpevom>文言实词翻面卡片</a> <p class="card-sub" data-astro-cid-4gjpevom>文言文 · 实词积累</p> <p class="card-desc" data-astro-cid-4gjpevom>文言复习课投屏：按册次筛出实词卡，先说义项再翻面读课文例句印证。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>文言文</span><span class="chip" data-astro-cid-4gjpevom>实词</span><span class="chip" data-astro-cid-4gjpevom>积累</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-classical-words" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>积累 40 个高频文言实词的常用义项，能说出例句中的词义。</li>
+<li>学会「代入检验」：把义项放回句子验证是否通顺。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>一词一义思维：如「亡」有逃亡、灭亡、通「无」等多个义项，需按句选义。</li>
+<li>死记义项不进句子——翻面卡必须配课文原句记忆。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>认一认（约 4 分）</td><td>浏览卡片墙，说出认识的词及其义项</td><td>「这些词里哪个你最有把握？哪个最陌生？」</td><td>默认词表</td></tr><tr><td>翻一翻（约 10 分）</td><td>抽卡翻面：正面义项、背面课文原句，代入检验</td><td>「把『走』的『跑』义放回例句，通吗？」</td><td>翻开若干卡</td></tr><tr><td>快问快答（约 6 分）</td><td>同桌互考：说义项猜词、给词说义</td><td>「『兵』在『草木皆兵』里是什么意思？」</td><td>按册次筛选抽卡</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>文言实词一字多义，积累方法：义项 + 课文原句 + 代入检验。高频词例：走（跑）、亡（逃亡/灭亡/通「无」）、兵（兵器/士兵/军队）、之（代词/助词「的」/动词「去」）、其（代词/表语气）。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>通假字音义</td><td>干扰项混入今音 shuō</td></tr><tr><td>2</td><td>「走」的古义</td><td>跑/逃/步行三义辨析</td></tr><tr><td>3</td><td>「狱」的古义</td><td>干扰项今义监狱</td></tr><tr><td>4</td><td>积累方法本身</td><td>干扰项单背义项、抄课文</td></tr><tr><td>5</td><td>「再」的古义</td><td>第二次与又一次之别</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开，点「七上」只留本册卡片，逐张出示正面，请学生先说出该字义项。</li>
+<li>点卡片翻面：课文例句中该字金色高亮，全班齐读例句，说出整句意思。</li>
+<li>点「全部翻回」重新盖住，第二轮快问快答；再点下一册次继续，或请学生用例句口头仿说一句。</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给三位一体积累法与古今异义要领；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版语文七至九年级文言课文：《论语》十二章、狼（七上），孙权劝学、卖油翁、陋室铭、爱莲说（七下），三峡、与朱元思书、生于忧患死于安乐、周亚夫军细柳（八上），桃花源记、小石潭记、虽有嘉肴（八下），岳阳楼记、醉翁亭记（九上），曹刿论战、邹忌讽齐王纳谏、送东阳马生序（九下）。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>写作 · 结构</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-essay-structure?embed=1" data-grades="7,8,9" data-book="统编版初中通用" data-unit="写作单元" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-essay-structure" target="_blank" rel="noopener" aria-label="打开 文章结构思维导图" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-essay-structure.jpg" alt="文章结构思维导图 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>7、8、9 年级 · 初中</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-essay-structure" target="_blank" rel="noopener" data-astro-cid-4gjpevom>文章结构思维导图</a> <p class="card-sub" data-astro-cid-4gjpevom>写作 · 结构</p> <p class="card-desc" data-astro-cid-4gjpevom>作文指导课投屏：展开文体结构树，按节点提示语搭提纲，学生仿照列出自己的提纲。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>写作</span><span class="chip" data-astro-cid-4gjpevom>结构</span><span class="chip" data-astro-cid-4gjpevom>思维导图</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-essay-structure" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>说出写景、写人、议论文三类文章的常用结构框架。</li>
+<li>用结构树搭提纲，把「节点提示」转化为自己的写作安排。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>写景文只有景没有「序」：时间序、空间序、游踪序要先定一个。</li>
+<li>议论文三要素位置颠倒：观点要在开头亮明，论据紧随，结尾回扣。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>认结构（约 5 分）</td><td>展开写景树一级节点，读三大块</td><td>「写景文开头做什么？中间写什么？」</td><td>tree=0，open=[0]</td></tr><tr><td>读写法（约 7 分）</td><td>逐个点开二级节点，读节点写作提示</td><td>「『多感官描写』这个节点可以写什么？」</td><td>tree=0，open=[1]，聚焦节点</td></tr><tr><td>搭提纲（约 6 分）</td><td>切换议论文树，对照结构口头搭一个提纲</td><td>「你的论点放哪？两个论据怎么分层？」</td><td>tree=2（议论文），open=[0]</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>写景文：定序（时间/空间/游踪）→多感官绘景→情景交融收束；写人文：抓特征→典型事例→细节描写→抒情议论点题；议论文：亮观点→摆论据（事例 + 道理）→析论证→回扣观点。结构是骨架，节点提示帮检查每块是否落实。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>通用骨架三块</td><td>干扰项起承转合硬套</td></tr><tr><td>2</td><td>移步换景的抓手</td><td>干扰项用修辞混淆结构手段</td></tr><tr><td>3</td><td>多感官写景的范围</td><td>干扰项心理、议论</td></tr><tr><td>4</td><td>议论文本论配置</td><td>干扰项堆名言</td></tr><tr><td>5</td><td>修改作文的顺序</td><td>直击「先改句子」误区</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开，选「写景」，先带学生看三大块：开头引出景物、中间按顺序展开、结尾收束升华。</li>
+<li>逐个点开中间的写法节点读提示语，如「移步换景」提示每换一处用「走进、转过、登上」带出；点节点可折叠已讲部分，聚焦下一块。</li>
+<li>请学生照树上的顺序口头说提纲，每块至少选一个写法；再换「写人」「议论文」同法练习，或对照修改自己已写的作文。</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给三块骨架、写法抓手与提纲法；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版语文七至九年级写作单元通用，如七年级上册「写人要抓住特点」、八年级上册「学习描写景物」及九年级议论文写作训练。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>古诗文积累 · 默写</h2> <div class="cards" data-astro-cid-4gjpevom> <article class="pcard" data-live="/interactives/chinese-famous-lines?embed=1" data-grades="6,7,8,9" data-book="统编版小学至初中" data-unit="古诗文积累" data-astro-cid-4gjpevom> <a class="pv" href="/interactives/chinese-famous-lines" target="_blank" rel="noopener" aria-label="打开 古诗文名句情境填空" data-astro-cid-4gjpevom> <img loading="lazy" src="/previews/chinese-famous-lines.jpg" alt="古诗文名句情境填空 界面实拍" data-astro-cid-4gjpevom> <span class="grade-tag mono" data-astro-cid-4gjpevom>6、7、8、9 年级 · 初中</span> <span class="pv-open" data-astro-cid-4gjpevom>打开</span> </a> <div class="pcard-body" data-astro-cid-4gjpevom> <a class="card-title" href="/interactives/chinese-famous-lines" target="_blank" rel="noopener" data-astro-cid-4gjpevom>古诗文名句情境填空</a> <p class="card-sub" data-astro-cid-4gjpevom>古诗文积累 · 默写</p> <p class="card-desc" data-astro-cid-4gjpevom>古诗文默写复习投屏：按月山水主题练情境选择，先背再选，答后齐读全句与出处。</p> <div class="chips" data-astro-cid-4gjpevom><span class="chip" data-astro-cid-4gjpevom>古诗文</span><span class="chip" data-astro-cid-4gjpevom>默写</span><span class="chip" data-astro-cid-4gjpevom>情境运用</span></div> </div> <div class="pcard-foot" data-astro-cid-4gjpevom> <span class="badge mono" data-astro-cid-4gjpevom>READY</span> <a class="go" href="/interactives/chinese-famous-lines" target="_blank" rel="noopener" data-astro-cid-4gjpevom>进入教室 <i data-astro-cid-4gjpevom>→</i></a> </div> <details class="card-body" data-astro-cid-4gjpevom> <summary data-astro-cid-4gjpevom>教学设计与使用步骤</summary> <div class="body-md" data-astro-cid-4gjpevom><h2 id="教学设计">教学设计</h2>
+<p><strong>学习目标</strong></p>
+<ol>
+<li>按「月、山、水」主题积累古诗文名句，做到会背会写。</li>
+<li>学会情境审题：抓住情境关键词（思乡、壮志、写景）锁定诗句。</li>
+</ol>
+<p><strong>易错点预设</strong></p>
+<ul>
+<li>只背句子不辨情境：同样写月，「举头望明月」是思乡，「月有阴晴圆缺」是哲理。</li>
+<li>同主题名句互相干扰——干扰项就来自同主题，需精读题目情境词。</li>
+</ul>
+<p><strong>环节设计</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>环节</th><th>学生活动</th><th>教师提问</th><th>资源状态</th></tr></thead><tbody><tr><td>读情境（约 5 分）</td><td>读第 1 题（月主题），圈出情境关键词再作答</td><td>「题目里的『游子』提示我们找哪类诗句？」</td><td>t=0（月），q=0，不显示答案</td></tr><tr><td>辨干扰句（约 7 分）</td><td>做 3 道干扰项题，说出错误选项为何错</td><td>「这句也是写月，为什么不符合情境？」</td><td>t=0，q=3，判定开启</td></tr><tr><td>归意象（约 5 分）</td><td>切到山主题第一题，归纳「山」常承载的情感</td><td>「写山的诗句常寄托什么？」</td><td>t=1（山），q=0，判定开启</td></tr></tbody></table>
+<p><strong>板书式小结</strong></p>
+<p>情境默写三步：读情境词 → 定主题意象 → 检索名句并核查书写。常见意象寄托：月—思乡怀人（举头望明月 / 千里共婵娟）；山—壮志或超脱（会当凌绝顶 / 悠然见南山）；水—愁思或豪情（恰似一江春水向东流 / 奔流到海不复回）。</p>
+<p><strong>随堂检测（5 题，答完即出解析与得分）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>题号</th><th>考查点</th><th>选项设计</th></tr></thead><tbody><tr><td>1</td><td>情境与名句的对应</td><td>干扰项取同意象其余四句</td></tr><tr><td>2</td><td>名句出处事实</td><td>干扰项混入同单元登临诗作者</td></tr><tr><td>3</td><td>三步作答法的第一步</td><td>干扰项「眼熟」「最有名」</td></tr><tr><td>4</td><td>同意象干扰句的辨析依据</td><td>直击「选最著名」误区</td></tr><tr><td>5</td><td>意象归类的情感分工</td><td>干扰项边塞、咏史等错位</td></tr></tbody></table>
+<h2 id="课堂用法">课堂用法</h2>
+<ol>
+<li>全屏打开，选「月」主题，读第一题的情境描述，请学生先轻声背出符合情境的名句，再点选项验证。</li>
+<li>答对选项变金色、答错标红并金框亮出正确句；判定后出处面板显示完整诗句与篇名作者，全班齐读一遍。</li>
+<li>五题做完看答对数，点「重练本组」换一批干扰句再过一轮；换「山」「水」主题同法复习。</li>
+<li>每个环节配了「讲解」弹层：引导语抛问题，讲解词给五要素读题法、辨析机制与归类分层积累；点「检测」做 5 题。</li>
+</ol>
+<h2 id="适用教材">适用教材</h2>
+<p>统编版小学、初中语文教材必背古诗文，如《观沧海》《峨眉山月歌》《闻王昌龄左迁龙标遥有此寄》《游山西村》《望岳》《登飞来峰》《黄鹤楼》《蒹葭》等；六年级衔接与九年级总复习均可用。</p></div> </details> </article> </div>  </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>识字与写字 · 入学教育</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>一年级上册语文精品课·天地人</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>识字与写字 · 季节识字</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>一年级下册语文精品课·春夏秋冬</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>阅读 · 写景抒情</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>二年级下册语文精品课·找春天</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a><a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>三年级上册语文精品课·秋天的雨</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a><a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>三年级下册语文精品课·荷花</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a><a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>六年级上册语文精品课·草原</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>阅读 · 科学童话</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>二年级上册语文精品课·小蝌蚪找妈妈</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>阅读 · 壮观景象描写</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>四年级上册语文精品课·观潮</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>阅读 · 游记顺序</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>四年级下册语文精品课·记金华的双龙洞</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>阅读 · 借物抒情</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>五年级上册语文精品课·白鹭</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>阅读 · 古典名著</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>五年级下册语文精品课·草船借箭</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>阅读 · 抒情散文</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>六年级下册语文精品课·匆匆</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>现代散文 · 写景抒情</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>七年级上册语文精品课·春</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>初中</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>文言文 · 先忧后乐</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>九年级上册语文精品课·岳阳楼记</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>初中</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>文言文 · 山水小品</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>八年级上册语文精品课·三峡</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>初中</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>朗读 · 课文范读</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>小学语文课文朗读音频</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>小学</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>古诗文积累 · 诵读</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://www.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>初中古诗文诵读资源</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>初中</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section><section class="topic" data-astro-cid-4gjpevom> <h2 class="topic-title" data-astro-cid-4gjpevom>作业设计 · 基础性作业</h2> <div class="cards" data-astro-cid-4gjpevom>  </div> <div class="elist" data-astro-cid-4gjpevom> <a class="ecard" href="https://basic.smartedu.cn/" target="_blank" rel="noopener" data-astro-cid-4gjpevom> <span class="ecard-title" data-astro-cid-4gjpevom>语文基础性作业示范课</span> <span class="ecard-meta" data-astro-cid-4gjpevom> <span class="esrc" data-astro-cid-4gjpevom>国家智慧教育平台</span> <span data-astro-cid-4gjpevom>初中</span> <span class="earrow" aria-hidden="true" data-astro-cid-4gjpevom>↗</span> </span> </a> </div> </section> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html> <script type="module">const o={grade:"all",book:"all",unit:"all"},i=()=>{document.querySelectorAll(".pcard[data-grades]").forEach(e=>{const a=o.grade==="all"||e.dataset.grades.split(",").includes(o.grade),l=o.book==="all"||e.dataset.book===o.book,t=o.unit==="all"||e.dataset.unit===o.unit;e.style.display=a&&l&&t?"":"none"})},d=(e,a,l)=>{const t=document.querySelectorAll(e);t.forEach(s=>s.addEventListener("click",()=>{t.forEach(n=>n.classList.toggle("on",n===s)),o[a]=s.dataset[l]||"all",i()}))};d(".gchip[data-g]","grade","g");d(".gchip[data-b]","book","b");d(".gchip[data-u]","unit","u");if(matchMedia("(pointer: fine)").matches)for(const e of document.querySelectorAll(".pcard[data-live]")){const a=e.querySelector(".pv");let l;e.addEventListener("mouseenter",()=>{l=setTimeout(()=>{const t=document.createElement("iframe");t.loading="lazy",t.title="实时预览",t.src=e.dataset.live,t.addEventListener("load",()=>a.classList.add("live")),a.appendChild(t)},350)}),e.addEventListener("mouseleave",()=>{clearTimeout(l),a?.classList.remove("live"),a?.querySelector("iframe")?.remove()})}</script> 

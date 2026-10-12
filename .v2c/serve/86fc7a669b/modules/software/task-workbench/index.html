@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>任务二：打造教师智能工作台（产品级全实录） · HappyVibe 数智学园</title><meta name="description" content="一段 4000 字的产品级提示词，换来一个 Linear 风格的完整工作台——提示词全文折叠可查，六张真实界面逐步展示，&#34;会提需求&#34;比&#34;会写代码&#34;更重要。"><meta property="og:title" content="任务二：打造教师智能工作台（产品级全实录） · HappyVibe 数智学园"><meta property="og:description" content="一段 4000 字的产品级提示词，换来一个 Linear 风格的完整工作台——提示词全文折叠可查，六张真实界面逐步展示，&#34;会提需求&#34;比&#34;会写代码&#34;更重要。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> software </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>task-workbench</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（26 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先看成品workbuddy-真实交付" data-astro-cid-5y7t3r35>先看成品（WorkBuddy 真实交付）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#这份提示词为什么值钱五条精华" data-astro-cid-5y7t3r35>这份提示词为什么值钱（五条精华）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#你的改造版拿去就能用" data-astro-cid-5y7t3r35>你的改造版（拿去就能用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#配套练习数据可选" data-astro-cid-5y7t3r35>配套练习数据（可选）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#完成标准" data-astro-cid-5y7t3r35>完成标准</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#提示词全文点击展开--想看再看" data-astro-cid-5y7t3r35>提示词全文（点击展开 · 想看再看）</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#一产品定位" data-astro-cid-5y7t3r35>一、产品定位</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#二核心设计原则" data-astro-cid-5y7t3r35>二、核心设计原则</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#三整体信息架构" data-astro-cid-5y7t3r35>三、整体信息架构</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#四首页今日工作台" data-astro-cid-5y7t3r35>四、首页——今日工作台</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#五教学中心" data-astro-cid-5y7t3r35>五、教学中心</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#六课堂助手" data-astro-cid-5y7t3r35>六、课堂助手</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#七作业中心" data-astro-cid-5y7t3r35>七、作业中心</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#八学生中心" data-astro-cid-5y7t3r35>八、学生中心</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#九班级工作台班主任开启非班主任隐藏" data-astro-cid-5y7t3r35>九、班级工作台（班主任开启，非班主任隐藏）</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十教研工作台" data-astro-cid-5y7t3r35>十、教研工作台</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十一工作事务" data-astro-cid-5y7t3r35>十一、工作事务</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十二ai-助手" data-astro-cid-5y7t3r35>十二、AI 助手</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十三教师资料库" data-astro-cid-5y7t3r35>十三、教师资料库</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十四全局快捷按钮" data-astro-cid-5y7t3r35>十四、全局快捷按钮</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十五ai-agent-设计" data-astro-cid-5y7t3r35>十五、AI Agent 设计</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十六界面设计" data-astro-cid-5y7t3r35>十六、界面设计</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十七交互原则" data-astro-cid-5y7t3r35>十七、交互原则</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十八demo-数据" data-astro-cid-5y7t3r35>十八、Demo 数据</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十九开发要求" data-astro-cid-5y7t3r35>十九、开发要求</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#二十最终目标" data-astro-cid-5y7t3r35>二十、最终目标</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/software/" style="color:#e8935e" data-astro-cid-5y7t3r35>T2 · WorkBuddy 实操</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>任务二：打造教师智能工作台（产品级全实录）</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>一段 4000 字的产品级提示词，换来一个 Linear 风格的完整工作台——提示词全文折叠可查，六张真实界面逐步展示，&quot;会提需求&quot;比&quot;会写代码&quot;更重要。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>真实提示词 + WorkBuddy 真实交付</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="software/task-workbench" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：同样叫”做个工作台”，随手一句话得到玩具，一份想清楚的产品提示词得到生产工具。这一课拆给你看：这份提示词好在哪、成品长什么样、你怎么改造成自己的。</strong></p>
+</blockquote>
+<h2 id="先看成品workbuddy-真实交付">先看成品（WorkBuddy 真实交付）</h2>
+<p>→ <strong><a href="/demos/workbench/">点开真实工作台操作</a></strong>（吴老师 · 初中数学 · 七年级 2/3/4 班，内置完整演示数据）</p>
+<p><strong>首页 · 今日工作台</strong>——打开第一眼回答「我今天要干什么」：今日课程时间轴、AI 今日建议（根据作业情况建议复习重点）、待办卡片（可一键交给 AI）：</p>
+<p><img src="/images/demos/rw-home.webp" alt="首页：今日课程时间轴 + AI 建议 + 待办"></p>
+<p><strong>教学中心</strong>——备课 → 上课 → 作业 → 评价的完整闭环，不是功能堆砌：</p>
+<p><img src="/images/demos/rw-teaching.webp" alt="教学中心"></p>
+<p><strong>AI 备课</strong>——选课程自动继承年级/教材/章节，一键生成教案，支持<strong>只重新生成某一段</strong>：</p>
+<p><img src="/images/demos/rw-lesson-plan.webp" alt="AI 备课"></p>
+<p><strong>学生中心</strong>——每个学生一张「学习卡」：成绩趋势、作业、课堂表现、AI 学习摘要：</p>
+<p><img src="/images/demos/rw-students.webp" alt="学生中心学习卡"></p>
+<p><strong>作业中心</strong>——创建到讲评全流程，AI 分析正确率与高频错误：</p>
+<p><img src="/images/demos/rw-homework.webp" alt="作业中心"></p>
+<p><strong>AI 助手</strong>——不是空白聊天框：顶部显示它已连接你的课程/班级/学生/资料，问「七3班最近数学情况」不用再上传任何东西：</p>
+<p><img src="/images/demos/rw-ai.webp" alt="AI 助手带上下文"></p>
+<h2 id="这份提示词为什么值钱五条精华">这份提示词为什么值钱（五条精华）</h2>
+<p>原文很长（20 个章节），折叠在文末。先给你划的五条重点——<strong>学会了拿去改造任何 AI 提示词</strong>：</p>
+<p><strong>1. 今天优先</strong>
+首页不是功能导航页，是回答「我今天要做什么」。→ 反例：大多数学校系统打开是几十个图标。</p>
+<p><strong>2. 工作流优先，不是技术优先</strong>
+不按”AI 写作/AI 搜索/AI OCR”分类，按”备课/上课/作业/学生/班级”分类。→ AI 藏在教师的工作流里，而不是让老师去找 AI。</p>
+<p><strong>3. 少输入 + 上下文自动继承</strong>
+老师的学科、班级、教材、名单——系统记一次，处处自动带。老师永远不该第二次回答”你教几年级”。</p>
+<p><strong>4. AI 不像聊天机器人</strong>
+把「请输入您的需求」换成：按钮、一键生成、智能建议、快速确认。生成教案是 <strong>3 次点击</strong>（选课 → AI 备课 → 生成），不是填十个表单。</p>
+<p><strong>5. 界面审美直接指定</strong>
+白底、少量蓝、大留白、细线、6-10px 圆角，参考 Linear/Notion——<strong>把丑的可能性提前封死</strong>。还指定了适配 1920/1440/MacBook。</p>
+<p>另外一个隐藏要点：<strong>它给了优先级</strong>（P0 首页/备课/作业 → P1 班级/教研 → P2 自动化），并明确”先做能跑的 MVP，不要几十个半成品”——AI 做产品最容易犯的错就是铺一堆空页面，这句话直接防住了。</p>
+<h2 id="你的改造版拿去就能用">你的改造版（拿去就能用）</h2>
+<p>把原文里的「吴老师/初中数学/七年级2-4班」换成你的信息，其余几乎不用动。改这几处就够：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>改哪里</th><th>换成</th></tr></thead><tbody><tr><td>教师/学科/班级</td><td>你的（如：陈老师 · 小学语文 · 三年级1-3班）</td></tr><tr><td>班主任班级</td><td>你的（不当班主任就删那段）</td></tr><tr><td>教材版本</td><td>你用的版本</td></tr><tr><td>Demo 数据</td><td>让 AI 生成对应学段的模拟数据</td></tr></tbody></table>
+<p><strong>发给谁</strong>：WorkBuddy（推荐，能直接产出文件）、Trae、任何能写代码的 AI。生成后把它设成浏览器主页——你的数字桌面开张。</p>
+<h2 id="配套练习数据可选">配套练习数据（可选）</h2>
+<p>想练”喂真实数据”的环节：<a href="/materials/workbench-data.zip">模拟数据包 workbench-data.zip</a>（10 位化名学生+待办+课表+作业记录）。真实数据版本<strong>只存自己电脑</strong>，别上传任何群。</p>
+<h2 id="完成标准">完成标准</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 用改造版提示词生成了自己的工作台</li>
+<li class="task-list-item"><input type="checkbox" disabled> 打开首页 3 秒内能回答「我今天干什么」</li>
+<li class="task-list-item"><input type="checkbox" disabled> 设成了浏览器主页并连用一周</li>
+</ul>
+<p>搭好之后的问题（数据存哪/手机怎么用/要不要服务器）→ <a href="/modules/software/task-workbench-data/">《搭好之后》FAQ</a></p>
+<hr>
+<hr>
+<h2 id="提示词全文点击展开--想看再看">提示词全文（点击展开 · 想看再看）</h2>
+<details>
+<summary>展开完整提示词（约 4000 字 · 20 个章节）</summary>
+<p>你现在是一名同时具备以下能力的高级产品团队：</p>
+<ul>
+<li>K12 教育产品经理</li>
+<li>一线教师工作流专家</li>
+<li>AI Agent 产品架构师</li>
+<li>Web 全栈开发工程师</li>
+<li>UI/UX 设计师</li>
+</ul>
+<p>请直接为我设计并搭建一个「教师智能工作台」。</p>
+<p>这不是一个传统的学校 OA，也不是简单把几十个 AI 工具堆在一起，而是一个真正面向中小学一线教师日常工作的个人工作台。</p>
+<h3 id="一产品定位">一、产品定位</h3>
+<p>产品名称暂定：教师工作台</p>
+<p>核心目标：让教师每天打开系统之后，可以立即知道：</p>
+<ol>
+<li>我今天有什么课</li>
+<li>我今天有什么事情要处理</li>
+<li>哪些学生需要关注</li>
+<li>哪些作业需要批改</li>
+<li>哪些通知、材料、任务需要完成</li>
+<li>AI 今天可以替我完成什么工作</li>
+</ol>
+<p>不要让教师主动寻找 AI 工具。AI 应当嵌入教师实际工作流程。</p>
+<p>例如：教师不是点击「AI 写作」，而是点击：「写家长通知」「生成本节课教案」「分析本班成绩」「生成作业」「批改学生作业」「整理听课记录」「写学生评语」「形成班级周报」。AI 在背后完成任务。</p>
+<h3 id="二核心设计原则">二、核心设计原则</h3>
+<p><strong>1. 今天优先</strong>——首页不是功能导航页。首页首先回答：「这个老师今天需要做什么？」</p>
+<p><strong>2. 工作流优先</strong>——不要按照技术能力分类（AI 写作/AI 搜索/AI OCR/AI Agent），应该按照教师工作分类：备课、上课、作业、学生、班级、教研、事务。</p>
+<p><strong>3. 少输入</strong>——教师不应该每次使用 AI 都重新输入年级、学科、班级、教材版本。这些信息应该由系统自动继承上下文。</p>
+<p><strong>4. AI 默认知道上下文</strong>——系统应维护：教师信息、任教学科、任教班级、课程表、教材版本、学生名单、历史成绩、作业记录、班级记录。教师提出任务时自动调用。</p>
+<p><strong>5. AI 不应该显得像聊天机器人</strong>——尽量减少「请输入您的需求」，而应该设计成：按钮、表单、快捷动作、智能建议、自动生成、一键确认。</p>
+<h3 id="三整体信息架构">三、整体信息架构</h3>
+<p>一级模块：首页、教学、学生、班级、教研、工作、AI 助手、资料库。左侧固定导航栏。底部为个人设置、帮助。不要超过 8 个一级菜单。</p>
+<h3 id="四首页今日工作台">四、首页——今日工作台</h3>
+<p>顶部显示：日期、星期、教师姓名、今日课程数量、今日待办数量（例：8 月 28 日 周五 吴老师 今天：4 节课 6 项待办）。右侧提供新建任务。</p>
+<p><strong>今日课程</strong>：时间轴形式（08:30 七年级3班 数学 第三章 一元一次方程）。操作：备课、查看班级、课堂记录。课程即将开始显示「还有 20 分钟上课」并自动给出：查看教案、打开课件、课堂点名、随机提问。</p>
+<p><strong>AI 今日建议</strong>：根据课程、任务和学生数据主动建议。例如：「七（3）班今天学一元一次方程，根据上次作业情况，建议重点复习『移项』」+ 按钮「生成 5 分钟复习题」；「七（2）班有 6 名学生连续两次作业正确率下降」+ 按钮「查看学生」。</p>
+<p><strong>今日待办</strong>：待批改作业、待填写材料、教研任务、班级事务、学校通知、会议。统一任务卡片（名称/截止/来源/状态）。操作：开始处理、交给 AI、完成。</p>
+<h3 id="五教学中心">五、教学中心</h3>
+<p>围绕：备课 → 上课 → 作业 → 评价 → 复盘闭环。顶部：今日课程、本周课程、我的教学资源。</p>
+<p><strong>备课</strong>：点击某节课自动读取年级/班级/学科/教材/章节/课时。提供：生成教学设计、教学目标、重难点、课堂活动、板书、课堂问题、课堂练习、课件大纲。不要让老师填写大量 Prompt。</p>
+<p><strong>AI 教案</strong>：选课程后自动生成教学目标、核心素养目标、重点难点、教学过程、课堂活动（教师活动/学生活动）、评价方式、课堂练习、课后作业。支持<strong>重新生成某一部分</strong>而不是整篇。</p>
+<h3 id="六课堂助手">六、课堂助手</h3>
+<p>每节课「进入课堂」，极简界面：点名、随机抽学生、课堂计时器、随机分组、课堂提问、学生表现记录、课堂事件记录、随手记。「+课堂记录」快速记录：积极回答/回答错误/注意力不集中/合作优秀/需要关注。课后自动生成：课堂记录、学生表现摘要、教学反思建议。</p>
+<h3 id="七作业中心">七、作业中心</h3>
+<p>流程：创建 → 发布 → 收集 → 批改 → 分析 → 讲评。创建时选课程，系统自动识别知识点/难度/学情。AI 可生成：基础题、提高题、易错题、分层作业。作业分析自动生成：班级平均正确率、知识点正确率、错误率最高题目、高频错误、学生分层、进步学生、需要关注学生。按钮：生成讲评课、生成错题训练、生成个性化作业。</p>
+<h3 id="八学生中心">八、学生中心</h3>
+<p>每个学生一张「学生学习卡」：基本信息、成绩趋势、作业情况、知识点掌握、课堂表现、教师记录、荣誉、需关注事项。点击学生：顶部姓名班级，显示最近状态（如「数学成绩连续 3 次提升」「最近作业完成率下降」）。AI 自动生成学习摘要（「近期整体稳定，但几何证明正确率明显低于班级平均」）。提供：生成学习建议、生成学生评语、生成家长沟通建议。</p>
+<h3 id="九班级工作台班主任开启非班主任隐藏">九、班级工作台（班主任开启，非班主任隐藏）</h3>
+<p>班级首页：今日班级情况、出勤、请假、学生异常、班级任务、家校沟通。快捷功能：写班级/家长通知、写学生评语、写班会方案、班级周报、班主任工作记录、学生谈话记录、家访记录、班级活动方案。AI 自动读取班级信息。</p>
+<h3 id="十教研工作台">十、教研工作台</h3>
+<p>听课、评课、教研活动、公开课、课题、论文、资源共享。<strong>听评课</strong>：输入简短笔记，AI 自动整理教学流程、课堂亮点、问题、改进建议、听课评价。<strong>教研活动</strong>：新建活动、会议记录、AI 会议纪要、行动事项、资料归档。</p>
+<h3 id="十一工作事务">十一、工作事务</h3>
+<p>集中处理非教学任务：学校通知、会议、材料提交、表格填写、活动任务、培训、文件。每个任务支持「交给 AI」——如学校要求提交个人发展计划，教师点「AI 帮我写」，系统读取教师信息、学科、历史材料，自动生成草稿。</p>
+<h3 id="十二ai-助手">十二、AI 助手</h3>
+<p>不是普通 ChatGPT 页面。顶部显示 AI 已连接：我的课程/班级/学生/资料。快捷入口：帮我备课/出题/分析成绩/写材料/处理班级事务/做教研。支持自然语言（「帮我看看七3班最近数学情况」），系统自动理解班级+学科+数据，不再要求上传。</p>
+<h3 id="十三教师资料库">十三、教师资料库</h3>
+<p>上传 Word/PDF/PPT/Excel/图片等，形成我的资料库。支持搜索、AI 问资料、自动分类标签。分类：教学资料、学校文件、学生资料、班级资料、教研资料、个人资料。</p>
+<h3 id="十四全局快捷按钮">十四、全局快捷按钮</h3>
+<p>页面右下角始终有「+」：备课、写通知、出作业、记录学生、新建待办、上传资料、问 AI。</p>
+<h3 id="十五ai-agent-设计">十五、AI Agent 设计</h3>
+<p>内部多个 Agent（备课/作业/学情分析/学生分析/班主任/材料写作/教研/资料检索/任务），但<strong>不直接暴露给教师</strong>，前端统一表现为「AI 帮我完成」。</p>
+<h3 id="十六界面设计">十六、界面设计</h3>
+<p>不要传统国产后台管理系统风格；不要大量彩色渐变、卡片、阴影、图标、复杂数据驾驶舱、Web Coding 感模板。参考 Linear/Notion/Apple/现代 SaaS/瑞士平面设计：白色背景、少量蓝色、大面积留白、清晰网格、细线分隔、字体层级明显、圆角 6-10px。左侧导航约 220px；顶部教师姓名/学校/学期；主体最大宽度 1400px；适配 1920×1080、1440×900、MacBook、Windows PC。</p>
+<h3 id="十七交互原则">十七、交互原则</h3>
+<p>重要操作 1-3 次点击完成。生成教案 = 点击课程 → AI 备课 → 生成（而不是新建→选学科→选年级→输课程→输教材→写 Prompt）。</p>
+<h3 id="十八demo-数据">十八、Demo 数据</h3>
+<p>教师：吴老师；学科：初中数学；任教：七年级 2/3/4 班；班主任：七年级 3 班。建立完整课程表、学生示例数据、成绩数据、作业数据、课堂记录、待办任务、通知、教研活动——打开就是真实可体验的工作台，不是空页面。</p>
+<h3 id="十九开发要求">十九、开发要求</h3>
+<p>先完成可运行 MVP。优先级：<strong>P0</strong> 首页/课程/备课/作业/学生/AI 助手；<strong>P1</strong> 班级/工作事务/教研/资料库；<strong>P2</strong> 数据分析/Agent 自动化/跨模块联动。不要一次搭建几十个半成品页面，首先保证核心工作流可以真正点击使用。</p>
+<h3 id="二十最终目标">二十、最终目标</h3>
+<p>这个系统不是「教师 AI 工具箱」，而是「教师每天工作的数字桌面」。教师打开后自然完成：今天有什么课 → 备课 → 上课 → 记录学生 → 布置作业 → 查看学情 → 处理班级事务 → 完成学校任务。AI 全程存在，但尽量不打扰教师。</p>
+<p><strong>现在请直接开始搭建第一版产品。优先完成：首页、课程、备课、学生、作业。不要只输出需求分析或产品建议，请直接创建可运行页面与交互。</strong></p>
+</details> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="任务二：打造教师智能工作台（产品级全实录）" data-module="WorkBuddy 实操" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script>  <a class="btn btn-ghost back-btn" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 T2 WorkBuddy 实操 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/software/wb-09-troubleshooting/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>第 9 课 · 排错手册：卡住了怎么办（10 种常见情况）</span> </a> <a class="btn btn-ghost nav-next" href="/modules/software/task-workbench-data/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>下一课 →</span> <span data-astro-cid-5y7t3r35>搭好之后：数据放哪、手机怎么看、要不要买服务器</span> </a> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先看成品workbuddy-真实交付" data-toc-link="先看成品workbuddy-真实交付" data-astro-cid-5y7t3r35>先看成品（WorkBuddy 真实交付）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#这份提示词为什么值钱五条精华" data-toc-link="这份提示词为什么值钱五条精华" data-astro-cid-5y7t3r35>这份提示词为什么值钱（五条精华）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#你的改造版拿去就能用" data-toc-link="你的改造版拿去就能用" data-astro-cid-5y7t3r35>你的改造版（拿去就能用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#配套练习数据可选" data-toc-link="配套练习数据可选" data-astro-cid-5y7t3r35>配套练习数据（可选）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#完成标准" data-toc-link="完成标准" data-astro-cid-5y7t3r35>完成标准</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#提示词全文点击展开--想看再看" data-toc-link="提示词全文点击展开--想看再看" data-astro-cid-5y7t3r35>提示词全文（点击展开 · 想看再看）</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#一产品定位" data-toc-link="一产品定位" data-astro-cid-5y7t3r35>一、产品定位</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#二核心设计原则" data-toc-link="二核心设计原则" data-astro-cid-5y7t3r35>二、核心设计原则</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#三整体信息架构" data-toc-link="三整体信息架构" data-astro-cid-5y7t3r35>三、整体信息架构</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#四首页今日工作台" data-toc-link="四首页今日工作台" data-astro-cid-5y7t3r35>四、首页——今日工作台</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#五教学中心" data-toc-link="五教学中心" data-astro-cid-5y7t3r35>五、教学中心</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#六课堂助手" data-toc-link="六课堂助手" data-astro-cid-5y7t3r35>六、课堂助手</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#七作业中心" data-toc-link="七作业中心" data-astro-cid-5y7t3r35>七、作业中心</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#八学生中心" data-toc-link="八学生中心" data-astro-cid-5y7t3r35>八、学生中心</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#九班级工作台班主任开启非班主任隐藏" data-toc-link="九班级工作台班主任开启非班主任隐藏" data-astro-cid-5y7t3r35>九、班级工作台（班主任开启，非班主任隐藏）</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十教研工作台" data-toc-link="十教研工作台" data-astro-cid-5y7t3r35>十、教研工作台</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十一工作事务" data-toc-link="十一工作事务" data-astro-cid-5y7t3r35>十一、工作事务</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十二ai-助手" data-toc-link="十二ai-助手" data-astro-cid-5y7t3r35>十二、AI 助手</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十三教师资料库" data-toc-link="十三教师资料库" data-astro-cid-5y7t3r35>十三、教师资料库</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十四全局快捷按钮" data-toc-link="十四全局快捷按钮" data-astro-cid-5y7t3r35>十四、全局快捷按钮</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十五ai-agent-设计" data-toc-link="十五ai-agent-设计" data-astro-cid-5y7t3r35>十五、AI Agent 设计</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十六界面设计" data-toc-link="十六界面设计" data-astro-cid-5y7t3r35>十六、界面设计</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十七交互原则" data-toc-link="十七交互原则" data-astro-cid-5y7t3r35>十七、交互原则</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十八demo-数据" data-toc-link="十八demo-数据" data-astro-cid-5y7t3r35>十八、Demo 数据</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#十九开发要求" data-toc-link="十九开发要求" data-astro-cid-5y7t3r35>十九、开发要求</a></li><li class="d3" data-astro-cid-5y7t3r35><a href="#二十最终目标" data-toc-link="二十最终目标" data-astro-cid-5y7t3r35>二十、最终目标</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>课堂随机点名器</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+         background: radial-gradient(1200px 600px at 50% -10%, #2b1845, #150e22); font-family: 'PingFang SC','Microsoft YaHei',sans-serif; color: #f2ecf8; }
+  h1 { font-size: 20px; letter-spacing: .3em; color: #a99cc0; margin-bottom: 26px; }
+  .stage { width: min(720px, 88vw); height: 190px; display: flex; align-items: center; justify-content: center;
+           background: #1e1433; border: 1px solid rgba(180,130,210,.3); border-radius: 16px; }
+  .name { font-size: clamp(48px, 10vw, 88px); font-weight: 800; letter-spacing: .08em; }
+  .rolling { color: #a63d97; }
+  .picked { color: #feb300; text-shadow: 0 0 30px rgba(254,179,0,.35); }
+  button { margin-top: 30px; padding: 14px 52px; font-size: 20px; font-weight: 700; border: 0; border-radius: 10px;
+           background: linear-gradient(135deg, #ffd34d, #feb300); color: #2a1c00; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .meta { margin-top: 18px; color: #6f6390; font-size: 14px; }
+</style>
+</head>
+<body>
+<h1>课 堂 随 机 点 名</h1>
+<div class="stage"><div class="name" id="name">准备好了吗？</div></div>
+<button id="btn" onclick="roll()">开始点名</button>
+<div class="meta" id="meta">全班 45 人 · 点过的不再重复</div>
+<script>
+const names = ['陈梓忻','尹宝谦','伍政添','巩钰越','林冠锋','钟子杭','黄允东','李宗阳','冯凯琳','马钰旋','杜昕宸','赖梓淇','苏子轩','周诗涵','吴一帆'];
+let pool = [...names], rolling = false;
+function roll() {
+  if (rolling) return;
+  if (!pool.length) { document.getElementById('meta').textContent = '全部点完，点「重置」重新开始'; return; }
+  rolling = true;
+  document.getElementById('btn').disabled = true;
+  const el = document.getElementById('name');
+  el.className = 'name rolling';
+  let n = 0;
+  const timer = setInterval(() => {
+    el.textContent = pool[Math.floor(Math.random() * pool.length)];
+    if (++n >= 18) {
+      clearInterval(timer);
+      const i = Math.floor(Math.random() * pool.length);
+      const picked = pool.splice(i, 1)[0];
+      el.textContent = picked;
+      el.className = 'name picked';
+      document.getElementById('btn').disabled = false;
+      document.getElementById('btn').textContent = '再点一位';
+      document.getElementById('meta').textContent = `全班 ${names.length} 人 · 已点 ${names.length - pool.length} 人 · 剩余 ${pool.length} 人`;
+      rolling = false;
+    }
+  }, 70);
+}
+window.roll = roll;
+</script>
+</body>
+</html>

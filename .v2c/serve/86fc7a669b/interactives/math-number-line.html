@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数轴动点实验室</title>
+<style>
+:root{
+  --cuhk:#6b2077;--brand:#8a3d99;--brand-line:rgba(178,120,196,.34);
+  --bg:#1a0e26;--bg2:#241233;--panel:#251337;--panel2:#2e1a43;--inset:#150b20;
+  --text:#f4edf9;--muted:#b3a4c9;--faint:#82729e;
+  --gold:#e8b04b;--gold-soft:#f0c470;--wrong:#c97b7b;--ok:#7fbf9e;
+  --line:rgba(186,136,212,.16);--line2:rgba(186,136,212,.3);--line-gold:rgba(232,176,75,.4);
+  --shadow:0 10px 32px rgba(0,0,0,.5);
+  --shell-top:44px;--rail-w:216px;--rail-h:0px;
+}
+:root[data-theme=light]{
+  --cuhk:#6b2077;--brand:#6b2077;--brand-line:rgba(107,32,119,.32);
+  --bg:#f8f5fb;--bg2:#f0e9f7;--panel:#ffffff;--panel2:#f4eef9;--inset:#fbf9fd;
+  --text:#2a1a35;--muted:#5e4d70;--faint:#8b7ca0;
+  --gold:#8a6a1f;--gold-soft:#8a6a1f;--wrong:#b35b5b;--ok:#4d8a68;
+  --line:rgba(107,32,119,.16);--line2:rgba(107,32,119,.32);--line-gold:rgba(138,106,31,.45);
+  --shadow:0 8px 24px rgba(80,30,100,.14);
+}
+*{box-sizing:border-box;margin:0}
+/* 键盘可达性：Tab 焦点环（鼠标点击不显示，投屏遥控器/翻页笔友好） */
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+/* 舞台底：港紫径向层次（背景实现，不盖 canvas）；左轨/顶栏让位由变量驱动 */
+#stage{position:absolute;inset:calc(var(--shell-top) + var(--rail-h)) 0 0 var(--rail-w);background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
+/* ---------- 薄顶栏（44px）：返回 | 标题 | 教材锚点 …… 翻页/主操作/窗口控制 ---------- */
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#back{display:flex;align-items:center;gap:7px;min-height:32px;padding:0 11px;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+#back::before{content:'←';font-size:14px;line-height:1}
+#back:hover{color:var(--text);border-color:var(--line2);background:var(--panel2)}
+#bar h1{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+#meta{font-size:12.5px;color:var(--gold);white-space:nowrap;padding:3px 10px;border:1px solid var(--line-gold);border-radius:999px}
+#bar .grow{flex:1}
+/* ---------- 按钮系统：统一 32px 高；sq=方钮；primary=主操作实底 ---------- */
+.btn{font:inherit;font-size:13.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+.btn:hover{border-color:var(--brand-line);color:var(--text)}
+.btn[aria-pressed=true]{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sq{min-width:32px;padding:0;font-size:15px}
+/* ---------- 左轨章节导航（宽屏 216px；WeduLab 范式：编号+名称，检测/小结入列） ---------- */
+#rail{position:fixed;top:var(--shell-top);left:0;bottom:0;z-index:9;width:var(--rail-w);display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-right:1px solid var(--line);padding:10px 10px 8px;gap:2px}
+#rail .rail-title{font-size:11.5px;color:var(--faint);letter-spacing:.22em;padding:2px 8px 8px}
+.rail-step{display:flex;align-items:baseline;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.rail-step .no{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;font-weight:700;color:var(--faint);min-width:24px;transition:color .15s}
+.rail-step:hover{color:var(--text);background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+.rail-step[aria-pressed=true]{background:color-mix(in srgb,var(--cuhk) 20%,transparent);border-color:var(--brand-line);color:var(--text);font-weight:600}
+.rail-step[aria-pressed=true] .no{color:var(--gold)}
+#rail .rail-split{height:1px;background:var(--line);margin:8px 6px}
+#rail .rail-foot{margin-top:auto;padding:10px 8px 2px;font-size:11px;color:var(--faint);line-height:1.9;letter-spacing:.03em}
+#rail .rail-foot b{font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:2px;font-size:10.5px}
+#rail-prog{position:absolute;left:0;right:0;bottom:0;height:2px}
+#rail-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
+/* ---------- 舞台章节标头：01 / 03 · 环节名（印在画面上） ---------- */
+#stage-head{position:fixed;top:calc(var(--shell-top) + var(--rail-h) + 14px);left:calc(var(--rail-w) + 20px);z-index:5;display:flex;align-items:baseline;gap:10px;pointer-events:none}
+#stage-head .frac{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+#stage-head .sname{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--text);opacity:.92}
+/* ---------- 教学引导浮层：章节标头之下（引导语 + 操作提示） ---------- */
+#guide-tip{position:fixed;left:calc(var(--rail-w) + 20px);top:calc(var(--shell-top) + var(--rail-h) + 56px);z-index:6;max-width:min(600px,58vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
+#guide-tip.dim{opacity:.35}
+#g-tip{font-size:15px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ops-tip{margin-top:5px;font-size:12.5px;color:var(--faint);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* ---------- 讲解覆盖卡（顶栏/章节栏呼出，WeduLab 右栏的覆盖式实现） ---------- */
+#note{position:fixed;top:calc(var(--shell-top) + 14px);right:16px;z-index:22;width:min(400px,calc(100vw - 40px));max-height:calc(100vh - var(--shell-top) - 40px);overflow:auto;padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
+#note::before{content:'讲解';display:block;font-size:12.5px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px}
+:root[data-theme=light] #note::before{color:var(--cuhk)}
+/* ---------- 小结浮层 ---------- */
+#summary{position:fixed;top:calc(var(--shell-top) + 14px);left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
+#summary::before{content:'小结';display:block;font-size:12.5px;color:var(--gold);letter-spacing:.12em;margin-bottom:6px}
+/* ---------- 随堂检测 ---------- */
+#quiz-wrap{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(4px)}
+#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 100px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+#quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#quiz-head b{font-size:17px}
+#quiz-prog{font-size:13px;color:var(--faint)}
+#quiz-close{margin-left:auto}
+#quiz-q{font-size:16.5px;line-height:1.7;margin-bottom:14px}
+#quiz-opts{display:flex;flex-direction:column;gap:10px}
+.qopt{font:inherit;font-size:15px;line-height:1.6;text-align:left;padding:11px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--inset);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s}
+.qopt:not(:disabled):hover{border-color:var(--brand)}
+.qopt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--inset))}
+.qopt.no{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 14%,var(--inset))}
+.qopt:disabled{cursor:default}
+#quiz-why{margin-top:14px;padding:12px 16px;border-left:3px solid var(--gold);background:var(--inset);border-radius:0 10px 10px 0;font-size:14.5px;line-height:1.8;color:var(--muted);display:none}
+#quiz-why::before{content:'解析';display:block;font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+#quiz-foot{display:flex;align-items:center;gap:10px;margin-top:16px}
+#quiz-score{font-size:15px}
+#quiz-score b{font-size:22px;color:var(--brand)}
+:root[data-theme=light] #quiz-score b{color:var(--cuhk)}
+/* ---------- 窄屏（<1080px）：左轨收成顶部横排环节条 ---------- */
+@media (max-width:1079px){
+  :root{--rail-w:0px;--rail-h:52px}
+  #rail{top:var(--shell-top);left:0;right:0;bottom:auto;width:auto;height:var(--rail-h);flex-direction:row;align-items:center;gap:6px;padding:0 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
+  #rail .rail-title,#rail .rail-split,#rail .rail-foot{display:none}
+  .rail-step{flex:none;width:auto;padding:6px 12px;gap:7px}
+  .rail-step .no{font-size:15px;min-width:0}
+  #rail-prog{bottom:0;left:0}
+  #meta{display:none}
+  #guide-tip{left:12px;right:12px;max-width:none}
+  #stage-head{left:16px}
+}
+@media (max-width:760px){
+  #back span{display:none}
+  #bar h1{font-size:15px}
+  #note-btn-top,#sum-btn-top{display:none}
+}
+/* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
+body.embed #bar, body.embed #rail, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip, body.embed #stage-head { display: none !important; }
+body.embed { --shell-top:0px; --rail-w:0px; --rail-h:0px; }
+body.embed #stage { inset: 0; }
+
+/* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
+#onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
+#onboard[hidden]{display:none}
+.ob-card{width:min(430px,calc(100vw - 40px));padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+.ob-title{display:block;font-size:17px;margin-bottom:12px;color:var(--brand)}
+:root[data-theme=light] .ob-title{color:var(--cuhk)}
+.ob-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ob-card li{font-size:15px;line-height:1.7;color:var(--text)}
+.ob-card li b{color:var(--brand)}
+:root[data-theme=light] .ob-card li b{color:var(--cuhk)}
+.ob-card .btn{width:100%}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a id="back" href="/resources/" aria-label="返回资源库"><span>资源库</span></a>
+  <h1>数轴动点实验室</h1>
+  <span id="meta"></span>
+  <span class="grow"></span>
+  <button class="btn sq" id="step-prev" type="button" aria-label="上一环节" hidden>‹</button>
+  <button class="btn sq" id="step-next" type="button" aria-label="下一环节" hidden>›</button>
+  <button class="btn" id="note-btn-top" type="button" hidden>讲解</button>
+  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
+  <button class="btn" id="sum-btn-top" type="button">小结</button>
+  <button class="btn sq" id="theme" type="button" aria-label="切换深浅色">◐</button>
+  <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
+</div>
+<nav id="rail" hidden aria-label="章节">
+  <div class="rail-title">章节</div>
+  <div id="steps"></div>
+  <div class="rail-split"></div>
+  <div id="rail-extra"></div>
+  <div class="rail-foot"><b>←</b><b>→</b> 切换环节<br><b>Esc</b> 收起浮层</div>
+  <span id="rail-prog"><i></i></span>
+</nav>
+<div id="stage-head" hidden>
+  <span class="frac">01 / 03</span>
+  <span class="sname"></span>
+</div>
+<div id="guide-tip" hidden>
+  <p id="g-tip"></p>
+  <p id="ops-tip">拖动金点读数，方向键左右微调，右侧读数板同步更新</p>
+</div>
+<div id="note"></div>
+<div id="summary"></div>
+<div id="quiz-wrap">
+  <div id="quiz" data-hv-quiz>
+    <div id="quiz-head">
+      <b>随堂检测</b>
+      <span id="quiz-prog"></span>
+      <button class="btn" id="quiz-close" type="button">关闭</button>
+    </div>
+    <div id="quiz-q"></div>
+    <div id="quiz-opts"></div>
+    <div id="quiz-why"></div>
+    <div id="quiz-foot">
+      <span id="quiz-score"></span>
+      <button class="btn primary" id="quiz-next" type="button" hidden>下一题</button>
+      <button class="btn primary" id="quiz-redo" type="button" hidden>重做</button>
+    </div>
+  </div>
+</div>
+<div id="stage" class="pad"></div>
+<div id="onboard" hidden>
+  <div class="ob-card">
+    <b class="ob-title">第一次使用</b>
+    <ul>
+      <li><b>左栏章节</b>：点章节或按键盘左右键换环节，当前环节高亮并印在画面左上</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，从顶栏或章节栏打开</li>
+      <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
+    </ul>
+    <button class="btn primary" id="ob-ok" type="button">开始上课</button>
+  </div>
+</div>
+<script>"use strict";(()=>{var K=new URLSearchParams(location.search).has("selftest");function oe(o){let s=document.getElementById("stage"),a=new URLSearchParams(location.search).get("theme"),t=a==="light"||a==="dark"?a:"dark";try{let n=localStorage.getItem("hv-theme");(n==="light"||n==="dark")&&!a&&(t=n)}catch{}if(document.documentElement.dataset.theme=t,K){let n={errors:[],checks:[],canvas:null,pedagogy:null};window.addEventListener("error",l=>n.errors.push(String(l.message).slice(0,200))),window.addEventListener("unhandledrejection",l=>n.errors.push("rejection: "+String(l.reason).slice(0,200))),window.__hvPushCheck=(l,E,y)=>n.checks.push({name:l,pass:E,detail:String(y!=null?y:"")}),setTimeout(()=>{try{n.canvas=r()}catch(E){n.errors.push("canvas-sample: "+E.message)}try{n.pedagogy=c()}catch(E){n.errors.push("pedagogy-sample: "+E.message)}let l=document.createElement("pre");l.id="hv-selftest",l.textContent="__HV__"+JSON.stringify(n)+"__HV__",document.body.appendChild(l)},2500)}function c(){let n=p=>{let M=document.querySelector(p);return M?(M.textContent||"").replace(/\s+/g," ").trim():""},l=[...document.querySelectorAll("[data-hv-step]")],E=n("#g-tip"),y=n("#summary"),z=i&&i.steps?i.steps.map(p=>p.guide||"").join(""):E,T=i&&i.steps?i.steps.map(p=>p.note||"").join(""):"",B=i&&i.quiz?i.quiz:null;return{metaChars:n("#meta").length,steps:l.length,stepNames:l.slice(0,6).map(p=>p.textContent.trim()),guideCount:l.length?1:0,guideChars:z.length,guideLens:i&&i.steps?i.steps.map(p=>(p.guide||"").length):[],noteChars:T.length,noteLens:i&&i.steps?i.steps.map(p=>(p.note||"").length):[],summaryChars:y.length,quizCount:B?B.length:0,quizChars:B?B.map(p=>(p.q||"")+(p.why||"")).join("").length:0}}function r(){let n=[...document.querySelectorAll("canvas")].sort((m,h)=>h.width*h.height-m.width*h.height)[0];if(!n)return null;let l=document.createElement("canvas");l.width=360,l.height=225;let E=l.getContext("2d");E.drawImage(n,0,0,l.width,l.height);let y=E.getImageData(0,0,l.width,l.height).data,z=[],T=new Map;for(let m=0;m<3;m++)for(let h=0;h<3;h++){let x=0,C=0,I=0;for(let b=m*75;b<(m+1)*75;b+=3)for(let w=h*120;w<(h+1)*120;w+=3){let g=(b*l.width+w)*4,P=(y[g]+y[g+1]+y[g+2])/3;x+=P,C+=P*P,I++;let Q=y[g]>>5<<10|y[g+1]>>5<<5|y[g+2]>>5;T.set(Q,(T.get(Q)||0)+1)}z.push(Math.round(Math.sqrt(C/I-(x/I)**2)))}let B=[...T.entries()].sort((m,h)=>h[1]-m[1]).slice(0,6).map(([m,h])=>[m.toString(16),h]),p=[...T.entries()].sort((m,h)=>h[1]-m[1])[0][0],M=((p>>10&31)*8+(p>>5&31)*8+(p&31)*8)/3,L=1,R=1,v=0,k=0,S=0;for(let m=0;m<l.height;m+=2)for(let h=0;h<l.width;h+=2){let x=(m*l.width+h)*4,C=(y[x]+y[x+1]+y[x+2])/3;if(Math.abs(C-M)>14){S++;let I=h/l.width,b=m/l.height;I<L&&(L=I),I>v&&(v=I),b<R&&(R=b),b>k&&(k=b)}}let _=S?[d(L),d(R),d(v),d(k)]:null;return{regions:z,topColors:B,bbox:_}}function d(n){return Math.round(n*100)/100}let i=o.teaching,N=[];function j(n){let l=n.style.display==="none"||!n.style.display;return G(),l&&(n.style.display="block"),l}function G(){for(let l of N)l.style.display="none";let n=document.getElementById("guide-tip");n&&n.classList.remove("dim")}if(i&&i.steps&&i.steps.length){let k=function(b,w){v=Math.max(0,Math.min(i.steps.length-1,b)),R.forEach((Q,de)=>Q.setAttribute("aria-pressed",String(de===v))),T.textContent=i.steps[v].guide||"",M&&(p.textContent=i.steps[v].note||""),B&&(B.style.width=(v+1)/i.steps.length*100+"%");let g=E.querySelector(".frac");g&&(g.textContent=String(v+1).padStart(2,"0")+" / "+String(i.steps.length).padStart(2,"0"));let P=E.querySelector(".sname");P&&(P.textContent=i.steps[v].name||""),w||G(),i.steps[v].apply&&i.steps[v].apply()};var ne=k;let n=document.getElementById("meta");n.textContent=i.meta||"",n.dataset.hvMeta="";let l=document.getElementById("rail");l.hidden=!1;let E=document.getElementById("stage-head");E.hidden=!1;let y=document.getElementById("guide-tip");y.hidden=!1;let z=document.getElementById("steps"),T=document.getElementById("g-tip"),B=document.querySelector("#rail-prog i"),p=document.getElementById("note"),M=i.steps.some(b=>b.note&&String(b.note).trim()),L=document.getElementById("note-btn-top");M&&(p.dataset.hvNote="",N.push(p),L.hidden=!1,L.addEventListener("click",()=>{j(p),y.classList.toggle("dim",p.style.display==="block")}));let R=i.steps.map((b,w)=>{let g=document.createElement("button");g.type="button",g.className="rail-step",g.dataset.hvStep="";let P=document.createElement("b");return P.className="no",P.textContent=String(w+1).padStart(2,"0"),g.appendChild(P),g.appendChild(document.createTextNode(" "+b.name)),g.addEventListener("click",()=>k(w)),z.appendChild(g),g}),v=0,S=document.getElementById("step-prev"),_=document.getElementById("step-next");S.hidden=!1,_.hidden=!1,S.addEventListener("click",()=>k(v-1)),_.addEventListener("click",()=>k(v+1)),window.__hvApplyStep0=()=>k(0);let m=document.getElementById("summary");m.textContent=i.summary||"",m.dataset.hvSummary="",N.push(m);let h=document.getElementById("sum-btn-top");h.addEventListener("click",()=>j(m));let x=document.getElementById("rail-extra"),C=(b,w)=>{let g=document.createElement("button");g.type="button",g.className="rail-step";let P=document.createElement("b");return P.className="no",P.textContent=b.no,g.appendChild(P),g.appendChild(document.createTextNode(" "+b.name)),g.addEventListener("click",w),x.appendChild(g),g};window.addEventListener("keydown",b=>{let w=b.target;w&&(w.tagName==="INPUT"||w.tagName==="TEXTAREA"||w.tagName==="SELECT"||w.isContentEditable)||document.getElementById("quiz-wrap").style.display==="flex"&&(b.key==="ArrowLeft"||b.key==="ArrowRight")||(b.key==="ArrowRight"?k(v+1):b.key==="ArrowLeft"?k(v-1):b.key==="Escape"&&G())}),Y();let I=document.getElementById("quiz-btn");I.hidden||C({no:"\u25C6",name:"\u968F\u5802\u68C0\u6D4B"},()=>I.click()),C({no:"\u2261",name:"\u8BFE\u5802\u5C0F\u7ED3"},()=>h.click())}function Y(){let n=i&&i.quiz;if(!n||!n.length)return;let l=document.getElementById("quiz-wrap"),E=document.getElementById("quiz-prog"),y=document.getElementById("quiz-q"),z=document.getElementById("quiz-opts"),T=document.getElementById("quiz-why"),B=document.getElementById("quiz-score"),p=document.getElementById("quiz-next"),M=document.getElementById("quiz-redo");N.push(l),document.getElementById("quiz-btn").hidden=!1,document.getElementById("quiz-btn").addEventListener("click",()=>{let S=l.style.display!=="flex";G(),S&&(l.style.display="flex")}),document.getElementById("quiz-close").addEventListener("click",()=>{l.style.display="none"});let L=0,R=0,v=new Array(n.length).fill(!1);function k(){let S=n[L];p.hidden=!0,M.hidden=!0,T.style.display="none",B.textContent="",E.textContent=`\u7B2C ${L+1} / ${n.length} \u9898`,y.textContent=S.q,y.dataset.hvQ="",z.textContent="",S.opts.forEach((_,m)=>{let h=document.createElement("button");h.type="button",h.className="qopt",h.textContent=String.fromCharCode(65+m)+". "+_,h.addEventListener("click",()=>{if(v[L])return;v[L]=!0;let x=m===S.a;x&&R++,[...z.children].forEach((C,I)=>{C.disabled=!0,I===S.a?C.classList.add("ok"):I===m&&C.classList.add("no")}),T.textContent=S.why||"",T.style.display="block",B.textContent=x?"\u7B54\u5BF9\u4E86":"\u7B54\u9519\u4E86",L<n.length-1?p.hidden=!1:(M.hidden=!1,B.textContent=`\u5171 ${R} / ${n.length} \u9898\u7B54\u5BF9`)}),z.appendChild(h)})}if(p.addEventListener("click",()=>{L++,k()}),M.addEventListener("click",()=>{L=0,R=0,v.fill(!1),k()}),l.style.display="none",k(),K&&typeof window.__hvPushCheck=="function"){let S=[];n.forEach((x,C)=>{(!x.q||!Array.isArray(x.opts)||x.opts.length<2)&&S.push(`\u7B2C${C+1}\u9898\u9898\u5E72\u6216\u9009\u9879\u7F3A\u5931`),(!Number.isInteger(x.a)||x.a<0||!x.opts||x.a>=x.opts.length)&&S.push(`\u7B2C${C+1}\u9898\u7B54\u6848\u4E0B\u6807\u8D8A\u754C`),(!x.why||x.why.length<10)&&S.push(`\u7B2C${C+1}\u9898\u89E3\u6790\u4E0D\u8DB310\u5B57`)}),n.length<3&&S.push(`\u4EC5 ${n.length} \u9898\uFF0C\u5C11\u4E8E 3 \u9898`),window.__hvPushCheck("quiz-valid",S.length===0,S.join("\uFF1B")||`${n.length} \u9898\u7ED3\u6784\u5408\u6CD5\uFF0C\u5747\u542B\u9898\u5E72\u3001\u9009\u9879\u3001\u7B54\u6848\u4E0E\u89E3\u6790`),l.style.display="flex",z.children[0].click();let _=getComputedStyle(T).display!=="none"&&T.getBoundingClientRect().height>0,m=B.textContent||"",h=[...z.children].every(x=>x.disabled);l.style.display="none",window.__hvPushCheck("quiz-answer-flow",_&&m.length>0&&h,`\u4F5C\u7B54\u540E\u89E3\u6790${_?"\u5DF2\u663E\u793A":"\u672A\u663E\u793A"}\uFF0C\u53CD\u9988\u300C${m.slice(0,12)}\u300D\uFF0C\u9009\u9879${h?"\u5DF2\u9501\u5B9A":"\u672A\u9501\u5B9A"}`)}}let O=new URLSearchParams(location.search).has("embed");O&&document.body.classList.add("embed");let D=document.getElementById("onboard");if(D&&!K&&!O&&!new URLSearchParams(location.search).has("pv")){let n=!1;try{n=localStorage.getItem("hv-onboard")==="1"}catch{}if(!n){D.hidden=!1;let l=()=>{D.hidden=!0;try{localStorage.setItem("hv-onboard","1")}catch{}};document.getElementById("ob-ok").addEventListener("click",l),window.addEventListener("keydown",E=>{E.key==="Escape"&&!D.hidden&&l()})}}let A={onTheme:null,onResize:null};document.getElementById("theme").addEventListener("click",()=>{t=document.documentElement.dataset.theme==="light"?"dark":"light",document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}A.onTheme&&A.onTheme(t)}),document.getElementById("fs").addEventListener("click",()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}),window.addEventListener("resize",()=>{A.onResize&&A.onResize()}),typeof ResizeObserver!="undefined"&&new ResizeObserver(()=>{A.onResize&&A.onResize()}).observe(s),o.mount(s,A),window.__hvApplyStep0&&window.__hvApplyStep0();let F=new URLSearchParams(location.search).get("step");if(F!==null&&i&&i.steps&&i.steps.length){let n=Math.max(0,Math.min(i.steps.length-1,parseInt(F,10)||0)),l=[...document.querySelectorAll("[data-hv-step]")];l[n]&&l[n].click()}return A}var te,q,e,W=0,V=0;var J="sanys",f=2,Z=!1,u=6,ce=`
+#nl-ui{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;z-index:6;display:flex;gap:26px;align-items:center;
+  background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:16px;
+  padding:12px 28px;backdrop-filter:blur(6px);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+#nl-read{display:flex;gap:26px}
+#nl-read .stat{display:flex;flex-direction:column;gap:5px;align-items:center;min-width:68px}
+#nl-read .lab{font-size:13.5px;color:var(--text-faint);letter-spacing:.05em;white-space:nowrap}
+#nl-read .val{font-family:Georgia,'Times New Roman',serif;font-size:27px;font-weight:700;line-height:1.1}
+#nl-read .pos{color:var(--gold)}
+#nl-read .opp{color:#B49BE3}
+#nl-read .abs{color:#8FD4B0}
+#nl-read .cmp{font-size:20px}
+#nl-tip{display:none}
+@media (max-width:760px){#nl-ui{left:10px;right:10px;transform:none;gap:14px;padding:10px 14px}#nl-read{gap:14px}#nl-read .val{font-size:22px}}
+`,he={meta:"\u6570\u5B66\xB7\u4E03\u5E74\u7EA7\uFF5C\u5317\u5E08\u5927\u7248\u4E03\u4E0A\u7B2C\u4E8C\u7AE0\u300A\u6709\u7406\u6570\u53CA\u5176\u8FD0\u7B97\u300B\xB7 \u6570\u8F74\u4E0E\u7EDD\u5BF9\u503C",steps:[{name:"\u60F3\u4E00\u60F3",guide:"\u5148\u770B\u8FD9\u6761\u6570\u8F74\uFF1A\u539F\u70B9\u3001\u6B63\u65B9\u5411\u3001\u5355\u4F4D\u957F\u5EA6\u5206\u522B\u5728\u54EA\u91CC\uFF1F\u6E29\u5EA6\u8BA1\u4E3A\u4EC0\u4E48\u7B97\u4E00\u6761\u7AD6\u7740\u7684\u6570\u8F74\uFF1F\u7F3A\u4E86\u7BAD\u5934\u7684\u76F4\u7EBF\u80FD\u5F53\u6570\u8F74\u5417\uFF1F",note:'\u6570\u8F74\u4E09\u8981\u7D20\uFF1A\u539F\u70B9\uFF08\u57FA\u51C6 0\uFF09\u3001\u6B63\u65B9\u5411\uFF08\u5411\u53F3\u4E3A\u6B63\uFF0C\u7528\u7BAD\u5934\u6807\u51FA\uFF09\u3001\u5355\u4F4D\u957F\u5EA6\uFF08\u6BCF\u4E00\u683C\u4E00\u6837\u957F\uFF0C\u7F3A\u4E00\u4E0D\u53EF\uFF09\u3002\u6E29\u5EA6\u8BA1\u6709\u96F6\u523B\u5EA6\u3001\u5411\u4E0A\u7684\u6B63\u5411\u548C\u5747\u5300\u523B\u5EA6\uFF0C\u6B63\u662F\u4E00\u6761\u7AD6\u653E\u7684\u6570\u8F74\u3002\u6709\u4E86\u4E09\u8981\u7D20\uFF0C\u4EFB\u4F55\u4E00\u4E2A\u6709\u7406\u6570\u90FD\u80FD\u627E\u5230\u6570\u8F74\u4E0A\u552F\u4E00\u7684\u4E00\u4E2A\u70B9\u4E0E\u5B83\u5BF9\u5E94\u2014\u2014\u8FD9\u662F"\u6570"\u4E0E"\u5F62"\u7B2C\u4E00\u6B21\u6B63\u5F0F\u63A5\u8F68\u3002',apply:()=>X("sanys")},{name:"\u505A\u4E00\u505A",guide:"\u62D6\u52A8\u91D1\u70B9\uFF0C\u8BFB\u6570\u677F\u8DDF\u7740\u53D8\uFF1A\u70B9\u8868\u793A\u7684\u6570\u3001\u5B83\u7684\u76F8\u53CD\u6570\u3001\u5230\u539F\u70B9\u7684\u8DDD\u79BB\u5404\u662F\u591A\u5C11\uFF1F\u628A\u70B9\u62D6\u5230\u539F\u70B9\u5DE6\u8FB9\uFF0C\u5B83\u4E0E 0 \u8C01\u5927\uFF1F\u518D\u7528\u65B9\u5411\u952E\u534A\u683C\u534A\u683C\u5730\u5FAE\u8C03\u8BD5\u8BD5\u3002",note:'\u70B9\u5728\u539F\u70B9\u53F3\u8FB9\u8868\u793A\u6B63\u6570\uFF0C\u5DE6\u8FB9\u8868\u793A\u8D1F\u6570\uFF1B\u70B9\u8D8A\u5F80\u53F3\uFF0C\u8868\u793A\u7684\u6570\u8D8A\u5927\uFF0C\u6240\u4EE5\u53F3\u5927\u5DE6\u5C0F\u662F\u4E0E 0 \u6BD4\u8F83\u7684\u4F9D\u636E\u3002\u76F8\u53CD\u6570\u53EA\u6539\u7B26\u53F7\uFF1A2 \u7684\u76F8\u53CD\u6570\u662F -2\uFF1B\u5230\u539F\u70B9\u7684\u8DDD\u79BB\u6C38\u8FDC\u662F"\u591A\u5C11\u683C"\uFF0C\u4E0D\u5E26\u65B9\u5411\uFF0C\u6240\u4EE5\u662F\u975E\u8D1F\u7684\u3002\u8BFB\u6570\u65F6\u5148\u770B\u65B9\u5411\u5B9A\u7B26\u53F7\uFF0C\u518D\u6570\u683C\u5B50\u5B9A\u5927\u5C0F\u3002',apply:()=>X("free")},{name:"\u8BAE\u4E00\u8BAE",guide:"\u73B0\u5728\u753B\u9762\u4E0A\u51FA\u73B0\u4E86\u5BF9\u79F0\u7684\u7D2B\u70B9\u548C\u4E24\u6BB5\u7B49\u957F\u7684\u5F27\u7EBF\uFF1A2 \u4E0E -2 \u5230\u539F\u70B9\u7684\u8DDD\u79BB\u5404\u662F\u591A\u5C11\uFF1F\u5C0F\u7EC4\u8BA8\u8BBA\u540E\u7528\u4E00\u53E5\u8BDD\u8BF4\u8BF4\u7EDD\u5BF9\u503C\u7684\u610F\u4E49\uFF0C\u518D\u603B\u7ED3\u8D1F\u6570\u6BD4\u8F83\u5927\u5C0F\u7684\u65B9\u6CD5\u3002",note:'\u4E92\u4E3A\u76F8\u53CD\u6570\u7684\u4E24\u4E2A\u70B9\u5173\u4E8E\u539F\u70B9\u5BF9\u79F0\uFF0C\u5230\u539F\u70B9\u7684\u8DDD\u79BB\u76F8\u7B49\u2014\u2014\u8FD9\u4E2A\u5171\u540C\u8DDD\u79BB\u5C31\u662F\u7EDD\u5BF9\u503C\uFF1A|2| = 2\uFF0C|-2| = 2\uFF0C\u6240\u4EE5 |a| \u2265 0\u3002\u6BD4\u8F83\u5927\u5C0F\u770B\u4F4D\u7F6E\uFF1A\u70B9\u8D8A\u9760\u53F3\u6570\u8D8A\u5927\uFF1B\u4E24\u4E2A\u8D1F\u6570\u6BD4\u8F83\uFF0C\u79BB\u539F\u70B9\u8D8A\u8FDC\u7684\u70B9\u8D8A\u9760\u5DE6\uFF0C\u6570\u53CD\u800C\u8D8A\u5C0F\uFF0C\u5982 -5 < -3\u3002\u53E3\u8BC0"\u53F3\u5927\u5DE6\u5C0F\uFF0C\u8D1F\u6570\u8FDC\u8005\u5C0F"\u3002',apply:()=>{X("mirror")}}],summary:"\u6570\u8F74\u4E09\u8981\u7D20\uFF1A\u539F\u70B9\u3001\u6B63\u65B9\u5411\u3001\u5355\u4F4D\u957F\u5EA6\u3002\u4EFB\u4F55\u6709\u7406\u6570\u90FD\u5BF9\u5E94\u6570\u8F74\u4E0A\u552F\u4E00\u7684\u4E00\u4E2A\u70B9\u3002\u53EA\u6709\u7B26\u53F7\u4E0D\u540C\u7684\u4E24\u4E2A\u6570\u4E92\u4E3A\u76F8\u53CD\u6570\uFF0C\u5176\u5BF9\u5E94\u70B9\u5173\u4E8E\u539F\u70B9\u5BF9\u79F0\uFF1B|a| \u8868\u793A\u6570 a \u5BF9\u5E94\u7684\u70B9\u5230\u539F\u70B9\u7684\u8DDD\u79BB\uFF0C\u6052\u6709 |a| \u2265 0\u3002\u6570\u8F74\u4E0A\u7684\u70B9\u8D8A\u9760\u53F3\uFF0C\u8868\u793A\u7684\u6570\u8D8A\u5927\uFF1B\u4E24\u4E2A\u8D1F\u6570\u6BD4\u8F83\u5927\u5C0F\uFF0C\u7EDD\u5BF9\u503C\u5927\u7684\u53CD\u800C\u5C0F\u3002",quiz:[{q:"\u4E00\u6761\u76F4\u7EBF\u8981\u6210\u4E3A\u6570\u8F74\uFF0C\u5FC5\u987B\u5177\u5907\u7684\u6761\u4EF6\u662F\uFF1F",opts:["\u539F\u70B9\u3001\u6B63\u65B9\u5411\u3001\u5355\u4F4D\u957F\u5EA6","\u8DB3\u591F\u5BC6\u96C6\u7684\u523B\u5EA6","\u957F\u5EA6\u6709\u9650\u4E14\u6807\u597D\u6570\u5B57","\u5FC5\u987B\u6C34\u5E73\u653E\u7F6E"],a:0,why:"\u4E09\u8981\u7D20\u7F3A\u4E00\u4E0D\u53EF\uFF1A\u539F\u70B9\u662F\u57FA\u51C6\uFF0C\u6B63\u65B9\u5411\uFF08\u7BAD\u5934\uFF09\u5B9A\u6B63\u8D1F\uFF0C\u5355\u4F4D\u957F\u5EA6\u5B9A\u683C\u5B50\u3002\u6CA1\u6709\u7BAD\u5934\u6216\u683C\u5B50\u4E0D\u5747\u5300\u7684\u76F4\u7EBF\u90FD\u4E0D\u662F\u6570\u8F74\u3002"},{q:"\u6570\u8F74\u4E0A\u91D1\u70B9\u5230\u539F\u70B9\u5DE6\u4FA7 3.5 \u4E2A\u5355\u4F4D\u957F\u5EA6\u5904\uFF0C\u5B83\u8868\u793A\u7684\u6570\u662F\uFF1F",opts:["3.5","-3.5","0.5","-0.5"],a:1,why:"\u539F\u70B9\u5DE6\u4FA7\u4E3A\u8D1F\uFF1A\u5148\u5B9A\u7B26\u53F7\uFF08\u8D1F\uFF09\uFF0C\u518D\u6570\u683C\u5B50\uFF083.5 \u683C\uFF09\uFF0C\u6240\u4EE5\u662F -3.5\u3002\u8BFB\u6570\u5148\u65B9\u5411\u540E\u683C\u6570\uFF0C\u7B26\u53F7\u5C31\u4E0D\u4F1A\u4E22\u3002"},{q:"-2.5 \u7684\u76F8\u53CD\u6570\u662F\uFF1F",opts:["2.5","-2.5","0.4","1/2.5"],a:0,why:"\u53EA\u6709\u7B26\u53F7\u4E0D\u540C\u7684\u4E24\u4E2A\u6570\u4E92\u4E3A\u76F8\u53CD\u6570\uFF0C-2.5 \u7684\u76F8\u53CD\u6570\u662F 2.5\u30020.4 \u662F\u5012\u6570\uFF08\u4E58\u79EF\u4E3A 1\uFF09\uFF0C\u4E0E\u76F8\u53CD\u6570\u662F\u4E24\u4E2A\u6982\u5FF5\u3002"},{q:"|-4| \u7B49\u4E8E 4\uFF0C\u4F9D\u636E\u662F\uFF1F",opts:["\u8D1F\u53F7\u53EF\u4EE5\u76F4\u63A5\u53BB\u6389","-4 \u5BF9\u5E94\u7684\u70B9\u5230\u539F\u70B9\u7684\u8DDD\u79BB\u662F 4","\u89C4\u5B9A\u5982\u6B64\u6CA1\u6709\u7406\u7531","\u56E0\u4E3A -4 \u5C0F\u4E8E 4"],a:1,why:'\u7EDD\u5BF9\u503C\u7684\u51E0\u4F55\u610F\u4E49\u662F"\u5230\u539F\u70B9\u7684\u8DDD\u79BB"\uFF1A-4 \u7684\u70B9\u79BB\u539F\u70B9 4 \u4E2A\u5355\u4F4D\u957F\u5EA6\uFF0C\u8DDD\u79BB\u4E0D\u5E26\u65B9\u5411\u3001\u6052\u4E3A\u975E\u8D1F\uFF0C\u6240\u4EE5 |-4| = 4\u3002'},{q:"\u6BD4\u8F83 -5 \u4E0E -3 \u7684\u5927\u5C0F\uFF0C\u6B63\u786E\u7684\u662F\uFF1F",opts:["-5 \u5927\uFF0C\u56E0\u4E3A 5 \u6BD4 3 \u5927","-3 \u5927\uFF0C\u5B83\u7684\u70B9\u5728\u6570\u8F74\u4E0A\u66F4\u9760\u53F3","\u4E00\u6837\u5927","\u65E0\u6CD5\u6BD4\u8F83"],a:1,why:'\u6570\u8F74\u4E0A -3 \u7684\u70B9\u5728 -5 \u7684\u53F3\u8FB9\uFF0C\u53F3\u5927\u5DE6\u5C0F\uFF0C\u6240\u4EE5 -3 > -5\u3002\u4E24\u4E2A\u8D1F\u6570\u6BD4\u8F83\uFF0C\u79BB\u539F\u70B9\u8D8A\u8FDC\u7684\u8D8A\u9760\u5DE6\u3001\u6570\u53CD\u800C\u8D8A\u5C0F\u2014\u2014"\u6570\u5B57\u5927"\u4E0D\u7B49\u4E8E"\u6570\u5927"\u3002'}]};function X(o){J=o,H()}function me(){let o=getComputedStyle(document.documentElement),s=(a,t)=>o.getPropertyValue(a).trim()||t;return{text:s("--text","#f2ecf8"),muted:s("--muted","#a99cc0"),faint:s("--faint","#7d7099"),gold:s("--gold","#E8B04B"),purple:s("--purple","#A66BA6"),line:s("--line","rgba(180,130,210,.3)"),panel2:s("--panel2","#271a42"),back:s("--bg","#140b20"),green:s("--ok","#7FBF9E"),purpleHi:document.documentElement.dataset.theme==="light"?"#8A4FB0":"#C9A0E8",goldHi:document.documentElement.dataset.theme==="light"?"#A66E10":"#E8B04B",greenHi:document.documentElement.dataset.theme==="light"?"#2E7D52":"#7FBF9E",light:document.documentElement.dataset.theme==="light"}}function H(){let o=me(),s=V*.63,a=W*.44,t=n=>W/2+n/u*a;e.clearRect(0,0,W,V);let c=(n,l)=>`${n} ${l}px "Noto Sans SC","PingFang SC",sans-serif`,r=V*.075,d=s-r,i=o.light?.32:.16,N=o.light?.1:.04,j=e.createLinearGradient(0,r,0,s);j.addColorStop(0,`rgba(232,176,75,${i})`),j.addColorStop(1,`rgba(232,176,75,${N})`),e.fillStyle=j,e.fillRect(t(0),r,t(u+.25)-t(0),d);let G=o.light?.28:.17,Y=o.light?.09:.04,O=e.createLinearGradient(0,r,0,s);O.addColorStop(0,`rgba(150,90,180,${G})`),O.addColorStop(1,`rgba(150,90,180,${Y})`),e.fillStyle=O,e.fillRect(t(-u-.25),r,t(0)-t(-u-.25),d),e.strokeStyle=o.line,e.lineWidth=1,e.globalAlpha=.38;for(let n=-u;n<=u;n+=1)n!==0&&(e.beginPath(),e.moveTo(t(n),r+4),e.lineTo(t(n),s-8),e.stroke());e.globalAlpha=1,e.textAlign="center",e.textBaseline="middle",e.font=c(700,24),e.strokeStyle=o.back,e.lineWidth=6,e.lineJoin="round";let D="\u6B63\u6570\u533A \xB7 \u5927\u4E8E 0",A="\u8D1F\u6570\u533A \xB7 \u5C0F\u4E8E 0";e.strokeText(D,(t(0)+t(u))/2,r+d*.26),e.strokeText(A,(t(0)+t(-u))/2,r+d*.26),e.fillStyle=o.goldHi,e.fillText(D,(t(0)+t(u))/2,r+d*.26),e.fillStyle=o.purpleHi,e.fillText(A,(t(0)+t(-u))/2,r+d*.26),e.font=c(400,15),e.globalAlpha=.85,e.strokeText("\u70B9\u5728\u539F\u70B9\u53F3\u8FB9",(t(0)+t(u))/2,r+d*.26+28),e.strokeText("\u70B9\u5728\u539F\u70B9\u5DE6\u8FB9",(t(0)+t(-u))/2,r+d*.26+28),e.fillStyle=o.goldHi,e.fillText("\u70B9\u5728\u539F\u70B9\u53F3\u8FB9",(t(0)+t(u))/2,r+d*.26+28),e.fillStyle=o.purpleHi,e.fillText("\u70B9\u5728\u539F\u70B9\u5DE6\u8FB9",(t(0)+t(-u))/2,r+d*.26+28),e.globalAlpha=1,e.strokeStyle=o.line,e.lineWidth=1.5,e.setLineDash([5,6]),e.beginPath(),e.moveTo(t(0),r),e.lineTo(t(0),s-12),e.stroke(),e.setLineDash([]),e.strokeStyle=o.text,e.lineWidth=4,e.lineCap="round",e.beginPath(),e.moveTo(t(-u-.35),s),e.lineTo(t(u+.35),s),e.stroke(),e.beginPath(),e.moveTo(t(u+.35)+2,s),e.lineTo(t(u+.35)-16,s-9),e.lineTo(t(u+.35)-16,s+9),e.closePath(),e.fillStyle=o.text,e.fill();for(let n=-u;n<=u;n+=1){let l=n===0;e.strokeStyle=o.text,e.lineWidth=l?3.5:2.5;let E=l?15:10;e.beginPath(),e.moveTo(t(n),s-E),e.lineTo(t(n),s+E),e.stroke(),e.strokeStyle=o.line,e.lineWidth=1.5,e.beginPath(),e.moveTo(t(n+.5),s-5),e.lineTo(t(n+.5),s+5),e.stroke();let y=n!==0&&n===Math.round(f);e.font=c(y||l?700:600,y?21:19),l?e.fillStyle=o.green:y?e.fillStyle=o.goldHi:e.fillStyle=o.muted,e.textBaseline="top",e.fillText(String(n),t(n),s+20)}if(J==="sanys"){e.strokeStyle=o.gold,e.lineWidth=2,e.beginPath(),e.moveTo(t(0),s-15),e.lineTo(t(0),s-44),e.stroke(),ee("\u539F\u70B9 \xB7 0",t(0),s-62,o.gold,o.back),ee("\u6B63\u65B9\u5411\uFF08\u5411\u53F3\u4E3A\u6B63\uFF09",t(u-.55),s+76,o.gold,o.back),e.beginPath(),e.moveTo(t(u-.55),s+64),e.lineTo(t(u-.55),s+15),e.stroke();let n=s-96;e.strokeStyle=o.gold,e.lineWidth=2,e.beginPath(),e.moveTo(t(1),n+10),e.lineTo(t(1),n),e.lineTo(t(2),n),e.lineTo(t(2),n+10),e.stroke(),ee("\u5355\u4F4D\u957F\u5EA6 \xB7 \u6BCF\u683C\u76F8\u7B49",t(1.5),n-16,o.gold,o.back)}if(J==="mirror"){let n=Math.abs(f)||.5;se(t(-f),s,13,o.purple,12),le($(-f),t(-f),s+56,o.purple,"#1c0f2a"),ie(t(0),t(f),s-100,o.greenHi,"|"+$(f)+"| = "+$(n)),ie(t(0),t(-f),s-100,o.greenHi,"|"+$(-f)+"| = "+$(n)),e.strokeStyle=o.purple,e.lineWidth=2,e.setLineDash([6,6]),e.beginPath(),e.moveTo(t(f),s-16),e.lineTo(t(-f),s-16),e.stroke(),e.setLineDash([])}let F=t(f),ne=6+3*Math.sin(re/480);e.beginPath(),e.arc(F,s,22+ne,0,Math.PI*2),e.strokeStyle=o.light?"rgba(166,110,16,.45)":"rgba(232,176,75,.35)",e.lineWidth=2.5,e.stroke(),se(F,s,15,o.gold,22),e.strokeStyle=o.gold,e.lineWidth=2.5,e.beginPath(),e.moveTo(F,s-15),e.lineTo(F,s-40),e.stroke(),le($(f),F,s-58,o.gold,"#221430")}var re=0;function se(o,s,a,t,c){e.save(),e.shadowColor=t,e.shadowBlur=c,e.beginPath(),e.arc(o,s,a,0,Math.PI*2),e.fillStyle=t,e.fill(),e.restore(),e.beginPath(),e.arc(o,s,a-3.5,0,Math.PI*2),e.strokeStyle="rgba(255,255,255,.85)",e.lineWidth=2,e.stroke()}function le(o,s,a,t,c){e.font='700 20px "Noto Sans SC","PingFang SC",sans-serif';let r=e.measureText(o).width+30,d=34;e.beginPath(),e.roundRect(s-r/2,a-d/2,r,d,d/2),e.fillStyle=t,e.fill(),e.fillStyle=c,e.textAlign="center",e.textBaseline="middle",e.fillText(o,s,a+1)}function ee(o,s,a,t,c){e.font='700 16px "Noto Sans SC","PingFang SC",sans-serif';let r=e.measureText(o).width+22,d=30;e.beginPath(),e.roundRect(s-r/2,a-d/2,r,d,8),e.fillStyle=c,e.globalAlpha=.82,e.fill(),e.globalAlpha=1,e.strokeStyle=t,e.lineWidth=1.5,e.stroke(),e.fillStyle=t,e.textAlign="center",e.textBaseline="middle",e.fillText(o,s,a+1)}function ie(o,s,a,t,c){let r=Math.min(o,s),d=Math.max(o,s);e.strokeStyle=t,e.lineWidth=3,e.beginPath(),e.moveTo(r,a+8),e.lineTo(r,a),e.lineTo(d,a),e.lineTo(d,a+8),e.stroke(),e.beginPath(),e.moveTo(r,a),e.lineTo(d,a),e.stroke(),e.fillStyle=t,e.beginPath(),e.moveTo(d,a),e.lineTo(d-9,a-5),e.lineTo(d-9,a+5),e.closePath(),e.fill(),e.beginPath(),e.moveTo(r,a),e.lineTo(r+9,a-5),e.lineTo(r+9,a+5),e.closePath(),e.fill(),e.font='700 20px "Noto Sans SC","PingFang SC",sans-serif';let i=a-22;e.strokeStyle="rgba(0,0,0,.55)",e.lineWidth=5,e.lineJoin="round",e.strokeText(c,(r+d)/2,i),e.fillStyle=t,e.textAlign="center",e.textBaseline="bottom",e.fillText(c,(r+d)/2,i)}function $(o){let s=Math.abs(o%1)<1e-9?String(Math.round(o)):o.toFixed(1);return s==="-0"?"0":s}function U(){if(!document.getElementById("nl-read"))return;let s=t=>document.getElementById(t);s("nl-p").textContent=$(f),s("nl-opp").textContent=$(-f),s("nl-abs").textContent=$(Math.abs(f));let a=s("nl-cmp");a.textContent=f>0?"> 0 \xB7 \u53F3\u4FA7":f<0?"< 0 \xB7 \u5DE6\u4FA7":"= 0 \xB7 \u539F\u70B9"}function pe(o){let s=document.createElement("style");s.textContent=ce,o.appendChild(s);let a=document.createElement("div");a.id="nl-ui",a.innerHTML=`
+    <div id="nl-read">
+      <div class="stat"><span class="lab">\u70B9\u8868\u793A\u7684\u6570</span><b class="val pos" id="nl-p"></b></div>
+      <div class="stat"><span class="lab">\u76F8\u53CD\u6570</span><b class="val opp" id="nl-opp"></b></div>
+      <div class="stat"><span class="lab">\u5230\u539F\u70B9\u8DDD\u79BB</span><b class="val abs" id="nl-abs"></b></div>
+      <div class="stat"><span class="lab">\u4E0E 0 \u6BD4\u8F83</span><b class="val pos cmp" id="nl-cmp"></b></div>
+    </div>`,o.appendChild(a),U()}function ue(){let o=window.__hvPushCheck;if(!o)return;let s=[3.5,-4,0,2.5,-.5],a=[];for(let r of s){f=r,U();let d=N=>document.getElementById(N).textContent,i=N=>parseFloat(d(N));(!Number.isFinite(i("nl-p"))||i("nl-p")!==r)&&a.push(`p=${r} \u8BFB\u6570 ${d("nl-p")}`),(!Number.isFinite(i("nl-opp"))||i("nl-opp")!==-r)&&a.push(`p=${r} \u76F8\u53CD\u6570 ${d("nl-opp")}`),(!Number.isFinite(i("nl-abs"))||i("nl-abs")!==Math.abs(r))&&a.push(`p=${r} \u7EDD\u5BF9\u503C ${d("nl-abs")}`)}o("\u8BFB\u6570\u677F\u4E09\u884C\u4E00\u81F4",a.length===0,a.join("\uFF1B")||"5 \u7EC4\u4F4D\u7F6E\uFF1A\u6570\u3001\u76F8\u53CD\u6570\u3001\u5230\u539F\u70B9\u8DDD\u79BB\u5168\u90E8\u4E0E\u62D6\u52A8\u4F4D\u7F6E\u4E00\u81F4"),f=2,U(),X("sanys");let t=J==="sanys";X("mirror");let c=J==="mirror";X("free"),o("\u73AF\u8282\u9884\u8BBE\u5207\u6362",t&&c,"\u4E09\u8981\u7D20\u6807\u6CE8\u4E0E\u5BF9\u79F0\u6F14\u793A\u6A21\u5F0F\u968F\u73AF\u8282\u5207\u6362\u751F\u6548")}function ae(){let o=Math.min(devicePixelRatio||1,2);W=te.clientWidth,V=te.clientHeight,q.width=Math.round(W*o),q.height=Math.round(V*o),q.style.width=W+"px",q.style.height=V+"px",e.setTransform(o,0,0,o,0,0),H()}oe({teaching:he,mount(o,s){te=o,q=document.createElement("canvas"),q.style.cssText="position:absolute;inset:0;touch-action:none;cursor:grab",o.appendChild(q),e=q.getContext("2d"),pe(o),ae();let a=c=>Math.max(-u,Math.min(u,Math.round((c-W/2)/(W*.44)*2)/2));q.addEventListener("pointerdown",c=>{Z=!0,q.setPointerCapture(c.pointerId),f=a(c.offsetX),U(),H()}),q.addEventListener("pointermove",c=>{Z&&(f=a(c.offsetX),U(),H())}),q.addEventListener("pointerup",()=>{Z=!1}),window.addEventListener("keydown",c=>{c.target&&(c.target.tagName==="INPUT"||c.target.isContentEditable)||(c.key==="ArrowRight"?(f=Math.min(u,f+.5),U(),H()):c.key==="ArrowLeft"&&(f=Math.max(-u,f-.5),U(),H()))});let t=c=>{re=c,document.hidden||H(),requestAnimationFrame(t)};requestAnimationFrame(t),s.onResize=ae,s.onTheme=H,new URLSearchParams(location.search).has("selftest")&&ue()}});})();
+</script>
+</body>
+</html>

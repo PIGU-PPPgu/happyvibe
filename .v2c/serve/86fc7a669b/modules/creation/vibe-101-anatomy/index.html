@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>Vibe 101 · 解剖一个网页：HTML、CSS、JS 到底是什么 · HappyVibe 数智学园</title><meta name="description" content="深入 Vibe Coding 的地基课。用我们自己的一个真实课件页，把「代码」和「页面」摆在一起对照——看完你就知道 AI 写的到底是什么，以及该让它改哪里。"><meta property="og:title" content="Vibe 101 · 解剖一个网页：HTML、CSS、JS 到底是什么 · HappyVibe 数智学园"><meta property="og:description" content="深入 Vibe Coding 的地基课。用我们自己的一个真实课件页，把「代码」和「页面」摆在一起对照——看完你就知道 AI 写的到底是什么，以及该让它改哪里。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/creation/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> creation </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>vibe-101-anatomy</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（7 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#为什么要解剖它" data-astro-cid-5y7t3r35>为什么要解剖它</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#三件套各管一件事" data-astro-cid-5y7t3r35>三件套，各管一件事</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#傻瓜实验改一行字亲眼看页面变化5-分钟" data-astro-cid-5y7t3r35>傻瓜实验：改一行字，亲眼看页面变化（5 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#看懂结构后你的话术会升级" data-astro-cid-5y7t3r35>看懂结构后，你的话术会升级</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#这节课在成长路径里的位置" data-astro-cid-5y7t3r35>这节课在成长路径里的位置</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#给想再深一步的老师" data-astro-cid-5y7t3r35>给想再深一步的老师</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#下一步去哪" data-astro-cid-5y7t3r35>下一步去哪</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/creation/" style="color:#feb300" data-astro-cid-5y7t3r35>06 · AI × 应用创造</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>Vibe 101 · 解剖一个网页：HTML、CSS、JS 到底是什么</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>深入 Vibe Coding 的地基课。用我们自己的一个真实课件页，把「代码」和「页面」摆在一起对照——看完你就知道 AI 写的到底是什么，以及该让它改哪里。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>本站真实课件页解剖 ／ 参考 Datawhale easy-vibe 并本土化重写</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="creation/vibe-101-anatomy" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：网页 = HTML（骨架，内容是什么）+ CSS（皮肤，长什么样）+ JS（动作，能做什么）。你不需要会写——只需要看得懂「哪段管哪块」，然后让 AI 去改。</strong></p>
+</blockquote>
+<h2 id="为什么要解剖它">为什么要解剖它</h2>
+<p>很多老师学了很久 Vibe Coding 还是心里没底，因为「AI 给了我一堆代码，我看不懂，不知道它写没写对」。这一课把你之前用过的一个<strong>真实课件页</strong>打开给你看：代码和页面长在同一张图上，一一对应。</p>
+<p>看懂的标准不是「会写」，而是：<strong>看到页面上的一个东西，能猜到它在代码里大概是哪几行</strong>。有这个能力，你就敢放心地指挥 AI 了。</p>
+<p><img src="/images/lessons/anatomy.png" alt="网页解剖图：代码与页面对照"></p>
+<h2 id="三件套各管一件事">三件套，各管一件事</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>三件套</th><th>管什么</th><th>课件里的例子</th></tr></thead><tbody><tr><td><strong>HTML</strong></td><td>骨架：页面有哪些内容</td><td>「A 层基础巩固」这个板块、5 道题的列表</td></tr><tr><td><strong>CSS</strong></td><td>皮肤：颜色、大小、间距</td><td>必做标签是金色的、答案折叠的虚线框</td></tr><tr><td><strong>JS（JavaScript）</strong></td><td>动作：点一下会发生什么</td><td>点「展开答案」显示参考答案</td></tr></tbody></table>
+<p><strong>记忆法</strong>：HTML 是<strong>有什么</strong>，CSS 是<strong>长什么样</strong>，JS 是<strong>会动</strong>。</p>
+<h2 id="傻瓜实验改一行字亲眼看页面变化5-分钟">傻瓜实验：改一行字，亲眼看页面变化（5 分钟）</h2>
+<p>不用装任何软件，用你电脑自带的文本编辑器：</p>
+<ol>
+<li>从 <a href="/demos/fenceng/">分层作业课件</a> 页面把它的网页文件要过来（或让 WorkBuddy 用一句话术生成一个新的：<code>做一个标题为「测试页」的单文件网页，内容随意，输出 html 版本给我就行</code>）；</li>
+<li>把下载的 <code>.html</code> 文件<strong>右键 → 打开方式 → 文本编辑</strong>（别用浏览器开）；</li>
+<li>找到 <code>&#x3C;h1></code> 和 <code>&#x3C;/h1></code> 之间的文字，改成你自己的名字；</li>
+<li>保存（Mac：⌘S / Windows：Ctrl+S），双击用浏览器打开——<strong>页面上最大的标题变成你的名字了</strong>。</li>
+</ol>
+<p><strong>✅ 恭喜</strong>：你刚刚亲手修改了一个网页。Vibe Coding 的全部秘密就是这一步的放大版——<strong>你改一行，AI 改一百行，原理一模一样</strong>。</p>
+<h2 id="看懂结构后你的话术会升级">看懂结构后，你的话术会升级</h2>
+<p>解剖过一次之后，你对 AI 提修改需求就能「指哪打哪」：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>升级前（笼统）</th><th>升级后（指哪打哪）</th></tr></thead><tbody><tr><td>「把页面改好看点」</td><td>「把 C 层那个板块的边框改成金色，其他不动」</td></tr><tr><td>「加个东西」</td><td>「在 B 层列表后面加一个按钮，点击展开提示」</td></tr><tr><td>「不对，重做」</td><td>「骨架不动，只把 A 层的 5 道题换成我贴给你的新题」</td></tr></tbody></table>
+<p><strong>「骨架不动，只换内容」是和 AI 协作修改网页最重要的一句话术</strong>——它防止 AI 把你已经满意的部分推倒重来。</p>
+<h2 id="这节课在成长路径里的位置">这节课在成长路径里的位置</h2>
+<pre><code>会用 AI → 教学提效 → 场景实践 → 数据分析 → [Vibe Coding ← 你在这] → 做出作品 → 形成成果
+</code></pre>
+<p>解剖完网页，下一步就是<strong>完整做出一个属于自己的课件</strong>——带着你的学科材料，走 <a href="/modules/creation/subject-task/">学科课件任务</a>；想学更多「让 AI 更听话」的关键词 → <a href="/modules/creation/trigger-words/">触发词速查表</a>。</p>
+<h2 id="给想再深一步的老师">给想再深一步的老师</h2>
+<p>开源社区 Datawhale 有一套 <a href="https://datawhalechina.github.io/easy-vibe/zh-cn/">easy-vibe 教程</a>（含贪吃蛇游戏入门、原型实战、部署上线等 Stage 进阶），适合想往开发方向继续走的老师。它的路线更偏技术；本站则把同样的原理改写成「老师场景版」——两边对照着看，收获最大。</p>
+<h2 id="下一步去哪">下一步去哪</h2>
+<p>会做网页之后，两条进阶路都在<a href="/toolbox/">工具箱</a>里备好了入口：<strong>设计美学</strong>（配色/图标/组件灵感，让作品好看）和<strong>进阶学习</strong>（easy-vibe 的数据库与部署，让作品能用真数据、上真网络）。</p> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="Vibe 101 · 解剖一个网页：HTML、CSS、JS 到底是什么" data-module="AI × 应用创造" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script>  <a class="btn btn-ghost back-btn" href="/modules/creation/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 06 AI × 应用创造 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/creation/vibe-coding-intro/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>Vibe Coding 入门：会「动嘴」就会写程序</span> </a> <a class="btn btn-ghost nav-next" href="/modules/creation/ide-tools/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>下一课 →</span> <span data-astro-cid-5y7t3r35>Vibe Coding IDE 工具</span> </a> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#为什么要解剖它" data-toc-link="为什么要解剖它" data-astro-cid-5y7t3r35>为什么要解剖它</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#三件套各管一件事" data-toc-link="三件套各管一件事" data-astro-cid-5y7t3r35>三件套，各管一件事</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#傻瓜实验改一行字亲眼看页面变化5-分钟" data-toc-link="傻瓜实验改一行字亲眼看页面变化5-分钟" data-astro-cid-5y7t3r35>傻瓜实验：改一行字，亲眼看页面变化（5 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#看懂结构后你的话术会升级" data-toc-link="看懂结构后你的话术会升级" data-astro-cid-5y7t3r35>看懂结构后，你的话术会升级</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#这节课在成长路径里的位置" data-toc-link="这节课在成长路径里的位置" data-astro-cid-5y7t3r35>这节课在成长路径里的位置</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#给想再深一步的老师" data-toc-link="给想再深一步的老师" data-astro-cid-5y7t3r35>给想再深一步的老师</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#下一步去哪" data-toc-link="下一步去哪" data-astro-cid-5y7t3r35>下一步去哪</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>

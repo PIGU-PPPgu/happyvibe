@@ -50,15 +50,14 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
           <button class="fchip" data-f={s.slug} type="button" style={`--accent:${s.accent}`}>{s.icon} {s.name}</button>
         ))}
       </div>
-      <div class="filters" role="tablist" aria-label="按教材筛选">
-        <span class="glabel">教材</span>
-        <button class="gchip on" data-b="all" type="button">全部</button>
-        {[...new Set(own.map((r) => r.data.book).filter(Boolean))].sort().map((b) => <button class="gchip" data-b={b} type="button">{b}</button>)}
+      <div class="filters" aria-label="按年级筛选">
+        <span class="glabel">年级</span><span class="facet" id="facet-grade"></span>
       </div>
-      <div class="filters" role="tablist" aria-label="按章节筛选">
-        <span class="glabel">章节</span>
-        <button class="gchip on" data-u="all" type="button">全部</button>
-        {[...new Set(own.map((r) => r.data.unit).filter(Boolean))].sort().map((u) => <button class="gchip" data-u={u} type="button">{u}</button>)}
+      <div class="filters" aria-label="按教材筛选">
+        <span class="glabel">教材</span><span class="facet" id="facet-book"></span>
+      </div>
+      <div class="filters" aria-label="按章节筛选">
+        <span class="glabel">章节</span><span class="facet" id="facet-unit"></span>
       </div>
       <div class="cards" id="own-cards">
         {own.map((r) => {
@@ -122,45 +121,61 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
 </BaseLayout>
 
 <script>
-  // 学科 + 年级双筛选（AND 组合）
-  const state = { subject: 'all', grade: 'all', book: 'all', unit: 'all' };
-  const apply = () => {
-    document.querySelectorAll<HTMLElement>('.pcard[data-subject]').forEach((card) => {
-      const okS = state.subject === 'all' || card.dataset.subject === state.subject;
-      const okG = state.grade === 'all' || card.dataset.grades.split(',').includes(state.grade);
-      const okB = state.book === 'all' || card.dataset.book === state.book;
-      const okU = state.unit === 'all' || card.dataset.unit === state.unit;
-      card.style.display = okS && okG && okB && okU ? '' : 'none';
-    });
+  // facet 联动筛选：任一筛选变化后，其余各排选项 = 当前结果集里实际存在的值（带计数），
+  // 失效选择自动收回——选了数学，教材/章节就只剩数学用书与数学章节。
+  const cards = [...document.querySelectorAll<HTMLElement>('.pcard[data-subject]')];
+  const state: Record<string, string> = { subject: 'all', grade: 'all', book: 'all', unit: 'all' };
+  const FACETS = [
+    { key: 'grade', el: document.getElementById('facet-grade'), suffix: ' 年级', num: true },
+    { key: 'book', el: document.getElementById('facet-book') },
+    { key: 'unit', el: document.getElementById('facet-unit') },
+  ];
+  const valOf = (c: HTMLElement, key: string): string[] =>
+    key === 'subject' ? [c.dataset.subject || '']
+    : key === 'grade' ? (c.dataset.grades || '').split(',').filter(Boolean)
+    : key === 'book' ? [c.dataset.book || '']
+    : [c.dataset.unit || ''];
+  const matches = (c: HTMLElement, skip?: string) => {
+    for (const k of Object.keys(state)) {
+      if (k === skip || state[k] === 'all') continue;
+      if (!valOf(c, k).includes(state[k])) return false;
+    }
+    return true;
   };
-  const bindChips = (sel, key, attr) => {
-    const chips = document.querySelectorAll<HTMLButtonElement>(sel);
-    chips.forEach((c) =>
-      c.addEventListener('click', () => {
-        chips.forEach((x) => x.classList.toggle('on', x === c));
-        state[key] = c.dataset[attr] || 'all';
-        apply();
-      })
-    );
+  const render = () => {
+    cards.forEach((c) => (c.style.display = matches(c) ? '' : 'none'));
+    for (const f of FACETS) {
+      if (!f.el) continue;
+      const counts = new Map<string, number>();
+      for (const c of cards) {
+        if (!matches(c, f.key)) continue;
+        for (const v of valOf(c, f.key)) if (v) counts.set(v, (counts.get(v) || 0) + 1);
+      }
+      if (state[f.key] !== 'all' && !counts.has(state[f.key])) state[f.key] = 'all';
+      const opts = [...counts.keys()].sort((a: string, b: string) =>
+        f.num ? Number(a) - Number(b) : a.localeCompare(b, 'zh'));
+      f.el.innerHTML = '';
+      const mk = (v: string, text: string) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'gchip' + (state[f.key] === v ? ' on' : '');
+        b.textContent = text;
+        b.addEventListener('click', () => { state[f.key] = v; render(); });
+        f.el!.appendChild(b);
+      };
+      mk('all', `全部 ${cards.filter((c) => matches(c, f.key)).length}`);
+      for (const v of opts) mk(v, `${v}${f.suffix || ''} ${counts.get(v)}`);
+    }
   };
-  bindChips('.gchip[data-b]', 'book', 'b');
-  bindChips('.gchip[data-u]', 'unit', 'u');
   const chips = document.querySelectorAll<HTMLButtonElement>('.fchip');
   chips.forEach((c) =>
     c.addEventListener('click', () => {
       chips.forEach((x) => x.classList.toggle('on', x === c));
       state.subject = c.dataset.f || 'all';
-      apply();
+      render();
     })
   );
-  const gchips = document.querySelectorAll<HTMLButtonElement>('.gchip');
-  gchips.forEach((c) =>
-    c.addEventListener('click', () => {
-      gchips.forEach((x) => x.classList.toggle('on', x === c));
-      state.grade = c.dataset.g || 'all';
-      apply();
-    })
-  );
+  render();
   // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
   if (matchMedia('(pointer: fine)').matches) {
     for (const card of document.querySelectorAll<HTMLDivElement>('.pcard[data-live]')) {
@@ -199,6 +214,7 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
   .stat-l { font-size: 13px; color: var(--text-muted); }
 
   .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .facet { display: inline-flex; flex-wrap: wrap; gap: 8px; }
   .glabel { font-size: 13px; color: var(--text-faint); }
   .gchip {
     font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 999px;

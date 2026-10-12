@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>实战：一次月考后的完整数据分析 · HappyVibe 数智学园</title><meta name="description" content="深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"><meta property="og:title" content="实战：一次月考后的完整数据分析 · HappyVibe 数智学园"><meta property="og:description" content="深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/edu-data/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> edu-data </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>exam-analysis-task</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（7 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先看成品30-秒" data-astro-cid-5y7t3r35>先看成品（30 秒）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-1-步--准备成绩表5-分钟" data-astro-cid-5y7t3r35>第 1 步 · 准备成绩表（5 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-2-步--发话术照抄" data-astro-cid-5y7t3r35>第 2 步 · 发话术（照抄）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-3-步--验收对着成品学怎么看" data-astro-cid-5y7t3r35>第 3 步 · 验收（对着成品学怎么看）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-4-步--报告怎么用出去" data-astro-cid-5y7t3r35>第 4 步 · 报告怎么用出去</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#进阶把流程固化" data-astro-cid-5y7t3r35>进阶：把流程固化</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#完成标准" data-astro-cid-5y7t3r35>完成标准</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/edu-data/" style="color:#b877b0" data-astro-cid-5y7t3r35>03 · AI × 教育数据</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>实战：一次月考后的完整数据分析</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>真实产出演示（演示数据 · 化名）</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="edu-data/exam-analysis-task" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：考试后的数据分析不是「算平均分」，是回答三个问题——整体怎么样、谁在进步、哪要干预。一份话术全部搞定。</strong></p>
+</blockquote>
+<h2 id="先看成品30-秒">先看成品（30 秒）</h2>
+<p>一份成绩表 + 一段话术，生成的完整分析报告页（四张表 + 三条行动建议）：</p>
+<p><img src="/images/demos/exam-analysis.webp" alt="月考分析报告页">
+→ <a href="/demos/exam-analysis/">点开真报告（含增值榜/分化预警/行动建议）</a></p>
+<h2 id="第-1-步--准备成绩表5-分钟">第 1 步 · 准备成绩表（5 分钟）</h2>
+<p>Excel 四列起步：<code>姓名（或化名）/ 班级 / 各科分数 / 上次总分</code>。<strong>没有上次数据的先跳过增值表</strong>，下次就有了。</p>
+<blockquote>
+<p>隐私红线：这份表只在你自己电脑 + 自己的 Agent 里处理；产出用化名/演示数据（本页成品就是化名演示）。</p>
+</blockquote>
+<h2 id="第-2-步--发话术照抄">第 2 步 · 发话术（照抄）</h2>
+<pre><code>【目标】生成网页版班级月考分析报告，给班主任自己用
+【输入】我上传的成绩表（含上次总分）
+【动作】四部分：
+  1. 各科均分 + 年级排名（没有年级数据就只报班内）
+  2. 进步榜：和自己上次比进步前 8 名（增值视角，化名）
+  3. 分化预警：各分数段人数与上次对比，标出在滑落的段
+  4. 三条行动建议：本周内/两周内/家长会各一条，必须基于上面的数据
+【约束】不出现排名倒数名单；不出现真实姓名（全部化名）；
+       建议必须引用具体数字，不许空话
+【输出】单文件 HTML，深色大屏风格
+【验收】我抽查一个学科均分；核对进步榜第一名与我手算一致
+</code></pre>
+<h2 id="第-3-步--验收对着成品学怎么看">第 3 步 · 验收（对着成品学怎么看）</h2>
+<p>拿到报告别只看均分，按这个顺序读：</p>
+<ol>
+<li><strong>先看第 3 部分（分化预警）</strong>——均分可能没变，但中间层在滑落（成品里数学 16%&#x3C;60 分，比上次涨 3 个点）；</li>
+<li><strong>再看进步榜</strong>——家长会和班会的表扬素材就在这（增值口径：和自己比）；</li>
+<li><strong>最后看行动建议</strong>——空话打回：<code>第 2 条建议没有引用数据，请基于分化表重写</code>。</li>
+</ol>
+<h2 id="第-4-步--报告怎么用出去">第 4 步 · 报告怎么用出去</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>场景</th><th>用哪部分</th><th>怎么说</th></tr></thead><tbody><tr><td>班会课</td><td>进步榜</td><td>「今天表扬和自己比进步最大的同学」</td></tr><tr><td>科组对课</td><td>分化预警</td><td>把数学那栏直接给数学老师</td></tr><tr><td>家长会</td><td>均分趋势 + 进步榜</td><td>「我们看进步，不只看名次」</td></tr><tr><td>自己台账</td><td>存档 + T+14 复盘</td><td>两周后看干预是否起效</td></tr></tbody></table>
+<h2 id="进阶把流程固化">进阶：把流程固化</h2>
+<p>第二次考试后你会重复同样的动作——固化它：</p>
+<pre><code>把本次分析流程保存为技能 monthly-exam-analysis：
+输入=新成绩表，自动按四部分出报告，化名处理。
+下次我只说「分析这次月考」。
+</code></pre>
+<h2 id="完成标准">完成标准</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 生成过一份四部分完整的分析报告</li>
+<li class="task-list-item"><input type="checkbox" disabled> 按三步验收法读过报告（预警→进步→建议）</li>
+<li class="task-list-item"><input type="checkbox" disabled> 报告里至少一个发现被你用在了实际工作里</li>
+</ul>
+<p>上一课：<a href="/modules/edu-data/visualization/">数据可视化速成</a> ｜ 配套：<a href="/modules/teaching/exam-paper-task/">命题实战</a></p> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="实战：一次月考后的完整数据分析" data-module="AI × 教育数据" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script>  <a class="btn btn-ghost back-btn" href="/modules/edu-data/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 03 AI × 教育数据 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/edu-data/visualization/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>数据可视化速成：让班级数据自己开口说话</span> </a> <span data-astro-cid-5y7t3r35></span> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先看成品30-秒" data-toc-link="先看成品30-秒" data-astro-cid-5y7t3r35>先看成品（30 秒）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-1-步--准备成绩表5-分钟" data-toc-link="第-1-步--准备成绩表5-分钟" data-astro-cid-5y7t3r35>第 1 步 · 准备成绩表（5 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-2-步--发话术照抄" data-toc-link="第-2-步--发话术照抄" data-astro-cid-5y7t3r35>第 2 步 · 发话术（照抄）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-3-步--验收对着成品学怎么看" data-toc-link="第-3-步--验收对着成品学怎么看" data-astro-cid-5y7t3r35>第 3 步 · 验收（对着成品学怎么看）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-4-步--报告怎么用出去" data-toc-link="第-4-步--报告怎么用出去" data-astro-cid-5y7t3r35>第 4 步 · 报告怎么用出去</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#进阶把流程固化" data-toc-link="进阶把流程固化" data-astro-cid-5y7t3r35>进阶：把流程固化</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#完成标准" data-toc-link="完成标准" data-astro-cid-5y7t3r35>完成标准</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>

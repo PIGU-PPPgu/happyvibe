@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>课本可视化 · 18 科样板集</title>
+<style>
+  :root { --bg:#150e22; --panel:#1e1433; --text:#f2ecf8; --muted:#a99cc0;
+    --gold:#feb300; --gold-soft:#ffd34d; --line:rgba(180,130,210,.25); }
+  * { margin:0; box-sizing:border-box; }
+  body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text);
+    background-image:linear-gradient(rgba(166,61,151,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(166,61,151,.04) 1px,transparent 1px);
+    background-size:36px 36px; padding:36px 18px; }
+  .wrap { max-width:1000px; margin:0 auto; }
+  .tag { font-family:ui-monospace,monospace; font-size:12px; color:var(--gold); letter-spacing:.2em; }
+  .hero h1 { font-size:clamp(24px,4vw,38px); margin:8px 0 6px; }
+  .hero .sub { color:var(--muted); font-size:14px; margin-bottom:24px; line-height:1.8; }
+  .nav { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:30px; }
+  .nav a { padding:8px 16px; background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    color:var(--text); text-decoration:none; font-size:13px; }
+  .nav a:hover { border-color:var(--gold); color:var(--gold-soft); }
+  h1 { font-size:24px; color:var(--purple-soft,#c98fbf); margin:36px 0 16px; }
+  .lesson { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-bottom:24px; }
+  .lesson h2 { font-size:19px; color:var(--gold-soft); margin-bottom:4px; }
+  .lesson .meta { font-size:12px; color:var(--muted); margin-bottom:14px; font-family:ui-monospace,monospace; }
+  .imgrow { display:flex; gap:10px; overflow-x:auto; padding-bottom:8px; margin-bottom:12px; }
+  .imgrow img { height:200px; border-radius:8px; border:1px solid var(--line); }
+  .player { display:flex; align-items:center; gap:12px; background:#0f0a19; border:1px solid var(--gold);
+    border-radius:10px; padding:10px 16px; }
+  .player span { font-size:13px; color:var(--gold-soft); white-space:nowrap; }
+  audio { flex:1; height:36px; }
+  footer { text-align:center; margin-top:36px; font-size:12px; color:#6f6390; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <p class="tag">TEXTBOOK → WEB · 18 课</p>
+    <h1>课本可视化样板集</h1>
+    <p class="sub">1-9 年级 · 每年级至少一课 · 统编/人教版真实教材页 + 朗读音频。<br>教材来源：<a href="https://github.com/TapXWorld/ChinaTextbook" style="color:var(--gold)">ChinaTextbook</a>（开源）。做自己的可视化课件 → <a href="https://happyvibe.intelliedu.cc/modules/creation/subject-task/" style="color:var(--gold)">七步法</a>。</p>
+  </div>
+  <div class="nav">
+    <a href="#小学">小学</a><a href="#初中">初中</a>
+    <a href="https://happyvibe.intelliedu.cc/textbooks/">领教材 PDF</a>
+    <a href="https://happyvibe.intelliedu.cc/modules/creation/subject-task/">自己做一个</a>
+  </div>
+  <h1 id="小学">小学</h1>
+    <div class="lesson">
+      <h2>一年级数学 · 《认识钟表》</h2>
+      <p class="meta">人教版数学一年级上册 · 第 89-90 页</p>
+      <div class="imgrow"><img src="sx1-p089.webp" alt="教材页"> <img src="sx1-p090.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/sx1.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>六年级数学 · 《圆》</h2>
+      <p class="meta">人教版数学六年级上册 · 第 61-62 页</p>
+      <div class="imgrow"><img src="sx6-p061.webp" alt="教材页"> <img src="sx6-p062.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/sx6.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>一年级语文 · 《秋天》</h2>
+      <p class="meta">统编版语文一年级上册 · 第 59-60 页</p>
+      <div class="imgrow"><img src="yw1-p059.webp" alt="教材页"> <img src="yw1-p060.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw1.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>二年级语文 · 《场景歌》</h2>
+      <p class="meta">统编版语文二年级上册 · 第 21-22 页</p>
+      <div class="imgrow"><img src="yw2-p021.webp" alt="教材页"> <img src="yw2-p022.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw2.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>三年级语文 · 《大青树下的小学》</h2>
+      <p class="meta">统编版语文三年级上册 · 第 4-5 页</p>
+      <div class="imgrow"><img src="yw3-p004.webp" alt="教材页"> <img src="yw3-p005.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw3.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>四年级语文 · 《观潮》</h2>
+      <p class="meta">统编版语文四年级上册 · 第 7-8 页</p>
+      <div class="imgrow"><img src="yw4-p007.webp" alt="教材页"> <img src="yw4-p008.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw4.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>五年级语文 · 《白鹭》</h2>
+      <p class="meta">统编版语文五年级上册 · 第 7-8 页</p>
+      <div class="imgrow"><img src="yw5-p007.webp" alt="教材页"> <img src="yw5-p008.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw5.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>六年级语文 · 《草原》</h2>
+      <p class="meta">统编版语文六年级上册 · 第 7-8 页</p>
+      <div class="imgrow"><img src="yw6-p007.webp" alt="教材页"> <img src="yw6-p008.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw6.mp3"></audio></div>
+    </div><h1 id="初中">初中</h1>
+    <div class="lesson">
+      <h2>七年级地理 · 《地球与地图》</h2>
+      <p class="meta">人教版地理七年级上册 · 第 54-55 页</p>
+      <div class="imgrow"><img src="dl7-p054.webp" alt="教材页"> <img src="dl7-p055.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/dl7.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>九年级化学 · 《分子和原子》</h2>
+      <p class="meta">人教版化学九年级上册 · 第 4-5 页</p>
+      <div class="imgrow"><img src="hx9-p004.webp" alt="教材页"> <img src="hx9-p005.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/hx9.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>七年级历史 · 《中国早期人类》</h2>
+      <p class="meta">统编版历史七年级上册 · 第 7-8 页</p>
+      <div class="imgrow"><img src="ls7-p007.webp" alt="教材页"> <img src="ls7-p008.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/ls7.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>七年级生物 · 《细胞》</h2>
+      <p class="meta">人教版生物七年级上册 · 第 51-52 页</p>
+      <div class="imgrow"><img src="sw7-p051.webp" alt="教材页"> <img src="sw7-p052.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/sw7.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>七年级数学 · 《有理数》</h2>
+      <p class="meta">人教版数学七年级上册 · 第 6-7 页</p>
+      <div class="imgrow"><img src="sx7-p006.webp" alt="教材页"> <img src="sx7-p007.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/sx7.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>八年级数学 · 《全等三角形》</h2>
+      <p class="meta">人教版数学八年级上册 · 第 39-40 页</p>
+      <div class="imgrow"><img src="sx8-p039.webp" alt="教材页"> <img src="sx8-p040.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/sx8.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>九年级数学 · 《二次函数》</h2>
+      <p class="meta">人教版数学九年级上册 · 第 37-38 页</p>
+      <div class="imgrow"><img src="sx9-p037.webp" alt="教材页"> <img src="sx9-p038.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/sx9.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>八年级物理 · 《声音》</h2>
+      <p class="meta">人教版物理八年级上册 · 第 50-51 页</p>
+      <div class="imgrow"><img src="wl8-p050.webp" alt="教材页"> <img src="wl8-p051.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/wl8.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>七年级语文 · 《济南的冬天》</h2>
+      <p class="meta">统编版语文七年级上册 · 第 13-14 页</p>
+      <div class="imgrow"><img src="yw7-p013.webp" alt="教材页"> <img src="yw7-p014.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw7.mp3"></audio></div>
+    </div>
+    <div class="lesson">
+      <h2>八年级语文 · 《藤野先生》</h2>
+      <p class="meta">统编版语文八年级上册 · 第 29-30 页</p>
+      <div class="imgrow"><img src="yw8-p029.webp" alt="教材页"> <img src="yw8-p030.webp" alt="教材页"></div>
+      <div class="player"><span>📖 朗读</span><audio controls preload="none" src="audio/yw8.mp3"></audio></div>
+    </div>
+  <footer>HappyVibe 数智学园 · 教材页仅供教学演示 · <a href="/" style="color:var(--gold)">返回</a></footer>
+</div>
+</body>
+</html>

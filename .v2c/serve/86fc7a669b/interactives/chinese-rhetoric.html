@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>修辞手法例句对比</title>
+<style>
+:root{
+  --cuhk:#6b2077;--brand:#8a3d99;--brand-line:rgba(178,120,196,.34);
+  --bg:#1a0e26;--bg2:#241233;--panel:#251337;--panel2:#2e1a43;--inset:#150b20;
+  --text:#f4edf9;--muted:#b3a4c9;--faint:#82729e;
+  --gold:#e8b04b;--gold-soft:#f0c470;--wrong:#c97b7b;--ok:#7fbf9e;
+  --line:rgba(186,136,212,.16);--line2:rgba(186,136,212,.3);--line-gold:rgba(232,176,75,.4);
+  --shadow:0 10px 32px rgba(0,0,0,.5);
+  --shell-top:44px;--rail-w:216px;--rail-h:0px;
+}
+:root[data-theme=light]{
+  --cuhk:#6b2077;--brand:#6b2077;--brand-line:rgba(107,32,119,.32);
+  --bg:#f8f5fb;--bg2:#f0e9f7;--panel:#ffffff;--panel2:#f4eef9;--inset:#fbf9fd;
+  --text:#2a1a35;--muted:#5e4d70;--faint:#8b7ca0;
+  --gold:#8a6a1f;--gold-soft:#8a6a1f;--wrong:#b35b5b;--ok:#4d8a68;
+  --line:rgba(107,32,119,.16);--line2:rgba(107,32,119,.32);--line-gold:rgba(138,106,31,.45);
+  --shadow:0 8px 24px rgba(80,30,100,.14);
+}
+*{box-sizing:border-box;margin:0}
+/* 键盘可达性：Tab 焦点环（鼠标点击不显示，投屏遥控器/翻页笔友好） */
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+/* 舞台底：港紫径向层次（背景实现，不盖 canvas）；左轨/顶栏让位由变量驱动 */
+#stage{position:absolute;inset:calc(var(--shell-top) + var(--rail-h)) 0 0 var(--rail-w);background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
+/* ---------- 薄顶栏（44px）：返回 | 标题 | 教材锚点 …… 翻页/主操作/窗口控制 ---------- */
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#back{display:flex;align-items:center;gap:7px;min-height:32px;padding:0 11px;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+#back::before{content:'←';font-size:14px;line-height:1}
+#back:hover{color:var(--text);border-color:var(--line2);background:var(--panel2)}
+#bar h1{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+#meta{font-size:12.5px;color:var(--gold);white-space:nowrap;padding:3px 10px;border:1px solid var(--line-gold);border-radius:999px}
+#bar .grow{flex:1}
+/* ---------- 按钮系统：统一 32px 高；sq=方钮；primary=主操作实底 ---------- */
+.btn{font:inherit;font-size:13.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+.btn:hover{border-color:var(--brand-line);color:var(--text)}
+.btn[aria-pressed=true]{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sq{min-width:32px;padding:0;font-size:15px}
+/* ---------- 左轨章节导航（宽屏 216px；WeduLab 范式：编号+名称，检测/小结入列） ---------- */
+#rail{position:fixed;top:var(--shell-top);left:0;bottom:0;z-index:9;width:var(--rail-w);display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-right:1px solid var(--line);padding:10px 10px 8px;gap:2px}
+#rail .rail-title{font-size:11.5px;color:var(--faint);letter-spacing:.22em;padding:2px 8px 8px}
+.rail-step{display:flex;align-items:baseline;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.rail-step .no{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;font-weight:700;color:var(--faint);min-width:24px;transition:color .15s}
+.rail-step:hover{color:var(--text);background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+.rail-step[aria-pressed=true]{background:color-mix(in srgb,var(--cuhk) 20%,transparent);border-color:var(--brand-line);color:var(--text);font-weight:600}
+.rail-step[aria-pressed=true] .no{color:var(--gold)}
+#rail .rail-split{height:1px;background:var(--line);margin:8px 6px}
+#rail .rail-foot{margin-top:auto;padding:10px 8px 2px;font-size:11px;color:var(--faint);line-height:1.9;letter-spacing:.03em}
+#rail .rail-foot b{font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:2px;font-size:10.5px}
+#rail-prog{position:absolute;left:0;right:0;bottom:0;height:2px}
+#rail-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
+/* ---------- 舞台章节标头：01 / 03 · 环节名（印在画面上） ---------- */
+#stage-head{position:fixed;top:calc(var(--shell-top) + var(--rail-h) + 14px);left:calc(var(--rail-w) + 20px);z-index:5;display:flex;align-items:baseline;gap:10px;pointer-events:none}
+#stage-head .frac{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+#stage-head .sname{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--text);opacity:.92}
+/* ---------- 教学引导浮层：章节标头之下（引导语 + 操作提示） ---------- */
+#guide-tip{position:fixed;left:calc(var(--rail-w) + 20px);top:calc(var(--shell-top) + var(--rail-h) + 56px);z-index:6;max-width:min(600px,58vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
+#guide-tip.dim{opacity:.35}
+#g-tip{font-size:15px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ops-tip{margin-top:5px;font-size:12.5px;color:var(--faint);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* ---------- 讲解覆盖卡（顶栏/章节栏呼出，WeduLab 右栏的覆盖式实现） ---------- */
+#note{position:fixed;top:calc(var(--shell-top) + 14px);right:16px;z-index:22;width:min(400px,calc(100vw - 40px));max-height:calc(100vh - var(--shell-top) - 40px);overflow:auto;padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
+#note::before{content:'讲解';display:block;font-size:12.5px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px}
+:root[data-theme=light] #note::before{color:var(--cuhk)}
+/* ---------- 小结浮层 ---------- */
+#summary{position:fixed;top:calc(var(--shell-top) + 14px);left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
+#summary::before{content:'小结';display:block;font-size:12.5px;color:var(--gold);letter-spacing:.12em;margin-bottom:6px}
+/* ---------- 随堂检测 ---------- */
+#quiz-wrap{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(4px)}
+#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 100px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+#quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#quiz-head b{font-size:17px}
+#quiz-prog{font-size:13px;color:var(--faint)}
+#quiz-close{margin-left:auto}
+#quiz-q{font-size:16.5px;line-height:1.7;margin-bottom:14px}
+#quiz-opts{display:flex;flex-direction:column;gap:10px}
+.qopt{font:inherit;font-size:15px;line-height:1.6;text-align:left;padding:11px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--inset);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s}
+.qopt:not(:disabled):hover{border-color:var(--brand)}
+.qopt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--inset))}
+.qopt.no{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 14%,var(--inset))}
+.qopt:disabled{cursor:default}
+#quiz-why{margin-top:14px;padding:12px 16px;border-left:3px solid var(--gold);background:var(--inset);border-radius:0 10px 10px 0;font-size:14.5px;line-height:1.8;color:var(--muted);display:none}
+#quiz-why::before{content:'解析';display:block;font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+#quiz-foot{display:flex;align-items:center;gap:10px;margin-top:16px}
+#quiz-score{font-size:15px}
+#quiz-score b{font-size:22px;color:var(--brand)}
+:root[data-theme=light] #quiz-score b{color:var(--cuhk)}
+/* ---------- 窄屏（<1080px）：左轨收成顶部横排环节条 ---------- */
+@media (max-width:1079px){
+  :root{--rail-w:0px;--rail-h:52px}
+  #rail{top:var(--shell-top);left:0;right:0;bottom:auto;width:auto;height:var(--rail-h);flex-direction:row;align-items:center;gap:6px;padding:0 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
+  #rail .rail-title,#rail .rail-split,#rail .rail-foot{display:none}
+  .rail-step{flex:none;width:auto;padding:6px 12px;gap:7px}
+  .rail-step .no{font-size:15px;min-width:0}
+  #rail-prog{bottom:0;left:0}
+  #meta{display:none}
+  #guide-tip{left:12px;right:12px;max-width:none}
+  #stage-head{left:16px}
+}
+@media (max-width:760px){
+  #back span{display:none}
+  #bar h1{font-size:15px}
+  #note-btn-top,#sum-btn-top{display:none}
+}
+/* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
+body.embed #bar, body.embed #rail, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip, body.embed #stage-head { display: none !important; }
+body.embed { --shell-top:0px; --rail-w:0px; --rail-h:0px; }
+body.embed #stage { inset: 0; }
+
+/* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
+#onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
+#onboard[hidden]{display:none}
+.ob-card{width:min(430px,calc(100vw - 40px));padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+.ob-title{display:block;font-size:17px;margin-bottom:12px;color:var(--brand)}
+:root[data-theme=light] .ob-title{color:var(--cuhk)}
+.ob-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ob-card li{font-size:15px;line-height:1.7;color:var(--text)}
+.ob-card li b{color:var(--brand)}
+:root[data-theme=light] .ob-card li b{color:var(--cuhk)}
+.ob-card .btn{width:100%}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a id="back" href="/resources/" aria-label="返回资源库"><span>资源库</span></a>
+  <h1>修辞手法例句对比</h1>
+  <span id="meta"></span>
+  <span class="grow"></span>
+  <button class="btn sq" id="step-prev" type="button" aria-label="上一环节" hidden>‹</button>
+  <button class="btn sq" id="step-next" type="button" aria-label="下一环节" hidden>›</button>
+  <button class="btn" id="note-btn-top" type="button" hidden>讲解</button>
+  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
+  <button class="btn" id="sum-btn-top" type="button">小结</button>
+  <button class="btn sq" id="theme" type="button" aria-label="切换深浅色">◐</button>
+  <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
+</div>
+<nav id="rail" hidden aria-label="章节">
+  <div class="rail-title">章节</div>
+  <div id="steps"></div>
+  <div class="rail-split"></div>
+  <div id="rail-extra"></div>
+  <div class="rail-foot"><b>←</b><b>→</b> 切换环节<br><b>Esc</b> 收起浮层</div>
+  <span id="rail-prog"><i></i></span>
+</nav>
+<div id="stage-head" hidden>
+  <span class="frac">01 / 03</span>
+  <span class="sname"></span>
+</div>
+<div id="guide-tip" hidden>
+  <p id="g-tip"></p>
+  <p id="ops-tip">选手法看例句，点显示标注高亮成分；比喻附本体喻体连线</p>
+</div>
+<div id="note"></div>
+<div id="summary"></div>
+<div id="quiz-wrap">
+  <div id="quiz" data-hv-quiz>
+    <div id="quiz-head">
+      <b>随堂检测</b>
+      <span id="quiz-prog"></span>
+      <button class="btn" id="quiz-close" type="button">关闭</button>
+    </div>
+    <div id="quiz-q"></div>
+    <div id="quiz-opts"></div>
+    <div id="quiz-why"></div>
+    <div id="quiz-foot">
+      <span id="quiz-score"></span>
+      <button class="btn primary" id="quiz-next" type="button" hidden>下一题</button>
+      <button class="btn primary" id="quiz-redo" type="button" hidden>重做</button>
+    </div>
+  </div>
+</div>
+<div id="stage" class="pad"></div>
+<div id="onboard" hidden>
+  <div class="ob-card">
+    <b class="ob-title">第一次使用</b>
+    <ul>
+      <li><b>左栏章节</b>：点章节或按键盘左右键换环节，当前环节高亮并印在画面左上</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，从顶栏或章节栏打开</li>
+      <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
+    </ul>
+    <button class="btn primary" id="ob-ok" type="button">开始上课</button>
+  </div>
+</div>
+<script>"use strict";(()=>{var ee=new URLSearchParams(location.search).has("selftest");function ae(s){let d=document.getElementById("stage"),u=new URLSearchParams(location.search).get("theme"),c=u==="light"||u==="dark"?u:"dark";try{let e=localStorage.getItem("hv-theme");(e==="light"||e==="dark")&&!u&&(c=e)}catch{}if(document.documentElement.dataset.theme=c,ee){let e={errors:[],checks:[],canvas:null,pedagogy:null};window.addEventListener("error",t=>e.errors.push(String(t.message).slice(0,200))),window.addEventListener("unhandledrejection",t=>e.errors.push("rejection: "+String(t.reason).slice(0,200))),window.__hvPushCheck=(t,x,y)=>e.checks.push({name:t,pass:x,detail:String(y!=null?y:"")}),setTimeout(()=>{try{e.canvas=g()}catch(x){e.errors.push("canvas-sample: "+x.message)}try{e.pedagogy=i()}catch(x){e.errors.push("pedagogy-sample: "+x.message)}let t=document.createElement("pre");t.id="hv-selftest",t.textContent="__HV__"+JSON.stringify(e)+"__HV__",document.body.appendChild(t)},2500)}function i(){let e=r=>{let B=document.querySelector(r);return B?(B.textContent||"").replace(/\s+/g," ").trim():""},t=[...document.querySelectorAll("[data-hv-step]")],x=e("#g-tip"),y=e("#summary"),q=n&&n.steps?n.steps.map(r=>r.guide||"").join(""):x,C=n&&n.steps?n.steps.map(r=>r.note||"").join(""):"",k=n&&n.quiz?n.quiz:null;return{metaChars:e("#meta").length,steps:t.length,stepNames:t.slice(0,6).map(r=>r.textContent.trim()),guideCount:t.length?1:0,guideChars:q.length,guideLens:n&&n.steps?n.steps.map(r=>(r.guide||"").length):[],noteChars:C.length,noteLens:n&&n.steps?n.steps.map(r=>(r.note||"").length):[],summaryChars:y.length,quizCount:k?k.length:0,quizChars:k?k.map(r=>(r.q||"")+(r.why||"")).join("").length:0}}function g(){let e=[...document.querySelectorAll("canvas")].sort((a,o)=>o.width*o.height-a.width*o.height)[0];if(!e)return null;let t=document.createElement("canvas");t.width=360,t.height=225;let x=t.getContext("2d");x.drawImage(e,0,0,t.width,t.height);let y=x.getImageData(0,0,t.width,t.height).data,q=[],C=new Map;for(let a=0;a<3;a++)for(let o=0;o<3;o++){let m=0,w=0,L=0;for(let h=a*75;h<(a+1)*75;h+=3)for(let v=o*120;v<(o+1)*120;v+=3){let p=(h*t.width+v)*4,z=(y[p]+y[p+1]+y[p+2])/3;m+=z,w+=z*z,L++;let W=y[p]>>5<<10|y[p+1]>>5<<5|y[p+2]>>5;C.set(W,(C.get(W)||0)+1)}q.push(Math.round(Math.sqrt(w/L-(m/L)**2)))}let k=[...C.entries()].sort((a,o)=>o[1]-a[1]).slice(0,6).map(([a,o])=>[a.toString(16),o]),r=[...C.entries()].sort((a,o)=>o[1]-a[1])[0][0],B=((r>>10&31)*8+(r>>5&31)*8+(r&31)*8)/3,S=1,R=1,f=0,E=0,b=0;for(let a=0;a<t.height;a+=2)for(let o=0;o<t.width;o+=2){let m=(a*t.width+o)*4,w=(y[m]+y[m+1]+y[m+2])/3;if(Math.abs(w-B)>14){b++;let L=o/t.width,h=a/t.height;L<S&&(S=L),L>f&&(f=L),h<R&&(R=h),h>E&&(E=h)}}let _=b?[l(S),l(R),l(f),l(E)]:null;return{regions:q,topColors:k,bbox:_}}function l(e){return Math.round(e*100)/100}let n=s.teaching,U=[];function K(e){let t=e.style.display==="none"||!e.style.display;return j(),t&&(e.style.display="block"),t}function j(){for(let t of U)t.style.display="none";let e=document.getElementById("guide-tip");e&&e.classList.remove("dim")}if(n&&n.steps&&n.steps.length){let E=function(h,v){f=Math.max(0,Math.min(n.steps.length-1,h)),R.forEach((W,ce)=>W.setAttribute("aria-pressed",String(ce===f))),C.textContent=n.steps[f].guide||"",B&&(r.textContent=n.steps[f].note||""),k&&(k.style.width=(f+1)/n.steps.length*100+"%");let p=x.querySelector(".frac");p&&(p.textContent=String(f+1).padStart(2,"0")+" / "+String(n.steps.length).padStart(2,"0"));let z=x.querySelector(".sname");z&&(z.textContent=n.steps[f].name||""),v||j(),n.steps[f].apply&&n.steps[f].apply()};var ge=E;let e=document.getElementById("meta");e.textContent=n.meta||"",e.dataset.hvMeta="";let t=document.getElementById("rail");t.hidden=!1;let x=document.getElementById("stage-head");x.hidden=!1;let y=document.getElementById("guide-tip");y.hidden=!1;let q=document.getElementById("steps"),C=document.getElementById("g-tip"),k=document.querySelector("#rail-prog i"),r=document.getElementById("note"),B=n.steps.some(h=>h.note&&String(h.note).trim()),S=document.getElementById("note-btn-top");B&&(r.dataset.hvNote="",U.push(r),S.hidden=!1,S.addEventListener("click",()=>{K(r),y.classList.toggle("dim",r.style.display==="block")}));let R=n.steps.map((h,v)=>{let p=document.createElement("button");p.type="button",p.className="rail-step",p.dataset.hvStep="";let z=document.createElement("b");return z.className="no",z.textContent=String(v+1).padStart(2,"0"),p.appendChild(z),p.appendChild(document.createTextNode(" "+h.name)),p.addEventListener("click",()=>E(v)),q.appendChild(p),p}),f=0,b=document.getElementById("step-prev"),_=document.getElementById("step-next");b.hidden=!1,_.hidden=!1,b.addEventListener("click",()=>E(f-1)),_.addEventListener("click",()=>E(f+1)),window.__hvApplyStep0=()=>E(0);let a=document.getElementById("summary");a.textContent=n.summary||"",a.dataset.hvSummary="",U.push(a);let o=document.getElementById("sum-btn-top");o.addEventListener("click",()=>K(a));let m=document.getElementById("rail-extra"),w=(h,v)=>{let p=document.createElement("button");p.type="button",p.className="rail-step";let z=document.createElement("b");return z.className="no",z.textContent=h.no,p.appendChild(z),p.appendChild(document.createTextNode(" "+h.name)),p.addEventListener("click",v),m.appendChild(p),p};window.addEventListener("keydown",h=>{let v=h.target;v&&(v.tagName==="INPUT"||v.tagName==="TEXTAREA"||v.tagName==="SELECT"||v.isContentEditable)||document.getElementById("quiz-wrap").style.display==="flex"&&(h.key==="ArrowLeft"||h.key==="ArrowRight")||(h.key==="ArrowRight"?E(f+1):h.key==="ArrowLeft"?E(f-1):h.key==="Escape"&&j())}),N();let L=document.getElementById("quiz-btn");L.hidden||w({no:"\u25C6",name:"\u968F\u5802\u68C0\u6D4B"},()=>L.click()),w({no:"\u2261",name:"\u8BFE\u5802\u5C0F\u7ED3"},()=>o.click())}function N(){let e=n&&n.quiz;if(!e||!e.length)return;let t=document.getElementById("quiz-wrap"),x=document.getElementById("quiz-prog"),y=document.getElementById("quiz-q"),q=document.getElementById("quiz-opts"),C=document.getElementById("quiz-why"),k=document.getElementById("quiz-score"),r=document.getElementById("quiz-next"),B=document.getElementById("quiz-redo");U.push(t),document.getElementById("quiz-btn").hidden=!1,document.getElementById("quiz-btn").addEventListener("click",()=>{let b=t.style.display!=="flex";j(),b&&(t.style.display="flex")}),document.getElementById("quiz-close").addEventListener("click",()=>{t.style.display="none"});let S=0,R=0,f=new Array(e.length).fill(!1);function E(){let b=e[S];r.hidden=!0,B.hidden=!0,C.style.display="none",k.textContent="",x.textContent=`\u7B2C ${S+1} / ${e.length} \u9898`,y.textContent=b.q,y.dataset.hvQ="",q.textContent="",b.opts.forEach((_,a)=>{let o=document.createElement("button");o.type="button",o.className="qopt",o.textContent=String.fromCharCode(65+a)+". "+_,o.addEventListener("click",()=>{if(f[S])return;f[S]=!0;let m=a===b.a;m&&R++,[...q.children].forEach((w,L)=>{w.disabled=!0,L===b.a?w.classList.add("ok"):L===a&&w.classList.add("no")}),C.textContent=b.why||"",C.style.display="block",k.textContent=m?"\u7B54\u5BF9\u4E86":"\u7B54\u9519\u4E86",S<e.length-1?r.hidden=!1:(B.hidden=!1,k.textContent=`\u5171 ${R} / ${e.length} \u9898\u7B54\u5BF9`)}),q.appendChild(o)})}if(r.addEventListener("click",()=>{S++,E()}),B.addEventListener("click",()=>{S=0,R=0,f.fill(!1),E()}),t.style.display="none",E(),ee&&typeof window.__hvPushCheck=="function"){let b=[];e.forEach((m,w)=>{(!m.q||!Array.isArray(m.opts)||m.opts.length<2)&&b.push(`\u7B2C${w+1}\u9898\u9898\u5E72\u6216\u9009\u9879\u7F3A\u5931`),(!Number.isInteger(m.a)||m.a<0||!m.opts||m.a>=m.opts.length)&&b.push(`\u7B2C${w+1}\u9898\u7B54\u6848\u4E0B\u6807\u8D8A\u754C`),(!m.why||m.why.length<10)&&b.push(`\u7B2C${w+1}\u9898\u89E3\u6790\u4E0D\u8DB310\u5B57`)}),e.length<3&&b.push(`\u4EC5 ${e.length} \u9898\uFF0C\u5C11\u4E8E 3 \u9898`),window.__hvPushCheck("quiz-valid",b.length===0,b.join("\uFF1B")||`${e.length} \u9898\u7ED3\u6784\u5408\u6CD5\uFF0C\u5747\u542B\u9898\u5E72\u3001\u9009\u9879\u3001\u7B54\u6848\u4E0E\u89E3\u6790`),t.style.display="flex",q.children[0].click();let _=getComputedStyle(C).display!=="none"&&C.getBoundingClientRect().height>0,a=k.textContent||"",o=[...q.children].every(m=>m.disabled);t.style.display="none",window.__hvPushCheck("quiz-answer-flow",_&&a.length>0&&o,`\u4F5C\u7B54\u540E\u89E3\u6790${_?"\u5DF2\u663E\u793A":"\u672A\u663E\u793A"}\uFF0C\u53CD\u9988\u300C${a.slice(0,12)}\u300D\uFF0C\u9009\u9879${o?"\u5DF2\u9501\u5B9A":"\u672A\u9501\u5B9A"}`)}}let se=new URLSearchParams(location.search).has("embed");se&&document.body.classList.add("embed");let Y=document.getElementById("onboard");if(Y&&!ee&&!se&&!new URLSearchParams(location.search).has("pv")){let e=!1;try{e=localStorage.getItem("hv-onboard")==="1"}catch{}if(!e){Y.hidden=!1;let t=()=>{Y.hidden=!0;try{localStorage.setItem("hv-onboard","1")}catch{}};document.getElementById("ob-ok").addEventListener("click",t),window.addEventListener("keydown",x=>{x.key==="Escape"&&!Y.hidden&&t()})}}let T={onTheme:null,onResize:null};document.getElementById("theme").addEventListener("click",()=>{c=document.documentElement.dataset.theme==="light"?"dark":"light",document.documentElement.dataset.theme=c;try{localStorage.setItem("hv-theme",c)}catch{}T.onTheme&&T.onTheme(c)}),document.getElementById("fs").addEventListener("click",()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}),window.addEventListener("resize",()=>{T.onResize&&T.onResize()}),typeof ResizeObserver!="undefined"&&new ResizeObserver(()=>{T.onResize&&T.onResize()}).observe(d),s.mount(d,T),window.__hvApplyStep0&&window.__hvApplyStep0();let oe=new URLSearchParams(location.search).get("step");if(oe!==null&&n&&n.steps&&n.steps.length){let e=Math.max(0,Math.min(n.steps.length-1,parseInt(oe,10)||0)),t=[...document.querySelectorAll("[data-hv-step]")];t[e]&&t[e].click()}return T}var H=[{id:"by",name:"\u6BD4\u55BB",intro:"\u7528\u76F8\u4F3C\u7684\u4E8B\u7269\u6253\u6BD4\u65B9\uFF1A\u672C\u4F53\uFF0B\u55BB\u8BCD\uFF0B\u55BB\u4F53\uFF1B\u4E0D\u7528\u55BB\u8BCD\u3001\u76F4\u63A5\u7528\u300C\u662F\u300D\u7684\u53EB\u6697\u55BB\u3002",legend:[["bt","\u672C\u4F53"],["yc","\u55BB\u8BCD"],["yt","\u55BB\u4F53"]],items:[{src:"\u6731\u81EA\u6E05\u300A\u6625\u300B",s:"<bt>\u7EA2\u7684</bt><yc>\u50CF</yc><yt>\u706B</yt>\uFF0C<bt>\u7C89\u7684</bt><yc>\u50CF</yc><yt>\u971E</yt>\uFF0C<bt>\u767D\u7684</bt><yc>\u50CF</yc><yt>\u96EA</yt>\u3002",a:"\u4E09\u7EC4\u6BD4\u55BB\u8FDE\u7528\uFF08\u517C\u6392\u6BD4\uFF09\uFF0C\u5199\u51FA\u6625\u82B1\u989C\u8272\u7684\u660E\u8273\u3002"},{src:"\u5B97\u749E\u300A\u7D2B\u85E4\u841D\u7011\u5E03\u300B",s:"\u53EA\u89C1\u4E00\u7247\u8F89\u714C\u7684<bt>\u6DE1\u7D2B\u8272</bt>\uFF0C<yc>\u50CF</yc>\u4E00\u6761<yt>\u7011\u5E03</yt>\uFF0C\u4ECE\u7A7A\u4E2D\u5782\u4E0B\u3002",a:"\u628A\u82B1\u4E1B\u6BD4\u4F5C\u7011\u5E03\uFF0C\u5199\u51FA\u7D2B\u85E4\u841D\u5F00\u5F97\u7E41\u8302\u3001\u6709\u6C14\u52BF\u3002"},{src:"\u8001\u820D\u300A\u6D4E\u5357\u7684\u51AC\u5929\u300B",s:"\u81EA\u4E0A\u800C\u4E0B\u5168\u662F\u90A3\u4E48\u6E05\u4EAE\uFF0C\u90A3\u4E48\u84DD\u6C6A\u6C6A\u7684\uFF0C<bt>\u6574\u4E2A\u7684</bt><yc>\u662F</yc>\u5757\u7A7A\u7075\u7684<yt>\u84DD\u6C34\u6676</yt>\u3002",a:"\u6697\u55BB\uFF1A\u55BB\u8BCD\u6362\u6210\u300C\u662F\u300D\uFF0C\u628A\u6C34\u5929\u4E00\u8272\u7684\u6D4E\u5357\u6BD4\u4F5C\u84DD\u6C34\u6676\u3002"}],pairs:[["\u592A\u9633","\u706B\u7403"],["\u6708\u4EAE","\u7389\u76D8"],["\u773C\u775B","\u661F\u661F"],["\u65F6\u95F4","\u6D41\u6C34"]]},{id:"nr",name:"\u62DF\u4EBA",intro:"\u628A\u7269\u5F53\u4F5C\u4EBA\u6765\u5199\uFF1A\u7ED9\u4E8B\u7269\u914D\u4E0A\u4EBA\u7684\u52A8\u4F5C\u3001\u60C5\u6001\u6216\u611F\u60C5\u3002",legend:[["bt","\u5BF9\u8C61"],["yt","\u4EBA\u7684\u52A8\u4F5C\u60C5\u6001"]],items:[{src:"\u6731\u81EA\u6E05\u300A\u6625\u300B",s:"<bt>\u5C0F\u8349</bt><yt>\u5077\u5077\u5730</yt>\u4ECE\u571F\u91CC<yt>\u94BB</yt>\u51FA\u6765\uFF0C\u5AE9\u5AE9\u7684\uFF0C\u7EFF\u7EFF\u7684\u3002",a:"\u300C\u5077\u5077\u5730\u300D\u300C\u94BB\u300D\u5199\u51FA\u5C0F\u8349\u4E0D\u7ECF\u610F\u95F4\u840C\u53D1\uFF0C\u50CF\u4E2A\u8C03\u76AE\u7684\u5B69\u5B50\u3002"},{src:"\u8001\u820D\u300A\u6D4E\u5357\u7684\u51AC\u5929\u300B",s:"\u4E00\u4E2A<bt>\u8001\u57CE</bt>\uFF0C\u6709\u5C71\u6709\u6C34\uFF0C\u5168\u5728\u5929\u5E95\u4E0B\u6652\u7740\u9633\u5149\uFF0C\u6696\u548C\u5B89\u9002\u5730<yt>\u7761\u7740</yt>\uFF0C\u53EA\u7B49\u6625\u98CE\u6765\u628A\u5B83\u4EEC<yt>\u5524\u9192</yt>\u3002",a:"\u8001\u57CE\u4F1A\u300C\u7761\u300D\u4F1A\u300C\u9192\u300D\uFF0C\u5199\u51FA\u6D4E\u5357\u51AC\u5929\u7684\u6E29\u6696\u5B89\u9002\u3002"},{src:"\u6731\u81EA\u6E05\u300A\u6625\u300B",s:"<bt>\u9E1F\u513F</bt>\u5C06\u5DE2\u5B89\u5728\u7E41\u82B1\u5AE9\u53F6\u5F53\u4E2D\uFF0C\u9AD8\u5174\u8D77\u6765\u4E86\uFF0C<yt>\u547C\u670B\u5F15\u4F34\u5730\u5356\u5F04</yt>\u6E05\u8106\u7684\u5589\u5499\u3002",a:"\u300C\u9AD8\u5174\u300D\u300C\u5356\u5F04\u300D\u628A\u9E1F\u513F\u5199\u51FA\u4EBA\u7684\u6B22\u5FEB\u5FC3\u6C14\u3002"}]},{id:"pb",name:"\u6392\u6BD4",intro:"\u4E09\u4E2A\u6216\u66F4\u591A\u7ED3\u6784\u76F8\u540C\u3001\u8BED\u6C14\u4E00\u81F4\u7684\u77ED\u8BED\u5206\u53E5\u8FDE\u6392\uFF0C\u8BFB\u8D77\u6765\u6709\u4E00\u6C14\u5475\u6210\u7684\u6C14\u52BF\u3002",legend:[["pp","\u5E76\u5217\u5206\u53E5"],["bt","\u91CD\u590D\u53E5\u5F0F"]],items:[{src:"\u6731\u81EA\u6E05\u300A\u6625\u300B",s:"<pp>\u5C71<bt>\u6717\u6DA6\u8D77\u6765\u4E86</bt></pp>\uFF0C<pp>\u6C34<bt>\u6DA8\u8D77\u6765\u4E86</bt></pp>\uFF0C<pp>\u592A\u9633\u7684\u8138<bt>\u7EA2\u8D77\u6765\u4E86</bt></pp>\u3002",a:"\u4E09\u4E2A\u300C\u2026\u2026\u8D77\u6765\u4E86\u300D\u5E76\u5217\uFF0C\u6625\u56DE\u5927\u5730\u7684\u53D8\u5316\u6251\u9762\u800C\u6765\u3002"},{src:"\u5218\u6210\u7AE0\u300A\u5B89\u585E\u8170\u9F13\u300B",s:"<pp><bt>\u9AA4\u96E8\u4E00\u6837</bt>\uFF0C\u662F\u6025\u4FC3\u7684\u9F13\u70B9</pp>\uFF1B<pp><bt>\u65CB\u98CE\u4E00\u6837</bt>\uFF0C\u662F\u98DE\u626C\u7684\u6D41\u82CF</pp>\uFF1B<pp><bt>\u4E71\u86D9\u4E00\u6837</bt>\uFF0C\u662F\u8E66\u8DF3\u7684\u811A\u6B65</pp>\u3002",a:"\u300C\u2026\u2026\u4E00\u6837\uFF0C\u662F\u2026\u2026\u300D\u53E5\u5F0F\u53CD\u590D\uFF0C\u9F13\u70B9\u8D8A\u6765\u8D8A\u5BC6\u3001\u6C14\u52BF\u8D8A\u50AC\u8D8A\u7D27\u3002"},{src:"\u901A\u7528\u7EC3\u4E60\u53E5",s:"<pp><bt>\u7231\u5FC3</bt>\u662F\u51AC\u65E5\u7684\u9633\u5149</pp>\uFF0C<pp><bt>\u7231\u5FC3</bt>\u662F\u6C99\u6F20\u7684\u6E05\u6CC9</pp>\uFF0C<pp><bt>\u7231\u5FC3</bt>\u662F\u591C\u8DEF\u7684\u706F\u5854</pp>\u3002",a:"\u53E5\u9996\u300C\u7231\u5FC3\u300D\u53CD\u590D\u51FA\u73B0\uFF0C\u6392\u6BD4\u4E4B\u4E2D\u53C8\u5404\u542B\u4E00\u4E2A\u6BD4\u55BB\u3002"}]},{id:"kh",name:"\u5938\u5F20",intro:"\u6545\u610F\u8A00\u8FC7\u5176\u5B9E\uFF0C\u653E\u5927\u6216\u7F29\u5C0F\u4E8B\u7269\u7684\u7279\u5F81\uFF0C\u52A0\u6DF1\u5370\u8C61\u3002",legend:[["yt","\u5938\u5927\u5904"]],items:[{src:"\u674E\u767D\u300A\u671B\u5E90\u5C71\u7011\u5E03\u300B",s:"\u98DE\u6D41\u76F4\u4E0B<yt>\u4E09\u5343\u5C3A</yt>\uFF0C\u7591\u662F<yt>\u94F6\u6CB3\u843D\u4E5D\u5929</yt>\u3002",a:"\u6781\u8A00\u7011\u5E03\u4E4B\u9AD8\u4E4B\u6025\uFF0C\u5947\u60F3\u5929\u5916\u3002"},{src:"\u300A\u6728\u5170\u8BD7\u300B",s:"<yt>\u4E07\u91CC</yt>\u8D74\u620E\u673A\uFF0C<yt>\u5173\u5C71\u5EA6\u82E5\u98DE</yt>\u3002",a:"\u6781\u8A00\u884C\u519B\u4E4B\u8FDC\u3001\u8FDB\u519B\u4E4B\u901F\uFF0C\u6218\u4E8B\u7D27\u5F20\u3002"},{src:"\u901A\u7528\u7EC3\u4E60\u53E5",s:"\u6559\u5BA4\u91CC\u9759\u5F97\u8FDE\u4E00\u6839\u9488<yt>\u6389\u5728\u5730\u4E0A\u90FD\u80FD\u542C\u89C1</yt>\u3002",a:"\u4EE5\u4E0D\u53EF\u80FD\u542C\u89C1\u7684\u58F0\u54CD\u53CD\u886C\u5B89\u9759\u5230\u6781\u70B9\u3002"}]}],pe=`
+.rh-wrap{position:absolute;inset:0;overflow:auto;padding:18px 24px 30px;display:flex;flex-direction:column;gap:14px}
+.rh-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.rh-card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 22px;display:flex;flex-direction:column;gap:12px;max-width:880px}
+.rh-src{font-size:16px;color:var(--muted)}
+.rh-sent{font-size:22px;line-height:2.1;font-weight:500}
+.rh-sent b{font-weight:700;transition:color .25s,background .25s,border-color .25s;border-bottom:2px solid transparent;padding:1px 2px}
+.rh-show .rh-sent b.bt{color:var(--gold)}
+.rh-show .rh-sent b.yt{color:var(--purple);border-color:var(--purple)}
+.rh-show .rh-sent b.yc{color:var(--muted);border:1.5px dashed var(--muted);border-radius:6px;padding:0 6px;font-size:19px}
+.rh-show .rh-sent b.pp{background:rgba(166,61,151,.14);border-bottom:2px solid var(--purple)}
+.rh-show .rh-sent b.pp b.bt{color:var(--gold);background:none;border-color:transparent}
+.rh-ana{font-size:17px;color:var(--muted);line-height:1.7}
+.rh-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:16px;color:var(--muted);align-items:center}
+.rh-legend i{display:inline-block;width:18px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.rh-legend .i-bt{background:var(--gold)}
+.rh-legend .i-yt{background:var(--purple)}
+.rh-legend .i-yc{background:none;border:1.5px dashed var(--muted)}
+.rh-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rh-cnt{font-size:16px;color:var(--muted);margin-left:2px}
+.rh-quiz{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 22px;display:flex;flex-direction:column;gap:12px;max-width:880px}
+.rh-quiz h3{font-size:20px}
+.rh-board{position:relative;display:flex;justify-content:space-between;gap:18px;padding:6px 0}
+.rh-col{display:flex;flex-direction:column;gap:12px;z-index:2}
+.rh-word{font:inherit;font-size:20px;padding:10px 18px;border:1.5px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);cursor:pointer;touch-action:manipulation;min-width:110px}
+.rh-word.sel{border-color:var(--gold);color:var(--gold);font-weight:700}
+.rh-word.done{border-color:var(--gold);color:var(--gold);opacity:.85;pointer-events:none}
+.rh-word.wrong{border-color:#e2543f;animation:rh-shake .4s}
+@keyframes rh-shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.rh-svg{position:absolute;inset:0;z-index:1;pointer-events:none}
+.rh-svg line{stroke-width:2.5;stroke-linecap:round}
+.rh-tip{font-size:17px;color:var(--muted)}
+.rh-teach{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:12px 16px;display:flex;flex-direction:column;gap:8px;max-width:880px}
+.rh-tsteps{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.rh-tsteps .btn[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.rh-tguide{display:block;font-size:15px;line-height:1.7;color:var(--text)}
+.rh-sumbtn{margin-left:auto}
+.rh-panel{position:fixed;top:calc(var(--shell-top) + 12px);left:50%;transform:translateX(-50%);z-index:30;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.9;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+`,F,Q,M,O,P=0,I=0,D=!1,$=-1,te=0,he="#e2543f";function Z(){let s=H[P];Q.innerHTML=`
+    <div class="rh-src">${s.items[I].src}</div>
+    <div class="rh-sent">${s.items[I].s}</div>
+    <div class="rh-ana">${s.items[I].a}</div>
+    <div class="rh-legend">${s.legend.map(([d,u])=>`<span><i class="i-${d}"></i>${u}</span>`).join("")}</div>
+    <div class="rh-ctl">
+      <button class="btn" type="button" data-a="prev">\u4E0A\u4E00\u53E5</button>
+      <button class="btn" type="button" data-a="next">\u4E0B\u4E00\u53E5</button>
+      <button class="btn" type="button" data-a="mark">${D?"\u9690\u85CF\u6807\u6CE8":"\u663E\u793A\u6807\u6CE8"}</button>
+      <span class="rh-cnt">${I+1}/${s.items.length}</span>
+    </div>`,Q.querySelectorAll("[data-a]").forEach(d=>d.addEventListener("click",()=>{let u=d.dataset.a;u==="prev"?I=(I+s.items.length-1)%s.items.length:u==="next"?I=(I+1)%s.items.length:u==="mark"&&(D=!D),Z()})),Q.classList.toggle("rh-show",D),M.style.display=s.pairs?"":"none",s.pairs&&ne(s)}var J,A,X,G,V=null;function ne(s){M.innerHTML='<h3>\u672C\u4F53\u55BB\u4F53\u8FDE\u8FDE\u770B</h3><div class="rh-tip">\u5148\u70B9\u5DE6\u8FB9\u672C\u4F53\uFF0C\u518D\u70B9\u53F3\u8FB9\u55BB\u4F53\uFF1A\u8FDE\u5BF9\u53D8\u91D1\u7EBF\uFF0C\u8FDE\u9519\u95EA\u7EA2</div>';let d=document.createElement("div");d.className="rh-board",J=document.createElementNS("http://www.w3.org/2000/svg","svg"),J.setAttribute("class","rh-svg"),d.appendChild(J);let u=[...s.pairs].sort(()=>Math.random()-.5);A=document.createElement("div"),A.className="rh-col",X=document.createElement("div"),X.className="rh-col",s.pairs.forEach(([i],g)=>{let l=document.createElement("button");l.type="button",l.className="rh-word",l.textContent=i,l.dataset.i=g,A.appendChild(l)}),u.forEach(([i,g])=>{let l=document.createElement("button");l.type="button",l.className="rh-word",l.textContent=g,l.dataset.pair=i,X.appendChild(l)}),d.appendChild(A),d.appendChild(X),M.appendChild(d),G=document.createElement("div"),G.className="rh-tip",M.appendChild(G);let c=document.createElement("button");c.type="button",c.className="btn",c.textContent="\u91CD\u8FDE",c.style.alignSelf="flex-start",c.addEventListener("click",()=>ne(s)),M.appendChild(c),A.querySelectorAll(".rh-word").forEach(i=>i.addEventListener("click",()=>{i.classList.contains("done")||($=+i.dataset.i,A.querySelectorAll(".rh-word").forEach(g=>g.classList.remove("sel")),i.classList.add("sel"))})),X.querySelectorAll(".rh-word").forEach(i=>i.addEventListener("click",()=>{$<0||i.classList.contains("done")||(i.dataset.pair===s.pairs[$][0]?(re(A.children[$],i,"var(--gold)"),A.children[$].classList.add("done"),A.children[$].classList.remove("sel"),i.classList.add("done"),te++,$=-1,G.textContent=te===s.pairs.length?"\u5168\u90E8\u8FDE\u5BF9":""):(V=re(A.children[$],i,he),i.classList.add("wrong"),setTimeout(()=>{i.classList.remove("wrong"),V==null||V.remove(),V=null},500),G.textContent="\u4E0D\u5BF9\uFF0C\u518D\u60F3\u60F3\uFF1A\u4E24\u8005\u54EA\u91CC\u76F8\u4F3C\uFF1F"))})),$=-1,te=0}function re(s,d,u){let c=J.parentElement,i=s.getBoundingClientRect(),g=d.getBoundingClientRect(),l=c.getBoundingClientRect(),n=i.right-l.left,U=i.top+i.height/2-l.top,K=g.left-l.left,j=g.top+g.height/2-l.top,N=document.createElementNS("http://www.w3.org/2000/svg","line");return N.setAttribute("x1",n),N.setAttribute("y1",U),N.setAttribute("x2",K),N.setAttribute("y2",j),N.setAttribute("stroke",u),J.appendChild(N),N}var ie=[{name:"\u8BA4\u624B\u6CD5",m:0,i:0,mk:!1,guide:"\u5148\u8BFB\u539F\u53E5\uFF1A\u7EA2\u7684\u50CF\u706B\uFF0C\u7C89\u7684\u50CF\u971E\uFF0C\u767D\u7684\u50CF\u96EA\u3002\u4F5C\u8005\u628A\u4EC0\u4E48\u6BD4\u4F5C\u4E86\u4EC0\u4E48\uFF1F\u8BF7\u4F60\u6307\u51FA\u53E5\u4E2D\u7684\u672C\u4F53\u3001\u55BB\u8BCD\u548C\u55BB\u4F53\uFF0C\u5148\u4E0D\u770B\u6807\u6CE8\u3002",note:"\u6BD4\u55BB\u4E09\u8981\u7D20\uFF1A\u672C\u4F53\uFF08\u88AB\u6BD4\u7684\u4E8B\u7269\uFF09\u3001\u55BB\u8BCD\uFF08\u50CF\u3001\u662F\u3001\u4EFF\u4F5B\u7B49\uFF09\u3001\u55BB\u4F53\uFF08\u7528\u6765\u6253\u6BD4\u65B9\u7684\u4E8B\u7269\uFF09\u3002\u6210\u7ACB\u7684\u524D\u63D0\u662F\u672C\u4F53\u55BB\u4F53\u300C\u4E0D\u540C\u7C7B\u4F46\u6709\u76F8\u4F3C\u70B9\u300D\u2014\u2014\u82B1\u4E0E\u706B\u4E0D\u540C\u7C7B\uFF0C\u76F8\u4F3C\u70B9\u662F\u989C\u8272\u4E0E\u70ED\u70C8\u3002\u8FA8\u6790\u7B2C\u4E00\u95EE\u6C38\u8FDC\u662F\uFF1A\u76F8\u4F3C\u70B9\u5728\u54EA\u91CC\uFF1F\u8BF4\u4E0D\u6E05\u76F8\u4F3C\u70B9\uFF0C\u591A\u534A\u4E0D\u662F\u6BD4\u55BB\u3002"},{name:"\u9A8C\u6807\u6CE8",m:0,i:2,mk:!0,guide:"\u5BF9\u7167\u6807\u6CE8\u68C0\u9A8C\uFF1A\u91D1\u8272\u662F\u672C\u4F53\uFF0C\u7D2B\u8272\u662F\u55BB\u4F53\uFF0C\u865A\u7EBF\u6846\u662F\u55BB\u8BCD\u3002\u6CE8\u610F\u8FD9\u53E5\u7684\u55BB\u8BCD\u662F\u300C\u662F\u300D\u4E0D\u662F\u300C\u50CF\u300D\uFF0C\u6697\u55BB\u548C\u660E\u55BB\u5DEE\u522B\u5728\u54EA\u91CC\uFF1F\u70B9\u300C\u4E0B\u4E00\u53E5\u300D\u8FDE\u770B\u4E09\u4F8B\u3002",note:"\u660E\u55BB\u4E0E\u6697\u55BB\u53EA\u5DEE\u55BB\u8BCD\uFF1A\u7528\u300C\u50CF\u3001\u597D\u50CF\u3001\u4EFF\u4F5B\u300D\u662F\u660E\u55BB\uFF0C\u7528\u300C\u662F\u3001\u6210\u4E86\u3001\u53D8\u6210\u300D\u662F\u6697\u55BB\uFF08\u9690\u55BB\uFF09\u3002\u6697\u55BB\u66F4\u65A9\u9489\u622A\u94C1\uFF0C\u300C\u672C\u4F53\u662F\u55BB\u4F53\u300D\u76F4\u63A5\u753B\u7B49\u53F7\uFF0C\u8BED\u6C14\u66F4\u91CD\u3002\u8FD8\u6709\u501F\u55BB\u2014\u2014\u672C\u4F53\u55BB\u8BCD\u90FD\u4E0D\u51FA\u73B0\uFF0C\u53EA\u51FA\u73B0\u55BB\u4F53\uFF08\u300C\u6211\u4EEC\u4E4B\u95F4\u9694\u7740\u4E00\u5835\u5899\u300D\uFF09\uFF0C\u8FA8\u8BA4\u96BE\u5EA6\u6700\u9AD8\uFF0C\u8981\u9760\u4E0A\u4E0B\u6587\u8865\u56DE\u672C\u4F53\u3002"},{name:"\u8FA8\u5F02\u540C",m:2,i:1,mk:!0,guide:"\u6362\u6210\u300A\u5B89\u585E\u8170\u9F13\u300B\u518D\u6BD4\u4E00\u6BD4\uFF1A\u4E09\u4E2A\u300C\u2026\u2026\u4E00\u6837\uFF0C\u662F\u2026\u2026\u300D\u8FDE\u6392\uFF0C\u8BFB\u51FA\u4E00\u6C14\u5475\u6210\u7684\u6C14\u52BF\u3002\u56DE\u5934\u770B\u300A\u6625\u300B\u7B2C\u4E00\u53E5\uFF0C\u6BD4\u55BB\u517C\u6392\u6BD4\u7684\u53E5\u5B50\u600E\u4E48\u8FA8\uFF1F",note:"\u4E00\u53E5\u8BDD\u53EF\u4EE5\u517C\u7528\u4E24\u79CD\u4FEE\u8F9E\uFF1A\u300C\u7EA2\u7684\u50CF\u706B\uFF0C\u7C89\u7684\u50CF\u971E\uFF0C\u767D\u7684\u50CF\u96EA\u300D\u65E2\u662F\u4E09\u4E2A\u6BD4\u55BB\u8FDE\u7528\uFF0C\u53C8\u6784\u6210\u6392\u6BD4\uFF08\u4E09\u4E2A\u7ED3\u6784\u76F8\u540C\u3001\u8BED\u6C14\u4E00\u81F4\u7684\u5206\u53E5\u8FDE\u6392\uFF09\u3002\u7B54\u9898\u4E0D\u8981\u975E\u6B64\u5373\u5F7C\uFF0C\u8981\u5206\u5C42\u8BF4\uFF1A\u7ED3\u6784\u4E0A\u6784\u6210\u6392\u6BD4\uFF0C\u5185\u5BB9\u4E0A\u5404\u5206\u53E5\u662F\u6BD4\u55BB\uFF0C\u8868\u8FBE\u6548\u679C\u53D6\u5E76\u96C6\u2014\u2014\u6C14\u52BF\u4E0E\u5F62\u8C61\u517C\u5F97\u3002"}],me="\u4FEE\u8F9E\u8FA8\u6790\u8981\u70B9\uFF1A\u6BD4\u55BB\u7528\u76F8\u4F3C\u7684\u4E8B\u7269\u6253\u6BD4\u65B9\uFF0C\u53E5\u4E2D\u6709\u672C\u4F53\u3001\u55BB\u8BCD\u3001\u55BB\u4F53\uFF0C\u55BB\u8BCD\u7528\u300C\u50CF\u300D\u662F\u660E\u55BB\u3001\u7528\u300C\u662F\u300D\u662F\u6697\u55BB\uFF1B\u62DF\u4EBA\u628A\u7269\u5F53\u4F5C\u4EBA\u6765\u5199\uFF0C\u7ED9\u4E8B\u7269\u914D\u4E0A\u4EBA\u7684\u52A8\u4F5C\u3001\u60C5\u6001\u6216\u611F\u60C5\uFF1B\u6392\u6BD4\u662F\u4E09\u4E2A\u6216\u66F4\u591A\u7ED3\u6784\u76F8\u540C\u3001\u8BED\u6C14\u4E00\u81F4\u7684\u77ED\u8BED\u6216\u5206\u53E5\u8FDE\u6392\uFF0C\u8BFB\u6765\u4E00\u6C14\u5475\u6210\uFF1B\u5938\u5F20\u6545\u610F\u8A00\u8FC7\u5176\u5B9E\uFF0C\u653E\u5927\u6216\u7F29\u5C0F\u4E8B\u7269\u7684\u7279\u5F81\u3002\u8FA8\u6790\u5148\u627E\u7ED3\u6784\u6807\u5FD7\uFF0C\u518D\u8FFD\u95EE\u76F8\u4F3C\u70B9\u5728\u54EA\u91CC\u3002";function le(){O.querySelectorAll(".btn").forEach((s,d)=>{s.style.borderColor=d===P?"var(--gold)":"var(--line)",s.style.color=d===P?"var(--gold)":"var(--text)"})}function de(s){let d=ie[s];P=d.m,I=d.i,D=d.mk,le(),Z(),document.querySelectorAll("[data-hv-step]").forEach((u,c)=>u.setAttribute("aria-pressed",String(c===s))),document.querySelectorAll("[data-hv-guide]").forEach((u,c)=>{u.style.display=c===s?"":"none"})}var ue={meta:"\u8BED\u6587\xB7\u521D\u4E2D\u4E03\u516B\u5E74\u7EA7\uFF5C\u7EDF\u7F16\u7248\u4E03\u4E0A\u81F3\u516B\u4E0B \xB7 \u4FEE\u8F9E\u624B\u6CD5\u8FA8\u6790",steps:ie.map((s,d)=>({name:s.name,guide:s.guide,note:s.note,apply:()=>de(d)})),summary:me,quiz:[{q:"\u300C\u7EA2\u7684\u50CF\u706B\uFF0C\u7C89\u7684\u50CF\u971E\uFF0C\u767D\u7684\u50CF\u96EA\u300D\u4E2D\uFF0C\u672C\u4F53\u662F\uFF1F",opts:["\u706B\u3001\u971E\u3001\u96EA","\u82B1\uFF08\u5404\u79CD\u989C\u8272\u7684\u82B1\uFF09","\u55BB\u8BCD\u300C\u50CF\u300D","\u6CA1\u6709\u672C\u4F53"],a:1,why:"\u672C\u4F53\u662F\u88AB\u6BD4\u7684\u4E8B\u7269\u2014\u2014\u5404\u8272\u7684\u82B1\uFF1B\u706B\u3001\u971E\u3001\u96EA\u662F\u55BB\u4F53\u3002\u627E\u672C\u4F53\u8981\u770B\u8BED\u5883\uFF0C\u989C\u8272\u8BCD\u300C\u7EA2\u7684\u3001\u7C89\u7684\u3001\u767D\u7684\u300D\u6307\u4EE3\u7684\u90FD\u662F\u82B1\u3002"},{q:"\u55BB\u8BCD\u7528\u300C\u662F\u3001\u6210\u4E86\u3001\u53D8\u6210\u300D\u7684\u6BD4\u55BB\u53EB\uFF1F",opts:["\u660E\u55BB","\u6697\u55BB","\u501F\u55BB","\u62DF\u4EBA"],a:1,why:"\u660E\u55BB\u7528\u300C\u50CF\u300D\uFF0C\u6697\u55BB\u7528\u300C\u662F\u300D\u7C7B\u8BCD\u76F4\u63A5\u753B\u7B49\u53F7\uFF0C\u8BED\u6C14\u66F4\u91CD\uFF1B\u501F\u55BB\u8FDE\u672C\u4F53\u90FD\u4E0D\u51FA\u73B0\u3002\u55BB\u8BCD\u7C7B\u578B\u662F\u4E09\u8005\u7684\u5206\u754C\u7EBF\u3002"},{q:"\u5224\u65AD\u300C\u4ED6\u957F\u5F97\u50CF\u4ED6\u7238\u7238\u300D\u4E0D\u662F\u6BD4\u55BB\u7684\u4F9D\u636E\u662F\uFF1F",opts:["\u53E5\u5B50\u592A\u77ED","\u540C\u7C7B\u4E8B\u7269\u76F8\u6BD4\uFF0C\u6CA1\u6709\u4E0D\u540C\u7C7B\u7684\u76F8\u4F3C\u70B9","\u6CA1\u6709\u55BB\u8BCD","\u4E0D\u662F\u6587\u5B66\u53E5\u5B50"],a:1,why:"\u6BD4\u55BB\u8981\u6C42\u672C\u4F53\u55BB\u4F53\u4E0D\u540C\u7C7B\u800C\u6709\u76F8\u4F3C\u70B9\uFF1B\u4EBA\u4E0E\u4EBA\u662F\u540C\u7C7B\u76F8\u6BD4\uFF0C\u5C5E\u4E8E\u6BD4\u8F83\u4E0D\u662F\u6BD4\u55BB\u3002\u300C\u50CF\u300D\u5B57\u53E5\u8981\u5148\u9A8C\u540C\u7C7B\u4E0E\u5426\u3002"},{q:"\u6392\u6BD4\u7684\u6784\u6210\u8981\u6C42\u662F\uFF1F",opts:["\u4E24\u4E2A\u53E5\u5B50\u5E76\u5217","\u4E09\u4E2A\u6216\u66F4\u591A\u7ED3\u6784\u76F8\u540C\u3001\u8BED\u6C14\u4E00\u81F4\u7684\u77ED\u8BED\u6216\u5206\u53E5\u8FDE\u6392","\u5B57\u6570\u5B8C\u5168\u76F8\u7B49","\u5FC5\u987B\u6709\u6BD4\u55BB"],a:1,why:"\u6392\u6BD4\u4E09\u8981\u7D20\uFF1A\u4E09\u9879\u8D77\u3001\u7ED3\u6784\u76F8\u540C\u3001\u8BED\u6C14\u4E00\u81F4\uFF0C\u8BFB\u6765\u4E00\u6C14\u5475\u6210\u3002\u4E24\u9879\u662F\u5BF9\u5076\u6216\u5E76\u5217\uFF0C\u5B57\u6570\u76F8\u7B49\u4E0D\u662F\u5FC5\u8981\u6761\u4EF6\u3002"},{q:"\u300C\u7EA2\u7684\u50CF\u706B\uFF0C\u7C89\u7684\u50CF\u971E\uFF0C\u767D\u7684\u50CF\u96EA\u300D\u7684\u5B8C\u6574\u4FEE\u8F9E\u5224\u65AD\u662F\uFF1F",opts:["\u53EA\u662F\u6392\u6BD4","\u53EA\u662F\u6BD4\u55BB","\u6392\u6BD4\u517C\u6BD4\u55BB","\u6392\u6BD4\u517C\u5938\u5F20"],a:2,why:"\u7ED3\u6784\u4E0A\u4E09\u4E2A\u76F8\u540C\u53E5\u5F0F\u8FDE\u6392\u662F\u6392\u6BD4\uFF0C\u5185\u5BB9\u4E0A\u5404\u5206\u53E5\u53C8\u5404\u662F\u660E\u55BB\u2014\u2014\u517C\u7528\u8981\u5206\u5C42\u8BF4\uFF0C\u6548\u679C\u53D6\u5E76\u96C6\uFF1A\u6C14\u52BF\u4E0E\u5F62\u8C61\u517C\u5F97\u3002"}]};ae({teaching:ue,mount(s,d){let u=document.createElement("style");u.textContent=pe,s.appendChild(u),F=document.createElement("div"),F.className="rh-wrap",O=document.createElement("div"),O.className="rh-tabs",H.forEach((c,i)=>{let g=document.createElement("button");g.type="button",g.className="btn",g.textContent=c.name,g.addEventListener("click",()=>{P=i,I=0,le(),Z()}),O.appendChild(g)}),F.appendChild(O),Q=document.createElement("div"),Q.className="rh-card",F.appendChild(Q),M=document.createElement("div"),M.className="rh-quiz",F.appendChild(M),s.appendChild(F),d.onResize=()=>{H[P].pairs&&ne(H[P])},de(0);try{let c=new URLSearchParams(location.search),i=c.get("m"),g=H.findIndex(l=>l.id===i);if(g>=0){O.children[g].click();let l=parseInt(c.get("i")||"",10);l>=1&&l<=H[g].items.length&&(I=l-1),c.get("mk")==="1"&&(D=!0),Z()}}catch{}}});})();
+</script>
+</body>
+</html>

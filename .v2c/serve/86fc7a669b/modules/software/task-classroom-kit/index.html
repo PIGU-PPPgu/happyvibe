@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>任务三：一周课堂三件套（点名器 + 积分板 + 抢答页） · HappyVibe 数智学园</title><meta name="description" content="三句话换三个课堂工具，周一点名、周三积分、周五抢答——本站有全部可交互成品，做完直接投屏用。"><meta property="og:title" content="任务三：一周课堂三件套（点名器 + 积分板 + 抢答页） · HappyVibe 数智学园"><meta property="og:description" content="三句话换三个课堂工具，周一点名、周三积分、周五抢答——本站有全部可交互成品，做完直接投屏用。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> software </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>task-classroom-kit</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（7 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#任务卡" data-astro-cid-5y7t3r35>任务卡</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#先玩成品30-秒决定要不要做" data-astro-cid-5y7t3r35>先玩成品（30 秒决定要不要做）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-1-件--点名器周一用" data-astro-cid-5y7t3r35>第 1 件 · 点名器（周一用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-2-件--积分板周三用" data-astro-cid-5y7t3r35>第 2 件 · 积分板（周三用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-3-件--抢答页周五复习课用" data-astro-cid-5y7t3r35>第 3 件 · 抢答页（周五复习课用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#三个任务的共同心法" data-astro-cid-5y7t3r35>三个任务的共同心法</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#完成标准" data-astro-cid-5y7t3r35>完成标准</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/software/" style="color:#e8935e" data-astro-cid-5y7t3r35>T2 · WorkBuddy 实操</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>任务三：一周课堂三件套（点名器 + 积分板 + 抢答页）</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>三句话换三个课堂工具，周一点名、周三积分、周五抢答——本站有全部可交互成品，做完直接投屏用。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>任务式教程（成品全部真实可玩）</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="software/task-classroom-kit" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：三个 10 分钟的小任务，换一学期的课堂气氛。每个都有真实成品，点开就能玩。</strong></p>
+</blockquote>
+<h2 id="任务卡">任务卡</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>成品</td><td>随机点名器 + 小组积分板 + 知识抢答页（三个独立网页）</td></tr><tr><td>耗时</td><td>每个 10-15 分钟，可分三天做</td></tr><tr><td>难度</td><td>★☆☆☆☆（第 2 课水平就能做）</td></tr><tr><td>工具</td><td>WorkBuddy / 任何 AI 对话框都行（这就是普通 vibe coding）</td></tr></tbody></table>
+<h2 id="先玩成品30-秒决定要不要做">先玩成品（30 秒决定要不要做）</h2>
+<p><strong>随机点名器</strong>——大字滚动、金色中选、点过不重复：</p>
+<p><img src="/images/demos/dianming.gif" alt="点名器实况">
+→ <a href="/demos/dianming/">点开真货玩一下</a></p>
+<p><strong>小组积分板</strong>——点击加减分、实时排名、第一名金色高亮：</p>
+<p><img src="/images/demos/jifen.gif" alt="积分板实况">
+→ <a href="/demos/jifen/">点开真货玩一下</a></p>
+<h2 id="第-1-件--点名器周一用">第 1 件 · 点名器（周一用）</h2>
+<p><strong>准备</strong>：班级名单（Excel 或文本都行，化名亦可——要投屏的注意隐私）。</p>
+<p><strong>话术</strong>：</p>
+<pre><code>做一个课堂随机点名网页：
+- 名单我贴在下面（45 人）
+- 点「开始」名字快速滚动，2 秒后停在一个名字上，大字金色显示
+- 点过的自动排除，页面上显示已点/剩余人数
+- 有「重置」按钮
+输出 html 版本给我即可。
+</code></pre>
+<p><strong>验收</strong>：投屏试 5 次 → 点过的名字再也没出现 → 剩余计数对。</p>
+<p><strong>课堂话术</strong>（对学生的仪式感）：被点到金色名字的同学，全班鼓掌三秒——气氛就是从这里来的。</p>
+<h2 id="第-2-件--积分板周三用">第 2 件 · 积分板（周三用）</h2>
+<p><strong>话术</strong>：</p>
+<pre><code>做一个小组积分板网页：
+- 8 个小组（组名可改），每个有 +1 +2 -1 三个按钮
+- 分数实时从高到低排序，第一名金色高亮边框
+- 数据存在浏览器本地，关掉再开不丢
+- 有「清零」按钮（长按 3 秒才触发，防误触）
+输出 html 版本给我即可。
+</code></pre>
+<p><strong>验收</strong>：加一组分数 → 排序变了 → 关浏览器重开 → 分数还在。</p>
+<h2 id="第-3-件--抢答页周五复习课用">第 3 件 · 抢答页（周五复习课用）</h2>
+<p><strong>准备</strong>：本周知识点的 10-20 道选择题（没有？让 AI 出：<code>基于「本章知识点」出 15 道选择题，附答案</code>）。</p>
+<p><strong>话术</strong>：</p>
+<pre><code>做一个课堂知识抢答网页：
+- 题目我贴在下面，一次显示一题，先不显示选项
+- 点「出题」后开始 10 秒倒计时，有小组举手就点对应组名暂停
+- 显示选项 → 点「公布答案」→ 正确答案变绿
+- 右侧记分板：答对的组 +2，抢答权轮流
+输出 html 版本给我即可。
+</code></pre>
+<p><strong>验收</strong>：完整走一轮 3 题的流程 → 记分正确 → 倒计时能暂停。</p>
+<h2 id="三个任务的共同心法">三个任务的共同心法</h2>
+<ol>
+<li><strong>一次只要一件</strong>：别把三件套塞进一句话，分三次对话做；</li>
+<li><strong>验收就三条</strong>：能投屏（字够大）、数据不丢（刷新还在）、按钮够大（手指能点）；</li>
+<li><strong>做顺了就固化</strong>：话术存成技能 <code>classroom-kit</code>，下学期换名单 3 分钟重出全套。</li>
+</ol>
+<h2 id="完成标准">完成标准</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 三件都做出来了，至少两件在真实课堂上用过</li>
+<li class="task-list-item"><input type="checkbox" disabled> 每件都过了「投屏三条」验收</li>
+<li class="task-list-item"><input type="checkbox" disabled> 把最顺手的一套话术存进了备忘录或技能</li>
+</ul>
+<p>下一个：<a href="/modules/software/task-final-term/">任务四 · 期末材料大生产</a></p> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="任务三：一周课堂三件套（点名器 + 积分板 + 抢答页）" data-module="WorkBuddy 实操" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script>  <a class="btn btn-ghost back-btn" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 T2 WorkBuddy 实操 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/software/task-cloud/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>实操 · 30 分钟让数据上云（手机电脑同步）</span> </a> <a class="btn btn-ghost nav-next" href="/modules/software/task-final-term/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>下一课 →</span> <span data-astro-cid-5y7t3r35>任务四：期末材料大生产（评语 + 素质手册 + 家长会）</span> </a> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#任务卡" data-toc-link="任务卡" data-astro-cid-5y7t3r35>任务卡</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#先玩成品30-秒决定要不要做" data-toc-link="先玩成品30-秒决定要不要做" data-astro-cid-5y7t3r35>先玩成品（30 秒决定要不要做）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-1-件--点名器周一用" data-toc-link="第-1-件--点名器周一用" data-astro-cid-5y7t3r35>第 1 件 · 点名器（周一用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-2-件--积分板周三用" data-toc-link="第-2-件--积分板周三用" data-astro-cid-5y7t3r35>第 2 件 · 积分板（周三用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-3-件--抢答页周五复习课用" data-toc-link="第-3-件--抢答页周五复习课用" data-astro-cid-5y7t3r35>第 3 件 · 抢答页（周五复习课用）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#三个任务的共同心法" data-toc-link="三个任务的共同心法" data-astro-cid-5y7t3r35>三个任务的共同心法</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#完成标准" data-toc-link="完成标准" data-astro-cid-5y7t3r35>完成标准</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>

@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>一小时上服务器：让外面的人访问你的应用 · HappyVibe 数智学园</title><meta name="description" content="从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"><meta property="og:title" content="一小时上服务器：让外面的人访问你的应用 · HappyVibe 数智学园"><meta property="og:description" content="从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> software </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>deploy-server</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（8 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先想清楚什么时候才需要服务器" data-astro-cid-5y7t3r35>先想清楚：什么时候才需要服务器</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第一步买一台服务器10-分钟" data-astro-cid-5y7t3r35>第一步：买一台服务器（10 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第二步把三样东西告诉-ai复制话术" data-astro-cid-5y7t3r35>第二步：把三样东西告诉 AI（复制话术）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第三步ai-会带你走的六步心里有个地图" data-astro-cid-5y7t3r35>第三步：AI 会带你走的六步（心里有个地图）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第四步让外面的人访问到" data-astro-cid-5y7t3r35>第四步：让外面的人访问到</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#安全红线" data-astro-cid-5y7t3r35>安全红线</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#常见坑" data-astro-cid-5y7t3r35>常见坑</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#做完的标志" data-astro-cid-5y7t3r35>做完的标志</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/software/" style="color:#e8935e" data-astro-cid-5y7t3r35>T2 · WorkBuddy 实操</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>一小时上服务器：让外面的人访问你的应用</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>站内原创</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="software/deploy-server" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：Cloudflare Pages 能免费放静态网页；当你的应用要存数据、多个人同时写入时，才需要一台自己的服务器——而整件事你需要做的只是「买机器 + 把三样信息交给 AI」。</strong></p>
+</blockquote>
+<h2 id="先想清楚什么时候才需要服务器">先想清楚：什么时候才需要服务器</h2>
+<p>用三问检查，都答「是」再往下走：</p>
+<ol>
+<li><strong>应用要写数据吗？</strong>——点名记录、答题数据要存下来，不只是给人看；</li>
+<li><strong>多个人同时用吗？</strong>——你、科组、几个班同时打开同一个地址；</li>
+<li><strong>免费方案不够了吗？</strong>——静态网页用 <a href="/modules/software/task-publish/">发布上线</a> 一课的 Cloudflare Pages 就够，零成本零服务器。</li>
+</ol>
+<p>三问里有「否」，回上一课；全是「是」，买机器。</p>
+<p><img src="/images/lessons/deploy-buy.png" alt="买服务器：四个选项照着选"></p>
+<h2 id="第一步买一台服务器10-分钟">第一步：买一台服务器（10 分钟）</h2>
+<p><strong>去哪买</strong>：腾讯云「轻量应用服务器」或阿里云「轻量应用服务器」。选轻量版不选标准版——便宜、自带控制台、够老师用。</p>
+<p><strong>怎么选</strong>（两家的选项名字几乎一样）：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>选项</th><th>选什么</th><th>说明</th></tr></thead><tbody><tr><td>地域</td><td>就近选（广州/上海）</td><td>访问快</td></tr><tr><td>套餐</td><td>2 核 2G 最低档</td><td>新人价一般每年几十元</td></tr><tr><td>镜像</td><td>系统镜像 · Ubuntu 22.04</td><td>别选「应用镜像」，AI 最熟纯系统</td></tr><tr><td>时长</td><td>先买一个月试</td><td>用得起来再续</td></tr></tbody></table>
+<p><strong>付款后你拿到三样东西</strong>（这就是要交给 AI 的全部）：</p>
+<ol>
+<li><strong>公网 IP</strong>：一串数字，如 <code>101.32.XX.XX</code>，在控制台首页能看到；</li>
+<li><strong>初始密码</strong>：有的发到站内信，有的在「重置密码」里自己设一个（见下方安全红线）；</li>
+<li><strong>系统版本</strong>：就是 Ubuntu 22.04 这一句。</li>
+</ol>
+<p><img src="/images/lessons/deploy-console.png" alt="控制台三个地方：IP · 重置密码 · 防火墙"></p>
+<h2 id="第二步把三样东西告诉-ai复制话术">第二步：把三样东西告诉 AI（复制话术）</h2>
+<p>先做一件事：在控制台「重置密码」里把密码改成一个<strong>临时的、专给这次部署用的新密码</strong>——不要把你常用的任何密码给它。</p>
+<p>然后复制这段话术，填空后发给 AI：</p>
+<blockquote>
+<p>我有一台云轻量服务器：系统 Ubuntu 22.04，公网 IP 是 ____，用 root 登录，密码是 ____（临时密码，部署完我会改）。
+我要把本地的 ____ 文件夹部署上去（里面是：静态网页 / Node.js 应用，二选一），目标是外网浏览器输入 <a href="http://IP">http://IP</a> 就能访问。
+请一步一步指挥我：每次只给一条命令或一次操作，告诉我去哪里执行，并说明这条执行成功应该看到什么。我回复结果后你再给下一步。</p>
+</blockquote>
+<p>从这条消息发出开始，你就不用再想「技术」了——你的任务只剩<strong>照做 + 把屏幕上出现的文字原样回给 AI</strong>。</p>
+<p><img src="/images/lessons/deploy-ssh.png" alt="终端登录长这样"></p>
+<h2 id="第三步ai-会带你走的六步心里有个地图">第三步：AI 会带你走的六步（心里有个地图）</h2>
+<p>路只有六段，一张图记住：</p>
+<pre><code class="language-mermaid">flowchart TD
+  L["1 登录服务器&#x3C;br/>ssh root@你的IP"] --> E["2 装运行环境&#x3C;br/>nginx 或 Node"]
+  E --> U["3 传文件上去&#x3C;br/>scp 或网页上传"]
+  U --> P["4 放到正确位置&#x3C;br/>/var/www/html"]
+  P --> S["5 启动服务"] --> V["6 服务器内部先验证"]
+  V --> O["内部过了 → 开 80 端门 → 外网上线"]
+  style O fill:#3a2a00,stroke:#FEB300,color:#ffe9b0
+</code></pre>
+<p>每一段具体做什么：</p>
+<ol>
+<li><strong>登录服务器</strong>：AI 会教你在电脑终端输 <code>ssh root@你的IP</code>，输密码（屏幕不显示是正常的）；</li>
+<li><strong>装运行环境</strong>：静态网页装 nginx，Node 应用装 Node——AI 会给安装命令；</li>
+<li><strong>把文件传上去</strong>：AI 会选一种方式（scp 命令、或控制台网页上传），把你的文件夹放进服务器；</li>
+<li><strong>放到正确的位置</strong>：nginx 默认读 <code>/var/www/html</code>，AI 会指挥你挪过去；</li>
+<li><strong>启动服务</strong>：静态网页 nginx 装好就在跑；Node 应用要启动并常驻；</li>
+<li><strong>先在服务器内部验证</strong>：AI 会让你在服务器上执行一条「本机测试」命令，先确认服务活着——这一步过了才轮到外网。</li>
+</ol>
+<p>每一段做完，跟 AI 确认一句：「这段完成，屏幕显示的是 ____，对吗？」</p>
+<h2 id="第四步让外面的人访问到">第四步：让外面的人访问到</h2>
+<p>内部验证通过、手机却打不开？九成卡在<strong>门没开</strong>：</p>
+<p><img src="/images/lessons/deploy-firewall.png" alt="防火墙：添加 80 端口规则"></p>
+<ol>
+<li><strong>开放 80 端口</strong>：回云控制台 → 你的服务器 → 「防火墙」或「安全组」标签页 →「添加规则」→ 端口填 <code>80</code>，协议 TCP，来源 0.0.0.0/0（即所有人）→ 保存。这一步是网页点击，不是命令；</li>
+<li><strong>再测</strong>：手机<strong>关掉 Wi-Fi 用流量</strong>打开 <code>http://你的IP</code>——出来了，就上线了；</li>
+</ol>
+<p><img src="/images/lessons/deploy-phone.png" alt="验证成功的样子">
+3. <strong>想要一个好记的地址（可选，事后做）</strong>：买域名 → 解析里加一条 A 记录指向你的 IP → 国内服务器绑定域名需要<strong>备案</strong>（提交后等十天左右，教学期间先用 IP 地址完全够用）→ 备案下来后让 AI 用 certbot 给你配免费的 HTTPS。</p>
+<h2 id="安全红线">安全红线</h2>
+<ul>
+<li><strong>改掉初始密码再部署</strong>：给 AI 的是临时密码，部署完立刻在控制台再改一次；</li>
+<li><strong>真实学生数据不上公网服务器</strong>：和全站规矩一样，放上去的成绩名单一律化名脱敏；</li>
+<li><strong>用不到的端口全关</strong>：防火墙里只留 80（以后加了 HTTPS 再开 443）和 SSH 的 22（建议只允许你自己的 IP）。</li>
+</ul>
+<h2 id="常见坑">常见坑</h2>
+<ul>
+<li><strong>手机打不开、电脑能打开</strong>：多半用了校园网，内网策略挡了；用流量一测便知；</li>
+<li><strong><code>ssh</code> 提示连接超时</strong>：防火墙把 22 端口关了，或 IP 抄错一位；</li>
+<li><strong>nginx 欢迎页出来了、自己的页面没有</strong>：文件没放对目录，把 AI 给的 <code>ls</code> 命令结果发回去让它纠正；</li>
+<li><strong>Node 应用关掉终端就停了</strong>：让 AI 给你配「常驻」（pm2 或 systemd），一句话的事。</li>
+</ul>
+<h2 id="做完的标志">做完的标志</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 手机关流量，输入 <code>http://你的IP</code>，能看到自己的应用</li>
+<li class="task-list-item"><input type="checkbox" disabled> 同事在别的网络也能打开</li>
+<li class="task-list-item"><input type="checkbox" disabled> 服务器密码已改回自己的（AI 那份临时密码作废）</li>
+<li class="task-list-item"><input type="checkbox" disabled> 防火墙里除了 80 和 22 没有别的口子</li>
+</ul>
+<p>到这一步，你做的就是真正的「上线」。下一步回到 <a href="/modules/software/task-cloud/">数据上云</a>：让应用的数据在这台服务器上存起来、多端同步。</p> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="一小时上服务器：让外面的人访问你的应用" data-module="WorkBuddy 实操" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script> <script type="module" src="/_astro/Mermaid.astro_astro_type_script_index_0_lang.DKvXPaMk.js"></script>  <a class="btn btn-ghost back-btn" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 T2 WorkBuddy 实操 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/software/task-subject-website/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>任务一：用 WorkBuddy 打造学科主题网站</span> </a> <span data-astro-cid-5y7t3r35></span> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#先想清楚什么时候才需要服务器" data-toc-link="先想清楚什么时候才需要服务器" data-astro-cid-5y7t3r35>先想清楚：什么时候才需要服务器</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第一步买一台服务器10-分钟" data-toc-link="第一步买一台服务器10-分钟" data-astro-cid-5y7t3r35>第一步：买一台服务器（10 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第二步把三样东西告诉-ai复制话术" data-toc-link="第二步把三样东西告诉-ai复制话术" data-astro-cid-5y7t3r35>第二步：把三样东西告诉 AI（复制话术）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第三步ai-会带你走的六步心里有个地图" data-toc-link="第三步ai-会带你走的六步心里有个地图" data-astro-cid-5y7t3r35>第三步：AI 会带你走的六步（心里有个地图）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第四步让外面的人访问到" data-toc-link="第四步让外面的人访问到" data-astro-cid-5y7t3r35>第四步：让外面的人访问到</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#安全红线" data-toc-link="安全红线" data-astro-cid-5y7t3r35>安全红线</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#常见坑" data-toc-link="常见坑" data-astro-cid-5y7t3r35>常见坑</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#做完的标志" data-toc-link="做完的标志" data-astro-cid-5y7t3r35>做完的标志</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>

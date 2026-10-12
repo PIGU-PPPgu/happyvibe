@@ -1,0 +1,266 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>任务一：用 WorkBuddy 打造学科主题网站 · HappyVibe 数智学园</title><meta name="description" content="任务式实战：从领取素材包到发布上线，带学生走进你的学科主页。每一步都有操作、话术、截图位和检查点。"><meta property="og:title" content="任务一：用 WorkBuddy 打造学科主题网站 · HappyVibe 数智学园"><meta property="og:description" content="任务式实战：从领取素材包到发布上线，带学生走进你的学科主页。每一步都有操作、话术、截图位和检查点。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> software </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>task-subject-website</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（15 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#任务卡" data-astro-cid-5y7t3r35>任务卡</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#真实跑通记录2026-08-31-实录" data-astro-cid-5y7t3r35>真实跑通记录（2026-08-31 实录）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#材料清单" data-astro-cid-5y7t3r35>材料清单</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#先看别人跑完的样子" data-astro-cid-5y7t3r35>先看别人跑完的样子</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-1领取模板放进工作文件夹" data-astro-cid-5y7t3r35>步骤 1：领取模板，放进工作文件夹</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-2让-workbuddy看见这个文件夹" data-astro-cid-5y7t3r35>步骤 2：让 WorkBuddy「看见」这个文件夹</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-3第一次改版换标题和配色" data-astro-cid-5y7t3r35>步骤 3：第一次改版——换标题和配色</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-4替换图文内容" data-astro-cid-5y7t3r35>步骤 4：替换图文内容</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-5加入音视频" data-astro-cid-5y7t3r35>步骤 5：加入音视频</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-6手机端检查" data-astro-cid-5y7t3r35>步骤 6：手机端检查</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-7让-workbuddy-自己当质检员" data-astro-cid-5y7t3r35>步骤 7：让 WorkBuddy 自己当质检员</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-8保存你的网站配方" data-astro-cid-5y7t3r35>步骤 8：保存你的「网站配方」</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-9发布给家长学生看" data-astro-cid-5y7t3r35>步骤 9：发布给家长学生看</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-10领取任务徽章" data-astro-cid-5y7t3r35>步骤 10：领取「任务徽章」 ✓</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#已完成" data-astro-cid-5y7t3r35>已完成</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/software/" style="color:#e8935e" data-astro-cid-5y7t3r35>T2 · WorkBuddy 实操</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>任务一：用 WorkBuddy 打造学科主题网站</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>任务式实战：从领取素材包到发布上线，带学生走进你的学科主页。每一步都有操作、话术、截图位和检查点。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>任务式教程 · 样板任务</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="software/task-subject-website" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：这不是「学软件」，是「做完一件事」——跟着 10 个步骤走，你会得到一个图文并茂、可发给家长学生的学科主题网站。</strong></p>
+</blockquote>
+<h2 id="任务卡">任务卡</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>成品</td><td>一个学科主题网站：首页 + 3 个栏目页，图文并茂、手机可看（<strong>已真实跑通</strong>，全过程见下方）</td></tr><tr><td>耗时</td><td>首次约 60 分钟（熟练后 20 分钟）</td></tr><tr><td>难度</td><td>★★☆☆☆（会打字、会点鼠标就行）</td></tr><tr><td>工具</td><td>WorkBuddy（任一大脑均可）</td></tr><tr><td>素材包</td><td>见下方「材料清单」</td></tr></tbody></table>
+<h2 id="真实跑通记录2026-08-31-实录">真实跑通记录（2026-08-31 实录）</h2>
+<p>这段话术在 WorkBuddy（Deepseek-V4-Flash，0.17x 夜间折扣）里真实执行的全过程——发送、自主规划、生成、遇到问题自主排障：</p>
+<p><img src="/images/demos/task-flow.gif" alt="任务全流程实录"></p>
+<p>最终交付到桌面的 <code>my-class-site</code> 文件夹（index.html / css / js / images 全齐）：</p>
+<p><img src="/images/demos/class-site-final.webp" alt="AI 生成的班级主页成品"></p>
+<h2 id="材料清单">材料清单</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>材料</th><th>提供方</th><th>说明</th></tr></thead><tbody><tr><td><strong>UI 模板（语/数/英/科 4 套）</strong></td><td><a href="/materials/site-templates.zip">本站下载 site-templates.zip</a></td><td>单文件骨架，所有要改的地方都标了「改」字</td></tr><tr><td>示例图文素材</td><td><a href="/modules/creation/material-packs/">学科材料包</a></td><td>15 科都有：文字素材 + 示意图 + 音频</td></tr><tr><td>音视频素材</td><td>老师自备</td><td>朗诵音频、课文视频等，来源建议见步骤 5</td></tr><tr><td>你的真实内容</td><td>你</td><td>本学期想放上网的 2-3 个栏目内容</td></tr></tbody></table>
+<p>四套模板长这样（语文 · 水墨书香 / 数学 · 理性蓝 / 英语 · 活力橙绿 / 科学 · 实验绿）：</p>
+<p><img src="/images/demos/tpl-chinese.webp" alt="语文模板效果"></p>
+<h2 id="先看别人跑完的样子">先看别人跑完的样子</h2>
+<p>WorkBuddy 跑真实任务的完整记录（搭建教师智能工作台，35 分钟、免费模型、0 积分）——你要经历的「拆步骤 → 调工具 → 交付文件」过程就是这样的：</p>
+<p><img src="/images/lessons/wb-06-task-exec.webp" alt="WorkBuddy 真实任务执行记录"></p>
+<hr>
+<h2 id="步骤-1领取模板放进工作文件夹">步骤 1：领取模板，放进工作文件夹</h2>
+<p><strong>目标</strong>：把素材包放到一个 WorkBuddy 能读到的文件夹里。</p>
+<ol>
+<li>在桌面新建文件夹，命名 <code>my-class-site</code>；</li>
+<li>从本站下载学科模板（语文版），把压缩包里的所有文件解压到 <code>my-class-site</code> 里；</li>
+<li>解压后文件夹里应有：<code>index.html</code>、<code>css</code> 文件夹、<code>images</code> 文件夹。</li>
+</ol>
+<blockquote>
+<p>【截图位 S1】解压完成后的 <code>my-class-site</code> 文件夹内容（应能看到 index.html 和两个文件夹）</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：双击 <code>index.html</code>，浏览器里能看到模板页面（哪怕是占位内容）。</p>
+<p><strong>注意：常见坑</strong>：解压出两层文件夹（<code>my-class-site/语文模板/index.html</code>）——把内层文件全部拖到外层就行。</p>
+<hr>
+<h2 id="步骤-2让-workbuddy看见这个文件夹">步骤 2：让 WorkBuddy「看见」这个文件夹</h2>
+<p><strong>目标</strong>：把工作目录交给 WorkBuddy。</p>
+<ol>
+<li>打开 WorkBuddy，新建对话；</li>
+<li>把 <code>my-class-site</code> 文件夹直接拖进对话窗口（或用「添加文件/文件夹」按钮选中它）；</li>
+<li>输入第一句话确认它能读到：</li>
+</ol>
+<pre><code>读取这个文件夹，告诉我里面有什么文件，分别是什么用途。
+</code></pre>
+<blockquote>
+<p>【截图位 S2】WorkBuddy 回答文件清单的界面</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：它能准确说出 <code>index.html</code> 是首页、<code>css</code> 是样式、<code>images</code> 是图片。</p>
+<p><strong>注意：常见坑</strong>：如果它说「读取失败」，检查文件夹是否被 iCloud「仅云同步」占用了——右键文件夹选「立即下载」。</p>
+<hr>
+<h2 id="步骤-3第一次改版换标题和配色">步骤 3：第一次改版——换标题和配色</h2>
+<p><strong>目标</strong>：让模板变成「你的」。直接照抄这段话术（把引号里的内容换成你的）：</p>
+<pre><code>请修改 index.html：
+1. 把网站标题改为「晓风语文角」
+2. 主配色从蓝色换成暖金色（#FEB300）+ 深紫色（#750F6D）
+3. 首页大标题下一行加一句副标题：「读经典，见众生」
+改完后告诉我改了哪几个文件的哪几处。
+</code></pre>
+<blockquote>
+<p>【截图位 S3】你发送的话术（展示给老师看「话术长什么样」）</p>
+</blockquote>
+<blockquote>
+<p>【截图位 S4】WorkBuddy 回复的修改清单</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：去浏览器<strong>刷新</strong> <code>index.html</code>（⌘R），标题和配色已变。</p>
+<p><strong>注意：常见坑</strong>：没刷新浏览器就以为失败了——网页不会自己变，永远记得 ⌘R。</p>
+<hr>
+<h2 id="步骤-4替换图文内容">步骤 4：替换图文内容</h2>
+<p><strong>目标</strong>：把占位文章换成你的真实内容。</p>
+<ol>
+<li>把你选好的 2-3 篇文章（文字 + 配图）放进 <code>images</code> 文件夹和对话里；</li>
+<li>发送话术：</li>
+</ol>
+<pre><code>请把首页「最新文章」栏目替换为我提供的 3 篇内容：
+- 每篇显示：标题、一句话摘要、配图、阅读全文按钮
+- 图片统一裁剪为 16:9 比例，宽度一致
+- 手机上看也要排版整齐（Responsive Design）
+</code></pre>
+<blockquote>
+<p>【截图位 S5】替换内容后的首页效果（浏览器整页截图）</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：三篇文章都在，图片大小一致，把浏览器窗口拖窄版式不乱。</p>
+<p><strong>注意：常见坑</strong>：一次只给它一个栏目，全塞一句话术容易顾此失彼。</p>
+<hr>
+<h2 id="步骤-5加入音视频">步骤 5：加入音视频</h2>
+<p><strong>目标</strong>：让网站「会说话、会动」。</p>
+<ol>
+<li>音频（如课文朗诵）：把 mp3 放进 <code>my-class-site/media</code> 文件夹；</li>
+<li>发送话术：</li>
+</ol>
+<pre><code>请在「诵读亭」栏目加入音频播放器，播放 media 文件夹里的 mp3，
+样式与网站一致，显示音频标题和时长。
+</code></pre>
+<ol start="3">
+<li>视频：B 站/腾讯视频的课件视频，不需要下载，直接用嵌入代码：</li>
+</ol>
+<pre><code>请在这一页嵌入这个 B 站视频：&#x3C;粘贴视频分享链接里的嵌入代码>
+</code></pre>
+<blockquote>
+<p>【截图位 S6】带播放器的栏目页</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：在浏览器里点播放能出声。</p>
+<p><strong>注意：常见坑</strong>：音视频文件名别用中文和空格（<code>shiting-01.mp3</code> ✓，<code>课文朗读 1.mp3</code> ✗）。</p>
+<hr>
+<h2 id="步骤-6手机端检查">步骤 6：手机端检查</h2>
+<p><strong>目标</strong>：家长大多用手机看，必须过这一关。</p>
+<ol>
+<li>把浏览器窗口拖到手机宽度（约 400px），逐页检查；</li>
+<li>发现问题直接告诉它：</li>
+</ol>
+<pre><code>手机宽度下「最新文章」的图片把文字挤没了，请修复移动端排版，
+保证 375px 宽度下图文上下排列、按钮可点。
+</code></pre>
+<blockquote>
+<p>【截图位 S7】浏览器手机宽度下的效果（开发者工具手机模式更好）</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：手机宽度下文字不被图片遮挡、按钮间距足够手指点击。</p>
+<hr>
+<h2 id="步骤-7让-workbuddy-自己当质检员">步骤 7：让 WorkBuddy 自己当质检员</h2>
+<p><strong>目标</strong>：用 AI 检查 AI，省下你逐行看代码的时间。</p>
+<pre><code>请对整个网站做一次质量检查，逐项回答：
+1. 每个链接都能打开吗？
+2. 有没有错别字？
+3. 图片是否全部正常显示？
+4. 手机端还有哪些问题？
+只报告问题，不用修改，等我确认。
+</code></pre>
+<blockquote>
+<p>【截图位 S8】它的质检报告</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：报告里列出的问题你都看得懂；有疑问的条目追问它。</p>
+<hr>
+<h2 id="步骤-8保存你的网站配方">步骤 8：保存你的「网站配方」</h2>
+<p><strong>目标</strong>：这次对话里的好话术，固化成 Skill，下次换学科直接复用。</p>
+<pre><code>请把本次建站过程整理成一个 Skill，命名 subject-site-builder：
+包含步骤流程、每步的话术模板、检查清单、常见坑。
+下次我只需要给你学科名和内容，你按这个流程自动执行。
+</code></pre>
+<blockquote>
+<p>【截图位 S9】Skill 固化成功的回复</p>
+</blockquote>
+<p><strong>✓ 检查点</strong>：它确认 Skill 已保存（方法见 <a href="/modules/growth/prompt-vs-skill/">Prompt 与 Skill</a>）。</p>
+<hr>
+<h2 id="步骤-9发布给家长学生看">步骤 9：发布给家长学生看</h2>
+<p><strong>目标</strong>：让网站离开你的电脑也能访问。三选一：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方式</th><th>适合</th><th>操作</th></tr></thead><tbody><tr><td>学校内网/服务器</td><td>学校有信息中心</td><td>把 <code>my-class-site</code> 整个文件夹交给信息中心上传</td></tr><tr><td>GitHub Pages</td><td>愿意折腾一次的</td><td>免费长期在线（我可以另外写一篇保姆教程）</td></tr><tr><td>先不发，本地用</td><td>课堂演示</td><td>投屏打开 index.html 就够</td></tr></tbody></table>
+<blockquote>
+<p>【截图位 S10】发布后的网站地址在手机上打开的效果</p>
+</blockquote>
+<hr>
+<h2 id="步骤-10领取任务徽章">步骤 10：领取「任务徽章」 ✓</h2>
+<p>完成标准（全部满足就行打勾）：</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 网站有你的标题、配色、副标题</li>
+<li class="task-list-item"><input type="checkbox" disabled> 至少 3 篇图文内容</li>
+<li class="task-list-item"><input type="checkbox" disabled> 至少 1 个音频或视频</li>
+<li class="task-list-item"><input type="checkbox" disabled> 手机端检查通过</li>
+<li class="task-list-item"><input type="checkbox" disabled> 固化了 <code>subject-site-builder</code> Skill</li>
+</ul>
+<p>下一个挑战：<a href="/modules/software/task-workbench/">任务二 · 打造教师工作台</a></p>
+<p><strong>做完这个任务，你实际已经学会了</strong>：给 Agent 喂文件夹、分步下需求、验收产出、固化 Skill——换任何一个学科、任何一种网站，流程一模一样。</p>
+<hr>
+<h2 id="已完成">已完成</h2>
+<ul>
+<li>✅ 任务已真实跑通：全流程 GIF + 成品截图见上方</li>
+<li>✅ 执行记录：WorkBuddy 自主规划 → 生成 HTML/CSS/JS → 生成 6 张占位图 → 自主排障（sandbox/字体）→ 交付桌面文件夹</li>
+<li>学科模板可从材料包下载页获取</li>
+</ul> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="任务一：用 WorkBuddy 打造学科主题网站" data-module="WorkBuddy 实操" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script>  <a class="btn btn-ghost back-btn" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 T2 WorkBuddy 实操 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/software/agent-transfer/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>会用 WorkBuddy = 会用所有桌面 Agent</span> </a> <a class="btn btn-ghost nav-next" href="/modules/software/deploy-server/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>下一课 →</span> <span data-astro-cid-5y7t3r35>一小时上服务器：让外面的人访问你的应用</span> </a> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#任务卡" data-toc-link="任务卡" data-astro-cid-5y7t3r35>任务卡</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#真实跑通记录2026-08-31-实录" data-toc-link="真实跑通记录2026-08-31-实录" data-astro-cid-5y7t3r35>真实跑通记录（2026-08-31 实录）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#材料清单" data-toc-link="材料清单" data-astro-cid-5y7t3r35>材料清单</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#先看别人跑完的样子" data-toc-link="先看别人跑完的样子" data-astro-cid-5y7t3r35>先看别人跑完的样子</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-1领取模板放进工作文件夹" data-toc-link="步骤-1领取模板放进工作文件夹" data-astro-cid-5y7t3r35>步骤 1：领取模板，放进工作文件夹</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-2让-workbuddy看见这个文件夹" data-toc-link="步骤-2让-workbuddy看见这个文件夹" data-astro-cid-5y7t3r35>步骤 2：让 WorkBuddy「看见」这个文件夹</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-3第一次改版换标题和配色" data-toc-link="步骤-3第一次改版换标题和配色" data-astro-cid-5y7t3r35>步骤 3：第一次改版——换标题和配色</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-4替换图文内容" data-toc-link="步骤-4替换图文内容" data-astro-cid-5y7t3r35>步骤 4：替换图文内容</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-5加入音视频" data-toc-link="步骤-5加入音视频" data-astro-cid-5y7t3r35>步骤 5：加入音视频</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-6手机端检查" data-toc-link="步骤-6手机端检查" data-astro-cid-5y7t3r35>步骤 6：手机端检查</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-7让-workbuddy-自己当质检员" data-toc-link="步骤-7让-workbuddy-自己当质检员" data-astro-cid-5y7t3r35>步骤 7：让 WorkBuddy 自己当质检员</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-8保存你的网站配方" data-toc-link="步骤-8保存你的网站配方" data-astro-cid-5y7t3r35>步骤 8：保存你的「网站配方」</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-9发布给家长学生看" data-toc-link="步骤-9发布给家长学生看" data-astro-cid-5y7t3r35>步骤 9：发布给家长学生看</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#步骤-10领取任务徽章" data-toc-link="步骤-10领取任务徽章" data-astro-cid-5y7t3r35>步骤 10：领取「任务徽章」 ✓</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#已完成" data-toc-link="已完成" data-astro-cid-5y7t3r35>已完成</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>

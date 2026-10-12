@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>欢乐颂 · 可弹钢琴</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+         background: radial-gradient(1000px 520px at 50% -10%, #2b1845, #150e22); font-family: 'PingFang SC',sans-serif; color: #f2ecf8; }
+  h1 { font-size: 20px; letter-spacing: .3em; color: #a99cc0; }
+  .lyric { font-size: 17px; color: #c98fbf; min-height: 26px; letter-spacing: .1em; }
+  .lyric b { color: #feb300; }
+  .piano { display: flex; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.5); }
+  .key { width: 74px; height: 210px; background: linear-gradient(#fffef8, #e8e2d0); border: 1px solid #999;
+         display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px;
+         font-size: 13px; color: #8a7f70; user-select: none; cursor: pointer; transition: background .08s; }
+  .key.active { background: linear-gradient(#ffe9a0, #feb300); }
+  .ctrl button { padding: 11px 34px; font-size: 15px; border: 0; border-radius: 8px; cursor: pointer;
+                 background: linear-gradient(135deg, #ffd34d, #feb300); color: #2a1c00; font-weight: 700; }
+  .hint { color: #6f6390; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>欢 乐 颂 · 可 弹 钢 琴</h1>
+<div class="lyric" id="lyric">点「自动演奏」或直接点琴键</div>
+<div class="piano" id="piano"></div>
+<div class="ctrl"><button id="auto" onclick="autoPlay()">▶ 自动演奏</button></div>
+<div class="hint">Web Audio 合成音色 · 琴键可鼠标弹奏</div>
+<script>
+const KEYS = [
+  ['C4', 261.63, 'do'], ['D4', 293.66, 're'], ['E4', 329.63, 'mi'], ['F4', 349.23, 'fa'],
+  ['G4', 392.00, 'sol'], ['A4', 440.00, 'la'], ['B4', 493.88, 'si'], ['C5', 523.25, 'do↑'],
+];
+const freq = Object.fromEntries(KEYS.map(([n, f]) => [n, f]));
+const piano = document.getElementById('piano');
+KEYS.forEach(([n, f, cn], i) => {
+  const k = document.createElement('div');
+  k.className = 'key'; k.dataset.note = n; k.textContent = cn;
+  k.onpointerdown = () => playNote(n);
+  piano.appendChild(k);
+});
+let AC;
+function playNote(n) {
+  AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = 'triangle'; o.frequency.value = freq[n];
+  g.gain.setValueAtTime(.4, AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + 0.9);
+  o.connect(g).connect(AC.destination);
+  o.start(); o.stop(AC.currentTime + 0.95);
+  const key = piano.querySelector(`[data-note="${n}"]`);
+  key.classList.add('active');
+  setTimeout(() => key.classList.remove('active'), 260);
+}
+window.playNote = playNote;
+const MELODY = [ // [音, 拍, 歌词]
+  ['E4', 1, '欢'], ['E4', 1, '乐'], ['F4', 1, '女'], ['G4', 1, '神'],
+  ['G4', 1, '圣'], ['F4', 1, '洁'], ['E4', 1, '美'], ['D4', 1, '丽'],
+  ['C4', 1, '灿'], ['C4', 1, '烂'], ['D4', 1, '光'], ['E4', 1, '芒'],
+  ['E4', 1.4, '照'], ['D4', .7, '大'], ['D4', 1.6, '地'],
+];
+let playing = false;
+async function autoPlay() {
+  if (playing) return;
+  playing = true;
+  document.getElementById('auto').textContent = '♪ 演奏中…';
+  const lyric = document.getElementById('lyric');
+  const words = ['欢乐', '女神', '圣洁', '美丽', '灿烂', '光芒', '照大地'];
+  let bi = 0;
+  for (const [n, beats] of MELODY) {
+    lyric.innerHTML = `<b>${words[Math.min(bi, words.length - 1)]}</b>`;
+    bi += (beats >= 1.4 ? 1 : 0.5);
+    playNote(n);
+    await new Promise(r => setTimeout(r, beats * 420));
+  }
+  lyric.textContent = '♪ 演奏完毕 · 点琴键自由弹奏';
+  document.getElementById('auto').textContent = '▶ 自动演奏';
+  playing = false;
+}
+window.autoPlay = autoPlay;
+</script>
+</body>
+</html>

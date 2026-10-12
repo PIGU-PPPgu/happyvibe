@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>圆周角动态演示</title>
+<style>
+:root{
+  --cuhk:#6b2077;--brand:#8a3d99;--brand-line:rgba(178,120,196,.34);
+  --bg:#1a0e26;--bg2:#241233;--panel:#251337;--panel2:#2e1a43;--inset:#150b20;
+  --text:#f4edf9;--muted:#b3a4c9;--faint:#82729e;
+  --gold:#e8b04b;--gold-soft:#f0c470;--wrong:#c97b7b;--ok:#7fbf9e;
+  --line:rgba(186,136,212,.16);--line2:rgba(186,136,212,.3);--line-gold:rgba(232,176,75,.4);
+  --shadow:0 10px 32px rgba(0,0,0,.5);
+  --shell-top:44px;--rail-w:216px;--rail-h:0px;
+}
+:root[data-theme=light]{
+  --cuhk:#6b2077;--brand:#6b2077;--brand-line:rgba(107,32,119,.32);
+  --bg:#f8f5fb;--bg2:#f0e9f7;--panel:#ffffff;--panel2:#f4eef9;--inset:#fbf9fd;
+  --text:#2a1a35;--muted:#5e4d70;--faint:#8b7ca0;
+  --gold:#8a6a1f;--gold-soft:#8a6a1f;--wrong:#b35b5b;--ok:#4d8a68;
+  --line:rgba(107,32,119,.16);--line2:rgba(107,32,119,.32);--line-gold:rgba(138,106,31,.45);
+  --shadow:0 8px 24px rgba(80,30,100,.14);
+}
+*{box-sizing:border-box;margin:0}
+/* 键盘可达性：Tab 焦点环（鼠标点击不显示，投屏遥控器/翻页笔友好） */
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+/* 舞台底：港紫径向层次（背景实现，不盖 canvas）；左轨/顶栏让位由变量驱动 */
+#stage{position:absolute;inset:calc(var(--shell-top) + var(--rail-h)) 0 0 var(--rail-w);background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
+/* ---------- 薄顶栏（44px）：返回 | 标题 | 教材锚点 …… 翻页/主操作/窗口控制 ---------- */
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#back{display:flex;align-items:center;gap:7px;min-height:32px;padding:0 11px;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+#back::before{content:'←';font-size:14px;line-height:1}
+#back:hover{color:var(--text);border-color:var(--line2);background:var(--panel2)}
+#bar h1{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+#meta{font-size:12.5px;color:var(--gold);white-space:nowrap;padding:3px 10px;border:1px solid var(--line-gold);border-radius:999px}
+#bar .grow{flex:1}
+/* ---------- 按钮系统：统一 32px 高；sq=方钮；primary=主操作实底 ---------- */
+.btn{font:inherit;font-size:13.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+.btn:hover{border-color:var(--brand-line);color:var(--text)}
+.btn[aria-pressed=true]{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sq{min-width:32px;padding:0;font-size:15px}
+/* ---------- 左轨章节导航（宽屏 216px；WeduLab 范式：编号+名称，检测/小结入列） ---------- */
+#rail{position:fixed;top:var(--shell-top);left:0;bottom:0;z-index:9;width:var(--rail-w);display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-right:1px solid var(--line);padding:10px 10px 8px;gap:2px}
+#rail .rail-title{font-size:11.5px;color:var(--faint);letter-spacing:.22em;padding:2px 8px 8px}
+.rail-step{display:flex;align-items:baseline;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.rail-step .no{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;font-weight:700;color:var(--faint);min-width:24px;transition:color .15s}
+.rail-step:hover{color:var(--text);background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+.rail-step[aria-pressed=true]{background:color-mix(in srgb,var(--cuhk) 20%,transparent);border-color:var(--brand-line);color:var(--text);font-weight:600}
+.rail-step[aria-pressed=true] .no{color:var(--gold)}
+#rail .rail-split{height:1px;background:var(--line);margin:8px 6px}
+#rail .rail-foot{margin-top:auto;padding:10px 8px 2px;font-size:11px;color:var(--faint);line-height:1.9;letter-spacing:.03em}
+#rail .rail-foot b{font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:2px;font-size:10.5px}
+#rail-prog{position:absolute;left:0;right:0;bottom:0;height:2px}
+#rail-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
+/* ---------- 舞台章节标头：01 / 03 · 环节名（印在画面上） ---------- */
+#stage-head{position:fixed;top:calc(var(--shell-top) + var(--rail-h) + 14px);left:calc(var(--rail-w) + 20px);z-index:5;display:flex;align-items:baseline;gap:10px;pointer-events:none}
+#stage-head .frac{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+#stage-head .sname{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--text);opacity:.92}
+/* ---------- 教学引导浮层：章节标头之下（引导语 + 操作提示） ---------- */
+#guide-tip{position:fixed;left:calc(var(--rail-w) + 20px);top:calc(var(--shell-top) + var(--rail-h) + 56px);z-index:6;max-width:min(600px,58vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
+#guide-tip.dim{opacity:.35}
+#g-tip{font-size:15px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ops-tip{margin-top:5px;font-size:12.5px;color:var(--faint);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* ---------- 讲解覆盖卡（顶栏/章节栏呼出，WeduLab 右栏的覆盖式实现） ---------- */
+#note{position:fixed;top:calc(var(--shell-top) + 14px);right:16px;z-index:22;width:min(400px,calc(100vw - 40px));max-height:calc(100vh - var(--shell-top) - 40px);overflow:auto;padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
+#note::before{content:'讲解';display:block;font-size:12.5px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px}
+:root[data-theme=light] #note::before{color:var(--cuhk)}
+/* ---------- 小结浮层 ---------- */
+#summary{position:fixed;top:calc(var(--shell-top) + 14px);left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
+#summary::before{content:'小结';display:block;font-size:12.5px;color:var(--gold);letter-spacing:.12em;margin-bottom:6px}
+/* ---------- 随堂检测 ---------- */
+#quiz-wrap{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(4px)}
+#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 100px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+#quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#quiz-head b{font-size:17px}
+#quiz-prog{font-size:13px;color:var(--faint)}
+#quiz-close{margin-left:auto}
+#quiz-q{font-size:16.5px;line-height:1.7;margin-bottom:14px}
+#quiz-opts{display:flex;flex-direction:column;gap:10px}
+.qopt{font:inherit;font-size:15px;line-height:1.6;text-align:left;padding:11px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--inset);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s}
+.qopt:not(:disabled):hover{border-color:var(--brand)}
+.qopt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--inset))}
+.qopt.no{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 14%,var(--inset))}
+.qopt:disabled{cursor:default}
+#quiz-why{margin-top:14px;padding:12px 16px;border-left:3px solid var(--gold);background:var(--inset);border-radius:0 10px 10px 0;font-size:14.5px;line-height:1.8;color:var(--muted);display:none}
+#quiz-why::before{content:'解析';display:block;font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+#quiz-foot{display:flex;align-items:center;gap:10px;margin-top:16px}
+#quiz-score{font-size:15px}
+#quiz-score b{font-size:22px;color:var(--brand)}
+:root[data-theme=light] #quiz-score b{color:var(--cuhk)}
+/* ---------- 窄屏（<1080px）：左轨收成顶部横排环节条 ---------- */
+@media (max-width:1079px){
+  :root{--rail-w:0px;--rail-h:52px}
+  #rail{top:var(--shell-top);left:0;right:0;bottom:auto;width:auto;height:var(--rail-h);flex-direction:row;align-items:center;gap:6px;padding:0 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
+  #rail .rail-title,#rail .rail-split,#rail .rail-foot{display:none}
+  .rail-step{flex:none;width:auto;padding:6px 12px;gap:7px}
+  .rail-step .no{font-size:15px;min-width:0}
+  #rail-prog{bottom:0;left:0}
+  #meta{display:none}
+  #guide-tip{left:12px;right:12px;max-width:none}
+  #stage-head{left:16px}
+}
+@media (max-width:760px){
+  #back span{display:none}
+  #bar h1{font-size:15px}
+  #note-btn-top,#sum-btn-top{display:none}
+}
+/* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
+body.embed #bar, body.embed #rail, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip, body.embed #stage-head { display: none !important; }
+body.embed { --shell-top:0px; --rail-w:0px; --rail-h:0px; }
+body.embed #stage { inset: 0; }
+
+/* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
+#onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
+#onboard[hidden]{display:none}
+.ob-card{width:min(430px,calc(100vw - 40px));padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+.ob-title{display:block;font-size:17px;margin-bottom:12px;color:var(--brand)}
+:root[data-theme=light] .ob-title{color:var(--cuhk)}
+.ob-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ob-card li{font-size:15px;line-height:1.7;color:var(--text)}
+.ob-card li b{color:var(--brand)}
+:root[data-theme=light] .ob-card li b{color:var(--cuhk)}
+.ob-card .btn{width:100%}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a id="back" href="/resources/" aria-label="返回资源库"><span>资源库</span></a>
+  <h1>圆周角动态演示</h1>
+  <span id="meta"></span>
+  <span class="grow"></span>
+  <button class="btn sq" id="step-prev" type="button" aria-label="上一环节" hidden>‹</button>
+  <button class="btn sq" id="step-next" type="button" aria-label="下一环节" hidden>›</button>
+  <button class="btn" id="note-btn-top" type="button" hidden>讲解</button>
+  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
+  <button class="btn" id="sum-btn-top" type="button">小结</button>
+  <button class="btn sq" id="theme" type="button" aria-label="切换深浅色">◐</button>
+  <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
+</div>
+<nav id="rail" hidden aria-label="章节">
+  <div class="rail-title">章节</div>
+  <div id="steps"></div>
+  <div class="rail-split"></div>
+  <div id="rail-extra"></div>
+  <div class="rail-foot"><b>←</b><b>→</b> 切换环节<br><b>Esc</b> 收起浮层</div>
+  <span id="rail-prog"><i></i></span>
+</nav>
+<div id="stage-head" hidden>
+  <span class="frac">01 / 03</span>
+  <span class="sname"></span>
+</div>
+<div id="guide-tip" hidden>
+  <p id="g-tip"></p>
+  <p id="ops-tip">拖 A、B 改弧，拖 P、Q 验证同弧圆周角相等</p>
+</div>
+<div id="note"></div>
+<div id="summary"></div>
+<div id="quiz-wrap">
+  <div id="quiz" data-hv-quiz>
+    <div id="quiz-head">
+      <b>随堂检测</b>
+      <span id="quiz-prog"></span>
+      <button class="btn" id="quiz-close" type="button">关闭</button>
+    </div>
+    <div id="quiz-q"></div>
+    <div id="quiz-opts"></div>
+    <div id="quiz-why"></div>
+    <div id="quiz-foot">
+      <span id="quiz-score"></span>
+      <button class="btn primary" id="quiz-next" type="button" hidden>下一题</button>
+      <button class="btn primary" id="quiz-redo" type="button" hidden>重做</button>
+    </div>
+  </div>
+</div>
+<div id="stage" class="pad"></div>
+<div id="onboard" hidden>
+  <div class="ob-card">
+    <b class="ob-title">第一次使用</b>
+    <ul>
+      <li><b>左栏章节</b>：点章节或按键盘左右键换环节，当前环节高亮并印在画面左上</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，从顶栏或章节栏打开</li>
+      <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
+    </ul>
+    <button class="btn primary" id="ob-ok" type="button">开始上课</button>
+  </div>
+</div>
+<script>"use strict";(()=>{var ae=new URLSearchParams(location.search).has("selftest");function re(t){let i=document.getElementById("stage"),l=new URLSearchParams(location.search).get("theme"),c=l==="light"||l==="dark"?l:"dark";try{let s=localStorage.getItem("hv-theme");(s==="light"||s==="dark")&&!l&&(c=s)}catch{}if(document.documentElement.dataset.theme=c,ae){let s={errors:[],checks:[],canvas:null,pedagogy:null};window.addEventListener("error",a=>s.errors.push(String(a.message).slice(0,200))),window.addEventListener("unhandledrejection",a=>s.errors.push("rejection: "+String(a.reason).slice(0,200))),window.__hvPushCheck=(a,B,x)=>s.checks.push({name:a,pass:B,detail:String(x!=null?x:"")}),setTimeout(()=>{try{s.canvas=p()}catch(B){s.errors.push("canvas-sample: "+B.message)}try{s.pedagogy=n()}catch(B){s.errors.push("pedagogy-sample: "+B.message)}let a=document.createElement("pre");a.id="hv-selftest",a.textContent="__HV__"+JSON.stringify(s)+"__HV__",document.body.appendChild(a)},2500)}function n(){let s=u=>{let N=document.querySelector(u);return N?(N.textContent||"").replace(/\s+/g," ").trim():""},a=[...document.querySelectorAll("[data-hv-step]")],B=s("#g-tip"),x=s("#summary"),R=o&&o.steps?o.steps.map(u=>u.guide||"").join(""):B,I=o&&o.steps?o.steps.map(u=>u.note||"").join(""):"",M=o&&o.quiz?o.quiz:null;return{metaChars:s("#meta").length,steps:a.length,stepNames:a.slice(0,6).map(u=>u.textContent.trim()),guideCount:a.length?1:0,guideChars:R.length,guideLens:o&&o.steps?o.steps.map(u=>(u.guide||"").length):[],noteChars:I.length,noteLens:o&&o.steps?o.steps.map(u=>(u.note||"").length):[],summaryChars:x.length,quizCount:M?M.length:0,quizChars:M?M.map(u=>(u.q||"")+(u.why||"")).join("").length:0}}function p(){let s=[...document.querySelectorAll("canvas")].sort((d,r)=>r.width*r.height-d.width*r.height)[0];if(!s)return null;let a=document.createElement("canvas");a.width=360,a.height=225;let B=a.getContext("2d");B.drawImage(s,0,0,a.width,a.height);let x=B.getImageData(0,0,a.width,a.height).data,R=[],I=new Map;for(let d=0;d<3;d++)for(let r=0;r<3;r++){let y=0,S=0,z=0;for(let f=d*75;f<(d+1)*75;f+=3)for(let w=r*120;w<(r+1)*120;w+=3){let g=(f*a.width+w)*4,q=(x[g]+x[g+1]+x[g+2])/3;y+=q,S+=q*q,z++;let te=x[g]>>5<<10|x[g+1]>>5<<5|x[g+2]>>5;I.set(te,(I.get(te)||0)+1)}R.push(Math.round(Math.sqrt(S/z-(y/z)**2)))}let M=[...I.entries()].sort((d,r)=>r[1]-d[1]).slice(0,6).map(([d,r])=>[d.toString(16),r]),u=[...I.entries()].sort((d,r)=>r[1]-d[1])[0][0],N=((u>>10&31)*8+(u>>5&31)*8+(u&31)*8)/3,L=1,j=1,b=0,P=0,v=0;for(let d=0;d<a.height;d+=2)for(let r=0;r<a.width;r+=2){let y=(d*a.width+r)*4,S=(x[y]+x[y+1]+x[y+2])/3;if(Math.abs(S-N)>14){v++;let z=r/a.width,f=d/a.height;z<L&&(L=z),z>b&&(b=z),f<j&&(j=f),f>P&&(P=f)}}let U=v?[h(L),h(j),h(b),h(P)]:null;return{regions:R,topColors:M,bbox:U}}function h(s){return Math.round(s*100)/100}let o=t.teaching,k=[];function T(s){let a=s.style.display==="none"||!s.style.display;return m(),a&&(s.style.display="block"),a}function m(){for(let a of k)a.style.display="none";let s=document.getElementById("guide-tip");s&&s.classList.remove("dim")}if(o&&o.steps&&o.steps.length){let P=function(f,w){b=Math.max(0,Math.min(o.steps.length-1,f)),j.forEach((te,he)=>te.setAttribute("aria-pressed",String(he===b))),I.textContent=o.steps[b].guide||"",N&&(u.textContent=o.steps[b].note||""),M&&(M.style.width=(b+1)/o.steps.length*100+"%");let g=B.querySelector(".frac");g&&(g.textContent=String(b+1).padStart(2,"0")+" / "+String(o.steps.length).padStart(2,"0"));let q=B.querySelector(".sname");q&&(q.textContent=o.steps[b].name||""),w||m(),o.steps[b].apply&&o.steps[b].apply()};var se=P;let s=document.getElementById("meta");s.textContent=o.meta||"",s.dataset.hvMeta="";let a=document.getElementById("rail");a.hidden=!1;let B=document.getElementById("stage-head");B.hidden=!1;let x=document.getElementById("guide-tip");x.hidden=!1;let R=document.getElementById("steps"),I=document.getElementById("g-tip"),M=document.querySelector("#rail-prog i"),u=document.getElementById("note"),N=o.steps.some(f=>f.note&&String(f.note).trim()),L=document.getElementById("note-btn-top");N&&(u.dataset.hvNote="",k.push(u),L.hidden=!1,L.addEventListener("click",()=>{T(u),x.classList.toggle("dim",u.style.display==="block")}));let j=o.steps.map((f,w)=>{let g=document.createElement("button");g.type="button",g.className="rail-step",g.dataset.hvStep="";let q=document.createElement("b");return q.className="no",q.textContent=String(w+1).padStart(2,"0"),g.appendChild(q),g.appendChild(document.createTextNode(" "+f.name)),g.addEventListener("click",()=>P(w)),R.appendChild(g),g}),b=0,v=document.getElementById("step-prev"),U=document.getElementById("step-next");v.hidden=!1,U.hidden=!1,v.addEventListener("click",()=>P(b-1)),U.addEventListener("click",()=>P(b+1)),window.__hvApplyStep0=()=>P(0);let d=document.getElementById("summary");d.textContent=o.summary||"",d.dataset.hvSummary="",k.push(d);let r=document.getElementById("sum-btn-top");r.addEventListener("click",()=>T(d));let y=document.getElementById("rail-extra"),S=(f,w)=>{let g=document.createElement("button");g.type="button",g.className="rail-step";let q=document.createElement("b");return q.className="no",q.textContent=f.no,g.appendChild(q),g.appendChild(document.createTextNode(" "+f.name)),g.addEventListener("click",w),y.appendChild(g),g};window.addEventListener("keydown",f=>{let w=f.target;w&&(w.tagName==="INPUT"||w.tagName==="TEXTAREA"||w.tagName==="SELECT"||w.isContentEditable)||document.getElementById("quiz-wrap").style.display==="flex"&&(f.key==="ArrowLeft"||f.key==="ArrowRight")||(f.key==="ArrowRight"?P(b+1):f.key==="ArrowLeft"?P(b-1):f.key==="Escape"&&m())}),$();let z=document.getElementById("quiz-btn");z.hidden||S({no:"\u25C6",name:"\u968F\u5802\u68C0\u6D4B"},()=>z.click()),S({no:"\u2261",name:"\u8BFE\u5802\u5C0F\u7ED3"},()=>r.click())}function $(){let s=o&&o.quiz;if(!s||!s.length)return;let a=document.getElementById("quiz-wrap"),B=document.getElementById("quiz-prog"),x=document.getElementById("quiz-q"),R=document.getElementById("quiz-opts"),I=document.getElementById("quiz-why"),M=document.getElementById("quiz-score"),u=document.getElementById("quiz-next"),N=document.getElementById("quiz-redo");k.push(a),document.getElementById("quiz-btn").hidden=!1,document.getElementById("quiz-btn").addEventListener("click",()=>{let v=a.style.display!=="flex";m(),v&&(a.style.display="flex")}),document.getElementById("quiz-close").addEventListener("click",()=>{a.style.display="none"});let L=0,j=0,b=new Array(s.length).fill(!1);function P(){let v=s[L];u.hidden=!0,N.hidden=!0,I.style.display="none",M.textContent="",B.textContent=`\u7B2C ${L+1} / ${s.length} \u9898`,x.textContent=v.q,x.dataset.hvQ="",R.textContent="",v.opts.forEach((U,d)=>{let r=document.createElement("button");r.type="button",r.className="qopt",r.textContent=String.fromCharCode(65+d)+". "+U,r.addEventListener("click",()=>{if(b[L])return;b[L]=!0;let y=d===v.a;y&&j++,[...R.children].forEach((S,z)=>{S.disabled=!0,z===v.a?S.classList.add("ok"):z===d&&S.classList.add("no")}),I.textContent=v.why||"",I.style.display="block",M.textContent=y?"\u7B54\u5BF9\u4E86":"\u7B54\u9519\u4E86",L<s.length-1?u.hidden=!1:(N.hidden=!1,M.textContent=`\u5171 ${j} / ${s.length} \u9898\u7B54\u5BF9`)}),R.appendChild(r)})}if(u.addEventListener("click",()=>{L++,P()}),N.addEventListener("click",()=>{L=0,j=0,b.fill(!1),P()}),a.style.display="none",P(),ae&&typeof window.__hvPushCheck=="function"){let v=[];s.forEach((y,S)=>{(!y.q||!Array.isArray(y.opts)||y.opts.length<2)&&v.push(`\u7B2C${S+1}\u9898\u9898\u5E72\u6216\u9009\u9879\u7F3A\u5931`),(!Number.isInteger(y.a)||y.a<0||!y.opts||y.a>=y.opts.length)&&v.push(`\u7B2C${S+1}\u9898\u7B54\u6848\u4E0B\u6807\u8D8A\u754C`),(!y.why||y.why.length<10)&&v.push(`\u7B2C${S+1}\u9898\u89E3\u6790\u4E0D\u8DB310\u5B57`)}),s.length<3&&v.push(`\u4EC5 ${s.length} \u9898\uFF0C\u5C11\u4E8E 3 \u9898`),window.__hvPushCheck("quiz-valid",v.length===0,v.join("\uFF1B")||`${s.length} \u9898\u7ED3\u6784\u5408\u6CD5\uFF0C\u5747\u542B\u9898\u5E72\u3001\u9009\u9879\u3001\u7B54\u6848\u4E0E\u89E3\u6790`),a.style.display="flex",R.children[0].click();let U=getComputedStyle(I).display!=="none"&&I.getBoundingClientRect().height>0,d=M.textContent||"",r=[...R.children].every(y=>y.disabled);a.style.display="none",window.__hvPushCheck("quiz-answer-flow",U&&d.length>0&&r,`\u4F5C\u7B54\u540E\u89E3\u6790${U?"\u5DF2\u663E\u793A":"\u672A\u663E\u793A"}\uFF0C\u53CD\u9988\u300C${d.slice(0,12)}\u300D\uFF0C\u9009\u9879${r?"\u5DF2\u9501\u5B9A":"\u672A\u9501\u5B9A"}`)}}let Q=new URLSearchParams(location.search).has("embed");Q&&document.body.classList.add("embed");let W=document.getElementById("onboard");if(W&&!ae&&!Q&&!new URLSearchParams(location.search).has("pv")){let s=!1;try{s=localStorage.getItem("hv-onboard")==="1"}catch{}if(!s){W.hidden=!1;let a=()=>{W.hidden=!0;try{localStorage.setItem("hv-onboard","1")}catch{}};document.getElementById("ob-ok").addEventListener("click",a),window.addEventListener("keydown",B=>{B.key==="Escape"&&!W.hidden&&a()})}}let _={onTheme:null,onResize:null};document.getElementById("theme").addEventListener("click",()=>{c=document.documentElement.dataset.theme==="light"?"dark":"light",document.documentElement.dataset.theme=c;try{localStorage.setItem("hv-theme",c)}catch{}_.onTheme&&_.onTheme(c)}),document.getElementById("fs").addEventListener("click",()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}),window.addEventListener("resize",()=>{_.onResize&&_.onResize()}),typeof ResizeObserver!="undefined"&&new ResizeObserver(()=>{_.onResize&&_.onResize()}).observe(i),t.mount(i,_),window.__hvApplyStep0&&window.__hvApplyStep0();let F=new URLSearchParams(location.search).get("step");if(F!==null&&o&&o.steps&&o.steps.length){let s=Math.max(0,Math.min(o.steps.length-1,parseInt(F,10)||0)),a=[...document.querySelectorAll("[data-hv-step]")];a[s]&&a[s].click()}return _}var ne="#6FA8C9",C,e,ie,H=0,J=0,E={A:190,B:350,P:80,Q:120},K=null;function D(t,i){return getComputedStyle(document.documentElement).getPropertyValue(t).trim()||i}function ue(){return{bg:D("--bg","#150e22"),text:D("--text","#f2ecf8"),muted:D("--muted","#a99cc0"),line:D("--line","rgba(180,130,210,.16)"),panel:D("--panel","#1e1433"),gold:D("--gold","#E8B04B"),purple:D("--purple","#A66BA6")}}var V=t=>(t%360+360)%360,O=t=>t*Math.PI/180,A=t=>Math.abs(t-Math.round(t))<.05?`${Math.round(t)}\xB0`:`${t.toFixed(1)}\xB0`,me=(t,i,l)=>V(t-i)<V(l-i);function Y(t){return me(E[t],E.A,E.B)?{from:E.B,to:E.A}:{from:E.A,to:E.B}}var G=t=>V(t.to-t.from);function oe(){let p=(J-6-6-16-24.5-33.49)/1.985,h=(de()?H/2:(H-280)/2)-34-14,o=Math.max(80,Math.min(h,p)),k=de()?H/2:(H-280)/2,T=6+(o+34)*.985+16,m={};for(let $ of["A","B","P","Q"])m[$]=[k+o*Math.cos(O(E[$])),T-o*Math.sin(O(E[$]))];return{R:o,cx:k,cy:T,pos:m}}var de=()=>H<760;function Z(t){let{pos:i}=oe(),l=i[t],c=p=>Math.atan2(i[p][1]-l[1],i[p][0]-l[0]),n=Math.abs(c("A")-c("B"))*180/Math.PI;return n>180&&(n=360-n),n}function ee(){let t=Z("P"),i=Z("Q"),l=G(Y("P")),c=G(Y("Q")),n=l===c,p=Math.abs(V(E.B-E.A)-180)<.5,h=[`<div class="ang gold">\u2220APB = ${A(t)}</div>`,`<div class="ang blue">\u2220AQB = ${A(i)}</div>`,`<div class="ang purple">\u2220AOB = ${A(l)}<span class="note">\uFF08P \u6240\u5BF9\u5F27\u7684\u5706\u5FC3\u89D2\uFF09</span></div>`],o;p?o="AB \u662F\u76F4\u5F84\uFF1A\u2220APB = \u2220AQB = 90\xB0\uFF0C\u76F4\u5F84\u6240\u5BF9\u7684\u5706\u5468\u89D2\u662F\u76F4\u89D2":n?o="P\u3001Q \u5728\u540C\u4E00\u6BB5\u5F27\u4E0A\uFF1A\u2220APB = \u2220AQB\uFF0C\u4E14\u90FD\u7B49\u4E8E\u6240\u5BF9\u5F27\u5706\u5FC3\u89D2\u7684\u4E00\u534A":o=`P\u3001Q \u5728\u4E24\u6BB5\u5F27\u4E0A\uFF1A\u2220APB + \u2220AQB = 180\xB0\uFF08\u6B64\u65F6 \u2220AOB \u7684\u53E6\u4E00\u6BB5\u5F27\u662F ${A(c)}\uFF09`,document.getElementById("angles").innerHTML=h.join("");let k=document.getElementById("concl");k.textContent=o,document.getElementById("rel").textContent=n&&!p?`${A(t)} \xD7 2 = ${A(t*2)} = \u2220AOB`:p?"90\xB0 \xD7 2 = 180\xB0\uFF0CAB \u6070\u4E3A\u5E73\u89D2":`${A(t)} + ${A(i)} = ${A(t+i)}`}function X(){let t=ue();e.fillStyle=t.bg,e.fillRect(0,0,H,J);let{R:i,cx:l,cy:c,pos:n}=oe();e.strokeStyle=t.text,e.globalAlpha=.5,e.lineWidth=2,e.beginPath(),e.arc(l,c,i,0,Math.PI*2),e.stroke(),e.globalAlpha=.35,e.beginPath(),e.moveTo(l,c),e.lineTo(n.A[0],n.A[1]),e.moveTo(l,c),e.lineTo(n.B[0],n.B[1]),e.stroke(),e.globalAlpha=1;let p=(m,$)=>{e.beginPath(),e.arc(l,c,$,-O(m.from),-O(m.from+G(m)),!0)};e.lineWidth=9,e.lineCap="round",e.strokeStyle=t.gold,e.globalAlpha=.85,p(Y("P"),i+7),e.stroke(),e.strokeStyle=ne,p(Y("Q"),i+20),e.stroke(),e.globalAlpha=1,e.lineWidth=2.5,e.strokeStyle=t.gold,e.beginPath(),e.moveTo(n.P[0],n.P[1]),e.lineTo(n.A[0],n.A[1]),e.moveTo(n.P[0],n.P[1]),e.lineTo(n.B[0],n.B[1]),e.stroke(),e.strokeStyle=ne,e.beginPath(),e.moveTo(n.Q[0],n.Q[1]),e.lineTo(n.A[0],n.A[1]),e.moveTo(n.Q[0],n.Q[1]),e.lineTo(n.B[0],n.B[1]),e.stroke();let h=Y("P");e.strokeStyle=t.purple,e.lineWidth=3,e.beginPath(),e.arc(l,c,34,-O(h.from),-O(h.from+G(h)),!0),e.stroke();let o=h.from+G(h)/2;e.fillStyle=t.purple,e.font='bold 18px "Noto Sans SC","PingFang SC",sans-serif',e.textAlign="center",e.fillText(A(G(h)),l+74*Math.cos(O(o)),c-74*Math.sin(O(o)));let k=(m,$)=>{let Q=n[m],W=Math.atan2(n.A[1]-Q[1],n.A[0]-Q[0]),_=Math.atan2(n.B[1]-Q[1],n.B[0]-Q[0]),F=_-W;for(;F>Math.PI;)F-=2*Math.PI;for(;F<-Math.PI;)F+=2*Math.PI;let se=W+F/2;e.strokeStyle=$,e.lineWidth=3.5,e.beginPath(),e.arc(Q[0],Q[1],26,W,_,F<0),e.stroke(),e.fillStyle=$,e.font='bold 18px "Noto Sans SC","PingFang SC",sans-serif',e.textAlign="center",e.fillText(A(Z(m)),Q[0]+52*Math.cos(se),Q[1]+52*Math.sin(se)+5)};k("P",t.gold),k("Q",ne);let T=(m,$)=>{e.fillStyle=$,e.beginPath(),e.arc(n[m][0],n[m][1],7,0,Math.PI*2),e.fill(),e.fillStyle=t.text,e.font="bold 19px Georgia,serif",e.textAlign="center",e.fillText(m==="O"?"O":m,l+(i+34)*Math.cos(O(E[m])),c-(i+34)*Math.sin(O(E[m])))};T("A",t.text),T("B",t.text),T("P",t.gold),T("Q",ne),e.fillStyle=t.text,e.beginPath(),e.arc(l,c,5,0,Math.PI*2),e.fill(),e.fillText("O",l+14,c+22)}var ge="\u6570\u5B66\xB7\u4E5D\u5E74\u7EA7\uFF5C\u4EBA\u6559\u7248\u4E5D\u4E0A\u7B2C\u4E8C\u5341\u56DB\u7AE0\u300A\u5706\u300B\xB7 \u5706\u5468\u89D2",ce=[{name:"\u731C\u4E00\u731C",pts:{A:200,B:340,P:60,Q:130},guide:"P\u3001Q \u540C\u5728\u4E00\u6761\u5F27\u4E0A\uFF0C\u4F4D\u7F6E\u5374\u4E00\u5DE6\u4E00\u53F3\u3002\u5148\u522B\u91CF\uFF1A\u731C\u4E00\u731C \u2220APB \u548C \u2220AQB \u8C01\u5927\u8C01\u5C0F\uFF1FP \u6CBF\u5F27\u62D6\u52A8\u65F6\u5EA6\u6570\u53D8\u4E0D\u53D8\uFF1F\u8BF4\u8BF4\u7406\u7531\uFF0C\u518D\u52A8\u624B\u9A8C\u8BC1\u3002",note:"\u5706\u5468\u89D2\u662F\u9876\u70B9\u5728\u5706\u4E0A\u3001\u4E24\u8FB9\u90FD\u4E0E\u5706\u76F8\u4EA4\u7684\u89D2\u3002\u540C\u4E00\u6761\u5F27 AB \u5BF9\u7740\u65E0\u6570\u4E2A\u5706\u5468\u89D2\uFF0C\u5B83\u4EEC\u7684\u5EA6\u6570\u90FD\u76F8\u540C\u2014\u2014\u56E0\u4E3A\u6BCF\u4E2A\u5706\u5468\u89D2\u90FD\u53EA\u300C\u770B\u300D\u540C\u4E00\u6BB5\u5F27\uFF0C\u5F27\u4E0D\u53D8\u3001\u89D2\u5C31\u4E0D\u53D8\u3002\u8FD9\u662F\u731C\u60F3\u73AF\u8282\u7684\u76F4\u89C2\u57FA\u7840\uFF1A\u4F4D\u7F6E\u53EF\u4EE5\u4E00\u5DE6\u4E00\u53F3\uFF0C\u5EA6\u6570\u5374\u7531\u5F27\u552F\u4E00\u51B3\u5B9A\u3002"},{name:"\u9A8C\u4E00\u9A8C",pts:{A:190,B:350,P:70,Q:110},guide:"\u8BFB\u4E00\u8BFB\u9762\u677F\u4E0A\u7684\u4E09\u4E2A\u89D2\uFF1A\u2220APB\u3001\u2220AQB \u548C\u7D2B\u8272\u7684 \u2220AOB\u3002\u540C\u5F27\u4E0A\u7684\u4E24\u4E2A\u5706\u5468\u89D2\u6709\u4EC0\u4E48\u5173\u7CFB\uFF1F\u5706\u5FC3\u89D2\u662F\u8C01\u7684\u4E24\u500D\uFF1F\u6362\u4E00\u7EC4 A\u3001B \u518D\u8BD5\u4E00\u6B21\u3002",note:"\u5706\u5468\u89D2\u5B9A\u7406\uFF1A\u540C\u5F27\u6216\u7B49\u5F27\u6240\u5BF9\u7684\u5706\u5468\u89D2\u76F8\u7B49\uFF0C\u90FD\u7B49\u4E8E\u8FD9\u6761\u5F27\u6240\u5BF9\u7684\u5706\u5FC3\u89D2\u7684\u4E00\u534A\u3002\u8BC1\u660E\u601D\u8DEF\u662F\u6309\u5706\u5FC3 O \u4E0E\u5706\u5468\u89D2\u7684\u4F4D\u7F6E\u5206\u4E09\u7C7B\u8BA8\u8BBA\uFF1AO \u5728\u89D2\u5185\u3001\u89D2\u5916\u3001\u8FB9\u4E0A\uFF0C\u8FDE\u63A5 OA\u3001OB \u5229\u7528\u7B49\u8170\u4E09\u89D2\u5F62\u5E95\u89D2\u76F8\u7B49\u4E0E\u5916\u89D2\u5B9A\u7406\u63A8\u51FA\u3002\u8BB0\u5FC6\u65F6\u6293\u300C\u540C\u5F27\u6240\u5BF9\u3001\u5468\u89D2\u662F\u5FC3\u89D2\u4E00\u534A\u300D\u4E24\u5C42\u5173\u7CFB\u3002"},{name:"\u7528\u4E00\u7528",pts:{A:180,B:0,P:90,Q:270},guide:"AB \u53D8\u6210\u4E86\u76F4\u5F84\u3002\u65E0\u8BBA P \u62D6\u5230\u5706\u4E0A\u54EA\u4E2A\u4F4D\u7F6E\uFF0C\u2220APB \u90FD\u662F\u591A\u5C11\u5EA6\uFF1F\u628A P \u62D6\u8FDB\u53E6\u4E00\u4E2A\u534A\u5706\u518D\u786E\u8BA4\u3002\u8C01\u80FD\u7528\u4E00\u53E5\u8BDD\u8BF4\u51FA\u76F4\u5F84\u6240\u5BF9\u5706\u5468\u89D2\u7684\u7ED3\u8BBA\uFF1F",note:"\u63A8\u8BBA\uFF1A\u76F4\u5F84\u6240\u5BF9\u7684\u5706\u5468\u89D2\u662F\u76F4\u89D2\u2014\u2014\u76F4\u5F84\u5BF9\u7684\u5F27\u662F\u534A\u5706 180\xB0\uFF0C\u5706\u5468\u89D2\u53D6\u4E00\u534A\u6070\u4E3A 90\xB0\u3002\u53CD\u8FC7\u6765\u4E5F\u6210\u7ACB\uFF1A90\xB0 \u7684\u5706\u5468\u89D2\u6240\u5BF9\u7684\u5F26\u662F\u76F4\u5F84\uFF08\u5224\u5B9A\u76F4\u89D2\u6216\u627E\u76F4\u5F84\u7684\u5E38\u7528\u624B\u6BB5\uFF09\u3002\u8FD9\u4E00\u6761\u5728\u51E0\u4F55\u8BA1\u7B97\u91CC\u51FA\u73B0\u9891\u7387\u6700\u9AD8\uFF1A\u89C1\u5230\u76F4\u5F84\uFF0C\u5C31\u627E\u5B83\u5BF9\u7684\u5706\u5468\u89D2\uFF1B\u89C1\u5230 90\xB0 \u5706\u5468\u89D2\uFF0C\u5C31\u8FDE\u51FA\u76F4\u5F84\u3002"}],fe="\u5706\u5468\u89D2\u5B9A\u7406\uFF1A\u540C\u5F27\u6216\u7B49\u5F27\u6240\u5BF9\u7684\u5706\u5468\u89D2\u76F8\u7B49\uFF0C\u90FD\u7B49\u4E8E\u8FD9\u6761\u5F27\u6240\u5BF9\u7684\u5706\u5FC3\u89D2\u7684\u4E00\u534A\u3002\u63A8\u8BBA\u4E00\uFF1A\u76F4\u5F84\u6240\u5BF9\u7684\u5706\u5468\u89D2\u662F\u76F4\u89D2\uFF1B\u53CD\u8FC7\u6765\uFF0C90\xB0 \u7684\u5706\u5468\u89D2\u6240\u5BF9\u7684\u5F26\u662F\u76F4\u5F84\u3002\u63A8\u8BBA\u4E8C\uFF1A\u5706\u5185\u63A5\u56DB\u8FB9\u5F62\u7684\u5BF9\u89D2\u4E92\u8865\u3002";function le(t){Object.assign(E,ce[t].pts),ee(),X(),document.querySelectorAll("[data-hv-step]").forEach((i,l)=>i.setAttribute("aria-pressed",String(l===t))),document.querySelectorAll("[data-hv-guide]").forEach((i,l)=>{i.style.display=l===t?"":"none"})}var ye={meta:ge,steps:ce.map((t,i)=>({name:t.name,guide:t.guide,note:t.note,apply:()=>le(i)})),summary:fe,quiz:[{q:"\u4E0B\u5217\u8BF4\u6CD5\u4E0E\u300C\u5706\u5468\u89D2\u300D\u5B9A\u4E49\u76F8\u7B26\u7684\u662F\uFF1F",opts:["\u9876\u70B9\u5728\u5706\u4E0A\uFF0C\u4E24\u8FB9\u90FD\u4E0E\u5706\u76F8\u4EA4\u7684\u89D2","\u9876\u70B9\u5728\u5706\u5FC3\u7684\u89D2","\u4E24\u8FB9\u90FD\u662F\u5F26\u7684\u4EFB\u610F\u89D2","\u9876\u70B9\u5728\u5706\u5916\u7684\u89D2"],a:0,why:"\u5706\u5468\u89D2\u7684\u5B9A\u4E49\u6709\u4E24\u4E2A\u8981\u70B9\uFF1A\u9876\u70B9\u5728\u5706\u4E0A\u3001\u4E24\u8FB9\u90FD\u4E0E\u5706\u76F8\u4EA4\u3002\u9876\u70B9\u5728\u5706\u5FC3\u7684\u662F\u5706\u5FC3\u89D2\uFF0C\u9876\u70B9\u5728\u5706\u5916\u6216\u4E24\u8FB9\u4E0D\u76F8\u4EA4\u7684\u90FD\u4E0D\u7B97\u3002"},{q:"\u540C\u4E00\u6761\u5F27\u6240\u5BF9\u7684\u5706\u5468\u89D2\u4E0E\u5706\u5FC3\u89D2\u7684\u5EA6\u6570\u5173\u7CFB\u662F\uFF1F",opts:["\u76F8\u7B49","\u5706\u5468\u89D2\u662F\u5706\u5FC3\u89D2\u7684\u4E00\u534A","\u5706\u5FC3\u89D2\u662F\u5706\u5468\u89D2\u7684\u4E00\u534A","\u4E92\u4F59"],a:1,why:"\u5706\u5468\u89D2\u5B9A\u7406\uFF1A\u540C\u5F27\u6216\u7B49\u5F27\u6240\u5BF9\u7684\u5706\u5468\u89D2\u76F8\u7B49\uFF0C\u90FD\u7B49\u4E8E\u6240\u5BF9\u5706\u5FC3\u89D2\u7684\u4E00\u534A\u3002\u5982 \u2220AOB = 160\xB0\uFF0C\u540C\u5F27\u5706\u5468\u89D2\u6052\u4E3A 80\xB0\u3002"},{q:"P \u5728\u5706\u4E0A\u79FB\u52A8\uFF08\u5F26 AB \u4E0D\u52A8\uFF09\uFF0C\u2220APB \u7684\u5EA6\u6570\uFF1F",opts:["\u4E00\u76F4\u53D8\u5927","\u4E00\u76F4\u53D8\u5C0F","\u5728\u540C\u5F27\u4E0A\u4E0D\u53D8","\u968F\u4F4D\u7F6E\u4EFB\u610F\u53D8\u5316"],a:2,why:"\u5F27 AB \u4E0D\u53D8\uFF0C\u5B83\u5BF9\u7684\u5706\u5468\u89D2\u5C31\u4E0D\u53D8\u2014\u2014\u5EA6\u6570\u7531\u5F27\u552F\u4E00\u51B3\u5B9A\uFF0C\u4E0E P \u5728\u5F27\u4E0A\u7684\u4F4D\u7F6E\u65E0\u5173\u3002\u8FD9\u6B63\u662F\u300C\u540C\u5F27\u7B49\u89D2\u300D\u7684\u5E94\u7528\u3002"},{q:"\u5F26 AB \u662F\u76F4\u5F84\uFF0C\u70B9 P \u5728\u5706\u4E0A\uFF08\u4E0D\u4E0E A\u3001B \u91CD\u5408\uFF09\uFF0C\u2220APB \u7B49\u4E8E\uFF1F",opts:["45\xB0","60\xB0","90\xB0","\u968F P \u4F4D\u7F6E\u53D8\u5316"],a:2,why:"\u76F4\u5F84\u6240\u5BF9\u7684\u5F27\u662F\u534A\u5706 180\xB0\uFF0C\u5706\u5468\u89D2\u53D6\u4E00\u534A\u6070\u4E3A 90\xB0\u3002\u53CD\u8FC7\u6765\uFF0C90\xB0 \u5706\u5468\u89D2\u6240\u5BF9\u7684\u5F26\u4E5F\u662F\u76F4\u5F84\uFF0C\u4E24\u4E2A\u65B9\u5411\u90FD\u5E38\u7528\u3002"},{q:"\u8981\u8BC1\u4E00\u6761\u5F26\u662F\u76F4\u5F84\uFF0C\u53EA\u9700\u8BC1\uFF1F",opts:["\u5B83\u662F\u5706\u4E2D\u6700\u957F\u7684\u5F26","\u5B83\u5BF9\u7684\u5706\u5468\u89D2\u662F 90\xB0","\u5B83\u5E73\u5206\u4E00\u6761\u76F4\u5F84","\u5B83\u5782\u76F4\u4E8E\u53E6\u4E00\u6761\u5F26"],a:1,why:"90\xB0 \u5706\u5468\u89D2\u6240\u5BF9\u7684\u5F26\u662F\u76F4\u5F84\u2014\u2014\u8FD9\u662F\u76F4\u5F84\u7684\u5224\u5B9A\u5B9A\u7406\u3002\u300C\u6700\u957F\u300D\u662F\u76F4\u5F84\u7684\u6027\u8D28\u800C\u975E\u5224\u5B9A\u4F9D\u636E\uFF0C\u5782\u76F4\u4E0E\u5E73\u5206\u90FD\u4E0D\u5145\u5206\u3002"}]},xe=`
+#panel{position:fixed;top:calc(var(--shell-top) + 12px);right:14px;z-index:15;width:260px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.steps .btn{font-size:14px;padding:7px 2px;text-align:center}
+.steps .btn[aria-pressed="true"]{border-color:var(--gold);background:var(--panel2)}
+.guide{font-size:15px;line-height:1.6;color:var(--text)}
+#hvsum{font-size:14px;line-height:1.75;color:var(--text);padding:10px 12px;background:var(--panel2);border:1px solid var(--gold);border-radius:8px;max-height:42vh;overflow:auto}
+#angles{display:flex;flex-direction:column;gap:6px;font-size:19px;font-weight:700;font-family:Georgia,'Times New Roman',serif}
+#angles .gold{color:var(--gold)}
+#angles .blue{color:#6FA8C9}
+#angles .purple{color:var(--purple)}
+#angles .note{font-size:15px;font-weight:400;color:var(--muted);font-family:"Noto Sans SC","PingFang SC",sans-serif}
+#rel{font-size:17px;font-weight:600;text-align:center;padding:6px;background:var(--panel2);border-radius:8px;font-family:Georgia,serif}
+#concl{font-size:15.5px;line-height:1.6;color:var(--text)}
+.tip{font-size:14px;color:var(--muted)}
+.btns{display:flex;gap:8px}
+.btns .btn{flex:1}
+@media (max-width:760px){#panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;padding:10px 12px;gap:7px}#angles{font-size:18px;flex-direction:row;flex-wrap:wrap;gap:4px 12px}#concl{font-size:15px}.tip,.guide{display:none}}
+`;function be(t){let i=document.createElement("style");i.textContent=xe,t.appendChild(i);let l=document.createElement("div");l.id="panel",l.innerHTML=['<div id="angles"></div>','<div id="rel"></div>','<div id="concl"></div>','<div class="tip">\u62D6 A\u3001B \u6539\u53D8\u5F27\uFF0C\u62D6 P\u3001Q \u6CBF\u5706\u79FB\u52A8\u6BD4\u8F83\u4E24\u4E2A\u5706\u5468\u89D2\u3002</div>','<div class="btns">','<button class="btn" id="dia" type="button" aria-label="AB \u8BBE\u4E3A\u76F4\u5F84">\u76F4\u5F84</button>','<button class="btn" id="reset" type="button" aria-label="\u590D\u4F4D">\u590D\u4F4D</button>',"</div>"].join(""),t.appendChild(l),l.querySelector("#dia").addEventListener("click",()=>{E.A=180,E.B=0,ee(),X()}),l.querySelector("#reset").addEventListener("click",()=>{Object.assign(E,{A:190,B:350,P:80,Q:120}),ee(),X()})}function Ee(){let t=window.__hvPushCheck;if(!t)return;let i=[];ce.forEach((l,c)=>{le(c);let n=Z("P"),p=Z("Q"),h=G(Y("P"));if(![n,p,h].every(Number.isFinite)){i.push(`\u73AF\u8282${c+1} \u89D2\u5EA6\u975E\u6709\u9650\u503C p=${n} q=${p} arc=${h}`);return}Math.abs(V(E.B-E.A)-180)<.5?(Math.abs(n-90)>.5||Math.abs(p-90)>.5)&&i.push(`\u73AF\u8282${c+1} \u76F4\u5F84\u5706\u5468\u89D2 ${A(n)}/${A(p)} \u2260 90\xB0`):(Math.abs(n-p)>.5&&i.push(`\u73AF\u8282${c+1} \u540C\u5F27\u5706\u5468\u89D2\u4E0D\u76F8\u7B49 ${A(n)} \u2260 ${A(p)}`),Math.abs(n*2-h)>.5&&i.push(`\u73AF\u8282${c+1} \u5706\u5468\u89D2 \u2260 \u5706\u5FC3\u89D2\u4E00\u534A ${A(n)}\xD72 \u2260 ${A(h)}`))}),le(0),t("\u73AF\u8282\u9884\u8BBE\u51E0\u4F55\u5173\u7CFB",i.length===0,i.join(" ")||"\u731C\u4E00\u731C/\u9A8C\u4E00\u9A8C\uFF1A\u540C\u5F27\u4E24\u89D2\u76F8\u7B49\u4E14\u4E3A\u5706\u5FC3\u89D2\u4E00\u534A\uFF1B\u7528\u4E00\u7528\uFF1A\u76F4\u5F84\u6240\u5BF9\u5706\u5468\u89D2 90\xB0")}function pe(){let t=Math.min(devicePixelRatio,2);H=ie.clientWidth,J=ie.clientHeight,C.width=Math.round(H*t),C.height=Math.round(J*t),C.style.width=H+"px",C.style.height=J+"px",e.setTransform(t,0,0,t,0,0),X()}re({teaching:ye,mount(t,i){ie=t,C=document.createElement("canvas"),C.style.cssText="position:absolute;inset:0;touch-action:none",t.appendChild(C),e=C.getContext("2d"),be(t),ee(),pe(),new URLSearchParams(location.search).has("selftest")&&Ee();let l=(n,p)=>{let{pos:h}=oe();for(let o of["A","B","P","Q"])if(Math.hypot(h[o][0]-n,h[o][1]-p)<22)return o;return null};C.addEventListener("pointerdown",n=>{let p=C.getBoundingClientRect(),h=l(n.clientX-p.left,n.clientY-p.top);h&&(K=h,C.setPointerCapture(n.pointerId))}),C.addEventListener("pointermove",n=>{if(!K)return;let p=C.getBoundingClientRect(),{cx:h,cy:o}=oe(),k=n.clientX-p.left-h,T=-(n.clientY-p.top-o),m=Math.atan2(T,k)*180/Math.PI;m=V(Math.round(m)),m!==E[K]&&(E[K]=m,ee(),X())});let c=()=>{K=null};C.addEventListener("pointerup",c),C.addEventListener("pointercancel",c),i.onResize=pe,i.onTheme=X}});})();
+</script>
+</body>
+</html>

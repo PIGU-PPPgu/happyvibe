@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v5.18.2"><title>实操 · 30 分钟让数据上云（手机电脑同步） · HappyVibe 数智学园</title><meta name="description" content="傻瓜级逐步教程：注册 Supabase → 建数据库 → 复制两串钥匙 → 让 AI 改好工作台 → 手机电脑看到同一份数据。每一步精确到按钮。"><meta property="og:title" content="实操 · 30 分钟让数据上云（手机电脑同步） · HappyVibe 数智学园"><meta property="og:description" content="傻瓜级逐步教程：注册 Supabase → 建数据库 → 复制两串钥匙 → 让 AI 改好工作台 → 手机电脑看到同一份数据。每一步精确到按钮。"><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150e22'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='6' y='2' width='2' height='12' fill='%23feb300'/%3E%3Crect x='4' y='7' width='2' height='2' fill='%23feb300'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23a63d97'/%3E%3Crect x='14' y='2' width='2' height='12' fill='%23a63d97'/%3E%3C/svg%3E"><script>
+      /* 主题初始化：在样式绘制前读取本地偏好，避免闪色 */
+      try {
+        var t = localStorage.getItem('hv-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/about.m84U7td5.css">
+<link rel="stylesheet" href="/_astro/_lesson_.D07aIdB1.css">
+<style>.mermaid-render{display:flex;justify-content:center;padding:18px 12px;margin:18px 0;background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.mermaid-render svg{max-width:100%;height:auto}
+</style></head> <body data-astro-cid-37fxchfa> <a class="skip-link" href="#main" data-astro-cid-37fxchfa>跳到正文</a> <header class="site-header" data-astro-cid-ctg3m53h> <div class="container header-inner" data-astro-cid-ctg3m53h> <a class="logo" href="/" aria-label="HappyVibe 数智学园 首页" data-astro-cid-ctg3m53h> <span class="logo-blocks" aria-hidden="true" data-astro-cid-ctg3m53h>▚▞</span> <span class="logo-text" data-astro-cid-ctg3m53h>HAPPYVIBE<span class="logo-cursor" data-astro-cid-ctg3m53h>_</span></span> <span class="logo-cn" data-astro-cid-ctg3m53h>数智学园</span> </a> <nav class="main-nav" aria-label="主导航" data-astro-cid-ctg3m53h> <a href="/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>00</span>首页 </a><a href="/modules/" class="nav-link active" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>01</span>课程模块 </a><a href="/path/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>02</span>学习路线图 </a><a href="/contest/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>03</span>比赛专区 </a><a href="/toolbox/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>04</span>工具箱 </a><a href="/resources/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>05</span>资源库 </a><a href="/analytics/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>06</span>数据看板 </a><a href="/about/" class="nav-link" data-astro-cid-ctg3m53h> <span class="nav-code" aria-hidden="true" data-astro-cid-ctg3m53h>07</span>关于 </a> </nav> <div class="header-actions" data-astro-cid-ctg3m53h> <button class="icon-btn" type="button" data-tour-start aria-label="新手教程" title="新手教程" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>?</span> </button> <button class="icon-btn" type="button" data-search-open aria-label="搜索课程内容" title="搜索（⌘K）" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>⌕</span> </button> <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换浅色 / 深色模式" title="切换浅色 / 深色模式" data-astro-cid-ctg3m53h> <span class="theme-icon-dark" aria-hidden="true" data-astro-cid-ctg3m53h>☀</span> <span class="theme-icon-light" aria-hidden="true" data-astro-cid-ctg3m53h>☾</span> </button> <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单" data-astro-cid-ctg3m53h> <span aria-hidden="true" data-astro-cid-ctg3m53h>≡</span> </button> </div> </div> <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden data-astro-cid-ctg3m53h> <a href="/" class="mobile-link" data-astro-cid-ctg3m53h>首页</a><a href="/modules/" class="mobile-link active" data-astro-cid-ctg3m53h>课程模块</a><a href="/path/" class="mobile-link" data-astro-cid-ctg3m53h>学习路线图</a><a href="/contest/" class="mobile-link" data-astro-cid-ctg3m53h>比赛专区</a><a href="/toolbox/" class="mobile-link" data-astro-cid-ctg3m53h>工具箱</a><a href="/resources/" class="mobile-link" data-astro-cid-ctg3m53h>资源库</a><a href="/analytics/" class="mobile-link" data-astro-cid-ctg3m53h>数据看板</a><a href="/about/" class="mobile-link" data-astro-cid-ctg3m53h>关于</a> </nav> </header>  <script type="module">document.querySelectorAll("[data-tour-start]").forEach(t=>{t.addEventListener("click",()=>{if(location.pathname==="/")window.dispatchEvent(new CustomEvent("hv-tour:start"));else{try{sessionStorage.setItem("hv-tour-run","1")}catch{}location.href="/"}})});const n=document.querySelector("[data-menu-toggle]"),e=document.getElementById("mobile-nav");n?.addEventListener("click",()=>{const t=e?.hasAttribute("hidden");t?e?.removeAttribute("hidden"):e?.setAttribute("hidden",""),n.setAttribute("aria-expanded",String(!!t))});const o=document.querySelector("[data-theme-toggle]");o?.addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("hv-theme",t)}catch{}});</script> <main id="main" data-astro-cid-37fxchfa>  <div class="container lesson-page" data-astro-cid-5y7t3r35> <nav class="crumbs mono" aria-label="面包屑" data-astro-cid-5y7t3r35> <a href="/" data-astro-cid-5y7t3r35>~/happyvibe</a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <a class="crumb-up" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↩</span> software </a> <span aria-hidden="true" data-astro-cid-5y7t3r35>/</span> <span class="crumb-here" data-astro-cid-5y7t3r35>task-cloud</span> </nav> <details class="toc-mobile" data-astro-cid-5y7t3r35> <summary class="mono" data-astro-cid-5y7t3r35>▸ 本页目录（9 节）</summary> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#开始前30-秒自查" data-astro-cid-5y7t3r35>开始前（30 秒自查）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-1-步--注册-supabase3-分钟" data-astro-cid-5y7t3r35>第 1 步 · 注册 Supabase（3 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-2-步--创建项目3-分钟--等待-2-分钟" data-astro-cid-5y7t3r35>第 2 步 · 创建项目（3 分钟 + 等待 2 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-3-步--建数据表3-分钟复制粘贴就行" data-astro-cid-5y7t3r35>第 3 步 · 建数据表（3 分钟，复制粘贴就行）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-4-步--复制两串钥匙2-分钟最关键" data-astro-cid-5y7t3r35>第 4 步 · 复制两串钥匙（2 分钟，最关键）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-5-步--让-ai-改造工作台5-分钟" data-astro-cid-5y7t3r35>第 5 步 · 让 AI 改造工作台（5 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-6-步--重新上传上线2-分钟" data-astro-cid-5y7t3r35>第 6 步 · 重新上传上线（2 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#三个必须知道" data-astro-cid-5y7t3r35>三个必须知道</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#检查点" data-astro-cid-5y7t3r35>检查点</a></li> </ul> </details> <div class="lesson-layout" data-astro-cid-5y7t3r35> <div class="lesson-main" data-astro-cid-5y7t3r35> <header class="lesson-header" data-astro-cid-5y7t3r35> <p class="lesson-kicker mono" data-astro-cid-5y7t3r35> <a href="/modules/software/" style="color:#e8935e" data-astro-cid-5y7t3r35>T2 · WorkBuddy 实操</a> </p> <h1 class="lesson-title" data-astro-cid-5y7t3r35>实操 · 30 分钟让数据上云（手机电脑同步）</h1> <p class="lesson-desc" data-astro-cid-5y7t3r35>傻瓜级逐步教程：注册 Supabase → 建数据库 → 复制两串钥匙 → 让 AI 改好工作台 → 手机电脑看到同一份数据。每一步精确到按钮。</p> <div class="lesson-meta" data-astro-cid-5y7t3r35> <span class="mono text-muted" data-astro-cid-5y7t3r35>任务二续篇 · 上云实操</span>  <button class="mark-done" type="button" data-mark-done data-lesson-id="software/task-cloud" data-astro-cid-jcoeg56w> <span class="mark-icon" aria-hidden="true" data-astro-cid-jcoeg56w>✓</span> <span class="mark-label" data-astro-cid-jcoeg56w>标记已学</span> </button>  <script type="module" src="/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js"></script> </div> </header> <article class="prose" data-pagefind-body data-astro-cid-5y7t3r35> <blockquote>
+<p><strong>一句话结论：注册一个免费数据库，复制两串”钥匙”交给 AI，它把你的工作台改成连数据库版——从此手机电脑同步，清缓存也不怕。</strong></p>
+</blockquote>
+<h2 id="开始前30-秒自查">开始前（30 秒自查）</h2>
+<ul>
+<li>✅ 工作台已经上线成网址（没有？先做<a href="/modules/software/task-publish/">上一课</a>，两课连着做）；</li>
+<li>✅ 有邮箱；准备一个<strong>密码记事本</strong>——这课要记 3 样东西。</li>
+</ul>
+<hr>
+<h2 id="第-1-步--注册-supabase3-分钟">第 1 步 · 注册 Supabase（3 分钟）</h2>
+<ol>
+<li>浏览器打开：<strong>supabase.com</strong>；</li>
+<li>点右上角 <strong>「Start your project（开始项目）」</strong>；</li>
+<li>用 GitHub 或邮箱注册——<strong>推荐邮箱</strong>（和 Cloudflare 一样的流程：填邮箱→设密码→收验证邮件→点确认）；</li>
+<li>回到 supabase.com 登录。</li>
+</ol>
+<p>✓ <strong>成功标志</strong>：进入一个空空的仪表盘（Dashboard）。</p>
+<p><strong>卡住了</strong>：GitHub 注册跳转后卡住 → 回来改用邮箱注册。</p>
+<hr>
+<h2 id="第-2-步--创建项目3-分钟--等待-2-分钟">第 2 步 · 创建项目（3 分钟 + 等待 2 分钟）</h2>
+<ol>
+<li>点 <strong>「New project（新建项目）</strong>；</li>
+<li>按提示填三样：
+<ul>
+<li><strong>Name 项目名</strong>：<code>workbench</code>（随你）；</li>
+<li><strong>Database Password 数据库密码</strong>：<strong>自己设一个并立刻记到密码记事本</strong>（丢了很麻烦）；</li>
+<li><strong>Region 区域</strong>：选 <strong>Singapore（新加坡）</strong>——离我们最近，速度快；</li>
+</ul>
+</li>
+<li>点 <strong>「Create new project」</strong>；</li>
+<li>等进度条跑完（约 2 分钟，去倒杯水）。</li>
+</ol>
+<p>✓ <strong>成功标志</strong>：进入项目页面，左侧出现一排菜单（Table Editor、SQL Editor……）。</p>
+<hr>
+<h2 id="第-3-步--建数据表3-分钟复制粘贴就行">第 3 步 · 建数据表（3 分钟，复制粘贴就行）</h2>
+<p>不用懂”表”是什么——AI 已经替你想好了，你只管粘贴：</p>
+<ol>
+<li>回到你搭工作台的 AI 对话（WorkBuddy 等）；</li>
+<li>发这句：</li>
+</ol>
+<pre><code>我要把工作台数据存到 Supabase。
+第一步：请根据工作台现有的数据结构（待办/学生/作业/备忘），
+给我建表的 SQL 语句，我复制到 Supabase 的 SQL Editor 里运行。
+</code></pre>
+<ol start="3">
+<li>AI 会给你一段 <code>CREATE TABLE ...</code> 的代码——<strong>全部复制</strong>；</li>
+<li>回 Supabase：左侧点 <strong>「SQL Editor」</strong> → 点 <strong>「New query」</strong> → 把代码<strong>粘贴进输入框</strong> → 点右下角 <strong>「Run（运行）」</strong>；</li>
+<li>显示 <code>Success. ...</code> 就成了。</li>
+</ol>
+<p>✓ <strong>成功标志</strong>：左侧点「Table Editor」，能看到几张建好的表。</p>
+<hr>
+<h2 id="第-4-步--复制两串钥匙2-分钟最关键">第 4 步 · 复制两串钥匙（2 分钟，最关键）</h2>
+<ol>
+<li>Supabase 左侧最底下：<strong>项目设置（齿轮图标 Project Settings）</strong> → 点 <strong>「API」</strong>；</li>
+<li>页面上有两样东西，<strong>各复制一份</strong>（点旁边的复制图标）：
+<ul>
+<li><strong>Project URL</strong>（网址形的一串）；</li>
+<li><strong>anon public</strong> 那一长串 Key（注意是 <strong>anon</strong> 开头那行，不是 service_role！）；</li>
+</ul>
+</li>
+<li>暂时存到密码记事本。</li>
+</ol>
+<blockquote>
+<p>🔒 安全提醒：这两串相当于”只读访客证”，可以交给 AI 使用；<strong>service_role 那串是管理员钥匙，谁都不给、不发群</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="第-5-步--让-ai-改造工作台5-分钟">第 5 步 · 让 AI 改造工作台（5 分钟）</h2>
+<p>回到 AI 对话，把钥匙交出去：</p>
+<pre><code>第二步：这是我的 Supabase 信息——
+Project URL：____（粘贴）
+anon Key：____（粘贴）
+请把工作台代码改成读写 Supabase：
+1. 所有数据（待办/学生/作业/备忘）存取都走数据库
+2. 保留"导出 JSON"按钮
+3. 改完把新的工作台文件夹给我
+</code></pre>
+<p>AI 会重写代码并交付<strong>新的文件夹</strong>。</p>
+<p>✓ <strong>验收</strong>：打开新工作台 → 加一条待办 → 换个设备（手机）打开 → <strong>那条待办在</strong>。</p>
+<hr>
+<h2 id="第-6-步--重新上传上线2-分钟">第 6 步 · 重新上传上线（2 分钟）</h2>
+<p>新文件夹要替换线上版（就是<a href="/modules/software/task-publish/">上线课</a>第 5 步）：</p>
+<ol>
+<li>Cloudflare → 你的项目 → <strong>Create new deployment</strong>；</li>
+<li>把<strong>新文件夹</strong>拖进去；</li>
+<li>等部署完成 → 手机电脑分别打开网址，各加一条待办互查——<strong>同步了</strong>。</li>
+</ol>
+<hr>
+<h2 id="三个必须知道">三个必须知道</h2>
+<p><strong>1. 数据真的在云上吗？</strong>
+在。Supabase 的 Table Editor 里点开表，能看到你每一条待办——<strong>数据可视、可导出（导出按钮随时下载全部）</strong>。</p>
+<p><strong>2. 免费档够用吗？</strong>
+对个人+一个班：<strong>远远够用</strong>（50MB 数据库、5 万行读/月起步）。真超了再考虑付费，那时你早已是熟手。</p>
+<p><strong>3. 安全红线</strong></p>
+<ul>
+<li>云端版建议<strong>继续用化名</strong>（或”学号+姓名首字母”）；</li>
+<li>anon Key 泄露了可以一键重置（API 页 → Regenerate）——这是它比 service_role 安全的原因；</li>
+<li>每学期点一次导出 JSON 存档，永远留后路。</li>
+</ul>
+<h2 id="检查点">检查点</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 手机和电脑看到了同一份数据</li>
+<li class="task-list-item"><input type="checkbox" disabled> 密码记事本存了：Supabase 登录密码、数据库密码、两串钥匙的出处</li>
+<li class="task-list-item"><input type="checkbox" disabled> 导出按钮测试过一次</li>
+</ul>
+<p>上一课：<a href="/modules/software/task-publish/">10 分钟上线</a> ｜ 回到：<a href="/modules/software/task-workbench/">任务二 · 教师工作台</a></p> </article> <div class="lesson-tail" data-astro-cid-5y7t3r35> <button class="stuck-btn" type="button" data-stuck data-lesson="实操 · 30 分钟让数据上云（手机电脑同步）" data-module="WorkBuddy 实操" data-astro-cid-77clcywu> <span aria-hidden="true" data-astro-cid-77clcywu>?</span> 卡住了？复制求助话术
+</button>  <script type="module">document.querySelectorAll("[data-stuck]").forEach(e=>{e.addEventListener("click",async()=>{const c=e.dataset.lesson||"",o=e.dataset.module||"",a=`【HappyVibe 求助】我在学「${c}」（${o}），卡住了。
+我做到：____（第几步 / 想做什么）
+屏幕显示：____（看到什么 / 报什么错）
+（也可以把这段话直接发给 AI，让它帮你排查）`;try{await navigator.clipboard.writeText(a)}catch{const t=document.createElement("textarea");t.value=a,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove()}const s=e.innerHTML;e.innerHTML="✓ 已复制，粘贴到教研群或发给 AI",e.classList.add("copied"),setTimeout(()=>{e.innerHTML=s,e.classList.remove("copied")},2400)})});</script>  <a class="btn btn-ghost back-btn" href="/modules/software/" data-astro-cid-5y7t3r35> <span aria-hidden="true" data-astro-cid-5y7t3r35>↑</span> 返回 T2 WorkBuddy 实操 · 课程列表
+</a> </div> <nav class="lesson-nav" aria-label="课程导航" data-astro-cid-5y7t3r35> <a class="btn btn-ghost nav-prev" href="/modules/software/task-publish/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>← 上一课</span> <span data-astro-cid-5y7t3r35>实操 · 10 分钟把工作台变成网址（免费上线）</span> </a> <a class="btn btn-ghost nav-next" href="/modules/software/task-classroom-kit/" data-astro-cid-5y7t3r35> <span class="nav-dir mono" data-astro-cid-5y7t3r35>下一课 →</span> <span data-astro-cid-5y7t3r35>任务三：一周课堂三件套（点名器 + 积分板 + 抢答页）</span> </a> </nav> </div> <aside class="toc" aria-label="本页目录" data-astro-cid-5y7t3r35> <p class="toc-title mono" data-astro-cid-5y7t3r35>// 本页目录</p> <ul data-astro-cid-5y7t3r35> <li class="d2" data-astro-cid-5y7t3r35><a href="#开始前30-秒自查" data-toc-link="开始前30-秒自查" data-astro-cid-5y7t3r35>开始前（30 秒自查）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-1-步--注册-supabase3-分钟" data-toc-link="第-1-步--注册-supabase3-分钟" data-astro-cid-5y7t3r35>第 1 步 · 注册 Supabase（3 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-2-步--创建项目3-分钟--等待-2-分钟" data-toc-link="第-2-步--创建项目3-分钟--等待-2-分钟" data-astro-cid-5y7t3r35>第 2 步 · 创建项目（3 分钟 + 等待 2 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-3-步--建数据表3-分钟复制粘贴就行" data-toc-link="第-3-步--建数据表3-分钟复制粘贴就行" data-astro-cid-5y7t3r35>第 3 步 · 建数据表（3 分钟，复制粘贴就行）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-4-步--复制两串钥匙2-分钟最关键" data-toc-link="第-4-步--复制两串钥匙2-分钟最关键" data-astro-cid-5y7t3r35>第 4 步 · 复制两串钥匙（2 分钟，最关键）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-5-步--让-ai-改造工作台5-分钟" data-toc-link="第-5-步--让-ai-改造工作台5-分钟" data-astro-cid-5y7t3r35>第 5 步 · 让 AI 改造工作台（5 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#第-6-步--重新上传上线2-分钟" data-toc-link="第-6-步--重新上传上线2-分钟" data-astro-cid-5y7t3r35>第 6 步 · 重新上传上线（2 分钟）</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#三个必须知道" data-toc-link="三个必须知道" data-astro-cid-5y7t3r35>三个必须知道</a></li><li class="d2" data-astro-cid-5y7t3r35><a href="#检查点" data-toc-link="检查点" data-astro-cid-5y7t3r35>检查点</a></li> </ul> </aside> </div> </div>  </main> <footer class="site-footer" data-astro-cid-gcn2mc3v> <div class="container footer-inner" data-astro-cid-gcn2mc3v> <div class="footer-brand" data-astro-cid-gcn2mc3v> <p class="footer-logo mono" data-astro-cid-gcn2mc3v>▚▞ HAPPYVIBE<span aria-hidden="true" data-astro-cid-gcn2mc3v>_</span></p> <p class="footer-slogan" data-astro-cid-gcn2mc3v>用好 AI = 减负增效</p> <p class="footer-note text-muted" data-astro-cid-gcn2mc3v>内容源自集团教师培训 · 仅供内部学习交流 · 微信公众号：Pigou Workshop</p> </div> <nav class="footer-nav" aria-label="页脚导航" data-astro-cid-gcn2mc3v> <a href="/" data-astro-cid-gcn2mc3v>首页</a> <a href="/path/" data-astro-cid-gcn2mc3v>学习路线图</a> <a href="/contest/" data-astro-cid-gcn2mc3v>比赛专区</a> · <a href="/toolbox/" data-astro-cid-gcn2mc3v>工具箱</a> <a href="/analytics/" data-astro-cid-gcn2mc3v>数据看板</a> <a href="/challenge/" data-astro-cid-gcn2mc3v>21 天挑战</a> <a href="/facilitator/" data-astro-cid-gcn2mc3v>培训者工具包</a> <a href="/about/" data-astro-cid-gcn2mc3v>关于本站</a> <button class="footer-tour" type="button" data-tour-start data-astro-cid-gcn2mc3v>新手教程</button> </nav> </div> <div class="container footer-meta mono" data-astro-cid-gcn2mc3v> <span data-astro-cid-gcn2mc3v>© 2026 吴林璋 · 公众号 Pigou Workshop</span> <span class="footer-cmd" aria-hidden="true" data-astro-cid-gcn2mc3v>$ exit 0 # 用好 AI，减负增效</span> </div> </footer>  <div class="search-overlay" data-search-overlay hidden data-astro-cid-qk3db3zz> <div class="search-panel" role="dialog" aria-modal="true" aria-label="全站搜索" data-astro-cid-qk3db3zz> <div class="search-head" data-astro-cid-qk3db3zz> <span class="mono search-prompt" aria-hidden="true" data-astro-cid-qk3db3zz>&gt;_</span> <span class="text-muted" data-astro-cid-qk3db3zz>全站搜索课程与工具</span> <button class="search-close" type="button" data-search-close aria-label="关闭搜索" data-astro-cid-qk3db3zz>
+Esc
+</button> </div> <div id="hv-search" class="search-body" data-astro-cid-qk3db3zz></div> <p class="search-hint text-muted mono" data-search-hint data-astro-cid-qk3db3zz>
+构建后生成索引 · 开发模式下不可用（npm run build 后可用）
+</p> </div> </div>  <script type="module" src="/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js"></script> <script type="application/json" id="hv-lesson-index">{"agent/undefined":{"t":"大厂 Agent 产品横评","m":"agent","d":"8 款 Agent 按普通教师 / 技术教师视角打分：文档、PPT、Excel、教研、网页、定时远程、生态、安全。含选型建议。"},"basics/undefined":{"t":"模型认知课：多模态、视觉、能力与价格，一次搞懂","m":"basics","d":"老师最容易被绕晕的一课，讲得最白话：什么是多模态、哪些模型能看图、能力强弱怎么看、倍率价格怎么算、在 WorkBuddy 里怎么选——附傻瓜实验。"},"class-management/undefined":{"t":"智能排座 SEAT OS：从名单到座位表一步生成","m":"class-management","d":"名单、成绩、学生画像联动，自动生成座位草案——近视的往前坐、动静搭配、成绩互补，规则你说了算。"},"creation/undefined":{"t":"AI 任务库：按你想解决的问题找任务","m":"creation","d":"不按软件找，按目标找。每个任务=话术+真实生成的结果（图/动图/可点开的成品）。课堂更生动 / 学生吸收更好 / 教学方式改变 / 重复劳动清零 / 为自己。"},"edu-data/undefined":{"t":"实战：一次月考后的完整数据分析","m":"edu-data","d":"深度实战。从一份成绩表到「分析报告页 + 行动建议」的完整流程——四张分析表怎么依次生成、增值视角怎么放进报告（真实成品可点开）。"},"growth/undefined":{"t":"创意工坊：把 AI 玩成「你的」AI","m":"growth","d":"任务库教你抄作业，这一课教你出题——四张牌打出没人能抄的玩法，30 个跨学科灵感点子，附「让 AI 帮你盘点风格」的话术。"},"policy/undefined":{"t":"AI 赋能教育政策速查（全国 / 广东 / 深圳）","m":"policy","d":"近两年的政策依据：教育部五部门行动计划、中小学 AI 通识教育指南、广东全域场景应用指南、深圳先锋城市行动计划——写课题、开家长会、跟领导汇报直接引用。"},"research/undefined":{"t":"申报书实战：五天把一个想法变成可提交的课题","m":"research","d":"深度实战。选题三问 → 框架打磨 → 分章生成 → 查重式自检——每天 40 分钟，五天出一份格式完整的申报书骨架。"},"software/undefined":{"t":"一小时上服务器：让外面的人访问你的应用","m":"software","d":"从买一台云服务器到外网访问的完整流程：去哪买、买完给 AI 哪三样信息、AI 指挥部署六步、开端口让全世界访问。含安全红线与常见坑。"},"teaching/undefined":{"t":"命题实战：从考纲到一份能直接印的试卷","m":"teaching","d":"深度实战。双向细目表怎么给 AI、三档难度怎么控、答案怎么折叠——做完你有一份 19 题的完整单元卷（真实成品可点开）。"}}</script> <!-- 统计由 Cloudflare Pages 的 Web Analytics 自动注入，无需手写探针 --> </body></html>  <script type="module">const o=[...document.querySelectorAll("[data-toc-link]")];if(o.length){const n=new Map(o.map(t=>[t.getAttribute("data-toc-link"),t])),c=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(o.forEach(i=>i.classList.remove("active")),n.get(e.target.id)?.classList.add("active"))},{rootMargin:"-80px 0px -70% 0px"});o.forEach(t=>{const e=document.getElementById(t.getAttribute("data-toc-link"));e&&c.observe(e)})}</script>
