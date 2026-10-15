@@ -110,8 +110,8 @@ function makeBronzeTexture() {
 
 let renderer, scene, camera, ding, spotSprites = [], texCanvas;
 let spinning = false, spinEl;
-const spherical = { theta: 0.7, phi: 1.12, radius: 3.6 };
-const target = new THREE.Vector3(0, 0.1, 0);
+const spherical = { theta: 0.7, phi: 1.12, radius: 3.9 };
+const target = new THREE.Vector3(0, -0.05, 0);
 let spotState = -2; // -2 默认（未选），-1 无，>=0 热点
 let els = {};
 let cardRedraws = [];

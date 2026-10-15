@@ -80,8 +80,9 @@ def add_obj(name, mesh, loc=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1)):
     scene.collection.objects.link(ob)
     return ob
 
-prof = [(0.00, -0.62), (0.42, -0.62), (0.50, -0.50), (0.545, -0.30), (0.56, -0.05),
-        (0.545, 0.18), (0.50, 0.36), (0.455, 0.44), (0.44, 0.50), (0.452, 0.545), (0.47, 0.575)]
+# 鼎形轮廓：圜底起 → 垂腹（最大径在中下）→ 束颈 → 口沿外撇（唇）
+prof = [(0.00, -0.62), (0.50, -0.60), (0.60, -0.44), (0.635, -0.18), (0.615, 0.08),
+        (0.545, 0.30), (0.475, 0.40), (0.465, 0.47), (0.50, 0.53), (0.535, 0.575)]
 body = add_obj("body", revolve([(r * 1.55, y * 1.55) for r, y in prof]))
 
 solid = body.modifiers.new("thick", "SOLIDIFY")
@@ -100,12 +101,13 @@ disp.vertex_group = "band"
 
 for i in range(3):
     ang = i * math.radians(120) - math.radians(90)
-    add_obj(f"foot{i}", cylinder(0.16, 0.78, taper=0.14),
-            loc=(math.cos(ang) * 1.30, math.sin(ang) * 1.30, -0.95),
+    # 贴圜底：足心 r=0.80（圜底半径 0.78），上端 -0.55 嵌入鼎底（-0.93）之下身体内
+    add_obj(f"foot{i}", cylinder(0.17, 1.0, taper=0.12),
+            loc=(math.cos(ang) * 0.80, math.sin(ang) * 0.80, -1.05),
             rot=(0, 0, ang + math.radians(90)))
 for sx in (-1, 1):
-    add_obj(f"ear{sx}", torus(0.24, 0.055),
-            loc=(sx * 0.95, 0, 1.05), rot=(math.radians(90), 0, 0), scale=(1, 1, 1.3))
+    add_obj(f"ear{sx}", torus(0.22, 0.05),
+            loc=(sx * 0.78, 0, 0.99), rot=(math.radians(90), 0, 0), scale=(1, 1, 1.3))
 
 # ── 青铜质感：顶点色（mathutils.noise 连续 3D 噪声混铜绿与金铜；glTF COLOR_0 原生支持） ──
 from mathutils import noise as mbnoise
