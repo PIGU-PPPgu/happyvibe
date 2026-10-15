@@ -53,7 +53,7 @@ for (const name of names) {
   if (!existsSync(file)) problems.push('产物缺失');
   else {
     const html = await readFile(file, 'utf8');
-    const limit = kind === 'interactive-3d' ? 1024 * 1024 : 100 * 1024;
+    const limit = kind === 'interactive-3d' ? 4 * 1024 * 1024 : 100 * 1024;  // 3D 含内嵌 GLB 资产，单独放宽到 4MB
     if (bytes > limit) problems.push(`体积 ${(bytes / 1024).toFixed(0)}KB 超限 ${limit / 1024}KB`);
     const noComments = html
       .replace(/<!--[\s\S]*?-->/g, '')

@@ -1,4 +1,7 @@
 import { init } from '../../_shared/runtime.mjs';
+import GLB_B64 from './ding.glb.b64.mjs';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import * as THREE from 'three';
 
 // 青铜器与甲骨文：程序化后母戊方鼎（3D 可旋转）+ 纹饰热点 + 甲骨文翻面卡片
@@ -25,14 +28,14 @@ const ORACLE = [
 ];
 
 const SPOTS = [
-  { name: '立耳', pos: [0.66, 1.12, 0],
+  { name: '立耳', pos: [0.80, 1.05, 0],
     text: '口沿上双耳竖立，用于穿杠抬举。耳与鼎身合铸一体，对铸造工艺要求极高。' },
-  { name: '兽面纹', pos: [0, 0.42, 0.9], zoom: true,
+  { name: '兽面纹', pos: [0, 0.05, 0.98], zoom: true,
     text: '腹部饰兽面纹（饕餮纹）：双目凸出、云雷纹衬底，威严神秘，是商代青铜器的典型纹饰。' },
-  { name: '铭文', pos: [0.3, 0.4, 0.32],
-    text: '腹内壁铸有「后母戊」三字（旧释「司母戊」），商王为祭祀其母戊而铸，鼎因此得名。' },
-  { name: '柱足', pos: [0.66, -0.72, 0.44],
-    text: '四条实心柱足承托鼎身。全器以多块陶范合铸而成，重 832.84 千克，是迄今出土最重的青铜器。' },
+  { name: '铭文', pos: [0.38, 0.18, 0.45],
+    text: '腹内壁常铸铭文，记录祭祀、征伐、赏赐等大事，是研究商周历史的第一手材料。' },
+  { name: '柱足', pos: [0, -0.78, -1.12],
+    text: '三条实心柱足承托鼎身，与双耳同样需陶范合铸一体成型，对铸造工艺要求极高。' },
 ];
 const DEFAULT_SPOT = {
   name: '后母戊鼎',
@@ -134,65 +137,23 @@ function makeSpotTexture(color) {
 }
 
 function buildDing() {
-  const g = new THREE.Group();
-  texCanvas = makeBronzeTexture();
-  const tex = new THREE.CanvasTexture(texCanvas);
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.repeat.set(4, 1);
-  const bronze = new THREE.MeshStandardMaterial({ map: tex, bumpMap: tex, bumpScale: 0.05, metalness: 0.72, roughness: 0.4 });
-  const bronzePlain = new THREE.MeshStandardMaterial({ color: 0x5a7258, metalness: 0.62, roughness: 0.45 });
-
-  // 鼎身：四棱台，上宽下窄
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(1.14, 0.92, 1.3, 4, 1), bronze);
-  body.rotation.y = Math.PI / 4;
-  body.scale.set(1.12, 1, 0.68);
-  g.add(body);
-
-  // 口沿
-  const rim = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.18, 0.14, 4, 1), bronzePlain);
-  rim.rotation.y = Math.PI / 4;
-  rim.scale.set(1.12, 1, 0.68);
-  rim.position.y = 0.72;
-  g.add(rim);
-
-  // 双立耳
-  const earGeo = new THREE.BoxGeometry(0.24, 0.46, 0.09);
-  for (const s of [-1, 1]) {
-    const ear = new THREE.Mesh(earGeo, bronzePlain);
-    ear.position.set(s * 0.62, 1.0, 0);
-    g.add(ear);
-  }
-
-  // 四柱足
-  const legGeo = new THREE.CylinderGeometry(0.155, 0.12, 0.86, 12);
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-    const leg = new THREE.Mesh(legGeo, bronzePlain);
-    leg.position.set(sx * 0.78, -1.06, sz * 0.47);
-    g.add(leg);
-  }
-
-  // 底座参照盘
-  const disc = new THREE.Mesh(
-    new THREE.CircleGeometry(2.3, 48),
-    new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.14 })
-  );
-  disc.rotation.x = -Math.PI / 2;
-  disc.position.y = -1.5;
-  g.add(disc);
-
-  // 热点 sprite（透壁可见）
-  const t = themeColors();
-  const spTex = makeSpotTexture(t.gold);
-  SPOTS.forEach((s) => {
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: spTex, depthTest: false }));
-    sp.position.set(s.pos[0], s.pos[1], s.pos[2]);
-    sp.scale.setScalar(0.19);
-    sp.renderOrder = 10;
-    sp.userData.index = SPOTS.indexOf(s);
-    g.add(sp);
-    spotSprites.push(sp);
+  // Blender 程序化建模 → GLB（回转鼎身/饕餮凸纹/三足二耳/顶点色青铜），构建期 base64 内嵌
+  const ding = new THREE.Group();
+  new GLTFLoader().load(GLB_B64, (gltf) => {
+    const m = gltf.scene;
+    m.scale.setScalar(0.85);
+    m.position.y = 0.12;
+    m.traverse((o) => {
+      if (o.isMesh && o.material) {
+        // 青铜绿整体色 + 环境反射出金属层次（斑驳锈色 Round 3 以烘焙贴图实现）
+        o.material.color.set(0x6a7a5a);
+        o.material.metalness = 0.62;
+        o.material.roughness = 0.5;
+      }
+    });
+    ding.add(m);
   });
-  return g;
+  return ding;
 }
 
 function setSpot(i) {
@@ -472,6 +433,10 @@ init({
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(themeColors().bg);
+    // 金属材质必须有环境反射才立得住（顶点色青铜靠 envMap 出质感）
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.06).texture;
+    scene.environmentIntensity = 0.75;
     camera = new THREE.PerspectiveCamera(47, 1, 0.1, 50);
 
     scene.add(new THREE.HemisphereLight(0xfff8e8, 0x2a2233, 1.35));

@@ -107,30 +107,32 @@ for sx in (-1, 1):
     add_obj(f"ear{sx}", torus(0.24, 0.055),
             loc=(sx * 0.95, 0, 1.05), rot=(math.radians(90), 0, 0), scale=(1, 1, 1.3))
 
+# ── 青铜质感：顶点色（mathutils.noise 连续 3D 噪声混铜绿与金铜；glTF COLOR_0 原生支持） ──
+from mathutils import noise as mbnoise
+A = (0.255, 0.335, 0.225)   # 铜绿
+B = (0.44, 0.31, 0.155)     # 金铜
 mat = bpy.data.materials.new("bronze")
 mat.use_nodes = True
-nt = mat.node_tree
-bsdf = nt.nodes["Principled BSDF"]
+bsdf = mat.node_tree.nodes["Principled BSDF"]
 bsdf.inputs["Metallic"].default_value = 0.85
-noise = nt.nodes.new("ShaderNodeTexNoise")
-noise.inputs["Scale"].default_value = 5.2
-noise.inputs["Detail"].default_value = 8.0
-noise.inputs["Roughness"].default_value = 0.6
-cA = nt.nodes.new("ShaderNodeRGB"); cA.outputs[0].default_value = (0.286, 0.36, 0.26, 1)
-cB = nt.nodes.new("ShaderNodeRGB"); cB.outputs[0].default_value = (0.42, 0.30, 0.16, 1)
-mix = nt.nodes.new("ShaderNodeMixRGB")
-nt.links.new(noise.outputs["Fac"], mix.inputs["Fac"])
-nt.links.new(cA.outputs["Color"], mix.inputs["Color1"])
-nt.links.new(cB.outputs["Color"], mix.inputs["Color2"])
-nt.links.new(mix.outputs["Color"], bsdf.inputs["Base Color"])
-rng = nt.nodes.new("ShaderNodeMapRange")
-nt.links.new(noise.outputs["Fac"], rng.inputs["Value"])
-rng.inputs["From Min"].default_value = 0.0; rng.inputs["From Max"].default_value = 1.0
-rng.inputs["To Min"].default_value = 0.35; rng.inputs["To Max"].default_value = 0.75
-nt.links.new(rng.outputs["Result"], bsdf.inputs["Roughness"])
-
+bsdf.inputs["Roughness"].default_value = 0.55
 for ob in scene.objects:
     ob.data.materials.append(mat)
+    # 只保留一层顶点色（多余层会被导出成 COLOR_1，three.js 只认 COLOR_0）
+    while len(ob.data.color_attributes) > 0:
+        ob.data.color_attributes.remove(ob.data.color_attributes[0])
+    lc = ob.data.color_attributes.new(name="rust", type="BYTE_COLOR", domain="CORNER")
+    ob.data.color_attributes.active_color = lc   # 必须：非激活层会被导出成 COLOR_1（three 不读）
+    try: lc.active_render = True
+    except AttributeError: pass
+    vcol = lc.data
+    rng = __import__("random").Random(ob.name)
+    for i, v in enumerate(ob.data.vertices):
+        n = mbnoise.noise(v.co * 2.6) * 0.5 + 0.5          # 大块斑驳
+        n2 = mbnoise.noise(v.co * 9.0) * 0.5 + 0.5         # 细颗粒
+        m = min(1.0, max(0.0, n * 0.72 + n2 * 0.28 + rng.random() * 0.08 - 0.04))
+        col = tuple(A[k] * m + B[k] * (1 - m) for k in range(3)) + (1.0,)
+        vcol[i].color = col
 
 bpy.ops.export_scene.gltf(filepath=OUT, export_format="GLB", export_apply=True,
                           export_texcoords=True, export_normals=True,

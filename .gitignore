@@ -16,3 +16,4 @@ public/previews/*
 
 scripts/.visual-evidence/
 scripts/.visual-review.json
+*.b64.mjs

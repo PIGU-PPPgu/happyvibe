@@ -1,4 +1,6 @@
 // 打包 src/interactives/<subject>/<name>/index.mjs 为单文件 public/interactives/<name>.html
+// 资源目录内的 *.glb（Blender 资产）构建期转 base64 模块 <name>.glb.b64.mjs，index.mjs 直接 import 使用；
+// 产物仍是零外链单文件（GLB 内嵌），断网投屏承诺不破。
 import { build } from 'esbuild';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -20,9 +22,17 @@ for (const s of await readdir(SRC, { withFileTypes: true })) {
   for (const e of await readdir(path.join(SRC, s.name), { withFileTypes: true })) {
     if (!e.isDirectory()) continue;
     if (only.length > 0 && !only.includes(e.name)) continue;
-    const entry = path.join(SRC, s.name, e.name, 'index.mjs');
+    const dir = path.join(SRC, s.name, e.name);
+    const entry = path.join(dir, 'index.mjs');
     if (!existsSync(entry)) continue;
-    const meta = JSON.parse(await readFile(path.join(SRC, s.name, e.name, 'meta.json'), 'utf8'));
+    // GLB 资产 → base64 模块（构建期生成，gitignore 掉生成物）
+    for (const f of await readdir(dir)) {
+      if (f.endsWith('.glb')) {
+        const b64 = (await readFile(path.join(dir, f))).toString('base64');
+        await writeFile(path.join(dir, f + '.b64.mjs'), `export default 'data:model/gltf-binary;base64,${b64}';\n`);
+      }
+    }
+    const meta = JSON.parse(await readFile(path.join(dir, 'meta.json'), 'utf8'));
     const result = await build({
       entryPoints: [entry],
       bundle: true,
