@@ -28,38 +28,55 @@ const ORACLE = [
 ];
 
 const SPOTS = [
-  { name: '立耳', pos: [0.80, 1.05, 0],
+  { name: '立耳', pos: [0.66, 1.12, 0],
     text: '口沿上双耳竖立，用于穿杠抬举。耳与鼎身合铸一体，对铸造工艺要求极高。' },
   { name: '兽面纹', pos: [0, 0.05, 0.98], zoom: true,
     text: '腹部饰兽面纹（饕餮纹）：双目凸出、云雷纹衬底，威严神秘，是商代青铜器的典型纹饰。' },
   { name: '铭文', pos: [0.38, 0.18, 0.45],
     text: '腹内壁常铸铭文，记录祭祀、征伐、赏赐等大事，是研究商周历史的第一手材料。' },
-  { name: '柱足', pos: [0, -0.78, -1.12],
+  { name: '柱足', pos: [0, -0.92, -1.18],
     text: '三条实心柱足承托鼎身，与双耳同样需陶范合铸一体成型，对铸造工艺要求极高。' },
 ];
 const DEFAULT_SPOT = {
-  name: '后母戊鼎',
-  text: '商朝后期王室祭祀用鼎，1939 年出土于河南安阳，重 832.84 千克。拖动旋转，点击金色热点查看部位。',
+  name: '三足圆鼎',
+  text: '圆鼎三足双耳，是商周最常见的炊食与祭祀礼器；同类的后母戊鼎重 832.84 千克，是现存最重的青铜器。拖动旋转，点击金色热点查看部位。',
 };
 
-// ———— 青铜纹饰纹理（512×256，一面纹样，环形重复 4 次） ————
-function makeBronzeTexture() {
+// ———— 青铜纹饰：彩色图（绿锈底+纹带）与浮雕图（灰度凸纹）共用同一套纹样几何 ————
+function makeBronzeTexture(plain = false) {
   const cv = document.createElement('canvas');
   cv.width = 512; cv.height = 256;
   const c = cv.getContext('2d');
   const g = c.createLinearGradient(0, 0, 0, 256);
-  g.addColorStop(0, '#4c5f50'); g.addColorStop(0.5, '#42543f'); g.addColorStop(1, '#37473a');
+  g.addColorStop(0, '#37544a'); g.addColorStop(0.45, '#2e4a3e'); g.addColorStop(1, '#24382f');
   c.fillStyle = g; c.fillRect(0, 0, 512, 256);
-  // 锈斑
   let seed = 7;
   const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
-  for (let i = 0; i < 260; i++) {
-    c.fillStyle = `rgba(${rnd() > 0.5 ? '150,170,140' : '30,44,36'},${0.04 + rnd() * 0.07})`;
-    const r = 2 + rnd() * 9;
-    c.beginPath(); c.arc(rnd() * 512, rnd() * 256, r, 0, Math.PI * 2); c.fill();
+  for (let i = 0; i < 200; i++) {
+    const verd = rnd() > 0.45;
+    c.fillStyle = verd ? `rgba(88,142,116,${0.05 + rnd() * 0.1})` : `rgba(14,24,18,${0.05 + rnd() * 0.1})`;
+    c.beginPath(); c.arc(rnd() * 512, rnd() * 256, 3 + rnd() * 12, 0, Math.PI * 2); c.fill();
   }
-  c.strokeStyle = '#1c2822'; c.lineCap = 'round'; c.lineJoin = 'round';
-  // 上带：连续回纹
+  if (!plain) drawPattern(c, '#0d1913', 1);
+  return cv;
+}
+function makeBronzeBump() {
+  const cv = document.createElement('canvas');
+  cv.width = 512; cv.height = 256;
+  const c = cv.getContext('2d');
+  c.fillStyle = '#bcbcbc'; c.fillRect(0, 0, 512, 256);
+  let seed = 23;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (let i = 0; i < 900; i++) {
+    c.fillStyle = rnd() > 0.5 ? 'rgba(255,255,255,.10)' : 'rgba(0,0,0,.12)';
+    c.beginPath(); c.arc(rnd() * 512, rnd() * 256, 1 + rnd() * 3, 0, Math.PI * 2); c.fill();
+  }
+  drawPattern(c, '#f4f4f4', 1, true);
+  return cv;
+}
+// 纹带几何：颈回纹带 / 主带弦纹框 / 兽面（目眉鼻口角）/ 云雷底纹 / 夔龙 / 下带弦纹
+function drawPattern(c, stroke, alpha, bump = false) {
+  c.strokeStyle = stroke; c.lineCap = 'round'; c.lineJoin = 'round'; c.globalAlpha = alpha;
   c.lineWidth = 6;
   for (let x = 0; x < 512; x += 64) {
     c.beginPath();
@@ -67,14 +84,12 @@ function makeBronzeTexture() {
     c.lineTo(x + 18, 38); c.lineTo(x + 34, 38);
     c.stroke();
   }
-  // 中带边框弦纹
   c.lineWidth = 5;
   c.beginPath(); c.moveTo(0, 66); c.lineTo(512, 66); c.moveTo(0, 226); c.lineTo(512, 226); c.stroke();
-  // 兽面：双目、粗眉、鼻梁、角
   c.lineWidth = 7;
   const eye = (cx) => {
-    c.beginPath(); c.arc(cx, 140, 22, 0, Math.PI * 2); c.stroke();
-    c.beginPath(); c.arc(cx, 140, 9, 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.arc(cx, 138, 27, 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.arc(cx, 138, 11, 0, Math.PI * 2); c.stroke();
   };
   eye(176); eye(336);
   c.beginPath(); c.moveTo(140, 104); c.quadraticCurveTo(176, 88, 212, 104); c.stroke();
@@ -83,8 +98,7 @@ function makeBronzeTexture() {
   c.beginPath(); c.moveTo(256, 96); c.lineTo(256, 176); c.stroke();
   c.lineWidth = 6;
   c.beginPath(); c.moveTo(216, 190); c.quadraticCurveTo(256, 208, 296, 190); c.stroke();
-  // 云雷底纹（细密小回形）
-  c.lineWidth = 2.2; c.globalAlpha = 0.32;
+  c.lineWidth = 2.4; c.globalAlpha = alpha * (bump ? 0.45 : 0.28);
   for (let y = 82; y < 216; y += 22) {
     for (let x = 24; x < 480; x += 26) {
       c.beginPath();
@@ -92,9 +106,7 @@ function makeBronzeTexture() {
       c.stroke();
     }
   }
-  c.globalAlpha = 1;
-  // 两侧夔龙折线
-  c.lineWidth = 5;
+  c.globalAlpha = alpha; c.lineWidth = 5;
   for (const s of [0, 1]) {
     const x0 = s ? 470 : 42;
     c.beginPath();
@@ -102,16 +114,15 @@ function makeBronzeTexture() {
     c.lineTo(x0 + (s ? -6 : 6), 150); c.lineTo(x0 + (s ? -6 : 6), 124); c.lineTo(x0 + (s ? -16 : 16), 124);
     c.stroke();
   }
-  // 下带弦纹
   c.lineWidth = 4;
   c.beginPath(); c.moveTo(0, 238); c.lineTo(512, 238); c.stroke();
-  return cv;
+  c.globalAlpha = 1;
 }
 
 let renderer, scene, camera, ding, spotSprites = [], texCanvas;
 let spinning = false, spinEl;
-const spherical = { theta: 0.7, phi: 1.12, radius: 3.9 };
-const target = new THREE.Vector3(0, -0.05, 0);
+const spherical = { theta: 0.7, phi: 1.2, radius: 4.2 };
+const target = new THREE.Vector3(0, -0.18, 0);
 let spotState = -2; // -2 默认（未选），-1 无，>=0 热点
 let els = {};
 let cardRedraws = [];
@@ -137,18 +148,33 @@ function makeSpotTexture(color) {
 }
 
 function buildDing() {
-  // Blender 程序化建模 → GLB（回转鼎身/饕餮凸纹/三足二耳/顶点色青铜），构建期 base64 内嵌
+  // Blender 程序化建模 → GLB（回转鼎身/蹄形柱足/矩形立耳），构建期 base64 内嵌；
+  // 青铜绿锈 + 饕餮纹带回纹由 CanvasTexture 提供（colorMap×bumpMap，柱面 UV 环绕 4 次）
   const ding = new THREE.Group();
+  const tex = new THREE.CanvasTexture(makeBronzeTexture());
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.repeat.set(4, 1);
+  tex.anisotropy = 4;
+  const plainTex = new THREE.CanvasTexture(makeBronzeTexture(true));
+  const bump = new THREE.CanvasTexture(makeBronzeBump());
+  bump.wrapS = THREE.RepeatWrapping;
+  bump.wrapT = THREE.ClampToEdgeWrapping;
+  bump.repeat.set(4, 1);
   new GLTFLoader().load(GLB_B64, (gltf) => {
     const m = gltf.scene;
     m.scale.setScalar(0.85);
-    m.position.y = 0.12;
+    m.position.y = -0.22;
     m.traverse((o) => {
       if (o.isMesh && o.material) {
-        // 青铜绿整体色 + 环境反射出金属层次（斑驳锈色 Round 3 以烘焙贴图实现）
-        o.material.color.set(0x6a7a5a);
-        o.material.metalness = 0.62;
-        o.material.roughness = 0.5;
+        o.castShadow = true;
+        const isEar = /^ear/.test(o.name);   // 耳：素面绿锈（纹带在小构件上挤成迷宫）
+        o.material.map = isEar ? plainTex : tex;
+        o.material.bumpMap = bump;
+        o.material.bumpScale = isEar ? 0.3 : 1.2;
+        o.material.color.set(0xffffff);
+        o.material.metalness = 0.25;   // 铜锈层基本是非金属，金属度低才压得住绿底色
+        o.material.roughness = 0.62;
       }
     });
     ding.add(m);
@@ -293,7 +319,7 @@ function runSelfChecks() {
   ok('step3-识其字', s2.cardsShown && !s2.canvasShown && s2.flipped === 0 && s2.pressed[2] === 'true', JSON.stringify(s2));
   setStep(0);
   const s0 = snap();
-  ok('step1-观其器', s0.canvasShown && !s0.cardsShown && s0.spin === false && s0.spot === '后母戊鼎' && s0.pressed[0] === 'true', JSON.stringify(s0));
+  ok('step1-观其器', s0.canvasShown && !s0.cardsShown && s0.spin === false && s0.spot === '三足圆鼎' && s0.pressed[0] === 'true', JSON.stringify(s0));
 }
 
 function drawCards() {
@@ -433,19 +459,54 @@ init({
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(themeColors().bg);
-    // 金属材质必须有环境反射才立得住（顶点色青铜靠 envMap 出质感）
+    // 金属材质必须有环境反射才立得住（envMap 提底光，三点布光负责造型）
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.06).texture;
-    scene.environmentIntensity = 0.75;
+    scene.environmentIntensity = 0.45;
     camera = new THREE.PerspectiveCamera(47, 1, 0.1, 50);
 
-    scene.add(new THREE.HemisphereLight(0xfff8e8, 0x2a2233, 1.35));
-    const dir = new THREE.DirectionalLight(0xffffff, 1.4);
-    dir.position.set(3, 6, 4);
-    scene.add(dir);
-    const dir2 = new THREE.DirectionalLight(0xffd9a0, 0.45);
-    dir2.position.set(-4, 2, -3);
-    scene.add(dir2);
+    // 三点布光：主光（前左上，投影）+ 补光（右）+ 轮廓光（后上）
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const key = new THREE.DirectionalLight(0xfff2dd, 1.6);
+    key.position.set(3.2, 5, 4);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.left = key.shadow.camera.bottom = -3;
+    key.shadow.camera.right = key.shadow.camera.top = 3;
+    key.shadow.camera.near = 0.5; key.shadow.camera.far = 16;
+    key.shadow.bias = -0.0006;
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xcdd8ef, 0.5);
+    fill.position.set(-4.5, 1.6, 2.6);
+    scene.add(fill);
+    const rim = new THREE.DirectionalLight(0xffffff, 0.9);
+    rim.position.set(-1, 4.5, -5);
+    scene.add(rim);
+    scene.add(new THREE.HemisphereLight(0xfff8e8, 0x2a2233, 0.5));
+
+    // 地面（只接影）：真实投影 + 径向渐变接触暗斑（后者不依赖 shadow map，任何环境都落地）
+    const ground = new THREE.Mesh(
+      new THREE.CircleGeometry(2.8, 48),
+      new THREE.ShadowMaterial({ opacity: 0.42 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -1.63;
+    ground.receiveShadow = true;
+    scene.add(ground);
+    const aoCv = document.createElement('canvas');
+    aoCv.width = aoCv.height = 256;
+    const ac = aoCv.getContext('2d');
+    const ag = ac.createRadialGradient(128, 128, 12, 128, 128, 126);
+    ag.addColorStop(0, 'rgba(0,0,0,.55)'); ag.addColorStop(0.55, 'rgba(0,0,0,.3)'); ag.addColorStop(1, 'rgba(0,0,0,0)');
+    ac.fillStyle = ag; ac.fillRect(0, 0, 256, 256);
+    const contact = new THREE.Mesh(
+      new THREE.CircleGeometry(1.9, 40),
+      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(aoCv), transparent: true, depthWrite: false })
+    );
+    contact.rotation.x = -Math.PI / 2;
+    contact.position.y = -1.62;
+    scene.add(contact);
 
     ding = buildDing();
     scene.add(ding);
