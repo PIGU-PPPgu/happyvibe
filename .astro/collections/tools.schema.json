@@ -1,0 +1,52 @@
+{
+  "$ref": "#/definitions/tools",
+  "definitions": {
+    "tools": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "class",
+            "teaching",
+            "creation",
+            "agent",
+            "local",
+            "design",
+            "learn",
+            "skill"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "install": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "order": {
+          "type": "number",
+          "default": 99
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "category",
+        "description"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

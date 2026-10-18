@@ -17,8 +17,16 @@ if not cand.exists() and not name.startswith("/"):
     print(f"WARN {name} 未找到，按绝对路径处理")
 
 errors = []
+import glob, os
+# 默认版本匹配失败时回退到缓存的 headless_shell（ms-playwright 缓存被别的工具动过时照样能跑）
+FALLBACK = sorted(glob.glob(os.path.expanduser(
+    "~/Library/Caches/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-mac-arm64/chrome-headless-shell")))[-1:]
 with sync_playwright() as pw:
-    b = pw.chromium.launch(args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
+    try:
+        b = pw.chromium.launch(args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
+    except Exception:
+        b = pw.chromium.launch(executable_path=FALLBACK[0],
+                               args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
     pg = b.new_page(viewport={"width": vw, "height": vh}, device_scale_factor=2)
     pg.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
     pg.on("pageerror", lambda e: errors.append(str(e)))

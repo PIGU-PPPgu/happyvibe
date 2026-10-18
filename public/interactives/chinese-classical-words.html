@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文言实词翻面卡片</title>
+<style>
+:root{
+  --cuhk:#6b2077;--brand:#8a3d99;--brand-line:rgba(178,120,196,.34);
+  --bg:#1a0e26;--bg2:#241233;--panel:#251337;--panel2:#2e1a43;--inset:#150b20;
+  --text:#f4edf9;--muted:#b3a4c9;--faint:#82729e;
+  --gold:#e8b04b;--gold-soft:#f0c470;--wrong:#c97b7b;--ok:#7fbf9e;
+  --line:rgba(186,136,212,.16);--line2:rgba(186,136,212,.3);--line-gold:rgba(232,176,75,.4);
+  --shadow:0 10px 32px rgba(0,0,0,.5);
+  --shell-top:44px;--rail-w:216px;--rail-h:0px;
+}
+:root[data-theme=light]{
+  --cuhk:#6b2077;--brand:#6b2077;--brand-line:rgba(107,32,119,.32);
+  --bg:#f8f5fb;--bg2:#f0e9f7;--panel:#ffffff;--panel2:#f4eef9;--inset:#fbf9fd;
+  --text:#2a1a35;--muted:#5e4d70;--faint:#8b7ca0;
+  --gold:#8a6a1f;--gold-soft:#8a6a1f;--wrong:#b35b5b;--ok:#4d8a68;
+  --line:rgba(107,32,119,.16);--line2:rgba(107,32,119,.32);--line-gold:rgba(138,106,31,.45);
+  --shadow:0 8px 24px rgba(80,30,100,.14);
+}
+*{box-sizing:border-box;margin:0}
+/* 键盘可达性：Tab 焦点环（鼠标点击不显示，投屏遥控器/翻页笔友好） */
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+/* 舞台底：港紫径向层次（背景实现，不盖 canvas）；左轨/顶栏让位由变量驱动 */
+#stage{position:absolute;inset:calc(var(--shell-top) + var(--rail-h)) 0 0 var(--rail-w);background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
+/* ---------- 薄顶栏（44px）：返回 | 标题 | 教材锚点 …… 翻页/主操作/窗口控制 ---------- */
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#back{display:flex;align-items:center;gap:7px;min-height:32px;padding:0 11px;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+#back::before{content:'←';font-size:14px;line-height:1}
+#back:hover{color:var(--text);border-color:var(--line2);background:var(--panel2)}
+#bar h1{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+#meta{font-size:12.5px;color:var(--gold);white-space:nowrap;padding:3px 10px;border:1px solid var(--line-gold);border-radius:999px}
+#bar .grow{flex:1}
+/* ---------- 按钮系统：统一 32px 高；sq=方钮；primary=主操作实底 ---------- */
+.btn{font:inherit;font-size:13.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+.btn:hover{border-color:var(--brand-line);color:var(--text)}
+.btn[aria-pressed=true]{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sq{min-width:32px;padding:0;font-size:15px}
+/* ---------- 左轨章节导航（宽屏 216px；WeduLab 范式：编号+名称，检测/小结入列） ---------- */
+#rail{position:fixed;top:var(--shell-top);left:0;bottom:0;z-index:9;width:var(--rail-w);display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-right:1px solid var(--line);padding:10px 10px 8px;gap:2px}
+#rail .rail-title{font-size:11.5px;color:var(--faint);letter-spacing:.22em;padding:2px 8px 8px}
+.rail-step{display:flex;align-items:baseline;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.rail-step .no{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;font-weight:700;color:var(--faint);min-width:24px;transition:color .15s}
+.rail-step:hover{color:var(--text);background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+.rail-step[aria-pressed=true]{background:color-mix(in srgb,var(--cuhk) 20%,transparent);border-color:var(--brand-line);color:var(--text);font-weight:600}
+.rail-step[aria-pressed=true] .no{color:var(--gold)}
+#rail .rail-split{height:1px;background:var(--line);margin:8px 6px}
+#rail .rail-foot{margin-top:auto;padding:10px 8px 2px;font-size:11px;color:var(--faint);line-height:1.9;letter-spacing:.03em}
+#rail .rail-foot b{font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:2px;font-size:10.5px}
+#rail-prog{position:absolute;left:0;right:0;bottom:0;height:2px}
+#rail-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
+/* ---------- 舞台章节标头：01 / 03 · 环节名（印在画面上） ---------- */
+#stage-head{position:fixed;top:calc(var(--shell-top) + var(--rail-h) + 14px);left:calc(var(--rail-w) + 20px);z-index:5;display:flex;align-items:baseline;gap:10px;pointer-events:none}
+#stage-head .frac{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+#stage-head .sname{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--text);opacity:.92}
+/* ---------- 教学引导浮层：章节标头之下（引导语 + 操作提示） ---------- */
+#guide-tip{position:fixed;left:calc(var(--rail-w) + 20px);top:calc(var(--shell-top) + var(--rail-h) + 56px);z-index:6;max-width:min(600px,58vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
+#guide-tip.dim{opacity:.35}
+#g-tip{font-size:15px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ops-tip{margin-top:5px;font-size:12.5px;color:var(--faint);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* ---------- 讲解覆盖卡（顶栏/章节栏呼出，WeduLab 右栏的覆盖式实现） ---------- */
+#note{position:fixed;top:calc(var(--shell-top) + 14px);right:16px;z-index:22;width:min(400px,calc(100vw - 40px));max-height:calc(100vh - var(--shell-top) - 40px);overflow:auto;padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
+#note::before{content:'讲解';display:block;font-size:12.5px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px}
+:root[data-theme=light] #note::before{color:var(--cuhk)}
+/* ---------- 小结浮层 ---------- */
+#summary{position:fixed;top:calc(var(--shell-top) + 14px);left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
+#summary::before{content:'小结';display:block;font-size:12.5px;color:var(--gold);letter-spacing:.12em;margin-bottom:6px}
+/* ---------- 随堂检测 ---------- */
+#quiz-wrap{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(4px)}
+#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 100px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+#quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#quiz-head b{font-size:17px}
+#quiz-prog{font-size:13px;color:var(--faint)}
+#quiz-close{margin-left:auto}
+#quiz-q{font-size:16.5px;line-height:1.7;margin-bottom:14px}
+#quiz-opts{display:flex;flex-direction:column;gap:10px}
+.qopt{font:inherit;font-size:15px;line-height:1.6;text-align:left;padding:11px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--inset);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s}
+.qopt:not(:disabled):hover{border-color:var(--brand)}
+.qopt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--inset))}
+.qopt.no{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 14%,var(--inset))}
+.qopt:disabled{cursor:default}
+#quiz-why{margin-top:14px;padding:12px 16px;border-left:3px solid var(--gold);background:var(--inset);border-radius:0 10px 10px 0;font-size:14.5px;line-height:1.8;color:var(--muted);display:none}
+#quiz-why::before{content:'解析';display:block;font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+#quiz-foot{display:flex;align-items:center;gap:10px;margin-top:16px}
+#quiz-score{font-size:15px}
+#quiz-score b{font-size:22px;color:var(--brand)}
+:root[data-theme=light] #quiz-score b{color:var(--cuhk)}
+/* ---------- 窄屏（<1080px）：左轨收成顶部横排环节条 ---------- */
+@media (max-width:1079px){
+  :root{--rail-w:0px;--rail-h:52px}
+  #rail{top:var(--shell-top);left:0;right:0;bottom:auto;width:auto;height:var(--rail-h);flex-direction:row;align-items:center;gap:6px;padding:0 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
+  #rail .rail-title,#rail .rail-split,#rail .rail-foot{display:none}
+  .rail-step{flex:none;width:auto;padding:6px 12px;gap:7px}
+  .rail-step .no{font-size:15px;min-width:0}
+  #rail-prog{bottom:0;left:0}
+  #meta{display:none}
+  #guide-tip{left:12px;right:12px;max-width:none}
+  #stage-head{left:16px}
+}
+@media (max-width:760px){
+  #back span{display:none}
+  #bar h1{font-size:15px}
+  #note-btn-top,#sum-btn-top{display:none}
+}
+/* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
+body.embed #bar, body.embed #rail, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip, body.embed #stage-head { display: none !important; }
+body.embed { --shell-top:0px; --rail-w:0px; --rail-h:0px; }
+body.embed #stage { inset: 0; }
+
+/* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
+#onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
+#onboard[hidden]{display:none}
+.ob-card{width:min(430px,calc(100vw - 40px));padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+.ob-title{display:block;font-size:17px;margin-bottom:12px;color:var(--brand)}
+:root[data-theme=light] .ob-title{color:var(--cuhk)}
+.ob-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ob-card li{font-size:15px;line-height:1.7;color:var(--text)}
+.ob-card li b{color:var(--brand)}
+:root[data-theme=light] .ob-card li b{color:var(--cuhk)}
+.ob-card .btn{width:100%}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a id="back" href="/resources/" aria-label="返回资源库"><span>资源库</span></a>
+  <h1>文言实词翻面卡片</h1>
+  <span id="meta"></span>
+  <span class="grow"></span>
+  <button class="btn sq" id="step-prev" type="button" aria-label="上一环节" hidden>‹</button>
+  <button class="btn sq" id="step-next" type="button" aria-label="下一环节" hidden>›</button>
+  <button class="btn" id="note-btn-top" type="button" hidden>讲解</button>
+  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
+  <button class="btn" id="sum-btn-top" type="button">小结</button>
+  <button class="btn sq" id="theme" type="button" aria-label="切换深浅色">◐</button>
+  <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
+</div>
+<nav id="rail" hidden aria-label="章节">
+  <div class="rail-title">章节</div>
+  <div id="steps"></div>
+  <div class="rail-split"></div>
+  <div id="rail-extra"></div>
+  <div class="rail-foot"><b>←</b><b>→</b> 切换环节<br><b>Esc</b> 收起浮层</div>
+  <span id="rail-prog"><i></i></span>
+</nav>
+<div id="stage-head" hidden>
+  <span class="frac">01 / 03</span>
+  <span class="sname"></span>
+</div>
+<div id="guide-tip" hidden>
+  <p id="g-tip"></p>
+  <p id="ops-tip">点卡片翻面看课文例句，按册次筛选复习</p>
+</div>
+<div id="note"></div>
+<div id="summary"></div>
+<div id="quiz-wrap">
+  <div id="quiz" data-hv-quiz>
+    <div id="quiz-head">
+      <b>随堂检测</b>
+      <span id="quiz-prog"></span>
+      <button class="btn" id="quiz-close" type="button">关闭</button>
+    </div>
+    <div id="quiz-q"></div>
+    <div id="quiz-opts"></div>
+    <div id="quiz-why"></div>
+    <div id="quiz-foot">
+      <span id="quiz-score"></span>
+      <button class="btn primary" id="quiz-next" type="button" hidden>下一题</button>
+      <button class="btn primary" id="quiz-redo" type="button" hidden>重做</button>
+    </div>
+  </div>
+</div>
+<div id="stage" class="pad"></div>
+<div id="onboard" hidden>
+  <div class="ob-card">
+    <b class="ob-title">第一次使用</b>
+    <ul>
+      <li><b>左栏章节</b>：点章节或按键盘左右键换环节，当前环节高亮并印在画面左上</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，从顶栏或章节栏打开</li>
+      <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
+    </ul>
+    <button class="btn primary" id="ob-ok" type="button">开始上课</button>
+  </div>
+</div>
+<script>"use strict";(()=>{var F=new URLSearchParams(location.search).has("selftest");function V(d){let s=document.getElementById("stage"),c=new URLSearchParams(location.search).get("theme"),y=c==="light"||c==="dark"?c:"dark";try{let t=localStorage.getItem("hv-theme");(t==="light"||t==="dark")&&!c&&(y=t)}catch{}if(document.documentElement.dataset.theme=y,F){let t={errors:[],checks:[],canvas:null,pedagogy:null};window.addEventListener("error",n=>t.errors.push(String(n.message).slice(0,200))),window.addEventListener("unhandledrejection",n=>t.errors.push("rejection: "+String(n.reason).slice(0,200))),window.__hvPushCheck=(n,h,m)=>t.checks.push({name:n,pass:h,detail:String(m!=null?m:"")}),setTimeout(()=>{try{t.canvas=B()}catch(h){t.errors.push("canvas-sample: "+h.message)}try{t.pedagogy=q()}catch(h){t.errors.push("pedagogy-sample: "+h.message)}let n=document.createElement("pre");n.id="hv-selftest",n.textContent="__HV__"+JSON.stringify(t)+"__HV__",document.body.appendChild(n)},2500)}function q(){let t=i=>{let I=document.querySelector(i);return I?(I.textContent||"").replace(/\s+/g," ").trim():""},n=[...document.querySelectorAll("[data-hv-step]")],h=t("#g-tip"),m=t("#summary"),L=e&&e.steps?e.steps.map(i=>i.guide||"").join(""):h,b=e&&e.steps?e.steps.map(i=>i.note||"").join(""):"",C=e&&e.quiz?e.quiz:null;return{metaChars:t("#meta").length,steps:n.length,stepNames:n.slice(0,6).map(i=>i.textContent.trim()),guideCount:n.length?1:0,guideChars:L.length,guideLens:e&&e.steps?e.steps.map(i=>(i.guide||"").length):[],noteChars:b.length,noteLens:e&&e.steps?e.steps.map(i=>(i.note||"").length):[],summaryChars:m.length,quizCount:C?C.length:0,quizChars:C?C.map(i=>(i.q||"")+(i.why||"")).join("").length:0}}function B(){let t=[...document.querySelectorAll("canvas")].sort((a,o)=>o.width*o.height-a.width*o.height)[0];if(!t)return null;let n=document.createElement("canvas");n.width=360,n.height=225;let h=n.getContext("2d");h.drawImage(t,0,0,n.width,n.height);let m=h.getImageData(0,0,n.width,n.height).data,L=[],b=new Map;for(let a=0;a<3;a++)for(let o=0;o<3;o++){let p=0,E=0,S=0;for(let l=a*75;l<(a+1)*75;l+=3)for(let w=o*120;w<(o+1)*120;w+=3){let r=(l*n.width+w)*4,z=(m[r]+m[r+1]+m[r+2])/3;p+=z,E+=z*z,S++;let D=m[r]>>5<<10|m[r+1]>>5<<5|m[r+2]>>5;b.set(D,(b.get(D)||0)+1)}L.push(Math.round(Math.sqrt(E/S-(p/S)**2)))}let C=[...b.entries()].sort((a,o)=>o[1]-a[1]).slice(0,6).map(([a,o])=>[a.toString(16),o]),i=[...b.entries()].sort((a,o)=>o[1]-a[1])[0][0],I=((i>>10&31)*8+(i>>5&31)*8+(i&31)*8)/3,k=1,N=1,u=0,x=0,g=0;for(let a=0;a<n.height;a+=2)for(let o=0;o<n.width;o+=2){let p=(a*n.width+o)*4,E=(m[p]+m[p+1]+m[p+2])/3;if(Math.abs(E-I)>14){g++;let S=o/n.width,l=a/n.height;S<k&&(k=S),S>u&&(u=S),l<N&&(N=l),l>x&&(x=l)}}let R=g?[v(k),v(N),v(u),v(x)]:null;return{regions:L,topColors:C,bbox:R}}function v(t){return Math.round(t*100)/100}let e=d.teaching,f=[];function j(t){let n=t.style.display==="none"||!t.style.display;return P(),n&&(t.style.display="block"),n}function P(){for(let n of f)n.style.display="none";let t=document.getElementById("guide-tip");t&&t.classList.remove("dim")}if(e&&e.steps&&e.steps.length){let x=function(l,w){u=Math.max(0,Math.min(e.steps.length-1,l)),N.forEach((D,W)=>D.setAttribute("aria-pressed",String(W===u))),b.textContent=e.steps[u].guide||"",I&&(i.textContent=e.steps[u].note||""),C&&(C.style.width=(u+1)/e.steps.length*100+"%");let r=h.querySelector(".frac");r&&(r.textContent=String(u+1).padStart(2,"0")+" / "+String(e.steps.length).padStart(2,"0"));let z=h.querySelector(".sname");z&&(z.textContent=e.steps[u].name||""),w||P(),e.steps[u].apply&&e.steps[u].apply()};var se=x;let t=document.getElementById("meta");t.textContent=e.meta||"",t.dataset.hvMeta="";let n=document.getElementById("rail");n.hidden=!1;let h=document.getElementById("stage-head");h.hidden=!1;let m=document.getElementById("guide-tip");m.hidden=!1;let L=document.getElementById("steps"),b=document.getElementById("g-tip"),C=document.querySelector("#rail-prog i"),i=document.getElementById("note"),I=e.steps.some(l=>l.note&&String(l.note).trim()),k=document.getElementById("note-btn-top");I&&(i.dataset.hvNote="",f.push(i),k.hidden=!1,k.addEventListener("click",()=>{j(i),m.classList.toggle("dim",i.style.display==="block")}));let N=e.steps.map((l,w)=>{let r=document.createElement("button");r.type="button",r.className="rail-step",r.dataset.hvStep="";let z=document.createElement("b");return z.className="no",z.textContent=String(w+1).padStart(2,"0"),r.appendChild(z),r.appendChild(document.createTextNode(" "+l.name)),r.addEventListener("click",()=>x(w)),L.appendChild(r),r}),u=0,g=document.getElementById("step-prev"),R=document.getElementById("step-next");g.hidden=!1,R.hidden=!1,g.addEventListener("click",()=>x(u-1)),R.addEventListener("click",()=>x(u+1)),window.__hvApplyStep0=()=>x(0);let a=document.getElementById("summary");a.textContent=e.summary||"",a.dataset.hvSummary="",f.push(a);let o=document.getElementById("sum-btn-top");o.addEventListener("click",()=>j(a));let p=document.getElementById("rail-extra"),E=(l,w)=>{let r=document.createElement("button");r.type="button",r.className="rail-step";let z=document.createElement("b");return z.className="no",z.textContent=l.no,r.appendChild(z),r.appendChild(document.createTextNode(" "+l.name)),r.addEventListener("click",w),p.appendChild(r),r};window.addEventListener("keydown",l=>{let w=l.target;w&&(w.tagName==="INPUT"||w.tagName==="TEXTAREA"||w.tagName==="SELECT"||w.isContentEditable)||document.getElementById("quiz-wrap").style.display==="flex"&&(l.key==="ArrowLeft"||l.key==="ArrowRight")||(l.key==="ArrowRight"?x(u+1):l.key==="ArrowLeft"?x(u-1):l.key==="Escape"&&P())}),K();let S=document.getElementById("quiz-btn");S.hidden||E({no:"\u25C6",name:"\u968F\u5802\u68C0\u6D4B"},()=>S.click()),E({no:"\u2261",name:"\u8BFE\u5802\u5C0F\u7ED3"},()=>o.click())}function K(){let t=e&&e.quiz;if(!t||!t.length)return;let n=document.getElementById("quiz-wrap"),h=document.getElementById("quiz-prog"),m=document.getElementById("quiz-q"),L=document.getElementById("quiz-opts"),b=document.getElementById("quiz-why"),C=document.getElementById("quiz-score"),i=document.getElementById("quiz-next"),I=document.getElementById("quiz-redo");f.push(n),document.getElementById("quiz-btn").hidden=!1,document.getElementById("quiz-btn").addEventListener("click",()=>{let g=n.style.display!=="flex";P(),g&&(n.style.display="flex")}),document.getElementById("quiz-close").addEventListener("click",()=>{n.style.display="none"});let k=0,N=0,u=new Array(t.length).fill(!1);function x(){let g=t[k];i.hidden=!0,I.hidden=!0,b.style.display="none",C.textContent="",h.textContent=`\u7B2C ${k+1} / ${t.length} \u9898`,m.textContent=g.q,m.dataset.hvQ="",L.textContent="",g.opts.forEach((R,a)=>{let o=document.createElement("button");o.type="button",o.className="qopt",o.textContent=String.fromCharCode(65+a)+". "+R,o.addEventListener("click",()=>{if(u[k])return;u[k]=!0;let p=a===g.a;p&&N++,[...L.children].forEach((E,S)=>{E.disabled=!0,S===g.a?E.classList.add("ok"):S===a&&E.classList.add("no")}),b.textContent=g.why||"",b.style.display="block",C.textContent=p?"\u7B54\u5BF9\u4E86":"\u7B54\u9519\u4E86",k<t.length-1?i.hidden=!1:(I.hidden=!1,C.textContent=`\u5171 ${N} / ${t.length} \u9898\u7B54\u5BF9`)}),L.appendChild(o)})}if(i.addEventListener("click",()=>{k++,x()}),I.addEventListener("click",()=>{k=0,N=0,u.fill(!1),x()}),n.style.display="none",x(),F&&typeof window.__hvPushCheck=="function"){let g=[];t.forEach((p,E)=>{(!p.q||!Array.isArray(p.opts)||p.opts.length<2)&&g.push(`\u7B2C${E+1}\u9898\u9898\u5E72\u6216\u9009\u9879\u7F3A\u5931`),(!Number.isInteger(p.a)||p.a<0||!p.opts||p.a>=p.opts.length)&&g.push(`\u7B2C${E+1}\u9898\u7B54\u6848\u4E0B\u6807\u8D8A\u754C`),(!p.why||p.why.length<10)&&g.push(`\u7B2C${E+1}\u9898\u89E3\u6790\u4E0D\u8DB310\u5B57`)}),t.length<3&&g.push(`\u4EC5 ${t.length} \u9898\uFF0C\u5C11\u4E8E 3 \u9898`),window.__hvPushCheck("quiz-valid",g.length===0,g.join("\uFF1B")||`${t.length} \u9898\u7ED3\u6784\u5408\u6CD5\uFF0C\u5747\u542B\u9898\u5E72\u3001\u9009\u9879\u3001\u7B54\u6848\u4E0E\u89E3\u6790`),n.style.display="flex",L.children[0].click();let R=getComputedStyle(b).display!=="none"&&b.getBoundingClientRect().height>0,a=C.textContent||"",o=[...L.children].every(p=>p.disabled);n.style.display="none",window.__hvPushCheck("quiz-answer-flow",R&&a.length>0&&o,`\u4F5C\u7B54\u540E\u89E3\u6790${R?"\u5DF2\u663E\u793A":"\u672A\u663E\u793A"}\uFF0C\u53CD\u9988\u300C${a.slice(0,12)}\u300D\uFF0C\u9009\u9879${o?"\u5DF2\u9501\u5B9A":"\u672A\u9501\u5B9A"}`)}}let G=new URLSearchParams(location.search).has("embed");G&&document.body.classList.add("embed");let U=document.getElementById("onboard");if(U&&!F&&!G&&!new URLSearchParams(location.search).has("pv")){let t=!1;try{t=localStorage.getItem("hv-onboard")==="1"}catch{}if(!t){U.hidden=!1;let n=()=>{U.hidden=!0;try{localStorage.setItem("hv-onboard","1")}catch{}};document.getElementById("ob-ok").addEventListener("click",n),window.addEventListener("keydown",h=>{h.key==="Escape"&&!U.hidden&&n()})}}let _={onTheme:null,onResize:null};document.getElementById("theme").addEventListener("click",()=>{y=document.documentElement.dataset.theme==="light"?"dark":"light",document.documentElement.dataset.theme=y;try{localStorage.setItem("hv-theme",y)}catch{}_.onTheme&&_.onTheme(y)}),document.getElementById("fs").addEventListener("click",()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}),window.addEventListener("resize",()=>{_.onResize&&_.onResize()}),typeof ResizeObserver!="undefined"&&new ResizeObserver(()=>{_.onResize&&_.onResize()}).observe(s),d.mount(s,_),window.__hvApplyStep0&&window.__hvApplyStep0();let Q=new URLSearchParams(location.search).get("step");if(Q!==null&&e&&e.steps&&e.steps.length){let t=Math.max(0,Math.min(e.steps.length-1,parseInt(Q,10)||0)),n=[...document.querySelectorAll("[data-hv-step]")];n[t]&&n[t].click()}return _}var O=[{g:"\u4E03\u4E0A",w:"\u8BF4",p:"yu\xE8",ys:"\u540C\u300C\u60A6\u300D\uFF0C\u6109\u5FEB",ex:"\u5B66\u800C\u65F6\u4E60\u4E4B\uFF0C\u4E0D\u4EA6\u3010\u8BF4\u3011\u4E4E\uFF1F",src:"\u300A\u8BBA\u8BED\u300B\u5341\u4E8C\u7AE0"},{g:"\u4E03\u4E0A",w:"\u65F6",p:"sh\xED",ys:"\u5F53\u65F6",ex:"\u5143\u65B9\u3010\u65F6\u3011\u5E74\u4E03\u5C81\uFF0C\u95E8\u5916\u620F\u3002",src:"\u300A\u9648\u592A\u4E18\u4E0E\u53CB\u671F\u884C\u300B"},{g:"\u4E03\u4E0A",w:"\u671F",p:"j\u012B",ys:"\u7EA6\u5B9A",ex:"\u9648\u592A\u4E18\u4E0E\u53CB\u3010\u671F\u3011\u884C\uFF0C\u3010\u671F\u3011\u65E5\u4E2D\u3002",src:"\u300A\u9648\u592A\u4E18\u4E0E\u53CB\u671F\u884C\u300B"},{g:"\u4E03\u4E0A",w:"\u4FE1",p:"x\xECn",ys:"\u8BDA\u4FE1",ex:"\u65E5\u4E2D\u4E0D\u81F3\uFF0C\u5219\u662F\u65E0\u3010\u4FE1\u3011\u3002",src:"\u300A\u9648\u592A\u4E18\u4E0E\u53CB\u671F\u884C\u300B"},{g:"\u4E03\u4E0A",w:"\u6B62",p:"zh\u01D0",ys:"\u53EA\uFF0C\u4EC5",ex:"\u62C5\u4E2D\u8089\u5C3D\uFF0C\u3010\u6B62\u3011\u6709\u5269\u9AA8\u3002",src:"\u84B2\u677E\u9F84\u300A\u72FC\u300B"},{g:"\u4E03\u4E0A",w:"\u610F",p:"y\xEC",ys:"\u795E\u60C5\u3001\u6001\u5EA6",ex:"\u76EE\u4F3C\u7791\uFF0C\u3010\u610F\u3011\u6687\u751A\u3002",src:"\u84B2\u677E\u9F84\u300A\u72FC\u300B"},{g:"\u4E03\u4E0A",w:"\u6545",p:"g\xF9",ys:"\u5B66\u8FC7\u7684\u65E7\u77E5\u8BC6",ex:"\u6E29\u3010\u6545\u3011\u800C\u77E5\u65B0\uFF0C\u53EF\u4EE5\u4E3A\u5E08\u77E3\u3002",src:"\u300A\u8BBA\u8BED\u300B\u5341\u4E8C\u7AE0"},{g:"\u4E03\u4E0B",w:"\u8F9E",p:"c\xED",ys:"\u63A8\u6258",ex:"\u8499\u3010\u8F9E\u3011\u4EE5\u519B\u4E2D\u591A\u52A1\u3002",src:"\u300A\u5B59\u6743\u529D\u5B66\u300B"},{g:"\u4E03\u4E0B",w:"\u6CBB",p:"zh\xEC",ys:"\u7814\u7A76",ex:"\u5B64\u5C82\u6B32\u537F\u3010\u6CBB\u3011\u7ECF\u4E3A\u535A\u58EB\u90AA\uFF01",src:"\u300A\u5B59\u6743\u529D\u5B66\u300B"},{g:"\u4E03\u4E0B",w:"\u89C1",p:"ji\xE0n",ys:"\u77E5\u6653\u3001\u8BA4\u6E05",ex:"\u5927\u5144\u4F55\u3010\u89C1\u3011\u4E8B\u4E4B\u665A\u4E4E\uFF01",src:"\u300A\u5B59\u6743\u529D\u5B66\u300B"},{g:"\u4E03\u4E0B",w:"\u9894",p:"h\xE0n",ys:"\u70B9\u5934",ex:"\u4F46\u5FAE\u3010\u9894\u3011\u4E4B\u3002",src:"\u300A\u5356\u6CB9\u7FC1\u300B"},{g:"\u4E03\u4E0B",w:"\u5F90",p:"x\xFA",ys:"\u6162\u6162\u5730",ex:"\u3010\u5F90\u3011\u4EE5\u6753\u914C\u6CB9\u6CA5\u4E4B\u3002",src:"\u300A\u5356\u6CB9\u7FC1\u300B"},{g:"\u4E03\u4E0B",w:"\u9E3F",p:"h\xF3ng",ys:"\u5927",ex:"\u8C08\u7B11\u6709\u3010\u9E3F\u3011\u5112\uFF0C\u5F80\u6765\u65E0\u767D\u4E01\u3002",src:"\u5218\u79B9\u9521\u300A\u964B\u5BA4\u94ED\u300B"},{g:"\u4E03\u4E0B",w:"\u9C9C",p:"xi\u01CEn",ys:"\u5C11",ex:"\u83CA\u4E4B\u7231\uFF0C\u9676\u540E\u3010\u9C9C\u3011\u6709\u95FB\u3002",src:"\u5468\u6566\u9890\u300A\u7231\u83B2\u8BF4\u300B"},{g:"\u516B\u4E0A",w:"\u9619",p:"qu\u0113",ys:"\u540C\u300C\u7F3A\u300D\uFF0C\u7A7A\u9699",ex:"\u4E24\u5CB8\u8FDE\u5C71\uFF0C\u7565\u65E0\u3010\u9619\u3011\u5904\u3002",src:"\u90E6\u9053\u5143\u300A\u4E09\u5CE1\u300B"},{g:"\u516B\u4E0A",w:"\u5954",p:"b\u0113n",ys:"\u98DE\u5954\u7684\u9A6C",ex:"\u867D\u4E58\u3010\u5954\u3011\u5FA1\u98CE\uFF0C\u4E0D\u4EE5\u75BE\u4E5F\u3002",src:"\u90E6\u9053\u5143\u300A\u4E09\u5CE1\u300B"},{g:"\u516B\u4E0A",w:"\u826F",p:"li\xE1ng",ys:"\u751A\uFF0C\u5F88",ex:"\u6E05\u8363\u5CFB\u8302\uFF0C\u3010\u826F\u3011\u591A\u8DA3\u5473\u3002",src:"\u90E6\u9053\u5143\u300A\u4E09\u5CE1\u300B"},{g:"\u516B\u4E0A",w:"\u623E",p:"l\xEC",ys:"\u81F3\u3001\u5230\u8FBE",ex:"\u9E22\u98DE\u3010\u623E\u3011\u5929\u8005\uFF0C\u671B\u5CF0\u606F\u5FC3\u3002",src:"\u5434\u5747\u300A\u4E0E\u6731\u5143\u601D\u4E66\u300B"},{g:"\u516B\u4E0A",w:"\u53CD",p:"f\u01CEn",ys:"\u540C\u300C\u8FD4\u300D\uFF0C\u8FD4\u56DE",ex:"\u7ECF\u7EB6\u4E16\u52A1\u8005\uFF0C\u7AA5\u8C37\u5FD8\u3010\u53CD\u3011\u3002",src:"\u5434\u5747\u300A\u4E0E\u6731\u5143\u601D\u4E66\u300B"},{g:"\u516B\u4E0A",w:"\u4E3E",p:"j\u01D4",ys:"\u88AB\u9009\u62D4",ex:"\u5085\u8BF4\u3010\u4E3E\u3011\u4E8E\u7248\u7B51\u4E4B\u95F4\u3002",src:"\u300A\u751F\u4E8E\u5FE7\u60A3\uFF0C\u6B7B\u4E8E\u5B89\u4E50\u300B"},{g:"\u516B\u4E0A",w:"\u519B",p:"j\u016Bn",ys:"\u9A7B\u519B\u3001\u9A7B\u624E",ex:"\u4EE5\u6CB3\u5185\u5B88\u4E9A\u592B\u4E3A\u5C06\u519B\uFF0C\u3010\u519B\u3011\u7EC6\u67F3\u3002",src:"\u300A\u5468\u4E9A\u592B\u519B\u7EC6\u67F3\u300B"},{g:"\u516B\u4E0B",w:"\u8981",p:"y\u0101o",ys:"\u540C\u300C\u9080\u300D\uFF0C\u9080\u8BF7",ex:"\u4FBF\u3010\u8981\u3011\u8FD8\u5BB6\uFF0C\u8BBE\u9152\u6740\u9E21\u4F5C\u98DF\u3002",src:"\u9676\u6E0A\u660E\u300A\u6843\u82B1\u6E90\u8BB0\u300B"},{g:"\u516B\u4E0B",w:"\u54B8",p:"xi\xE1n",ys:"\u5168\u3001\u90FD",ex:"\u6751\u4E2D\u95FB\u6709\u6B64\u4EBA\uFF0C\u3010\u54B8\u3011\u6765\u95EE\u8BAF\u3002",src:"\u9676\u6E0A\u660E\u300A\u6843\u82B1\u6E90\u8BB0\u300B"},{g:"\u516B\u4E0B",w:"\u5BFB",p:"x\xFAn",ys:"\u4E0D\u4E45",ex:"\u672A\u679C\uFF0C\u3010\u5BFB\u3011\u75C5\u7EC8\u3002",src:"\u9676\u6E0A\u660E\u300A\u6843\u82B1\u6E90\u8BB0\u300B"},{g:"\u516B\u4E0B",w:"\u8BB8",p:"x\u01D4",ys:"\u7528\u5728\u6570\u8BCD\u540E\u8868\u793A\u7EA6\u6570",ex:"\u6F6D\u4E2D\u9C7C\u53EF\u767E\u3010\u8BB8\u3011\u5934\u3002",src:"\u67F3\u5B97\u5143\u300A\u5C0F\u77F3\u6F6D\u8BB0\u300B"},{g:"\u516B\u4E0B",w:"\u5C45",p:"j\u016B",ys:"\u505C\u7559",ex:"\u4EE5\u5176\u5883\u8FC7\u6E05\uFF0C\u4E0D\u53EF\u4E45\u3010\u5C45\u3011\u3002",src:"\u67F3\u5B97\u5143\u300A\u5C0F\u77F3\u6F6D\u8BB0\u300B"},{g:"\u516B\u4E0B",w:"\u5609",p:"ji\u0101",ys:"\u597D\u3001\u7F8E",ex:"\u867D\u6709\u3010\u5609\u3011\u80B4\uFF0C\u5F17\u98DF\uFF0C\u4E0D\u77E5\u5176\u65E8\u4E5F\u3002",src:"\u300A\u867D\u6709\u5609\u80B4\u300B"},{g:"\u516B\u4E0B",w:"\u65E8",p:"zh\u01D0",ys:"\u5473\u7F8E",ex:"\u867D\u6709\u5609\u80B4\uFF0C\u5F17\u98DF\uFF0C\u4E0D\u77E5\u5176\u3010\u65E8\u3011\u4E5F\u3002",src:"\u300A\u867D\u6709\u5609\u80B4\u300B"},{g:"\u4E5D\u4E0A",w:"\u8C2A",p:"zh\xE9",ys:"\u8D2C\u5B98",ex:"\u5E86\u5386\u56DB\u5E74\u6625\uFF0C\u6ED5\u5B50\u4EAC\u3010\u8C2A\u3011\u5B88\u5DF4\u9675\u90E1\u3002",src:"\u8303\u4EF2\u6DF9\u300A\u5CB3\u9633\u697C\u8BB0\u300B"},{g:"\u4E5D\u4E0A",w:"\u5907",p:"b\xE8i",ys:"\u8BE6\u5C3D",ex:"\u524D\u4EBA\u4E4B\u8FF0\u3010\u5907\u3011\u77E3\u3002",src:"\u8303\u4EF2\u6DF9\u300A\u5CB3\u9633\u697C\u8BB0\u300B"},{g:"\u4E5D\u4E0A",w:"\u8584",p:"b\xF3",ys:"\u8FEB\u8FD1",ex:"\u3010\u8584\u3011\u66AE\u51A5\u51A5\uFF0C\u864E\u5578\u733F\u557C\u3002",src:"\u8303\u4EF2\u6DF9\u300A\u5CB3\u9633\u697C\u8BB0\u300B"},{g:"\u4E5D\u4E0A",w:"\u666F",p:"j\u01D0ng",ys:"\u65E5\u5149",ex:"\u81F3\u82E5\u6625\u548C\u3010\u666F\u3011\u660E\uFF0C\u6CE2\u6F9C\u4E0D\u60CA\u3002",src:"\u8303\u4EF2\u6DF9\u300A\u5CB3\u9633\u697C\u8BB0\u300B"},{g:"\u4E5D\u4E0A",w:"\u540D",p:"m\xEDng",ys:"\u547D\u540D",ex:"\u3010\u540D\u3011\u4E4B\u8005\u8C01\uFF1F\u592A\u5B88\u81EA\u8C13\u4E5F\u3002",src:"\u6B27\u9633\u4FEE\u300A\u9189\u7FC1\u4EAD\u8BB0\u300B"},{g:"\u4E5D\u4E0A",w:"\u8F84",p:"zh\xE9",ys:"\u5C31",ex:"\u996E\u5C11\u3010\u8F84\u3011\u9189\uFF0C\u800C\u5E74\u53C8\u6700\u9AD8\u3002",src:"\u6B27\u9633\u4FEE\u300A\u9189\u7FC1\u4EAD\u8BB0\u300B"},{g:"\u4E5D\u4E0B",w:"\u9119",p:"b\u01D0",ys:"\u6D45\u964B\uFF0C\u76EE\u5149\u77ED\u6D45",ex:"\u8089\u98DF\u8005\u3010\u9119\u3011\uFF0C\u672A\u80FD\u8FDC\u8C0B\u3002",src:"\u300A\u66F9\u523F\u8BBA\u6218\u300B"},{g:"\u4E5D\u4E0B",w:"\u95F4",p:"ji\xE0n",ys:"\u53C2\u4E0E",ex:"\u8089\u98DF\u8005\u8C0B\u4E4B\uFF0C\u53C8\u4F55\u3010\u95F4\u3011\u7109\uFF1F",src:"\u300A\u66F9\u523F\u8BBA\u6218\u300B"},{g:"\u4E5D\u4E0B",w:"\u72F1",p:"y\xF9",ys:"\u6848\u4EF6",ex:"\u5C0F\u5927\u4E4B\u3010\u72F1\u3011\uFF0C\u867D\u4E0D\u80FD\u5BDF\uFF0C\u5FC5\u4EE5\u60C5\u3002",src:"\u300A\u66F9\u523F\u8BBA\u6218\u300B"},{g:"\u4E5D\u4E0B",w:"\u518D",p:"z\xE0i",ys:"\u7B2C\u4E8C\u6B21",ex:"\u4E00\u9F13\u4F5C\u6C14\uFF0C\u3010\u518D\u3011\u800C\u8870\uFF0C\u4E09\u800C\u7AED\u3002",src:"\u300A\u66F9\u523F\u8BBA\u6218\u300B"},{g:"\u4E5D\u4E0B",w:"\u853D",p:"b\xEC",ys:"\u53D7\u8499\u853D",ex:"\u738B\u4E4B\u3010\u853D\u3011\u751A\u77E3\u3002",src:"\u300A\u90B9\u5FCC\u8BBD\u9F50\u738B\u7EB3\u8C0F\u300B"},{g:"\u4E5D\u4E0B",w:"\u8D70",p:"z\u01D2u",ys:"\u8DD1",ex:"\u5F55\u6BD5\uFF0C\u3010\u8D70\u3011\u9001\u4E4B\uFF0C\u4E0D\u6562\u7A0D\u903E\u7EA6\u3002",src:"\u5B8B\u6FC2\u300A\u9001\u4E1C\u9633\u9A6C\u751F\u5E8F\u300B"}],Y=["\u4E03\u4E0A","\u4E03\u4E0B","\u516B\u4E0A","\u516B\u4E0B","\u4E5D\u4E0A","\u4E5D\u4E0B"],X=`
+.cw-wrap{position:absolute;inset:0;overflow:auto;padding:64px 22px 26px;display:flex;flex-direction:column;gap:14px}
+.cw-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cw-cnt{font-size:17px;color:var(--muted);margin-left:6px}
+.cw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
+.cw-card{position:relative;height:198px;perspective:900px;cursor:pointer;touch-action:manipulation}
+.cw-in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .45s}
+.cw-card.flip .cw-in{transform:rotateY(180deg)}
+.cw-f{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.5px solid var(--line);border-radius:14px;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 12px}
+.cw-card:hover .cw-f{border-color:var(--gold)}
+.cw-back{transform:rotateY(180deg);justify-content:flex-start;padding-top:16px;background:var(--panel2)}
+.cw-z{font-size:56px;font-weight:700;line-height:1.1;color:var(--gold);text-shadow:0 0 24px rgba(232,176,75,.25)}
+.cw-py{font-size:19px;color:var(--muted);letter-spacing:.04em}
+.cw-ys{font-size:19px;line-height:1.6;text-align:center}
+.cw-gr{position:absolute;top:8px;right:10px;font-size:16px;color:var(--muted);opacity:.8}
+.cw-ex{font-size:19px;line-height:1.7;text-align:center;color:var(--text)}
+.cw-ex b{color:var(--gold);font-weight:700}
+.cw-src{margin-top:auto;font-size:17px;color:var(--muted);text-align:center;padding-bottom:2px}
+`,T,$="\u5168\u90E8",A=new Set;function Z(d){return d.replace(/【/g,"<b>").replace(/】/g,"</b>")}function M(){T.innerHTML="";let d=O.filter(s=>$==="\u5168\u90E8"||s.g===$);document.querySelector(".cw-cnt").textContent=`${d.length} \u8BCD`;for(let s of d){let c=document.createElement("div");c.className="cw-card"+(A.has(s.w)?" flip":""),c.dataset.w=s.w,c.innerHTML=`
+      <div class="cw-in">
+        <div class="cw-f">
+          <span class="cw-gr">${s.g}</span>
+          <div class="cw-z">${s.w}</div>
+          <div class="cw-py">${s.p}</div>
+          <div class="cw-ys">${s.ys}</div>
+        </div>
+        <div class="cw-f cw-back">
+          <div class="cw-ex">${Z(s.ex)}</div>
+          <div class="cw-src">${s.src}</div>
+        </div>
+      </div>`,c.addEventListener("click",()=>{c.classList.toggle("flip"),c.classList.contains("flip")?A.add(s.w):A.delete(s.w)}),T.appendChild(c)}window.addEventListener("keydown",s=>{if(s.target&&(s.target.tagName==="INPUT"||s.target.isContentEditable))return;let c=[...T.children];if(!c.length)return;let y=c.findIndex(q=>q.classList.contains("flip"));if(s.key==="ArrowRight"||s.key==="ArrowLeft"){s.preventDefault();let q=s.key==="ArrowRight"?Math.min(c.length-1,y+1):Math.max(0,y-1);c.forEach((B,v)=>{B.classList.toggle("flip",v===q);let e=O.find(f=>f.w===B.dataset.w);e&&(v===q?A.add(e.w):A.delete(e.w))}),c[q].scrollIntoView({block:"nearest",behavior:"smooth"})}})}function H(d){let s=[...document.querySelectorAll(".cw-bar .btn")].find(c=>c.textContent===d);s&&s.click()}var J=[{name:"\u8BA4\u4E00\u8BA4",preset:()=>{H("\u4E03\u4E0A"),A.clear(),M()},guide:"\u7B2C\u4E00\u8F6E\u8BA4\u8BFB\u3002\u6211\u70B9\u4E00\u5F20\u5361\uFF0C\u5168\u73ED\u9F50\u8BFB\u5B57\u97F3\u3001\u8BF4\u51FA\u4E49\u9879\uFF1A\u300C\u8BF4\u300D\u8FD9\u91CC\u8BFB yu\xE8\uFF0C\u540C\u300C\u60A6\u300D\uFF1B\u300C\u671F\u300D\u662F\u7EA6\u5B9A\u3002\u50CF\u8FD9\u6837\u628A\u4E03\u4E0A\u7684\u4E03\u5F20\u8FC7\u4E00\u904D\uFF0C\u62FF\u4E0D\u51C6\u7684\u8BB0\u5728\u79EF\u7D2F\u672C\u4E0A\u3002",note:"\u6587\u8A00\u5B9E\u8BCD\u79EF\u7D2F\u7684\u6B63\u786E\u5355\u4F4D\u662F\u300C\u5B57\uFF0B\u4E49\u9879\uFF0B\u8BFE\u6587\u4F8B\u53E5\u300D\u4E09\u4F4D\u4E00\u4F53\uFF1A\u53EA\u80CC\u4E49\u9879\u6CA1\u6709\u8BED\u5883\uFF0C\u8003\u8BD5\u65F6\u5957\u4E0D\u8FDB\u53E5\u5B50\uFF1B\u53EA\u8BFB\u4F8B\u53E5\u4E0D\u8BB0\u4E49\u9879\uFF0C\u9047\u5230\u65B0\u53E5\u53C8\u964C\u751F\u3002\u901A\u5047\u5B57\u8FD8\u8981\u5E26\u8BFB\u97F3\u2014\u2014\u300C\u8BF4\u300D\u540C\u300C\u60A6\u300D\u8BFB yu\xE8\u3001\u300C\u53CD\u300D\u540C\u300C\u8FD4\u300D\u8BFB f\u01CEn\uFF0C\u901A\u5047\u6309\u672C\u5B57\u8BFB\uFF0C\u97F3\u968F\u5B57\u5B9A\u3002"},{name:"\u7FFB\u4E00\u7FFB",preset:()=>{H("\u4E03\u4E0A"),A=new Set(O.filter(d=>d.g==="\u4E03\u4E0A").map(d=>d.w)),M()},guide:"\u5361\u7247\u5DF2\u5168\u90E8\u7FFB\u5230\u80CC\u9762\uFF0C\u8BFE\u6587\u4F8B\u53E5\u91CC\u7684\u76EE\u6807\u5B57\u91D1\u8272\u9AD8\u4EAE\u3002\u9F50\u8BFB\u4F8B\u53E5\uFF0C\u518D\u7528\u73B0\u4EE3\u8BDD\u8BF4\u8BF4\u6574\u53E5\u610F\u601D\uFF1A\u521A\u8BB0\u7684\u4E49\u9879\u653E\u8FDB\u53E5\u5B50\u91CC\uFF0C\u901A\u4E0D\u901A\uFF1F",note:"\u56DE\u8BFE\u6587\u662F\u9632\u6B62\u300C\u6B7B\u8BB0\u4E49\u9879\u300D\u7684\u5173\u952E\u4E00\u6B65\uFF1A\u4E49\u9879\u653E\u8FDB\u539F\u53E5\u7FFB\u8BD1\uFF0C\u901A\u987A\u624D\u7B97\u771F\u4F1A\u3002\u8FD9\u4E00\u6B65\u540C\u65F6\u7EC3\u4E86\u7FFB\u8BD1\u2014\u2014\u6587\u8A00\u7FFB\u8BD1\u7684\u4E09\u539F\u5219\u300C\u7559\u3001\u5220\u3001\u8865\u300D\u5728\u6B64\u5148\u884C\u4F53\u9A8C\uFF1A\u4EBA\u540D\u5730\u540D\u4FDD\u7559\u3001\u8BED\u6C14\u8BCD\u5220\u53BB\u3001\u7701\u7565\u6210\u5206\u8865\u51FA\u3002\u8BD1\u5B8C\u518D\u5BF9\u7167\u5361\u7247\u91CA\u4E49\uFF0C\u5F62\u6210\u6B63\u53CD\u9988\u3002"},{name:"\u5FEB\u95EE\u5FEB\u7B54",preset:()=>{H("\u5168\u90E8"),A.clear(),M()},guide:"\u516D\u518C\u56DB\u5341\u5F20\u5168\u90E8\u76D6\u4F4F\u6DF7\u5728\u4E00\u8D77\uFF1A\u6211\u8BF4\u4F8B\u53E5\uFF0C\u4F60\u4EEC\u62A2\u7B54\u5B57\u4E49\uFF1B\u7B54\u4E0D\u4E0A\u7684\u7FFB\u9762\u770B\u5B8C\u4F8B\u53E5\u518D\u76D6\u56DE\u53BB\uFF0C\u63A5\u7740\u62BD\u4E0B\u4E00\u5F20\uFF0C\u770B\u54EA\u4E00\u7EC4\u79EF\u7D2F\u5F97\u591A\u3002",note:"\u53E4\u4ECA\u5F02\u4E49\u662F\u6587\u8A00\u5B9E\u8BCD\u6700\u5927\u7684\u5751\uFF1A\u300C\u8D70\u300D\u53E4\u4E49\u662F\u8DD1\u3001\u300C\u72F1\u300D\u6307\u6848\u4EF6\u3001\u300C\u518D\u300D\u662F\u7B2C\u4E8C\u6B21\u2014\u2014\u62FF\u73B0\u4EE3\u4E49\u786C\u5957\u5FC5\u9519\u3002\u5FEB\u95EE\u5FEB\u7B54\u7528\u6DF7\u5408\u62BD\u53D6\u903C\u7740\u4F60\u5728\u8BED\u5883\u91CC\u8C03\u53D6\u4E49\u9879\uFF0C\u7B54\u9519\u5373\u662F\u6F0F\u70B9\uFF0C\u8BB0\u56DE\u79EF\u7D2F\u672C\u5FAA\u73AF\u68C0\u6D4B\u3002\u8BB0\u5FC6\u89C4\u5F8B\u662F\u300C\u95F4\u9694\uFF0B\u6DF7\u5408\u300D\uFF1A\u5206\u6563\u591A\u6B21\u3001\u6253\u4E71\u987A\u5E8F\uFF0C\u597D\u4E8E\u96C6\u4E2D\u6284\u5199\u3002"}],ee="\u6587\u8A00\u5B9E\u8BCD\u79EF\u7D2F\u4E09\u6B65\uFF1A\u8BB0\u4E49\u9879\u3001\u56DE\u8BFE\u6587\u4F8B\u53E5\u5370\u8BC1\u3001\u76D6\u9762\u5FEB\u7B54\u81EA\u67E5\u3002\u672C\u5E93 40 \u4E2A\u9AD8\u9891\u5B9E\u8BCD\u4E0E\u4F8B\u53E5\u5747\u51FA\u81EA\u7EDF\u7F16\u7248\u4E03\u81F3\u4E5D\u5E74\u7EA7\u8BFE\u6587\u3002\u5224\u65AD\u8BCD\u4E49\u8981\u770B\u53E5\u5B50\uFF1A\u4E0D\u5C11\u5B9E\u8BCD\u53E4\u4ECA\u4E49\u4E0D\u540C\uFF0C\u300C\u8D70\u300D\u53E4\u4E49\u662F\u8DD1\uFF0C\u300C\u72F1\u300D\u6307\u6848\u4EF6\uFF0C\u300C\u518D\u300D\u662F\u7B2C\u4E8C\u6B21\uFF0C\u4E0D\u80FD\u62FF\u73B0\u4EE3\u4E49\u786C\u5957\uFF1B\u901A\u5047\u5B57\u6309\u672C\u5B57\u8BFB\uFF0C\u300C\u8BF4\u300D\u540C\u300C\u60A6\u300D\u8BFB yu\xE8\uFF0C\u300C\u53CD\u300D\u540C\u300C\u8FD4\u300D\u8BFB f\u01CEn\u3002";function te(d){J[d].preset(),document.querySelectorAll("[data-hv-step]").forEach((s,c)=>{s.setAttribute("aria-pressed",String(c===d))}),document.querySelectorAll("[data-hv-guide]").forEach((s,c)=>{s.style.display=c===d?"":"none"})}var ne={meta:"\u8BED\u6587\xB7\u521D\u4E2D\u4E03\u81F3\u4E5D\u5E74\u7EA7\uFF5C\u7EDF\u7F16\u7248\u521D\u4E2D\u6587\u8A00\u6587 \xB7 \u9AD8\u9891\u5B9E\u8BCD\u79EF\u7D2F",steps:J.map((d,s)=>({name:d.name,guide:d.guide,note:d.note,apply:()=>te(s)})),summary:ee,quiz:[{q:"\u300C\u5B66\u800C\u65F6\u4E60\u4E4B\uFF0C\u4E0D\u4EA6\u8BF4\u4E4E\u300D\u7684\u300C\u8BF4\u300D\u8BFB\u4EC0\u4E48\u3001\u4EC0\u4E48\u610F\u601D\uFF1F",opts:["shu\u014D\uFF0C\u8BF4\u8BDD","shu\u014D\uFF0C\u9AD8\u5174","yu\xE8\uFF0C\u540C\u300C\u60A6\u300D\uFF0C\u9AD8\u5174","yu\xE8\uFF0C\u8BF4\u8BDD"],a:2,why:"\u300C\u8BF4\u300D\u5728\u6B64\u901A\u300C\u60A6\u300D\uFF0C\u8BFB yu\xE8\u3001\u610F\u4E3A\u9AD8\u5174\u2014\u2014\u901A\u5047\u5B57\u6309\u672C\u5B57\u8BFB\uFF0C\u97F3\u968F\u5B57\u5B9A\uFF0C\u4E49\u4E5F\u968F\u5B57\u5B9A\u3002"},{q:"\u300C\u5F03\u7532\u66F3\u5175\u800C\u8D70\u300D\u7684\u300C\u8D70\u300D\uFF0C\u53E4\u4E49\u662F\uFF1F",opts:["\u9003\u8DD1","\u8DD1","\u6B65\u884C","\u79BB\u5F00"],a:1,why:"\u300C\u8D70\u300D\u7684\u53E4\u4E49\u662F\u8DD1\u2014\u2014\u62D6\u7740\u5175\u5668\u8DD1\u6389\uFF0C\u6B63\u662F\u6218\u8D25\u5954\u9003\u4E4B\u6001\uFF1B\u4ECA\u4E49\u7684\u6B65\u884C\u662F\u540E\u8D77\u4E49\u3002\u53E4\u4ECA\u5F02\u4E49\u62FF\u73B0\u4EE3\u4E49\u786C\u5957\u5FC5\u9519\u3002"},{q:"\u300C\u5C0F\u5927\u4E4B\u72F1\uFF0C\u867D\u4E0D\u80FD\u5BDF\uFF0C\u5FC5\u4EE5\u60C5\u300D\u7684\u300C\u72F1\u300D\u6307\uFF1F",opts:["\u76D1\u72F1","\u6848\u4EF6","\u8BC9\u8BBC\u53CC\u65B9","\u5211\u7F5A"],a:1,why:"\u300C\u72F1\u300D\u53E4\u4E49\u6307\u6848\u4EF6\uFF0C\u8FD9\u53E5\u8BF4\u5927\u5C0F\u6848\u4EF6\u867D\u4E0D\u80FD\u4E00\u4E00\u660E\u5BDF\u4F46\u5FC5\u6309\u5B9E\u60C5\u5904\u7406\u3002\u76D1\u72F1\u662F\u4ECA\u4E49\u3002"},{q:"\u6587\u8A00\u5B9E\u8BCD\u79EF\u7D2F\u6700\u6709\u6548\u7684\u5355\u4F4D\u662F\uFF1F",opts:["\u5355\u72EC\u80CC\u4E49\u9879\u8868","\u5B57\uFF0B\u4E49\u9879\uFF0B\u8BFE\u6587\u4F8B\u53E5\u4E09\u4F4D\u4E00\u4F53","\u6284\u5199\u6574\u7BC7\u8BFE\u6587","\u53EA\u80CC\u901A\u5047\u5B57"],a:1,why:"\u4E49\u9879\u8981\u80FD\u653E\u56DE\u4F8B\u53E5\u624D\u7B97\u638C\u63E1\uFF1A\u4E09\u4F4D\u4E00\u4F53\u6709\u8BED\u5883\u652F\u6491\uFF0C\u8FC1\u79FB\u5230\u65B0\u53E5\u624D\u7528\u5F97\u51FA\u3002\u6284\u5199\u4E0E\u5355\u80CC\u90FD\u7F3A\u8BED\u5883\u95ED\u73AF\u3002"},{q:"\u300C\u518D\u300D\u5728\u6587\u8A00\u4E2D\u7684\u542B\u4E49\u662F\uFF1F",opts:["\u53C8\u4E00\u6B21\uFF0C\u91CD\u590D\u53D1\u751F","\u7B2C\u4E8C\u6B21","\u66F4\u52A0","\u7136\u540E"],a:1,why:"\u6587\u8A00\u300C\u518D\u300D\u4E13\u6307\u7B2C\u4E8C\u6B21\uFF08\u4E00\u9F13\u4F5C\u6C14\uFF0C\u518D\u800C\u8870\uFF09\uFF0C\u300C\u53C8\u4E00\u6B21\u300D\u662F\u4ECA\u4E49\u3002\u53E4\u4ECA\u5F02\u4E49\u8BCD\u8981\u6574\u8BCD\u8BB0\u5FC6\uFF0C\u4E0D\u80FD\u62C6\u5F00\u63A8\u65AD\u3002"}]};V({teaching:ne,mount(d){let s=document.createElement("style");s.textContent=X,d.appendChild(s);let c=document.createElement("div");c.className="cw-wrap";let y=document.createElement("div");y.className="cw-bar",["\u5168\u90E8",...Y].forEach(v=>{let e=document.createElement("button");e.type="button",e.className="btn",e.textContent=v,e.addEventListener("click",()=>{$=v,y.querySelectorAll(".btn").forEach(f=>{let j=f.textContent===$;f.style.borderColor=j?"var(--gold)":"var(--line)",f.style.color=j?"var(--gold)":"var(--text)"}),M()}),y.appendChild(e)});let q=document.createElement("span");q.className="cw-cnt",y.appendChild(q);let B=document.createElement("button");B.type="button",B.className="btn",B.textContent="\u5168\u90E8\u7FFB\u56DE",B.addEventListener("click",()=>{A.clear(),M()}),y.appendChild(B),c.appendChild(y),T=document.createElement("div"),T.className="cw-grid",c.appendChild(T),d.appendChild(c),y.children[0].click();try{let v=new URLSearchParams(location.search),e=v.get("g");e&&(e==="\u5168\u90E8"||Y.includes(e))&&($=e,[...y.querySelectorAll(".btn")].find(f=>f.textContent===e).click()),v.get("f")==="1"&&(A=new Set(O.filter(f=>$==="\u5168\u90E8"||f.g===$).map(f=>f.w)),M())}catch{}}});})();
+</script>
+</body>
+</html>

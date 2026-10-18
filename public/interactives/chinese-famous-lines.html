@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>古诗文名句情境填空</title>
+<style>
+:root{
+  --cuhk:#6b2077;--brand:#8a3d99;--brand-line:rgba(178,120,196,.34);
+  --bg:#1a0e26;--bg2:#241233;--panel:#251337;--panel2:#2e1a43;--inset:#150b20;
+  --text:#f4edf9;--muted:#b3a4c9;--faint:#82729e;
+  --gold:#e8b04b;--gold-soft:#f0c470;--wrong:#c97b7b;--ok:#7fbf9e;
+  --line:rgba(186,136,212,.16);--line2:rgba(186,136,212,.3);--line-gold:rgba(232,176,75,.4);
+  --shadow:0 10px 32px rgba(0,0,0,.5);
+  --shell-top:44px;--rail-w:216px;--rail-h:0px;
+}
+:root[data-theme=light]{
+  --cuhk:#6b2077;--brand:#6b2077;--brand-line:rgba(107,32,119,.32);
+  --bg:#f8f5fb;--bg2:#f0e9f7;--panel:#ffffff;--panel2:#f4eef9;--inset:#fbf9fd;
+  --text:#2a1a35;--muted:#5e4d70;--faint:#8b7ca0;
+  --gold:#8a6a1f;--gold-soft:#8a6a1f;--wrong:#b35b5b;--ok:#4d8a68;
+  --line:rgba(107,32,119,.16);--line2:rgba(107,32,119,.32);--line-gold:rgba(138,106,31,.45);
+  --shadow:0 8px 24px rgba(80,30,100,.14);
+}
+*{box-sizing:border-box;margin:0}
+/* 键盘可达性：Tab 焦点环（鼠标点击不显示，投屏遥控器/翻页笔友好） */
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+/* 舞台底：港紫径向层次（背景实现，不盖 canvas）；左轨/顶栏让位由变量驱动 */
+#stage{position:absolute;inset:calc(var(--shell-top) + var(--rail-h)) 0 0 var(--rail-w);background:radial-gradient(ellipse 90% 70% at 50% 38%,var(--bg2),var(--bg) 78%)}
+/* ---------- 薄顶栏（44px）：返回 | 标题 | 教材锚点 …… 翻页/主操作/窗口控制 ---------- */
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#back{display:flex;align-items:center;gap:7px;min-height:32px;padding:0 11px;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:8px;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+#back::before{content:'←';font-size:14px;line-height:1}
+#back:hover{color:var(--text);border-color:var(--line2);background:var(--panel2)}
+#bar h1{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+#meta{font-size:12.5px;color:var(--gold);white-space:nowrap;padding:3px 10px;border:1px solid var(--line-gold);border-radius:999px}
+#bar .grow{flex:1}
+/* ---------- 按钮系统：统一 32px 高；sq=方钮；primary=主操作实底 ---------- */
+.btn{font:inherit;font-size:13.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;touch-action:manipulation;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+.btn:hover{border-color:var(--brand-line);color:var(--text)}
+.btn[aria-pressed=true]{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary{background:var(--cuhk);border-color:var(--cuhk);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sq{min-width:32px;padding:0;font-size:15px}
+/* ---------- 左轨章节导航（宽屏 216px；WeduLab 范式：编号+名称，检测/小结入列） ---------- */
+#rail{position:fixed;top:var(--shell-top);left:0;bottom:0;z-index:9;width:var(--rail-w);display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);border-right:1px solid var(--line);padding:10px 10px 8px;gap:2px}
+#rail .rail-title{font-size:11.5px;color:var(--faint);letter-spacing:.22em;padding:2px 8px 8px}
+.rail-step{display:flex;align-items:baseline;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.rail-step .no{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;font-weight:700;color:var(--faint);min-width:24px;transition:color .15s}
+.rail-step:hover{color:var(--text);background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+.rail-step[aria-pressed=true]{background:color-mix(in srgb,var(--cuhk) 20%,transparent);border-color:var(--brand-line);color:var(--text);font-weight:600}
+.rail-step[aria-pressed=true] .no{color:var(--gold)}
+#rail .rail-split{height:1px;background:var(--line);margin:8px 6px}
+#rail .rail-foot{margin-top:auto;padding:10px 8px 2px;font-size:11px;color:var(--faint);line-height:1.9;letter-spacing:.03em}
+#rail .rail-foot b{font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:2px;font-size:10.5px}
+#rail-prog{position:absolute;left:0;right:0;bottom:0;height:2px}
+#rail-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cuhk),var(--brand));transition:width .25s}
+/* ---------- 舞台章节标头：01 / 03 · 环节名（印在画面上） ---------- */
+#stage-head{position:fixed;top:calc(var(--shell-top) + var(--rail-h) + 14px);left:calc(var(--rail-w) + 20px);z-index:5;display:flex;align-items:baseline;gap:10px;pointer-events:none}
+#stage-head .frac{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+#stage-head .sname{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--text);opacity:.92}
+/* ---------- 教学引导浮层：章节标头之下（引导语 + 操作提示） ---------- */
+#guide-tip{position:fixed;left:calc(var(--rail-w) + 20px);top:calc(var(--shell-top) + var(--rail-h) + 56px);z-index:6;max-width:min(600px,58vw);padding:10px 16px 11px 14px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s}
+#guide-tip.dim{opacity:.35}
+#g-tip{font-size:15px;line-height:1.62;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ops-tip{margin-top:5px;font-size:12.5px;color:var(--faint);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* ---------- 讲解覆盖卡（顶栏/章节栏呼出，WeduLab 右栏的覆盖式实现） ---------- */
+#note{position:fixed;top:calc(var(--shell-top) + 14px);right:16px;z-index:22;width:min(400px,calc(100vw - 40px));max-height:calc(100vh - var(--shell-top) - 40px);overflow:auto;padding:16px 20px;background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--cuhk);border-radius:12px;box-shadow:var(--shadow);font-size:15px;line-height:1.85;display:none}
+#note::before{content:'讲解';display:block;font-size:12.5px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px}
+:root[data-theme=light] #note::before{color:var(--cuhk)}
+/* ---------- 小结浮层 ---------- */
+#summary{position:fixed;top:calc(var(--shell-top) + 14px);left:50%;transform:translateX(-50%);z-index:20;width:min(600px,calc(100vw - 40px));padding:18px 22px;background:var(--panel);border:1px solid var(--line-gold);border-radius:12px;box-shadow:var(--shadow);font-size:15.5px;line-height:1.85;display:none}
+#summary::before{content:'小结';display:block;font-size:12.5px;color:var(--gold);letter-spacing:.12em;margin-bottom:6px}
+/* ---------- 随堂检测 ---------- */
+#quiz-wrap{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(4px)}
+#quiz{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 100px);overflow:auto;padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+#quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#quiz-head b{font-size:17px}
+#quiz-prog{font-size:13px;color:var(--faint)}
+#quiz-close{margin-left:auto}
+#quiz-q{font-size:16.5px;line-height:1.7;margin-bottom:14px}
+#quiz-opts{display:flex;flex-direction:column;gap:10px}
+.qopt{font:inherit;font-size:15px;line-height:1.6;text-align:left;padding:11px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--inset);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s}
+.qopt:not(:disabled):hover{border-color:var(--brand)}
+.qopt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--inset))}
+.qopt.no{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 14%,var(--inset))}
+.qopt:disabled{cursor:default}
+#quiz-why{margin-top:14px;padding:12px 16px;border-left:3px solid var(--gold);background:var(--inset);border-radius:0 10px 10px 0;font-size:14.5px;line-height:1.8;color:var(--muted);display:none}
+#quiz-why::before{content:'解析';display:block;font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+#quiz-foot{display:flex;align-items:center;gap:10px;margin-top:16px}
+#quiz-score{font-size:15px}
+#quiz-score b{font-size:22px;color:var(--brand)}
+:root[data-theme=light] #quiz-score b{color:var(--cuhk)}
+/* ---------- 窄屏（<1080px）：左轨收成顶部横排环节条 ---------- */
+@media (max-width:1079px){
+  :root{--rail-w:0px;--rail-h:52px}
+  #rail{top:var(--shell-top);left:0;right:0;bottom:auto;width:auto;height:var(--rail-h);flex-direction:row;align-items:center;gap:6px;padding:0 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
+  #rail .rail-title,#rail .rail-split,#rail .rail-foot{display:none}
+  .rail-step{flex:none;width:auto;padding:6px 12px;gap:7px}
+  .rail-step .no{font-size:15px;min-width:0}
+  #rail-prog{bottom:0;left:0}
+  #meta{display:none}
+  #guide-tip{left:12px;right:12px;max-width:none}
+  #stage-head{left:16px}
+}
+@media (max-width:760px){
+  #back span{display:none}
+  #bar h1{font-size:15px}
+  #note-btn-top,#sum-btn-top{display:none}
+}
+/* ---------- 卡片嵌入模式（?embed=1）：纯场景全幅，无 UI 壳 ---------- */
+body.embed #bar, body.embed #rail, body.embed #note, body.embed #summary, body.embed #quiz-wrap, body.embed #guide-tip, body.embed #stage-head { display: none !important; }
+body.embed { --shell-top:0px; --rail-w:0px; --rail-h:0px; }
+body.embed #stage { inset: 0; }
+
+/* ---------- 首次上手引导（仅第一次访问显示，Esc 或按钮关闭） ---------- */
+#onboard{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:blur(5px)}
+#onboard[hidden]{display:none}
+.ob-card{width:min(430px,calc(100vw - 40px));padding:22px 26px;background:var(--panel);border:1px solid var(--brand-line);border-radius:14px;box-shadow:var(--shadow)}
+.ob-title{display:block;font-size:17px;margin-bottom:12px;color:var(--brand)}
+:root[data-theme=light] .ob-title{color:var(--cuhk)}
+.ob-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ob-card li{font-size:15px;line-height:1.7;color:var(--text)}
+.ob-card li b{color:var(--brand)}
+:root[data-theme=light] .ob-card li b{color:var(--cuhk)}
+.ob-card .btn{width:100%}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a id="back" href="/resources/" aria-label="返回资源库"><span>资源库</span></a>
+  <h1>古诗文名句情境填空</h1>
+  <span id="meta"></span>
+  <span class="grow"></span>
+  <button class="btn sq" id="step-prev" type="button" aria-label="上一环节" hidden>‹</button>
+  <button class="btn sq" id="step-next" type="button" aria-label="下一环节" hidden>›</button>
+  <button class="btn" id="note-btn-top" type="button" hidden>讲解</button>
+  <button class="btn primary" id="quiz-btn" type="button" hidden>检测</button>
+  <button class="btn" id="sum-btn-top" type="button">小结</button>
+  <button class="btn sq" id="theme" type="button" aria-label="切换深浅色">◐</button>
+  <button class="btn" id="fs" type="button" aria-label="全屏">全屏</button>
+</div>
+<nav id="rail" hidden aria-label="章节">
+  <div class="rail-title">章节</div>
+  <div id="steps"></div>
+  <div class="rail-split"></div>
+  <div id="rail-extra"></div>
+  <div class="rail-foot"><b>←</b><b>→</b> 切换环节<br><b>Esc</b> 收起浮层</div>
+  <span id="rail-prog"><i></i></span>
+</nav>
+<div id="stage-head" hidden>
+  <span class="frac">01 / 03</span>
+  <span class="sname"></span>
+</div>
+<div id="guide-tip" hidden>
+  <p id="g-tip"></p>
+  <p id="ops-tip">选主题读情境，点符合的名句，即时判对错并看出处</p>
+</div>
+<div id="note"></div>
+<div id="summary"></div>
+<div id="quiz-wrap">
+  <div id="quiz" data-hv-quiz>
+    <div id="quiz-head">
+      <b>随堂检测</b>
+      <span id="quiz-prog"></span>
+      <button class="btn" id="quiz-close" type="button">关闭</button>
+    </div>
+    <div id="quiz-q"></div>
+    <div id="quiz-opts"></div>
+    <div id="quiz-why"></div>
+    <div id="quiz-foot">
+      <span id="quiz-score"></span>
+      <button class="btn primary" id="quiz-next" type="button" hidden>下一题</button>
+      <button class="btn primary" id="quiz-redo" type="button" hidden>重做</button>
+    </div>
+  </div>
+</div>
+<div id="stage" class="pad"></div>
+<div id="onboard" hidden>
+  <div class="ob-card">
+    <b class="ob-title">第一次使用</b>
+    <ul>
+      <li><b>左栏章节</b>：点章节或按键盘左右键换环节，当前环节高亮并印在画面左上</li>
+      <li><b>讲解</b>：每个环节配一段知识讲解，从顶栏或章节栏打开</li>
+      <li><b>检测</b>：随堂检测逐题作答、即时解析，末题出得分</li>
+    </ul>
+    <button class="btn primary" id="ob-ok" type="button">开始上课</button>
+  </div>
+</div>
+<script>"use strict";(()=>{var V=new URLSearchParams(location.search).has("selftest");function Y(o){let c=document.getElementById("stage"),a=new URLSearchParams(location.search).get("theme"),s=a==="light"||a==="dark"?a:"dark";try{let e=localStorage.getItem("hv-theme");(e==="light"||e==="dark")&&!a&&(s=e)}catch{}if(document.documentElement.dataset.theme=s,V){let e={errors:[],checks:[],canvas:null,pedagogy:null};window.addEventListener("error",t=>e.errors.push(String(t.message).slice(0,200))),window.addEventListener("unhandledrejection",t=>e.errors.push("rejection: "+String(t.reason).slice(0,200))),window.__hvPushCheck=(t,y,h)=>e.checks.push({name:t,pass:y,detail:String(h!=null?h:"")}),setTimeout(()=>{try{e.canvas=E()}catch(y){e.errors.push("canvas-sample: "+y.message)}try{e.pedagogy=p()}catch(y){e.errors.push("pedagogy-sample: "+y.message)}let t=document.createElement("pre");t.id="hv-selftest",t.textContent="__HV__"+JSON.stringify(e)+"__HV__",document.body.appendChild(t)},2500)}function p(){let e=i=>{let R=document.querySelector(i);return R?(R.textContent||"").replace(/\s+/g," ").trim():""},t=[...document.querySelectorAll("[data-hv-step]")],y=e("#g-tip"),h=e("#summary"),_=n&&n.steps?n.steps.map(i=>i.guide||"").join(""):y,q=n&&n.steps?n.steps.map(i=>i.note||"").join(""):"",k=n&&n.quiz?n.quiz:null;return{metaChars:e("#meta").length,steps:t.length,stepNames:t.slice(0,6).map(i=>i.textContent.trim()),guideCount:t.length?1:0,guideChars:_.length,guideLens:n&&n.steps?n.steps.map(i=>(i.guide||"").length):[],noteChars:q.length,noteLens:n&&n.steps?n.steps.map(i=>(i.note||"").length):[],summaryChars:h.length,quizCount:k?k.length:0,quizChars:k?k.map(i=>(i.q||"")+(i.why||"")).join("").length:0}}function E(){let e=[...document.querySelectorAll("canvas")].sort((r,l)=>l.width*l.height-r.width*l.height)[0];if(!e)return null;let t=document.createElement("canvas");t.width=360,t.height=225;let y=t.getContext("2d");y.drawImage(e,0,0,t.width,t.height);let h=y.getImageData(0,0,t.width,t.height).data,_=[],q=new Map;for(let r=0;r<3;r++)for(let l=0;l<3;l++){let u=0,C=0,L=0;for(let m=r*75;m<(r+1)*75;m+=3)for(let v=l*120;v<(l+1)*120;v+=3){let d=(m*t.width+v)*4,z=(h[d]+h[d+1]+h[d+2])/3;u+=z,C+=z*z,L++;let D=h[d]>>5<<10|h[d+1]>>5<<5|h[d+2]>>5;q.set(D,(q.get(D)||0)+1)}_.push(Math.round(Math.sqrt(C/L-(u/L)**2)))}let k=[...q.entries()].sort((r,l)=>l[1]-r[1]).slice(0,6).map(([r,l])=>[r.toString(16),l]),i=[...q.entries()].sort((r,l)=>l[1]-r[1])[0][0],R=((i>>10&31)*8+(i>>5&31)*8+(i&31)*8)/3,S=1,P=1,f=0,w=0,g=0;for(let r=0;r<t.height;r+=2)for(let l=0;l<t.width;l+=2){let u=(r*t.width+l)*4,C=(h[u]+h[u+1]+h[u+2])/3;if(Math.abs(C-R)>14){g++;let L=l/t.width,m=r/t.height;L<S&&(S=L),L>f&&(f=L),m<P&&(P=m),m>w&&(w=m)}}let j=g?[x(S),x(P),x(f),x(w)]:null;return{regions:_,topColors:k,bbox:j}}function x(e){return Math.round(e*100)/100}let n=o.teaching,I=[];function T(e){let t=e.style.display==="none"||!e.style.display;return B(),t&&(e.style.display="block"),t}function B(){for(let t of I)t.style.display="none";let e=document.getElementById("guide-tip");e&&e.classList.remove("dim")}if(n&&n.steps&&n.steps.length){let w=function(m,v){f=Math.max(0,Math.min(n.steps.length-1,m)),P.forEach((D,ee)=>D.setAttribute("aria-pressed",String(ee===f))),q.textContent=n.steps[f].guide||"",R&&(i.textContent=n.steps[f].note||""),k&&(k.style.width=(f+1)/n.steps.length*100+"%");let d=y.querySelector(".frac");d&&(d.textContent=String(f+1).padStart(2,"0")+" / "+String(n.steps.length).padStart(2,"0"));let z=y.querySelector(".sname");z&&(z.textContent=n.steps[f].name||""),v||B(),n.steps[f].apply&&n.steps[f].apply()};var ie=w;let e=document.getElementById("meta");e.textContent=n.meta||"",e.dataset.hvMeta="";let t=document.getElementById("rail");t.hidden=!1;let y=document.getElementById("stage-head");y.hidden=!1;let h=document.getElementById("guide-tip");h.hidden=!1;let _=document.getElementById("steps"),q=document.getElementById("g-tip"),k=document.querySelector("#rail-prog i"),i=document.getElementById("note"),R=n.steps.some(m=>m.note&&String(m.note).trim()),S=document.getElementById("note-btn-top");R&&(i.dataset.hvNote="",I.push(i),S.hidden=!1,S.addEventListener("click",()=>{T(i),h.classList.toggle("dim",i.style.display==="block")}));let P=n.steps.map((m,v)=>{let d=document.createElement("button");d.type="button",d.className="rail-step",d.dataset.hvStep="";let z=document.createElement("b");return z.className="no",z.textContent=String(v+1).padStart(2,"0"),d.appendChild(z),d.appendChild(document.createTextNode(" "+m.name)),d.addEventListener("click",()=>w(v)),_.appendChild(d),d}),f=0,g=document.getElementById("step-prev"),j=document.getElementById("step-next");g.hidden=!1,j.hidden=!1,g.addEventListener("click",()=>w(f-1)),j.addEventListener("click",()=>w(f+1)),window.__hvApplyStep0=()=>w(0);let r=document.getElementById("summary");r.textContent=n.summary||"",r.dataset.hvSummary="",I.push(r);let l=document.getElementById("sum-btn-top");l.addEventListener("click",()=>T(r));let u=document.getElementById("rail-extra"),C=(m,v)=>{let d=document.createElement("button");d.type="button",d.className="rail-step";let z=document.createElement("b");return z.className="no",z.textContent=m.no,d.appendChild(z),d.appendChild(document.createTextNode(" "+m.name)),d.addEventListener("click",v),u.appendChild(d),d};window.addEventListener("keydown",m=>{let v=m.target;v&&(v.tagName==="INPUT"||v.tagName==="TEXTAREA"||v.tagName==="SELECT"||v.isContentEditable)||document.getElementById("quiz-wrap").style.display==="flex"&&(m.key==="ArrowLeft"||m.key==="ArrowRight")||(m.key==="ArrowRight"?w(f+1):m.key==="ArrowLeft"?w(f-1):m.key==="Escape"&&B())}),b();let L=document.getElementById("quiz-btn");L.hidden||C({no:"\u25C6",name:"\u968F\u5802\u68C0\u6D4B"},()=>L.click()),C({no:"\u2261",name:"\u8BFE\u5802\u5C0F\u7ED3"},()=>l.click())}function b(){let e=n&&n.quiz;if(!e||!e.length)return;let t=document.getElementById("quiz-wrap"),y=document.getElementById("quiz-prog"),h=document.getElementById("quiz-q"),_=document.getElementById("quiz-opts"),q=document.getElementById("quiz-why"),k=document.getElementById("quiz-score"),i=document.getElementById("quiz-next"),R=document.getElementById("quiz-redo");I.push(t),document.getElementById("quiz-btn").hidden=!1,document.getElementById("quiz-btn").addEventListener("click",()=>{let g=t.style.display!=="flex";B(),g&&(t.style.display="flex")}),document.getElementById("quiz-close").addEventListener("click",()=>{t.style.display="none"});let S=0,P=0,f=new Array(e.length).fill(!1);function w(){let g=e[S];i.hidden=!0,R.hidden=!0,q.style.display="none",k.textContent="",y.textContent=`\u7B2C ${S+1} / ${e.length} \u9898`,h.textContent=g.q,h.dataset.hvQ="",_.textContent="",g.opts.forEach((j,r)=>{let l=document.createElement("button");l.type="button",l.className="qopt",l.textContent=String.fromCharCode(65+r)+". "+j,l.addEventListener("click",()=>{if(f[S])return;f[S]=!0;let u=r===g.a;u&&P++,[..._.children].forEach((C,L)=>{C.disabled=!0,L===g.a?C.classList.add("ok"):L===r&&C.classList.add("no")}),q.textContent=g.why||"",q.style.display="block",k.textContent=u?"\u7B54\u5BF9\u4E86":"\u7B54\u9519\u4E86",S<e.length-1?i.hidden=!1:(R.hidden=!1,k.textContent=`\u5171 ${P} / ${e.length} \u9898\u7B54\u5BF9`)}),_.appendChild(l)})}if(i.addEventListener("click",()=>{S++,w()}),R.addEventListener("click",()=>{S=0,P=0,f.fill(!1),w()}),t.style.display="none",w(),V&&typeof window.__hvPushCheck=="function"){let g=[];e.forEach((u,C)=>{(!u.q||!Array.isArray(u.opts)||u.opts.length<2)&&g.push(`\u7B2C${C+1}\u9898\u9898\u5E72\u6216\u9009\u9879\u7F3A\u5931`),(!Number.isInteger(u.a)||u.a<0||!u.opts||u.a>=u.opts.length)&&g.push(`\u7B2C${C+1}\u9898\u7B54\u6848\u4E0B\u6807\u8D8A\u754C`),(!u.why||u.why.length<10)&&g.push(`\u7B2C${C+1}\u9898\u89E3\u6790\u4E0D\u8DB310\u5B57`)}),e.length<3&&g.push(`\u4EC5 ${e.length} \u9898\uFF0C\u5C11\u4E8E 3 \u9898`),window.__hvPushCheck("quiz-valid",g.length===0,g.join("\uFF1B")||`${e.length} \u9898\u7ED3\u6784\u5408\u6CD5\uFF0C\u5747\u542B\u9898\u5E72\u3001\u9009\u9879\u3001\u7B54\u6848\u4E0E\u89E3\u6790`),t.style.display="flex",_.children[0].click();let j=getComputedStyle(q).display!=="none"&&q.getBoundingClientRect().height>0,r=k.textContent||"",l=[..._.children].every(u=>u.disabled);t.style.display="none",window.__hvPushCheck("quiz-answer-flow",j&&r.length>0&&l,`\u4F5C\u7B54\u540E\u89E3\u6790${j?"\u5DF2\u663E\u793A":"\u672A\u663E\u793A"}\uFF0C\u53CD\u9988\u300C${r.slice(0,12)}\u300D\uFF0C\u9009\u9879${l?"\u5DF2\u9501\u5B9A":"\u672A\u9501\u5B9A"}`)}}let A=new URLSearchParams(location.search).has("embed");A&&document.body.classList.add("embed");let N=document.getElementById("onboard");if(N&&!V&&!A&&!new URLSearchParams(location.search).has("pv")){let e=!1;try{e=localStorage.getItem("hv-onboard")==="1"}catch{}if(!e){N.hidden=!1;let t=()=>{N.hidden=!0;try{localStorage.setItem("hv-onboard","1")}catch{}};document.getElementById("ob-ok").addEventListener("click",t),window.addEventListener("keydown",y=>{y.key==="Escape"&&!N.hidden&&t()})}}let $={onTheme:null,onResize:null};document.getElementById("theme").addEventListener("click",()=>{s=document.documentElement.dataset.theme==="light"?"dark":"light",document.documentElement.dataset.theme=s;try{localStorage.setItem("hv-theme",s)}catch{}$.onTheme&&$.onTheme(s)}),document.getElementById("fs").addEventListener("click",()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}),window.addEventListener("resize",()=>{$.onResize&&$.onResize()}),typeof ResizeObserver!="undefined"&&new ResizeObserver(()=>{$.onResize&&$.onResize()}).observe(c),o.mount(c,$),window.__hvApplyStep0&&window.__hvApplyStep0();let K=new URLSearchParams(location.search).get("step");if(K!==null&&n&&n.steps&&n.steps.length){let e=Math.max(0,Math.min(n.steps.length-1,parseInt(K,10)||0)),t=[...document.querySelectorAll("[data-hv-step]")];t[e]&&t[e].click()}return $}var X="#e2543f",U=[{id:"yue",name:"\u6708",extra:["\u6625\u98CE\u53C8\u7EFF\u6C5F\u5357\u5CB8\uFF0C\u660E\u6708\u4F55\u65F6\u7167\u6211\u8FD8","\u6708\u843D\u4E4C\u557C\u971C\u6EE1\u5929\uFF0C\u6C5F\u67AB\u6E14\u706B\u5BF9\u6101\u7720","\u70DF\u7B3C\u5BD2\u6C34\u6708\u7B3C\u6C99\uFF0C\u591C\u6CCA\u79E6\u6DEE\u8FD1\u9152\u5BB6"],qs:[{s:"\u4E2D\u79CB\u4E4B\u591C\uFF0C\u82CF\u8F7C\u60F3\u5FF5\u4E03\u5E74\u672A\u89C1\u7684\u5F1F\u5F1F\uFF0C\u628A\u7F8E\u597D\u795D\u613F\u9001\u7ED9\u5929\u4E0B\u79BB\u4EBA\u3002",a:"\u4F46\u613F\u4EBA\u957F\u4E45\uFF0C\u5343\u91CC\u5171\u5A75\u5A1F",src:"\u82CF\u8F7C\u300A\u6C34\u8C03\u6B4C\u5934\u300B"},{s:"\u6218\u4E71\u4E4B\u4E2D\uFF0C\u675C\u752B\u601D\u5FF5\u79BB\u6563\u7684\u5F1F\u5F1F\uFF0C\u89C9\u5F97\u6545\u4E61\u7684\u6708\u8272\u683C\u5916\u660E\u4EAE\u3002",a:"\u9732\u4ECE\u4ECA\u591C\u767D\uFF0C\u6708\u662F\u6545\u4E61\u660E",src:"\u675C\u752B\u300A\u6708\u591C\u5FC6\u820D\u5F1F\u300B"},{s:"\u521D\u79CB\u591C\u665A\uFF0C\u5E74\u8F7B\u7684\u674E\u767D\u884C\u821F\u5E73\u7F8C\u6C5F\uFF0C\u534A\u8F6E\u79CB\u6708\u7684\u5F71\u5B50\u968F\u6C5F\u6C34\u6D41\u52A8\u3002",a:"\u5CE8\u7709\u5C71\u6708\u534A\u8F6E\u79CB\uFF0C\u5F71\u5165\u5E73\u7F8C\u6C5F\u6C34\u6D41",src:"\u674E\u767D\u300A\u5CE8\u7709\u5C71\u6708\u6B4C\u300B"},{s:"\u542C\u8BF4\u597D\u53CB\u738B\u660C\u9F84\u88AB\u8D2C\u5230\u504F\u8FDC\u4E4B\u5730\uFF0C\u674E\u767D\u628A\u7275\u6302\u6258\u4ED8\u7ED9\u660E\u6708\uFF0C\u8BA9\u5B83\u4E00\u8DEF\u968F\u884C\u3002",a:"\u6211\u5BC4\u6101\u5FC3\u4E0E\u660E\u6708\uFF0C\u968F\u541B\u76F4\u5230\u591C\u90CE\u897F",src:"\u674E\u767D\u300A\u95FB\u738B\u660C\u9F84\u5DE6\u8FC1\u9F99\u6807\u9065\u6709\u6B64\u5BC4\u300B"},{s:"\u66F9\u64CD\u767B\u4E34\u78A3\u77F3\u89C2\u6CA7\u6D77\uFF0C\u60F3\u8C61\u65E5\u6708\u4EFF\u4F5B\u5728\u5927\u6D77\u4E2D\u8FD0\u884C\u3002",a:"\u65E5\u6708\u4E4B\u884C\uFF0C\u82E5\u51FA\u5176\u4E2D",src:"\u66F9\u64CD\u300A\u89C2\u6CA7\u6D77\u300B"}]},{id:"shan",name:"\u5C71",extra:["\u7EFF\u6811\u6751\u8FB9\u5408\uFF0C\u9752\u5C71\u90ED\u5916\u659C","\u5343\u5C71\u9E1F\u98DE\u7EDD\uFF0C\u4E07\u5F84\u4EBA\u8E2A\u706D","\u4E24\u5CB8\u733F\u58F0\u557C\u4E0D\u4F4F\uFF0C\u8F7B\u821F\u5DF2\u8FC7\u4E07\u91CD\u5C71"],qs:[{s:"\u675C\u752B\u8FDC\u671B\u6CF0\u5C71\uFF0C\u7ACB\u5FD7\u767B\u4E0A\u6700\u9AD8\u5CF0\u4FEF\u77B0\u7FA4\u5C71\uFF0C\u6EE1\u6000\u8C6A\u60C5\u3002",a:"\u4F1A\u5F53\u51CC\u7EDD\u9876\uFF0C\u4E00\u89C8\u4F17\u5C71\u5C0F",src:"\u675C\u752B\u300A\u671B\u5CB3\u300B"},{s:"\u738B\u5B89\u77F3\u767B\u9AD8\u8FDC\u671B\uFF0C\u8BF4\u81EA\u5DF1\u4E0D\u6015\u6D6E\u4E91\u6321\u4F4F\u89C6\u7EBF\uFF0C\u56E0\u4E3A\u6B63\u8EAB\u5728\u6700\u9AD8\u5C42\u3002",a:"\u4E0D\u754F\u6D6E\u4E91\u906E\u671B\u773C\uFF0C\u81EA\u7F18\u8EAB\u5728\u6700\u9AD8\u5C42",src:"\u738B\u5B89\u77F3\u300A\u767B\u98DE\u6765\u5CF0\u300B"},{s:"\u9646\u6E38\u884C\u81F3\u5C71\u95F4\uFF0C\u6B63\u6000\u7591\u65E0\u8DEF\u53EF\u8D70\uFF0C\u5FFD\u7136\u773C\u524D\u51FA\u73B0\u4E00\u4E2A\u6751\u5E84\u3002",a:"\u5C71\u91CD\u6C34\u590D\u7591\u65E0\u8DEF\uFF0C\u67F3\u6697\u82B1\u660E\u53C8\u4E00\u6751",src:"\u9646\u6E38\u300A\u6E38\u5C71\u897F\u6751\u300B"},{s:"\u82CF\u8F7C\u6A2A\u770B\u4FA7\u770B\u8FDC\u770B\u8FD1\u770B\u5E90\u5C71\uFF0C\u611F\u6168\u770B\u4E0D\u6E05\u5B83\u7684\u771F\u9762\u76EE\uFF0C\u53EA\u56E0\u81EA\u5DF1\u8EAB\u5728\u5C71\u4E2D\u3002",a:"\u4E0D\u8BC6\u5E90\u5C71\u771F\u9762\u76EE\uFF0C\u53EA\u7F18\u8EAB\u5728\u6B64\u5C71\u4E2D",src:"\u82CF\u8F7C\u300A\u9898\u897F\u6797\u58C1\u300B"},{s:"\u9676\u6E0A\u660E\u5728\u4E1C\u7BF1\u4E0B\u91C7\u83CA\uFF0C\u62AC\u5934\u60A0\u7136\u671B\u89C1\u8FDC\u5904\u7684\u5357\u5C71\u3002",a:"\u91C7\u83CA\u4E1C\u7BF1\u4E0B\uFF0C\u60A0\u7136\u89C1\u5357\u5C71",src:"\u9676\u6E0A\u660E\u300A\u996E\u9152\u300B"}]},{id:"shui",name:"\u6C34",extra:["\u5B64\u5E06\u8FDC\u5F71\u78A7\u7A7A\u5C3D\uFF0C\u552F\u89C1\u957F\u6C5F\u5929\u9645\u6D41","\u5929\u95E8\u4E2D\u65AD\u695A\u6C5F\u5F00\uFF0C\u78A7\u6C34\u4E1C\u6D41\u81F3\u6B64\u56DE","\u4E5D\u66F2\u9EC4\u6CB3\u4E07\u91CC\u6C99\uFF0C\u6D6A\u6DD8\u98CE\u7C38\u81EA\u5929\u6DAF"],qs:[{s:"\u767D\u5C45\u6613\u56DE\u5FC6\u6C5F\u5357\uFF1A\u65E5\u51FA\u65F6\u6C5F\u8FB9\u7684\u82B1\u6BD4\u706B\u8FD8\u7EA2\uFF0C\u6625\u6C34\u78A7\u7EFF\u5982\u84DD\u8349\u3002",a:"\u65E5\u51FA\u6C5F\u82B1\u7EA2\u80DC\u706B\uFF0C\u6625\u6765\u6C5F\u6C34\u7EFF\u5982\u84DD",src:"\u767D\u5C45\u6613\u300A\u5FC6\u6C5F\u5357\u300B"},{s:"\u6CB3\u8FB9\u82A6\u82C7\u82CD\u82CD\uFF0C\u767D\u9732\u6210\u971C\uFF0C\u8BD7\u4EBA\u8FFD\u5BFB\u7684\u90A3\u4E2A\u4EBA\u4EFF\u4F5B\u5C31\u5728\u6CB3\u7684\u53E6\u4E00\u8FB9\u3002",a:"\u6240\u8C13\u4F0A\u4EBA\uFF0C\u5728\u6C34\u4E00\u65B9",src:"\u300A\u8BD7\u7ECF\xB7\u84B9\u846D\u300B"},{s:"\u674E\u767D\u4E58\u821F\u5C06\u884C\uFF0C\u6C6A\u4F26\u8E0F\u6B4C\u76F8\u9001\uFF0C\u674E\u767D\u8BF4\u5343\u5C3A\u6F6D\u6C34\u4E5F\u6BD4\u4E0D\u4E0A\u8FD9\u4EFD\u60C5\u8C0A\u3002",a:"\u6843\u82B1\u6F6D\u6C34\u6DF1\u5343\u5C3A\uFF0C\u4E0D\u53CA\u6C6A\u4F26\u9001\u6211\u60C5",src:"\u674E\u767D\u300A\u8D60\u6C6A\u4F26\u300B"},{s:"\u674E\u767D\u4EF0\u671B\u5E90\u5C71\u7011\u5E03\uFF0C\u5938\u5F20\u5730\u8BF4\u5B83\u50CF\u94F6\u6CB3\u4ECE\u4E5D\u5929\u4E4B\u4E0A\u503E\u843D\u3002",a:"\u98DE\u6D41\u76F4\u4E0B\u4E09\u5343\u5C3A\uFF0C\u7591\u662F\u94F6\u6CB3\u843D\u4E5D\u5929",src:"\u674E\u767D\u300A\u671B\u5E90\u5C71\u7011\u5E03\u300B"},{s:"\u66AE\u8272\u6E10\u6D53\uFF0C\u5D14\u98A2\u767B\u4E0A\u9EC4\u9E64\u697C\u773A\u671B\uFF0C\u6C5F\u4E0A\u70DF\u6CE2\u52FE\u8D77\u65E0\u5C3D\u4E61\u6101\u3002",a:"\u65E5\u66AE\u4E61\u5173\u4F55\u5904\u662F\uFF1F\u70DF\u6CE2\u6C5F\u4E0A\u4F7F\u4EBA\u6101",src:"\u5D14\u98A2\u300A\u9EC4\u9E64\u697C\u300B"}]}],te=`
+.fl-wrap{position:absolute;inset:0;overflow:auto;padding:64px 22px 30px;display:flex;flex-direction:column;gap:14px}
+.fl-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fl-cnt{font-size:16px;color:var(--muted);margin-left:6px}
+.fl-card{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:24px 28px;display:flex;flex-direction:column;gap:16px;max-width:860px;box-shadow:0 10px 34px rgba(0,0,0,.28)}
+.fl-s{font-size:23px;line-height:1.8;font-weight:500}
+.fl-s .th{color:var(--gold);font-weight:700;margin-right:10px;font-size:19px;border:1.5px solid var(--gold);border-radius:8px;padding:2px 10px;vertical-align:2px}
+.fl-opts{display:flex;flex-direction:column;gap:12px}
+.fl-opt{font:inherit;font-size:21px;text-align:left;padding:15px 18px;border:1.5px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);cursor:pointer;touch-action:manipulation;line-height:1.6;display:flex;gap:12px;align-items:baseline}
+.fl-opt:hover{border-color:var(--gold)}
+.fl-opt .no{flex:none;font-style:normal;font-size:16px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 8px;translate:0 -2px}
+.fl-opt.ok .no{border-color:var(--gold);color:var(--gold)}
+.fl-opt.bad .no{border-color:#e2543f;color:#e2543f}
+.fl-opt.ok{border-color:var(--gold);color:var(--gold);font-weight:700}
+.fl-opt.bad{border-color:${X};color:${X}}
+.fl-opt:disabled{cursor:default}
+.fl-src{border-left:5px solid var(--gold);background:var(--panel2);border-radius:10px;padding:16px 20px;display:none;flex-direction:column;gap:8px}
+.fl-src.on{display:flex}
+.fl-line{font-size:27px;font-weight:700;line-height:1.6;letter-spacing:.02em}
+.fl-from{font-size:19px;color:var(--muted)}
+.fl-judge{font-size:19px;font-weight:700}
+.fl-judge.ok{color:var(--gold)}
+.fl-judge.bad{color:${X}}
+.fl-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fl-sum{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:26px;display:flex;flex-direction:column;gap:14px;align-items:flex-start;max-width:820px}
+.fl-sum .big{font-size:24px;font-weight:700}
+.hv-panel{position:fixed;top:var(--shell-top);left:0;right:0;z-index:40;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.hv-panel .btn{font-size:15px;padding:7px 16px}
+.hv-guide{flex:1;min-width:260px;font-size:15px;color:var(--text);line-height:1.6}
+.hv-sum{position:fixed;top:calc(var(--shell-top) + 56px);left:50%;transform:translateX(-50%);z-index:41;max-width:640px;margin:0 16px;padding:16px 20px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;font-size:16px;line-height:1.8}
+`,F,H,O=0,M=0,J=0;function W(o){return[...o].sort(()=>Math.random()-.5)}function ne(o,c){let a=[...o.qs.filter(s=>s.a!==c.a).map(s=>s.a),...o.extra];return W([c.a,...W(a).slice(0,3)])}function Q(){let o=U[O];if(H.innerHTML="",M>=o.qs.length){let B=document.createElement("div");B.className="fl-sum",B.innerHTML=`<div class="big">${o.name}\u4E3B\u9898\u5B8C\u6210\uFF1A\u7B54\u5BF9 ${J}/${o.qs.length}</div>`;let b=document.createElement("div");b.className="fl-ctl";let A=document.createElement("button");A.type="button",A.className="btn",A.textContent="\u91CD\u7EC3\u672C\u7EC4",A.addEventListener("click",()=>G(O));let N=document.createElement("button");N.type="button",N.className="btn",N.textContent="\u6362\u4E00\u7EC4",N.addEventListener("click",()=>G((O+1)%U.length)),b.appendChild(A),b.appendChild(N),B.appendChild(b),H.appendChild(B);return}let c=o.qs[M],a=document.createElement("div");a.className="fl-card";let s=document.createElement("div");s.className="fl-s",s.innerHTML=`<span class="th">${o.name}\xB7${M+1}</span>${c.s}`,a.appendChild(s);let p=document.createElement("div");p.className="fl-opts";let E=document.createElement("div");E.className="fl-src";let x=!1,n=0;for(let B of ne(o,c)){let b=document.createElement("button");b.type="button",b.className="fl-opt",b.dataset.val=B,b.innerHTML=`<i class="no">${"\u7532\u4E59\u4E19\u4E01"[n++]}</i><span>${B}</span>`,b.addEventListener("click",()=>{if(x)return;x=!0;let A=B===c.a;A?(b.classList.add("ok"),J++):(b.classList.add("bad"),p.querySelectorAll(".fl-opt").forEach($=>{$.dataset.val===c.a&&$.classList.add("ok")})),p.querySelectorAll(".fl-opt").forEach($=>$.disabled=!0),E.classList.add("on");let N=E.querySelector(".fl-judge");N.textContent=A?"\u7B54\u5BF9\u4E86":"\u518D\u60F3\u60F3\uFF0C\u6B63\u786E\u7684\u662F\u91D1\u8272\u53E5",N.classList.add(A?"ok":"bad")}),p.appendChild(b)}a.appendChild(p),E.innerHTML=`
+    <div class="fl-judge"></div>
+    <div class="fl-line">${c.a}</div>
+    <div class="fl-from">\u2014\u2014${c.src}</div>`,a.appendChild(E);let I=document.createElement("div");I.className="fl-ctl";let T=document.createElement("button");T.type="button",T.className="btn",T.textContent=M===o.qs.length-1?"\u770B\u6210\u7EE9":"\u4E0B\u4E00\u9898",T.addEventListener("click",()=>{M++,Q()}),I.appendChild(T),a.appendChild(I),H.appendChild(a),document.querySelector(".fl-cnt").textContent=`\u7B2C ${Math.min(M+1,o.qs.length)}/${o.qs.length} \u9898`}function G(o){O=o,M=0,J=0,F.querySelectorAll(".fl-bar .btn").forEach((c,a)=>{let s=a===o;c.style.borderColor=s?"var(--gold)":"var(--line)",c.style.color=s?"var(--gold)":"var(--text)"}),Q()}var se=new URLSearchParams(location.search).has("selftest");function oe(){let o=(s,p,E)=>{window.__hvPushCheck&&window.__hvPushCheck(s,p,E)},c=U.filter(s=>s.qs.length!==5||s.extra.length!==3||s.qs.some(p=>!p.s||!p.a||!p.src)).map(s=>s.name);o("\u6BCF\u7EC4 5 \u9898 3 \u5E72\u6270\u53E5\u3001\u60C5\u5883/\u7B54\u6848/\u51FA\u5904\u9F50\u5168",c.length===0,c.join(","));let a=U.filter(s=>{let p=[...s.qs.map(E=>E.a),...s.extra];return new Set(p).size!==p.length}).map(s=>s.name);o("\u540C\u7EC4\u540D\u53E5\u4E0E\u5E72\u6270\u53E5\u65E0\u91CD\u590D",a.length===0,a.join(","))}var Z=[{name:"\u8BFB\u60C5\u5883",t:0,q:0,answer:!1,guide:"\u5148\u4E0D\u5FD9\u770B\u9009\u9879\u3002\u628A\u60C5\u5883\u5F53\u9898\u5E72\u8BFB\uFF1A\u8C01\u3001\u5728\u4EC0\u4E48\u65F6\u8282\u3001\u9047\u5230\u4EC0\u4E48\u4E8B\u3001\u6000\u7740\u4EC0\u4E48\u5FC3\u60C5\uFF1F\u5FC3\u91CC\u5148\u9ED8\u80CC\u51FA\u90A3\u53E5\u8BD7\uFF0C\u518D\u70B9\u9009\u9879\u6838\u5BF9\uFF0C\u770B\u4F60\u60F3\u7684\u548C\u6B63\u786E\u53E5\u662F\u4E0D\u662F\u540C\u4E00\u53E5\u3002",note:"\u60C5\u5883\u9ED8\u5199\u7684\u8BFB\u9898\u6CD5\uFF1A\u628A\u60C5\u5883\u5F53\u9898\u5E72\uFF0C\u6293\u4E94\u8981\u7D20\u2014\u2014\u4EBA\u7269\u3001\u65F6\u95F4\u3001\u5730\u70B9\u3001\u4E8B\u4EF6\u3001\u60C5\u611F\u3002\u8981\u7D20\u8D8A\u5168\uFF0C\u53EF\u9009\u9879\u8D8A\u5C11\uFF1A\u53EA\u8BF4\u300C\u6708\u4EAE\u300D\u4F1A\u6709\u5341\u51E0\u53E5\u5019\u9009\uFF0C\u8BF4\u6E05\u300C\u8C01\u3001\u5728\u54EA\u3001\u4E3A\u4EC0\u4E48\u770B\u6708\u300D\u5F80\u5F80\u53EA\u5269\u4E00\u53E5\u3002\u5148\u9ED8\u80CC\u518D\u6838\u5BF9\uFF0C\u662F\u5728\u8BAD\u7EC3\u300C\u4ECE\u60C5\u5883\u5230\u8BD7\u53E5\u300D\u7684\u76F4\u63A5\u8C03\u7528\uFF0C\u800C\u4E0D\u662F\u770B\u7740\u9009\u9879\u78B0\u8FD0\u6C14\u3002"},{name:"\u8FA8\u5E72\u6270\u53E5",t:0,q:3,answer:!0,guide:"\u8FD9\u4E00\u7EC4\u56DB\u4E2A\u9009\u9879\u90FD\u5199\u4E86\u6708\u4EAE\uFF0C\u4E3A\u4EC0\u4E48\u53EA\u6709\u4E00\u53E5\u8D34\u5408\u60C5\u5883\uFF1F\u628A\u60C5\u5883\u91CC\u7684\u5173\u952E\u8BCD\u548C\u8BD7\u53E5\u9010\u5B57\u5BF9\u5E94\uFF1A\u8C01\u88AB\u8D2C\u3001\u8C01\u7275\u6302\u3001\u660E\u6708\u8981\u9001\u5230\u54EA\u91CC\u3002\u518D\u8BF4\u8BF4\u5176\u4F59\u4E09\u53E5\u5404\u5199\u5728\u4EC0\u4E48\u573A\u5408\u3002",note:"\u540C\u610F\u8C61\u5E72\u6270\u53E5\u7684\u8FA8\u6790\u673A\u5236\uFF1A\u90FD\u5199\u6708\uFF0C\u4F46\u300C\u4F46\u613F\u4EBA\u957F\u4E45\u300D\u662F\u795D\u613F\u3001\u300C\u6708\u662F\u6545\u4E61\u660E\u300D\u662F\u601D\u4E61\u3001\u300C\u6211\u5BC4\u6101\u5FC3\u4E0E\u660E\u6708\u300D\u662F\u7275\u6302\u88AB\u8D2C\u7684\u53CB\u4EBA\u2014\u2014\u610F\u8C61\u76F8\u540C\uFF0C\u5DEE\u522B\u5728\u5177\u4F53\u60C5\u5883\u3002\u8FA8\u6790\u52A8\u4F5C\u662F\u9010\u5B57\u5BF9\u5E94\uFF1A\u60C5\u5883\u91CC\u7684\u300C\u88AB\u8D2C\u300D\u300C\u6258\u660E\u6708\u968F\u884C\u300D\u53EA\u6709\u300C\u968F\u541B\u76F4\u5230\u591C\u90CE\u897F\u300D\u80FD\u5BF9\u4E0A\u3002\u8BB0\u4F4F\uFF1A\u610F\u8C61\u7ED9\u4F60\u8303\u56F4\uFF0C\u60C5\u5883\u7EC6\u8282\u624D\u5B9A\u7B54\u6848\u3002"},{name:"\u5F52\u610F\u8C61",t:1,q:0,answer:!0,guide:"\u5224\u5B9A\u540E\u9F50\u8BFB\u5168\u53E5\u4E0E\u51FA\u5904\u3002\u518D\u628A\u505A\u8FC7\u7684\u53E5\u5B50\u6309\u610F\u8C61\u5F52\u5806\uFF1A\u54EA\u4E9B\u5199\u6708\u3001\u54EA\u4E9B\u5199\u5C71\u3001\u54EA\u4E9B\u5199\u6C34\uFF1F\u6BCF\u7EC4\u91CC\u7684\u53E5\u5B50\u6292\u53D1\u7684\u60C5\u611F\u6709\u4EC0\u4E48\u4E0D\u540C\uFF1F\u5F52\u7C7B\u79EF\u7D2F\uFF0C\u89C1\u5230\u60C5\u5883\u624D\u6709\u53E5\u53EF\u8C03\u3002",note:"\u610F\u8C61\u5F52\u7C7B\u79EF\u7D2F\u6CD5\uFF1A\u5199\u6708\u7684\u540D\u53E5\u591A\u5BC4\u601D\u5FF5\u4E0E\u795D\u613F\uFF0C\u5199\u5C71\u7684\u5E38\u6292\u767B\u4E34\u8C6A\u60C5\u6216\u89C2\u666F\u609F\u7406\uFF0C\u5199\u6C34\u7684\u6216\u72B6\u5947\u666F\u3001\u6216\u8F7D\u79BB\u60C5\u3002\u5F52\u7C7B\u4E0D\u662F\u6284\u5728\u4E00\u8D77\u5C31\u5B8C\u4E8B\u2014\u2014\u6BCF\u7EC4\u5185\u518D\u6309\u60C5\u611F\u5206\u5C0F\u7C7B\uFF08\u6708\u7684\u795D\u613F/\u601D\u4E61/\u7275\u6302\uFF09\uFF0C\u60C5\u5883\u4E00\u6765\u5148\u5B9A\u610F\u8C61\u3001\u518D\u5B9A\u60C5\u611F\u3001\u6700\u540E\u8C03\u53E5\u3002\u56DE\u8BFB\u9632\u9519\u540C\u6837\u5173\u952E\uFF1A\u4E0D\u6DFB\u5B57\u3001\u4E0D\u6F0F\u5B57\u3001\u4E0D\u5199\u9519\u522B\u5B57\uFF0C\u7BC7\u540D\u4F5C\u8005\u8BB0\u7262\u3002"}],ae="\u60C5\u5883\u9ED8\u5199\u6309\u4E09\u6B65\u4F5C\u7B54\uFF1A\u4E00\u6293\u60C5\u5883\u5173\u952E\u8BCD\u2014\u2014\u4EBA\u7269\u3001\u65F6\u95F4\u3001\u5730\u70B9\u3001\u4E8B\u4EF6\u3001\u60C5\u611F\uFF1B\u4E8C\u51ED\u5173\u952E\u8BCD\u56DE\u60F3\u8D34\u5408\u7684\u540D\u53E5\uFF0C\u8B66\u60D5\u540C\u610F\u8C61\u7684\u5E72\u6270\u53E5\u2014\u2014\u610F\u8C61\u76F8\u540C\uFF0C\u5DEE\u522B\u5728\u5177\u4F53\u60C5\u5883\uFF1B\u4E09\u56DE\u8BFB\u9632\u9519\u2014\u2014\u786E\u5B9A\u7684\u53E5\u5B50\u56DE\u8BFB\u5168\u53E5\uFF0C\u4E0D\u6DFB\u5B57\u3001\u4E0D\u6F0F\u5B57\u3001\u4E0D\u5199\u9519\u522B\u5B57\uFF0C\u5E76\u8BB0\u7262\u7BC7\u540D\u4E0E\u4F5C\u8005\u3002\u5F52\u7C7B\u5E2E\u52A9\u8BB0\u5FC6\uFF1A\u5199\u6708\u7684\u540D\u53E5\u591A\u5BC4\u601D\u5FF5\u4E0E\u795D\u613F\uFF0C\u5199\u5C71\u7684\u5E38\u6292\u767B\u4E34\u8C6A\u60C5\u6216\u89C2\u666F\u609F\u7406\uFF0C\u5199\u6C34\u7684\u6216\u72B6\u5947\u666F\u3001\u6216\u8F7D\u79BB\u60C5\u3002";function le(o,c=!0){if(c){let a=Z[o];if(G(a.t),M=a.q,Q(),a.answer){let s=[...H.querySelectorAll(".fl-opt")].find(p=>p.textContent===U[a.t].qs[a.q].a);s&&s.click()}}document.querySelectorAll("[data-hv-step]").forEach((a,s)=>{a.setAttribute("aria-pressed",String(s===o))}),document.querySelectorAll("[data-hv-guide]").forEach((a,s)=>{a.style.display=s===o?"":"none"})}var re={meta:"\u8BED\u6587\xB7\u516D\u81F3\u4E5D\u5E74\u7EA7\uFF5C\u7EDF\u7F16\u7248\u5FC5\u80CC\u53E4\u8BD7\u6587 \xB7 \u53E4\u8BD7\u6587\u540D\u53E5\u60C5\u5883\u9ED8\u5199",steps:Z.map((o,c)=>({name:o.name,guide:o.guide,note:o.note,apply:()=>le(c)})),summary:ae,quiz:[{q:"\u542C\u8BF4\u597D\u53CB\u738B\u660C\u9F84\u88AB\u8D2C\u504F\u8FDC\u4E4B\u5730\uFF0C\u674E\u767D\u6258\u660E\u6708\u4E00\u8DEF\u968F\u884C\u2014\u2014\u8FD9\u4E00\u60C5\u5883\u5BF9\u5E94\u7684\u540D\u53E5\u662F\uFF1F",opts:["\u4F46\u613F\u4EBA\u957F\u4E45\uFF0C\u5343\u91CC\u5171\u5A75\u5A1F","\u9732\u4ECE\u4ECA\u591C\u767D\uFF0C\u6708\u662F\u6545\u4E61\u660E","\u6211\u5BC4\u6101\u5FC3\u4E0E\u660E\u6708\uFF0C\u968F\u541B\u76F4\u5230\u591C\u90CE\u897F","\u5CE8\u7709\u5C71\u6708\u534A\u8F6E\u79CB\uFF0C\u5F71\u5165\u5E73\u7F8C\u6C5F\u6C34\u6D41"],a:2,why:"\u60C5\u5883\u5173\u952E\u8BCD\u300C\u88AB\u8D2C\u7684\u53CB\u4EBA\u300D\u300C\u6258\u660E\u6708\u968F\u884C\u300D\u53EA\u4E0E\u300C\u968F\u541B\u76F4\u5230\u591C\u90CE\u897F\u300D\u9010\u5B57\u5BF9\u5E94\u2014\u2014\u610F\u8C61\u7ED9\u8303\u56F4\uFF0C\u60C5\u5883\u7EC6\u8282\u5B9A\u7B54\u6848\u3002"},{q:"\u300C\u5C71\u91CD\u6C34\u590D\u7591\u65E0\u8DEF\uFF0C\u67F3\u6697\u82B1\u660E\u53C8\u4E00\u6751\u300D\u7684\u4F5C\u8005\u662F\uFF1F",opts:["\u738B\u5B89\u77F3","\u9646\u6E38","\u82CF\u8F7C","\u9676\u6E0A\u660E"],a:1,why:"\u51FA\u81EA\u9646\u6E38\u300A\u6E38\u5C71\u897F\u6751\u300B\uFF0C\u5199\u5C71\u884C\u7591\u65E0\u8DEF\u5FFD\u89C1\u6751\u5E84\u4E4B\u559C\u3002\u738B\u5B89\u77F3\u662F\u300C\u4E0D\u754F\u6D6E\u4E91\u906E\u671B\u773C\u300D\uFF0C\u82CF\u8F7C\u662F\u300C\u4E0D\u8BC6\u5E90\u5C71\u771F\u9762\u76EE\u300D\uFF0C\u522B\u6DF7\u3002"},{q:"\u60C5\u5883\u9ED8\u5199\u4F5C\u7B54\u7684\u7B2C\u4E00\u6B65\u662F\uFF1F",opts:["\u5148\u770B\u54EA\u4E2A\u9009\u9879\u773C\u719F","\u6293\u60C5\u5883\u5173\u952E\u8BCD\uFF1A\u4EBA\u7269\u3001\u65F6\u95F4\u3001\u5730\u70B9\u3001\u4E8B\u4EF6\u3001\u60C5\u611F","\u9ED8\u5199\u6700\u6709\u540D\u7684\u4E00\u53E5","\u6570\u9009\u9879\u91CC\u7684\u610F\u8C61\u4E2A\u6570"],a:1,why:"\u4E94\u8981\u7D20\u8D8A\u5168\u53EF\u9009\u9879\u8D8A\u5C11\uFF1A\u5148\u6293\u8981\u7D20\u3001\u518D\u56DE\u60F3\u8D34\u5408\u540D\u53E5\u3001\u6700\u540E\u56DE\u8BFB\u9632\u9519\u2014\u2014\u4E09\u6B65\u4F5C\u7B54\uFF0C\u7B2C\u4E00\u6B65\u5B9A\u65B9\u5411\u3002"},{q:"\u56DB\u4E2A\u9009\u9879\u90FD\u5199\u6708\uFF0C\u5224\u65AD\u54EA\u53E5\u8D34\u5408\u60C5\u5883\u7684\u4F9D\u636E\u662F\uFF1F",opts:["\u9009\u6700\u8457\u540D\u7684\u4E00\u53E5","\u610F\u8C61\u76F8\u540C\u5373\u53EF\u4EFB\u9009","\u60C5\u5883\u7EC6\u8282\u4E0E\u8BD7\u53E5\u9010\u5B57\u5BF9\u5E94","\u9009\u5B57\u6570\u6700\u591A\u7684\u4E00\u53E5"],a:2,why:"\u540C\u610F\u8C61\u7684\u53E5\u5B50\u6292\u53D1\u7684\u60C5\u611F\u5404\u6709\u5206\u5DE5\uFF1A\u795D\u613F\u3001\u601D\u4E61\u3001\u7275\u6302\u53CB\u4EBA\u5404\u4E0D\u540C\u2014\u2014\u628A\u60C5\u5883\u5173\u952E\u8BCD\u4E0E\u8BD7\u53E5\u9010\u5B57\u5BF9\u5E94\uFF0C\u624D\u80FD\u5728\u300C\u90FD\u5199\u6708\u300D\u91CC\u9009\u51FA\u552F\u4E00\u89E3\u3002"},{q:"\u6309\u610F\u8C61\u5F52\u7C7B\u79EF\u7D2F\uFF0C\u5199\u6708\u7684\u540D\u53E5\u591A\u5BC4\u6258\u4EC0\u4E48\uFF1F",opts:["\u8FB9\u585E\u5F81\u6218\u4E4B\u5FD7","\u601D\u5FF5\u4E0E\u795D\u613F","\u9690\u9038\u7530\u56ED\u4E4B\u8DA3","\u548F\u53F2\u6000\u53E4\u4E4B\u60C5"],a:1,why:"\u5199\u6708\u591A\u5BC4\u601D\u5FF5\u4E0E\u795D\u613F\uFF1B\u5199\u5C71\u5E38\u6292\u767B\u4E34\u8C6A\u60C5\u6216\u89C2\u666F\u609F\u7406\uFF1B\u5199\u6C34\u7684\u6216\u72B6\u5947\u666F\u3001\u6216\u8F7D\u79BB\u60C5\u2014\u2014\u5F52\u7C7B\u52A0\u60C5\u611F\u5206\u5C42\uFF0C\u89C1\u60C5\u5883\u624D\u6709\u53E5\u53EF\u8C03\u3002"}]};Y({teaching:re,mount(o){let c=document.createElement("style");c.textContent=te,o.appendChild(c),F=document.createElement("div"),F.className="fl-wrap";let a=document.createElement("div");a.className="fl-bar",U.forEach((p,E)=>{let x=document.createElement("button");x.type="button",x.className="btn",x.textContent=p.name,x.addEventListener("click",()=>G(E)),a.appendChild(x)});let s=document.createElement("span");s.className="fl-cnt",a.appendChild(s),F.appendChild(a),H=document.createElement("div"),H.style.cssText="display:flex;flex-direction:column;gap:12px",F.appendChild(H),o.appendChild(F),G(0),se&&oe();try{let p=new URLSearchParams(location.search),E=p.get("t"),x=U.findIndex(I=>I.id===E);x>=0&&G(x);let n=parseInt(p.get("q")||"",10);if(n>=1&&n<=U[O].qs.length&&(M=n-1,Q()),p.get("a")==="1"){let I=[...H.querySelectorAll(".fl-opt")].find(T=>T.textContent===U[O].qs[M].a);I&&I.click()}}catch{}}});})();
+</script>
+</body>
+</html>

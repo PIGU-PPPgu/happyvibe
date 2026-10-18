@@ -1,0 +1,114 @@
+{
+  "chinese-tianjingsa": {
+    "kind": "interactive-2d",
+    "bytes": 41677
+  },
+  "history-dynasties": {
+    "kind": "interactive-2d",
+    "bytes": 38843
+  },
+  "math-cube-nets": {
+    "kind": "interactive-3d",
+    "bytes": 579315
+  },
+  "math-rect-volume": {
+    "kind": "interactive-3d",
+    "bytes": 592081
+  },
+  "history-qin-unify": {
+    "kind": "interactive-2d",
+    "bytes": 48541
+  },
+  "history-silk-road": {
+    "kind": "interactive-2d",
+    "bytes": 52264
+  },
+  "chinese-stroke-order": {
+    "kind": "interactive-2d",
+    "bytes": 42657
+  },
+  "history-bronze": {
+    "kind": "interactive-3d",
+    "bytes": 3350547
+  },
+  "chinese-pinyin": {
+    "kind": "interactive-2d",
+    "bytes": 44267
+  },
+  "math-views": {
+    "kind": "interactive-3d",
+    "bytes": 591850
+  },
+  "chinese-punctuation": {
+    "kind": "interactive-2d",
+    "bytes": 46456
+  },
+  "history-modern-timeline": {
+    "kind": "interactive-2d",
+    "bytes": 47481
+  },
+  "history-reform-open": {
+    "kind": "interactive-2d",
+    "bytes": 49222
+  },
+  "chinese-rhetoric": {
+    "kind": "interactive-2d",
+    "bytes": 44383
+  },
+  "math-function-lab": {
+    "kind": "interactive-2d",
+    "bytes": 43281
+  },
+  "chinese-classical-words": {
+    "kind": "interactive-2d",
+    "bytes": 42961
+  },
+  "history-new-routes": {
+    "kind": "interactive-2d",
+    "bytes": 48625
+  },
+  "math-quadratic": {
+    "kind": "interactive-2d",
+    "bytes": 40737
+  },
+  "chinese-essay-structure": {
+    "kind": "interactive-2d",
+    "bytes": 41596
+  },
+  "history-world-wars": {
+    "kind": "interactive-2d",
+    "bytes": 50796
+  },
+  "math-circle-angle": {
+    "kind": "interactive-2d",
+    "bytes": 39013
+  },
+  "chinese-famous-lines": {
+    "kind": "interactive-2d",
+    "bytes": 44517
+  },
+  "math-unit-circle": {
+    "kind": "interactive-2d",
+    "bytes": 41770
+  },
+  "math-solid-section": {
+    "kind": "interactive-3d",
+    "bytes": 594093
+  },
+  "math-number-line": {
+    "kind": "interactive-2d",
+    "bytes": 40034
+  },
+  "bsuex-7a-2-4-add": {
+    "kind": "interactive-2d",
+    "bytes": 44827
+  },
+  "bsuex-7a-2-5-sub": {
+    "kind": "interactive-2d",
+    "bytes": 44621
+  },
+  "bsuex-7a-1-3-section": {
+    "kind": "interactive-3d",
+    "bytes": 604728
+  }
+}

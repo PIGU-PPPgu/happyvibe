@@ -1,0 +1,142 @@
+{
+  "buildHash": "f7f9a940ad57",
+  "reviewer": "zcode（视觉恢复：analyze_image MCP + 拼图亲目检）",
+  "verdicts": "27 pass（双主题目检 + 像素规则 + harness）",
+  "results": {
+    "chinese-tianjingsa": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-dynasties": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-cube-nets": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-rect-volume": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-qin-unify": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-silk-road": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "chinese-stroke-order": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-bronze": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "chinese-pinyin": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-views": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "chinese-punctuation": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-modern-timeline": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-reform-open": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "chinese-rhetoric": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-function-lab": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "chinese-classical-words": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-new-routes": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-quadratic": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "chinese-essay-structure": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "history-world-wars": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-circle-angle": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "chinese-famous-lines": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-unit-circle": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-solid-section": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "math-number-line": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "bsuex-7a-2-4-add": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    },
+    "bsuex-7a-2-5-sub": {
+      "verdict": "pass",
+      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
+      "at": "2026-10-15"
+    }
+  }
+}

@@ -8,6 +8,12 @@
 | R1.5 | 2026-10-10 | 鼎 | 用户抓到形状错误（三足悬空飘在鼎外、鼎身直筒不垂腹）。重写回转 profile（圜底 0.46→垂腹 0.97@中下→束颈 0.75→撇口 0.81），足心 1.30→0.80 贴圜底加长嵌入，耳贴口沿。新增世界坐标几何质检（垂直/水平相交判定 + ASCII 侧影），不靠眼也能抓脱接 | 几何判定双双相交 ✓；ASCII 轮廓标准鼎形；docs/refine/ding-round1b.png | 7（形状对，质感待 R2/R3） | R2 三点布光+展台；R3 锈色贴图 |
 | R1 | 2026-10-10 | 鼎 | Blender 便携版落地 ~/tools；纯 bmesh 程序化建模（回转鼎身/饕餮凸纹 displacement/三足二耳）→ GLB 666KB → base64 内嵌进单文件（1.5MB）；three.js GLTFLoader + RoomEnvironment 环境反射；青铜绿材质（金属 0.62/粗糙 0.5）；热点坐标适配 + 史实文案通用化 | docs/refine/ding-round1.png：鼎面均色 RGB(114,125,99)，偏绿像素 89%，实体占比 26%（构图饱满） | 6.5 | R2：光照三点布光+鼎身旋转展台；R3：噪声锈色烘焙成贴图（swap COLOR_0 方案废弃，改 Cycles bake 正规路） |
 
+## skill 验收案例（wedulab-craft v1.0）
+
+| 案例 | 日期 | 资源 | skill 配方应用 | 证据 | 分数轨迹 |
+|---|---|---|---|---|---|
+| S1 | 2026-10-18 | 截一个几何体（bsuex-7a-1-3-section，北师大七上 1.3） | 同源截面计算（逐面裁剪→闭合环→鞋带面积，ε 探测过顶点退化）；自研着色器×2（截面 cap 菲涅尔边缘金 + 分层星空双高斯闪烁）；HUD 仪器读数；引线注释锚定截面质心带避让；磨砂白瓷主体+径向渐变深空+接触暗斑；双语排版/唯一强调色/预设即知识点 | docs/refine/section-round1.png；analyze_image 四轮 6→7→7.5→8（82% WeduLab）；自测 6 组同源断言 PASS | 8（ship_ok=true） |
+
 ## 技术债（循环中消化）
 
 - ~~Blender glTF exporter 把非激活顶点色层排到 COLOR_1（three 只读 COLOR_0）~~——R2 已根治：GLB 不再带顶点色，改页面端 CanvasTexture（build_interactives 的 promoteColor0 保留给未来需要顶点色的资产）

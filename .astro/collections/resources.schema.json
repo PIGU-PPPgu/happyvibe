@@ -1,0 +1,111 @@
+{
+  "$ref": "#/definitions/resources",
+  "definitions": {
+    "resources": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string",
+          "enum": [
+            "chinese",
+            "math",
+            "english",
+            "science",
+            "physics",
+            "chemistry",
+            "biology",
+            "geography",
+            "history",
+            "politics",
+            "it"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "enum": [
+            "primary",
+            "junior",
+            "senior"
+          ]
+        },
+        "grades": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "minItems": 1
+        },
+        "topic": {
+          "type": "string"
+        },
+        "book": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "interactive-3d",
+            "interactive-2d",
+            "diagram",
+            "external"
+          ]
+        },
+        "file": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "smartedu",
+            "phet",
+            "geogebra"
+          ]
+        },
+        "usage": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready"
+          ],
+          "default": "draft"
+        },
+        "order": {
+          "type": "number",
+          "default": 99
+        }
+      },
+      "required": [
+        "title",
+        "subject",
+        "stage",
+        "grades",
+        "topic",
+        "kind",
+        "usage"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
