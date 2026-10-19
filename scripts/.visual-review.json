@@ -1,142 +1,147 @@
 {
-  "buildHash": "f7f9a940ad57",
-  "reviewer": "zcode（视觉恢复：analyze_image MCP + 拼图亲目检）",
-  "verdicts": "27 pass（双主题目检 + 像素规则 + harness）",
+  "buildHash": "51c14950d8e9",
+  "reviewer": "zcode（拼图亲检 + 全内容矩阵实测）",
+  "verdicts": "28 pass",
   "results": {
     "chinese-tianjingsa": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-dynasties": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-cube-nets": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-rect-volume": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-qin-unify": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-silk-road": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "chinese-stroke-order": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-bronze": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "chinese-pinyin": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-views": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "chinese-punctuation": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-modern-timeline": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-reform-open": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "chinese-rhetoric": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-function-lab": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "chinese-classical-words": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-new-routes": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-quadratic": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "chinese-essay-structure": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "history-world-wars": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-circle-angle": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "chinese-famous-lines": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-unit-circle": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-solid-section": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "math-number-line": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "bsuex-7a-2-4-add": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     },
     "bsuex-7a-2-5-sub": {
       "verdict": "pass",
-      "method": "深浅双主题目检拼图亲检（zcode 直视 sheet-dark/light）+ analyze_image 抽检；history-bronze 3D 另有 refine 循环三轮视觉评审 7/10",
-      "at": "2026-10-15"
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
+    },
+    "bsuex-7a-1-3-section": {
+      "verdict": "pass",
+      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
+      "at": "2026-10-18"
     }
   }
 }

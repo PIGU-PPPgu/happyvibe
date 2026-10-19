@@ -82,7 +82,8 @@ function solidGeometry(solid) {
 function computeSection(solid, n, d) {
   // 平面 n·x = d，保留 n·x ≤ d 一侧；收集 n·x = d 上的交线段
   const segs = [];
-  const dist = (v) => n.dot(v) - d;
+  // 共面顶点吸附：|dist|<1e-9 的顶点按裁剪侧处理，交点即顶点本身（过顶点/过棱的精确退化）
+  const dist = (v) => { const x = n.dot(v) - d; return Math.abs(x) < 1e-9 ? 1e-6 : x; };
   for (const f of solid.faces) {
     const poly = f.map(i => solid.verts[i]);
     const out = [];
@@ -98,11 +99,12 @@ function computeSection(solid, n, d) {
         if (da <= 0) exit = p; else enter = p; // 出面/入面交点
       }
     }
-    if (enter && exit) segs.push([enter, exit]); // 有向段：面内保留侧的边界
+    if (enter && exit && enter.distanceTo(exit) > 1e-5) segs.push([enter, exit]); // 面内保留侧边界；零长度段=面只触到共面顶点，丢弃
   }
   // 链环：按端点重合串成闭合多边形（凸体只会有一环）
   const loops = [];
-  const key = (p) => `${p.x.toFixed(4)},${p.y.toFixed(4)},${p.z.toFixed(4)}`;
+  // 整数量化键：toFixed 会把 ±1e-6 级的顶点交点写成 -0.0000 / 0.0000 两个键，链环断裂
+  const key = (p) => [p.x, p.y, p.z].map(v => Math.round(v * 1e4)).join(',');
   const byStart = new Map();
   segs.forEach(([a, b]) => { const k = key(a); if (!byStart.has(k)) byStart.set(k, []); byStart.get(k).push(b); });
   while (segs.length) {
@@ -335,18 +337,27 @@ function updateSection() {
   ui.shape.textContent = shape;
   ui.vcount.textContent = vcount || '—';
   ui.area.textContent = area ? area.toFixed(2) : '—';
-  // 椭圆近似时给长短轴
+  // 椭圆近似时给长短轴：先求面内协方差主方向（真主轴），再沿主轴量极值
   if (/椭圆|圆（/.test(shape) && sec) {
-    const u = new THREE.Vector3(1, 0, 0).cross(n);
-    if (u.lengthSq() < 1e-6) u.set(1, 0, 0); else u.normalize();
+    const u0 = new THREE.Vector3(1, 0, 0).cross(n);
+    const u = u0.lengthSq() < 1e-6 ? new THREE.Vector3(1, 0, 0) : u0.normalize();
     const w = new THREE.Vector3().crossVectors(n, u).normalize();
-    let lo = 1e9, hi = -1e9;
-    for (const v of sec.loop) { const t = v.clone().sub(sec.centroid).dot(u); lo = Math.min(lo, t); hi = Math.max(hi, t); }
-    let lo2 = 1e9, hi2 = -1e9;
-    for (const v of sec.loop) { const t = v.clone().sub(sec.centroid).dot(w); lo2 = Math.min(lo2, t); hi2 = Math.max(hi2, t); }
-    const A = hi - lo, B = hi2 - lo2;
+    let sxx = 0, syy = 0, sxy = 0;
+    for (const v of sec.loop) {
+      const p = v.clone().sub(sec.centroid);
+      const x = p.dot(u), y = p.dot(w);
+      sxx += x * x; syy += y * y; sxy += x * y;
+    }
+    const psi = 0.5 * Math.atan2(2 * sxy, sxx - syy);   // 主方向角
+    const e1 = u.clone().multiplyScalar(Math.cos(psi)).addScaledVector(w, Math.sin(psi)).normalize();
+    const e2 = new THREE.Vector3().crossVectors(n, e1).normalize();
+    let a1 = 0, a2 = 0;
+    for (const v of sec.loop) {
+      a1 = Math.max(a1, Math.abs(v.clone().sub(sec.centroid).dot(e1)));
+      a2 = Math.max(a2, Math.abs(v.clone().sub(sec.centroid).dot(e2)));
+    }
     ui.axes.parentElement.style.display = '';
-    ui.axes.textContent = `长轴 ${(Math.max(A, B)).toFixed(2)} · 短轴 ${(Math.min(A, B)).toFixed(2)}`;
+    ui.axes.textContent = `长轴 ${(2 * Math.max(a1, a2)).toFixed(2)} · 短轴 ${(2 * Math.min(a1, a2)).toFixed(2)}`;
   } else ui.axes.parentElement.style.display = 'none';
 }
 
@@ -578,6 +589,7 @@ function runSelfChecks() {
     ['cylinder', 0, 0, '圆（近似）', null, Math.PI * 0.8 * 0.8, 0.1],
     ['cylinder', 90, 0, '矩形', 4, 1.6 * 1.7, 0.05],
     ['cone', 0, -0.4, '圆（近似）', null, Math.PI * (0.85 * 1.3 / 1.8) ** 2, 0.03],
+    ['cone', 90, 0, '等腰三角形', 3, null, 0],   // 过顶点：精确退化（共面顶点吸附）
   ];
   for (const [kind, t, d, want, wantV, wantA, tolA] of cases) {
     solid = buildSolid(kind); rebuildSolid();
