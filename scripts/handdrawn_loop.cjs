@@ -135,6 +135,8 @@ while (true) {
   const { slug, title } = task;
   log(`— R${round} 开始：${slug} ${title}`);
   mark(slug, "⬜", "🔄");
+  // 每轮重读工单库（监督轮会运行中补工单）
+  try { JOBS = JSON.parse(fs.readFileSync(path.join(ROOT, "scripts/handdrawn-jobs.json"), "utf8")); } catch (e) {}
   const job = JOBS[slug];
   if (!job) {
     log(`  跳过 ${slug}（无工单，本轮不再取）`);
