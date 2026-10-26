@@ -1,0 +1,11 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sb = { window: {} }; new Function('window', src)(sb.window);
+var L = sb.window.LESSON;
+assert.strictEqual(M.mid(0, 8), 4); assert.strictEqual(M.mid(-3, 5), 1);
+assert.strictEqual(M.cmp(7.5, 6), 'AB > CD'); assert.strictEqual(M.cmp(5, 5), 'AB = CD');
+assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
+console.log('4.2 数学测试通过');
