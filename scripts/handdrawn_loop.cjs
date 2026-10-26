@@ -11,6 +11,7 @@ const path = require("path");
 const ROOT = "/tmp/hv";
 const PLAN = path.join(ROOT, "docs/handdrawn-plan.md");
 const LOG = "/tmp/hv/loop.log";
+const SKIP_FILE = "/tmp/hv/scripts/handdrawn-skip.json";
 const PROXY = "HTTPS_PROXY=http://127.0.0.1:7897";
 
 function log(msg) {
@@ -38,12 +39,20 @@ const TPL = path.join(ROOT, "src/interactives/math/kdedraw-7a-1-1");
 let JOBS = {};
 try { JOBS = JSON.parse(fs.readFileSync(path.join(ROOT, "scripts/handdrawn-jobs.json"), "utf8")); } catch (e) { /* 空 */ }
 
+let SKIP = new Set();
+try { SKIP = new Set(JSON.parse(fs.readFileSync(SKIP_FILE, "utf8"))); } catch (e) {}
 function nextTask() {
   const plan = fs.readFileSync(PLAN, "utf8");
-  // 行格式：- ⬜ 1.4 从三个方向看物体的形状（kdedraw-7a-1-4）— 描述
-  const m = plan.match(/- ⬜ (\d+\.\d+[a-z]?) (.+?)（(kdedraw-[a-z0-9-]+)）/);
-  if (!m) return null;
-  return { slug: m[3], section: m[1], title: m[2].trim() };
+  const re = /- ⬜ (\d+\.\d+[a-z]?) (.+?)（(kdedraw-[a-z0-9-]+)）/g;
+  let m;
+  while ((m = re.exec(plan))) {
+    if (!SKIP.has(m[3])) return { slug: m[3], section: m[1], title: m[2].trim() };
+  }
+  return null;
+}
+function skipTask(slug) {
+  SKIP.add(slug);
+  fs.writeFileSync(SKIP_FILE, JSON.stringify([...SKIP]));
 }
 function mark(slug, from, to) {
   let s = fs.readFileSync(PLAN, "utf8");
@@ -128,8 +137,8 @@ while (true) {
   mark(slug, "⬜", "🔄");
   const job = JOBS[slug];
   if (!job) {
-    log(`  跳过 ${slug}（无工单，账本回退待做）`);
-    mark(slug, "🔄", "⬜");
+    log(`  跳过 ${slug}（无工单，本轮不再取）`);
+    skipTask(slug);
     continue;
   }
   // 1) 脚手架
