@@ -1,0 +1,13 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sb = { window: {} }; new Function('window', src)(sb.window);
+var L = sb.window.LESSON;
+assert.strictEqual(M.pos(2, 3), 6); assert.strictEqual(M.pos(-2, 3), -6);
+assert.strictEqual(M.pos(2, -3), -6); assert.strictEqual(M.pos(-2, -3), 6, '负负得正');
+assert.strictEqual(M.signRule(-2, -3), '+'); assert.strictEqual(M.signRule(-2, 3), '-');
+assert.strictEqual(M.signRule(0, 5), '0');
+assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
+console.log('2.7 数学测试通过');
