@@ -1,0 +1,12 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sb = { window: {} }; new Function('window', src)(sb.window);
+var L = sb.window.LESSON;
+assert.strictEqual(M.segments(2), 1); assert.strictEqual(M.segments(3), 3);
+assert.strictEqual(M.segments(4), 6); assert.strictEqual(M.segments(8), 28);
+assert.strictEqual(M.maxIntersections(3), 3, '三直线最多 3 交点');
+assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
+console.log('4.1 数学测试通过');
