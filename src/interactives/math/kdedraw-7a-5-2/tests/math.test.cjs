@@ -1,0 +1,16 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sb = { window: {} }; new Function('window', src)(sb.window);
+var L = sb.window.LESSON;
+var e1 = M.apply1({ l: 8, r: 8 }, -3);
+assert.strictEqual(e1.l, 5); assert.strictEqual(e1.r, 5); assert.ok(M.balanced(e1), '同减仍平');
+var e2 = M.apply2({ l: 5, r: 5 }, 2);
+assert.strictEqual(e2.l, 10); assert.ok(M.balanced(e2));
+assert.strictEqual(M.apply2({ l: 5, r: 5 }, 0), null, '除以 0 拒绝');
+var e3 = M.apply1({ l: 4, r: 8 }, 1);
+assert.ok(!M.balanced(e3), '不同操作打破平衡');
+assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
+console.log('5.2 数学测试通过');
