@@ -14,3 +14,15 @@ astro_ok
 🌎 Deploying...
 ✨ Deployment complete! Take a peek over at https://afb8f3a3.happyvibe.pages.dev
 [2026-10-26T23:20]   线上字节一致
+[2026-10-26T23:29] — R2 完成：kdedraw-7a-6-2
+[2026-10-26T23:31] — R3 开始：kdedraw-7a-6-3 统计图的选择
+[2026-10-26T23:31]   数学测试 OK: 6.3 数学测试通过
+[2026-10-26T23:31]   构建 70055 字节 / 预览 OK
+astro_ok
+[32mIf you think this is a bug then please create an issue at https://github.com/cloudflare/workers-sdk/issues/new/choose[0m
+🪵  Logs were written to "/Users/iguppp/Library/Preferences/.wrangler/logs/wrangler-2026-10-26_23-31-25_261.log"
+[2026-10-26T23:39]   部署 失败 1/2: 字节不一致
+astro_ok
+🌎 Deploying...
+✨ Deployment complete! Take a peek over at https://872755de.happyvibe.pages.dev
+[2026-10-26T23:39]   线上字节一致
