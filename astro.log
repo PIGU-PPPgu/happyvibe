@@ -1,0 +1,222 @@
+01:57:39 [content] Syncing content
+01:57:39 [content] Synced content
+01:57:39 [types] Generated 174ms
+01:57:39 [build] output: "static"
+01:57:39 [build] mode: "static"
+01:57:39 [build] directory: /private/tmp/hv/dist/
+01:57:39 [build] Collecting build info...
+01:57:39 [build] ✓ Completed in 181ms.
+01:57:39 [build] Building static entrypoints...
+01:57:40 [vite] ✓ built in 584ms
+01:57:40 [build] ✓ Completed in 595ms.
+
+ building client (vite) 
+01:57:40 [vite] transforming...
+01:57:42 [vite] ✓ 2108 modules transformed.
+01:57:42 [vite] rendering chunks...
+01:57:43 [vite] computing gzip size...
+01:57:43 [vite] dist/_astro/urls.6fTMgBMC.js                                                   0.12 kB │ gzip:   0.12 kB
+01:57:43 [vite] dist/_astro/channel.BcXYRc_d.js                                                0.15 kB │ gzip:   0.15 kB
+01:57:43 [vite] dist/_astro/init.Gi6I4Gst.js                                                   0.15 kB │ gzip:   0.13 kB
+01:57:43 [vite] dist/_astro/sitemap.astro_astro_type_script_index_0_lang.BxgEHJTu.js           0.20 kB │ gzip:   0.18 kB
+01:57:43 [vite] dist/_astro/LessonCard.astro_astro_type_script_index_0_lang.79MT9Sh2.js        0.22 kB │ gzip:   0.19 kB
+01:57:43 [vite] dist/_astro/chunk-2Q5K7J3B.D0XhmVIK.js                                         0.23 kB │ gzip:   0.18 kB
+01:57:43 [vite] dist/_astro/chunk-JWPE2WC7.BgEivzVZ.js                                         0.26 kB │ gzip:   0.19 kB
+01:57:43 [vite] dist/_astro/chunk-XXDRQBXY.BgS_F5W8.js                                         0.26 kB │ gzip:   0.23 kB
+01:57:43 [vite] dist/_astro/chunk-5VM5RSS4.BgWxJ8i4.js                                         0.40 kB │ gzip:   0.29 kB
+01:57:43 [vite] dist/_astro/MarkDoneButton.astro_astro_type_script_index_0_lang.L7aOEwXe.js    0.43 kB │ gzip:   0.32 kB
+01:57:43 [vite] dist/_astro/stateDiagram-v2-MP3YSRHH._NQnJScK.js                               0.47 kB │ gzip:   0.33 kB
+01:57:43 [vite] dist/_astro/index.astro_astro_type_script_index_0_lang.Drn7vFiS.js             0.49 kB │ gzip:   0.34 kB
+01:57:43 [vite] dist/_astro/classDiagram-ZZMXUADV.D5sZjSIR.js                                  0.51 kB │ gzip:   0.35 kB
+01:57:43 [vite] dist/_astro/classDiagram-v2-VYDZK3BY.D5sZjSIR.js                               0.51 kB │ gzip:   0.35 kB
+01:57:43 [vite] dist/_astro/chunk-POPQ4Y6H.C7cjnsxG.js                                         0.54 kB │ gzip:   0.38 kB
+01:57:43 [vite] dist/_astro/path.astro_astro_type_script_index_0_lang.CtAevgdz.js              0.57 kB │ gzip:   0.37 kB
+01:57:43 [vite] dist/_astro/swimlanesDiagram-VR7AAH4N.KI23b8TF.js                              0.59 kB │ gzip:   0.40 kB
+01:57:43 [vite] dist/_astro/progress.C0sB82-H.js                                               0.61 kB │ gzip:   0.34 kB
+01:57:43 [vite] dist/_astro/infoDiagram-27XIBGKW.Cy4WuhvO.js                                   0.63 kB │ gzip:   0.43 kB
+01:57:43 [vite] dist/_astro/sizeCapture-INFHLROL.BfmnREZ3.js                                   0.98 kB │ gzip:   0.56 kB
+01:57:43 [vite] dist/_astro/index.astro_astro_type_script_index_0_lang.CbhBJ7G9.js             1.03 kB │ gzip:   0.65 kB
+01:57:43 [vite] dist/_astro/preload-helper.BlTxHScW.js                                         1.11 kB │ gzip:   0.65 kB
+01:57:43 [vite] dist/_astro/ordinal.BYWQX77i.js                                                1.19 kB │ gzip:   0.57 kB
+01:57:43 [vite] dist/_astro/railroadDiagram-O6MQD6OU.BhMGia_6.js                               1.65 kB │ gzip:   0.78 kB
+01:57:43 [vite] dist/_astro/SearchModal.astro_astro_type_script_index_0_lang.-djdvC7i.js       1.75 kB │ gzip:   0.95 kB
+01:57:43 [vite] dist/_astro/abnfDiagram-VCTEODGH.BpezD4hp.js                                   1.85 kB │ gzip:   0.91 kB
+01:57:43 [vite] dist/_astro/chunk-F27PBJKO.D4XOaOlZ.js                                         1.92 kB │ gzip:   0.85 kB
+01:57:43 [vite] dist/_astro/pegDiagram-XKGWAZYB.DJOoExro.js                                    2.00 kB │ gzip:   0.95 kB
+01:57:43 [vite] dist/_astro/ebnfDiagram-PWID7BFC.BepzPgCl.js                                   2.05 kB │ gzip:   0.90 kB
+01:57:43 [vite] dist/_astro/arc.C7tkkFvm.js                                                    3.46 kB │ gzip:   1.49 kB
+01:57:43 [vite] dist/_astro/ModuleCarousel.astro_astro_type_script_index_0_lang.P-OKSjLO.js    3.49 kB │ gzip:   1.59 kB
+01:57:43 [vite] dist/_astro/diagram-Z3DM3KII.DiTz2e49.js                                       4.25 kB │ gzip:   1.86 kB
+01:57:43 [vite] dist/_astro/analytics.astro_astro_type_script_index_0_lang.BaSEq1pk.js         4.67 kB │ gzip:   2.55 kB
+01:57:43 [vite] dist/_astro/defaultLocale.DX6XiGOO.js                                          4.69 kB │ gzip:   2.18 kB
+01:57:43 [vite] dist/_astro/linear.hxCix-LC.js                                                 5.69 kB │ gzip:   2.33 kB
+01:57:43 [vite] dist/_astro/diagram-UQ7AKVKN.DHQTyyA4.js                                       6.12 kB │ gzip:   2.65 kB
+01:57:43 [vite] dist/_astro/pieDiagram-E7YTZNPT.BIgA6Fw1.js                                    6.34 kB │ gzip:   2.65 kB
+01:57:43 [vite] dist/_astro/diagram-S7CK7UJ4.h8dJY0O3.js                                       8.26 kB │ gzip:   3.70 kB
+01:57:43 [vite] dist/_astro/cynefinDiagram-5FMLGOSQ.d0ta2tHb.js                               10.14 kB │ gzip:   3.66 kB
+01:57:43 [vite] dist/_astro/stateDiagram-D77RDMKH.CSGd-Om9.js                                 10.41 kB │ gzip:   3.65 kB
+01:57:43 [vite] dist/_astro/dagre-GXQ25YYZ.CWzUe6jH.js                                        10.75 kB │ gzip:   4.07 kB
+01:57:43 [vite] dist/_astro/diagram-VSXAHHWV.BFotM8Vu.js                                      10.78 kB │ gzip:   4.16 kB
+01:57:43 [vite] dist/_astro/chunk-SVP7TREG.Btv0i_7s.js                                        15.77 kB │ gzip:   4.42 kB
+01:57:43 [vite] dist/_astro/diagram-VX7I27RA.HGplvjDr.js                                      16.00 kB │ gzip:   5.72 kB
+01:57:43 [vite] dist/_astro/ishikawaDiagram-5VMMS53U.DFNNsN-r.js                              17.51 kB │ gzip:   6.68 kB
+01:57:43 [vite] dist/_astro/kanban-definition-UXKFOSKX.BP8AgxrE.js                            20.34 kB │ gzip:   7.24 kB
+01:57:43 [vite] dist/_astro/mindmap-definition-YA3MSWOX.CBIOSUOu.js                           23.22 kB │ gzip:   7.84 kB
+01:57:43 [vite] dist/_astro/sankeyDiagram-P5KCCOFB.QbqQxPzv.js                                23.25 kB │ gzip:   8.58 kB
+01:57:43 [vite] dist/_astro/journeyDiagram-3NMN7TZE.C5GOqQZx.js                               23.61 kB │ gzip:   8.38 kB
+01:57:43 [vite] dist/_astro/wardleyDiagram-VM6X3IG4.BSsGz-RA.js                               25.54 kB │ gzip:   6.82 kB
+01:57:43 [vite] dist/_astro/gitGraphDiagram-WWUBYQGX.BA3fv8R3.js                              29.46 kB │ gzip:   8.73 kB
+01:57:43 [vite] dist/_astro/erDiagram-RLTQ6QDP.CDPo5gVj.js                                    30.83 kB │ gzip:  10.62 kB
+01:57:43 [vite] dist/_astro/timeline-definition-24CTP7MA.Beyf0eeb.js                          30.88 kB │ gzip:  10.18 kB
+01:57:43 [vite] dist/_astro/requirementDiagram-BXWQKSXE.Vjy5V6FB.js                           31.04 kB │ gzip:   9.77 kB
+01:57:43 [vite] dist/_astro/quadrantDiagram-AXDQQJYC.DK2lh32a.js                              34.05 kB │ gzip:  10.00 kB
+01:57:43 [vite] dist/_astro/layout.DxglaHaX.js                                                35.47 kB │ gzip:  12.77 kB
+01:57:43 [vite] dist/_astro/chunk-IMKFNOWR.Dq_G-Cnx.js                                        38.12 kB │ gzip:  12.51 kB
+01:57:43 [vite] dist/_astro/blockDiagram-I7D4REHJ.BmpIk3-E.js                                 41.82 kB │ gzip:  13.61 kB
+01:57:43 [vite] dist/_astro/vennDiagram-4TSXK5OY.rxWuyjYE.js                                  42.01 kB │ gzip:  15.73 kB
+01:57:43 [vite] dist/_astro/xychartDiagram-S5SC5T6Z.DtYY9lmI.js                               44.52 kB │ gzip:  12.53 kB
+01:57:43 [vite] dist/_astro/chunk-TICWLB2K.qK3bFEyZ.js                                        49.21 kB │ gzip:  15.76 kB
+01:57:43 [vite] dist/_astro/flowDiagram-HODETNUW.Cnt08E9X.js                                  61.87 kB │ gzip:  19.89 kB
+01:57:43 [vite] dist/_astro/c4Diagram-7LVT6UL2.BrJlBm6A.js                                    65.51 kB │ gzip:  18.82 kB
+01:57:43 [vite] dist/_astro/ganttDiagram-EL5Y4UJY.YEed8HEu.js                                 69.73 kB │ gzip:  23.58 kB
+01:57:43 [vite] dist/_astro/cose-bilkent-JH36ORCC.Cr4Hj3lH.js                                 81.74 kB │ gzip:  22.51 kB
+01:57:43 [vite] dist/_astro/ui-core.D7EsID-j.js                                               94.16 kB │ gzip:  27.33 kB
+01:57:43 [vite] dist/_astro/swimlanes-42K2YHIH.B5xyvOXs.js                                   115.83 kB │ gzip:  42.54 kB
+01:57:43 [vite] dist/_astro/sequenceDiagram-WJ2MYXX4.CMSxIYEr.js                             117.01 kB │ gzip:  31.14 kB
+01:57:43 [vite] dist/_astro/architectureDiagram-5GKGNRK7.DVCh88p1.js                         151.86 kB │ gzip:  43.16 kB
+01:57:43 [vite] dist/_astro/katex.HP8lGamR.js                                                261.31 kB │ gzip:  77.57 kB
+01:57:43 [vite] dist/_astro/cytoscape.esm.CtNdOvlO.js                                        443.80 kB │ gzip: 142.41 kB
+01:57:43 [vite] dist/_astro/Mermaid.astro_astro_type_script_index_0_lang.DKvXPaMk.js         683.95 kB │ gzip: 169.46 kB
+01:57:43 [vite] dist/_astro/cynefin-OW5HDTMX.BsyflyVs.js                                     688.03 kB │ gzip: 152.07 kB
+01:57:43 [WARN] [vite] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+01:57:43 [vite] ✓ built in 2.54s
+
+ generating static routes 
+01:57:43 ▶ src/pages/about.astro
+01:57:43   └─ /about/index.html (+12ms) 
+01:57:43 ▶ src/pages/analytics.astro
+01:57:43   └─ /analytics/index.html (+1ms) 
+01:57:43 ▶ src/pages/challenge.astro
+01:57:43   └─ /challenge/index.html (+2ms) 
+01:57:43 ▶ src/pages/contest.astro
+01:57:43   └─ /contest/index.html (+3ms) 
+01:57:43 ▶ src/pages/facilitator.astro
+01:57:43   └─ /facilitator/index.html (+1ms) 
+01:57:43 ▶ src/pages/index.astro
+01:57:43   └─ /index.html (+3ms) 
+01:57:43 ▶ src/pages/modules/[slug]/[lesson].astro
+01:57:43   ├─ /modules/basics/agent-vs-llm/index.html (+6ms) 
+01:57:43   ├─ /modules/basics/models-101/index.html (+4ms) 
+01:57:43   ├─ /modules/basics/philosophy/index.html (+4ms) 
+01:57:43   ├─ /modules/basics/choose-model/index.html (+3ms) 
+01:57:43   ├─ /modules/basics/five-stages/index.html (+1ms) 
+01:57:43   ├─ /modules/basics/when-to-use/index.html (+1ms) 
+01:57:43   ├─ /modules/basics/why-hard/index.html (+1ms) 
+01:57:43   ├─ /modules/agent/agent-anatomy/index.html (+1ms) 
+01:57:43   ├─ /modules/agent/what-is-agent/index.html (+2ms) 
+01:57:43   ├─ /modules/agent/product-comparison/index.html (+1ms) 
+01:57:43   ├─ /modules/class-management/co-teacher/index.html (+1ms) 
+01:57:43   ├─ /modules/agent/why-agent/index.html (+1ms) 
+01:57:43   ├─ /modules/class-management/seat-planner/index.html (+1ms) 
+01:57:43   ├─ /modules/class-management/home-comm-task/index.html (+1ms) 
+01:57:43   ├─ /modules/class-management/trace-desk-advanced/index.html (+1ms) 
+01:57:43   ├─ /modules/class-management/trace-desk/index.html (+2ms) 
+01:57:43   ├─ /modules/creation/consumption-traps/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/html-solving/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/ide-tools/index.html (+0ms) 
+01:57:43   ├─ /modules/creation/case-study/index.html (+0ms) 
+01:57:43   ├─ /modules/creation/keywords/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/material-packs/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/subject-task/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/task-library/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/vibe-101-anatomy/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/vibe-coding-intro/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/trigger-words/index.html (+1ms) 
+01:57:43   ├─ /modules/edu-data/exam-analysis-task/index.html (+1ms) 
+01:57:43   ├─ /modules/edu-data/grade-analysis/index.html (+1ms) 
+01:57:43   ├─ /modules/edu-data/visualization/index.html (+1ms) 
+01:57:43   ├─ /modules/growth/knowledge-base/index.html (+1ms) 
+01:57:43   ├─ /modules/growth/ai-learning/index.html (+1ms) 
+01:57:43   ├─ /modules/growth/innovation/index.html (+0ms) 
+01:57:43   ├─ /modules/growth/pain-breakdown/index.html (+0ms) 
+01:57:43   ├─ /modules/growth/prompt-vs-skill/index.html (+0ms) 
+01:57:43   ├─ /modules/growth/skill-born/index.html (+1ms) 
+01:57:43   ├─ /modules/growth/teacher-agent/index.html (+1ms) 
+01:57:43   ├─ /modules/growth/skill-use/index.html (+1ms) 
+01:57:43   ├─ /modules/research/literature/index.html (+1ms) 
+01:57:43   ├─ /modules/policy/policy/index.html (+1ms) 
+01:57:43   ├─ /modules/research/proposal-task/index.html (+0ms) 
+01:57:43   ├─ /modules/research/topic-generator/index.html (+1ms) 
+01:57:43   ├─ /modules/software/agent-transfer/index.html (+1ms) 
+01:57:43   ├─ /modules/software/deploy-server/index.html (+1ms) 
+01:57:43   ├─ /modules/software/task-classroom-kit/index.html (+0ms) 
+01:57:43   ├─ /modules/software/task-cloud/index.html (+0ms) 
+01:57:43   ├─ /modules/software/task-publish/index.html (+1ms) 
+01:57:43   ├─ /modules/software/task-subject-website/index.html (+1ms) 
+01:57:43   ├─ /modules/software/task-final-term/index.html (+0ms) 
+01:57:43   ├─ /modules/software/task-workbench-data/index.html (+1ms) 
+01:57:43   ├─ /modules/software/task-workbench/index.html (+1ms) 
+01:57:43   ├─ /modules/software/wb-01-start/index.html (+1ms) 
+01:57:43   ├─ /modules/software/wb-02-first-chat/index.html (+0ms) 
+01:57:43   ├─ /modules/software/wb-02b-six/index.html (+0ms) 
+01:57:43   ├─ /modules/software/wb-04-brain-credits/index.html (+0ms) 
+01:57:43   ├─ /modules/software/wb-03-real-work/index.html (+1ms) 
+01:57:43   ├─ /modules/software/wb-05-market/index.html (+1ms) 
+01:57:43   ├─ /modules/software/wb-08-automation/index.html (+1ms) 
+01:57:43   ├─ /modules/software/wb-06-office/index.html (+0ms) 
+01:57:43   ├─ /modules/software/wb-07-connectors/index.html (+1ms) 
+01:57:43   ├─ /modules/software/wb-09-troubleshooting/index.html (+0ms) 
+01:57:43   ├─ /modules/software/workbuddy/index.html (+0ms) 
+01:57:43   ├─ /modules/teaching/exam-paper-task/index.html (+1ms) 
+01:57:43   ├─ /modules/teaching/comments/index.html (+1ms) 
+01:57:43   ├─ /modules/teaching/feixiang-skill/index.html (+1ms) 
+01:57:43   ├─ /modules/teaching/html-concepts/index.html (+1ms) 
+01:57:43   ├─ /modules/teaching/lesson-prep/index.html (+0ms) 
+01:57:43   ├─ /modules/teaching/lesson-plan/index.html (+1ms) 
+01:57:43   ├─ /modules/teaching/fun-class/index.html (+1ms) 
+01:57:43   └─ /modules/teaching/mindmap/index.html (+0ms) 
+01:57:43 ▶ src/pages/modules/[slug]/index.astro
+01:57:43   ├─ /modules/basics/index.html (+1ms) 
+01:57:43   ├─ /modules/teaching/index.html (+1ms) 
+01:57:43   ├─ /modules/class-management/index.html (+1ms) 
+01:57:43   ├─ /modules/edu-data/index.html (+1ms) 
+01:57:43   ├─ /modules/policy/index.html (+0ms) 
+01:57:43   ├─ /modules/research/index.html (+0ms) 
+01:57:43   ├─ /modules/growth/index.html (+1ms) 
+01:57:43   ├─ /modules/creation/index.html (+1ms) 
+01:57:43   ├─ /modules/agent/index.html (+1ms) 
+01:57:43   └─ /modules/software/index.html (+1ms) 
+01:57:43 ▶ src/pages/modules/index.astro
+01:57:43   └─ /modules/index.html (+1ms) 
+01:57:43 ▶ src/pages/pains.astro
+01:57:43   └─ /pains/index.html (+1ms) 
+01:57:43 ▶ src/pages/path.astro
+01:57:43   └─ /path/index.html (+1ms) 
+01:57:43 ▶ src/pages/resources/[subject].astro
+01:57:43   ├─ /resources/chinese/index.html (+2ms) 
+01:57:43   ├─ /resources/math/index.html (+3ms) 
+01:57:43   ├─ /resources/english/index.html (+1ms) 
+01:57:43   ├─ /resources/science/index.html (+1ms) 
+01:57:43   ├─ /resources/physics/index.html (+1ms) 
+01:57:43   ├─ /resources/chemistry/index.html (+2ms) 
+01:57:43   ├─ /resources/biology/index.html (+1ms) 
+01:57:43   ├─ /resources/geography/index.html (+1ms) 
+01:57:43   ├─ /resources/history/index.html (+1ms) 
+01:57:43   ├─ /resources/politics/index.html (+1ms) 
+01:57:43   └─ /resources/it/index.html (+2ms) 
+01:57:43 ▶ src/pages/resources/index.astro
+01:57:43   └─ /resources/index.html (+2ms) 
+01:57:43 ▶ src/pages/sitemap.astro
+01:57:43   └─ /sitemap/index.html (+1ms) 
+01:57:43 ▶ src/pages/toolbox.astro
+01:57:43   └─ /toolbox/index.html (+1ms) 
+01:57:43 ▶ src/pages/workshop-script.astro
+01:57:43   └─ /workshop-script/index.html (+1ms) 
+01:57:43 ✓ Completed in 123ms.
+
+01:57:43 [build] 104 page(s) built in 3.49s
+01:57:43 [build] Complete!

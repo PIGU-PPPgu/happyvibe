@@ -1,0 +1,18 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sandbox = { window: {} };
+new Function('window', src)(sandbox.window);
+var L = sandbox.window.LESSON;
+assert.strictEqual(M.classify(3), 'int+'); assert.strictEqual(M.classify(-7), 'int-');
+assert.strictEqual(M.classify(0), 'zero'); assert.strictEqual(M.classify(0.5), 'frac+');
+assert.strictEqual(M.classify(-2.5), 'frac-');
+assert.strictEqual(M.classifyName[M.classify(2 / 3)], '正分数');
+assert.strictEqual(M.classifyName[M.classify(-3 / 4)], '负分数');
+assert.strictEqual(M.fmt(2 / 3), '2/3');
+assert.ok(L.temps.every(t => t[1] < 0 || t[2] > 0), '温度数据合法');
+assert.strictEqual(L.cards.length, 10);
+L.quiz.forEach((q, i) => assert.ok(q.a >= 0 && q.a < q.opts.length, 'quiz' + i));
+console.log('2.1 数学测试通过');

@@ -1,0 +1,77 @@
+[2026-10-26T17:50] === loop 启动 ===
+[2026-10-26T17:50] 账本已清空，loop 结束
+[2026-10-26T17:50] === loop 退出 ===
+[2026-10-26T17:50] === loop 启动 ===
+[2026-10-26T17:50] — R1 开始：kdedraw-7a-1-4 从三个方向看物体的形状
+[2026-10-26T17:50]   数学测试 失败 1/1: Command failed: node src/interactives/math/kdedraw-7a-1-4/tests/math.test.cjs
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+Assertio
+[2026-10-26T17:50]   ⚠️ 数学测试不过，跳过 kdedraw-7a-1-4
+[2026-10-26T17:50] — R2 开始：kdedraw-7a-2-1 有理数
+[2026-10-26T17:50]   数学测试 OK: 2.1 数学测试通过
+[2026-10-26T17:50]   构建 68708 字节 / 预览 OK
+[2026-10-26T17:50]   部署 失败 1/2: Cannot read properties of null (reading 'toString')
+[2026-10-26T17:51]   部署 失败 2/2: Cannot read properties of null (reading 'toString')
+[2026-10-26T17:51]   ⚠️ 部署验证失败，跳过 kdedraw-7a-2-1
+[2026-10-26T17:51] — R3 开始：kdedraw-7a-2-2 数轴
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-2 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R4 开始：kdedraw-7a-2-3 绝对值
+[2026-10-26T17:51]   数学测试 OK: 2.3 数学测试通过
+[2026-10-26T17:51]   构建 69449 字节 / 预览 OK
+[2026-10-26T17:51]   部署 失败 1/2: Cannot read properties of null (reading 'toString')
+[2026-10-26T17:51]   部署 失败 2/2: Cannot read properties of null (reading 'toString')
+[2026-10-26T17:51]   ⚠️ 部署验证失败，跳过 kdedraw-7a-2-3
+[2026-10-26T17:51] — R5 开始：kdedraw-7a-2-6 有理数的加减混合运算
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-6 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R6 开始：kdedraw-7a-2-7 有理数的乘法
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-7 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R7 开始：kdedraw-7a-2-8 有理数的除法
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-8 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R8 开始：kdedraw-7a-2-9 有理数的乘方
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-9 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R9 开始：kdedraw-7a-2-10 科学记数法
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-10 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R10 开始：kdedraw-7a-2-11 有理数的混合运算
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-11 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R11 开始：kdedraw-7a-2-12 用计算器进行运算
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-2-12 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R12 开始：kdedraw-7a-3-1 字母表示数
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-3-1 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R13 开始：kdedraw-7a-3-2 代数式
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-3-2 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R14 开始：kdedraw-7a-3-3 整式
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-3-3 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R15 开始：kdedraw-7a-3-4 整式的加减
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-3-4 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R16 开始：kdedraw-7a-4-1 线段、射线、直线
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-4-1 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R17 开始：kdedraw-7a-4-2 比较线段的长短
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-4-2 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R18 开始：kdedraw-7a-4-3 角
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-4-3 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R19 开始：kdedraw-7a-4-4 角的比较
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-4-4 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R20 开始：kdedraw-7a-5-1 方程
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-5-1 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R21 开始：kdedraw-7a-5-2 等式的基本性质
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-5-2 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R22 开始：kdedraw-7a-5-3 一元一次方程的解法
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-5-3 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R23 开始：kdedraw-7a-5-4 一元一次方程的应用
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-5-4 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R24 开始：kdedraw-7a-6-1 数据的收集
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-6-1 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R25 开始：kdedraw-7a-6-2 数据的整理
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-6-2 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] — R26 开始：kdedraw-7a-6-3 统计图的选择
+[2026-10-26T17:51]   ⚠️ kdedraw-7a-6-3 无工单（handdrawn-jobs.json 未含），跳过
+[2026-10-26T17:51] 账本已清空，loop 结束
+[2026-10-26T17:51] === loop 退出 ===
+[2026-10-26T17:57] === loop 启动 ===
+[2026-10-26T17:57] — R1 开始：kdedraw-7a-1-4 从三个方向看物体的形状
+[2026-10-26T17:57]   数学测试 OK: 1.4 数学测试通过
+[2026-10-26T17:57]   构建 68608 字节 / 预览 OK
+[2026-10-26T17:58]   线上字节一致

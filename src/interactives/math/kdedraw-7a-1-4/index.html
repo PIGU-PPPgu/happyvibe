@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>从三个方向看物体的形状 · 互动课件</title>
+<link rel="stylesheet" href="css/app.css?v=20">
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="side" id="side" aria-label="课件目录">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div>
+        <div class="brand-title">从三个方向看物体的形状</div>
+        <div class="brand-sub">北师大版七上 · 1.4</div>
+      </div>
+    </div>
+    <nav class="toc" id="toc"></nav>
+    <div class="side-foot">
+      
+      <label class="switch" style="display:none"><input type="checkbox" id="showHidden"></label>
+      <div class="keys">← → 上一步/下一步　PgUp PgDn 换页<br>V 平面图/2.5D　B 收起目录<br>D 画笔　N 备注　F 全屏</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topline">
+      <button class="icon-btn" id="toggleSide" title="收起/展开目录（B）" aria-label="收起或展开目录">☰</button>
+      <div class="crumb" id="crumb"></div>
+      <div class="tools">
+        
+        <button class="tool" id="penBtn" title="画笔批注（D）">✎ 画笔</button>
+        <button class="tool" id="notesBtn" title="教师备注（N）">备注</button>
+        <button class="tool" id="depthBtn" title="印刷/素面切换（V）" style="display:none">2.5D → 平面图</button>
+        <button class="tool" id="fullBtn" title="全屏（F）">全屏</button>
+      </div>
+    </header>
+
+    <div class="viewport" id="viewport">
+      <div class="stage" id="stage"></div>
+      <canvas class="ink" id="ink" width="1280" height="720"></canvas>
+      <div class="penbar" id="penbar" hidden>
+        <button data-color="#6C2166" class="sw on" style="--c:#6C2166" aria-label="紫色"></button>
+        <button data-color="#C0392B" class="sw" style="--c:#C0392B" aria-label="红色"></button>
+        <button data-color="#1E7F4F" class="sw" style="--c:#1E7F4F" aria-label="绿色"></button>
+        <button data-color="hl" class="sw hl" style="--c:#F4D35E" aria-label="荧光笔"></button>
+        <button id="penUndo">撤销</button>
+        <button id="penClear">清空本页</button>
+      </div>
+    </div>
+
+    <footer class="ctrl">
+      <button class="nav-btn" id="prevPage" title="上一页（PgUp）">⏮</button>
+      <button class="nav-btn" id="prevStep" title="上一步（←）">◀</button>
+      <div class="dots" id="dots" aria-label="本页步骤"></div>
+      <button class="nav-btn primary" id="nextStep" title="下一步（→ 或 空格）">下一步 ▶</button>
+      <button class="nav-btn" id="nextPage" title="下一页（PgDn）">⏭</button>
+      <div class="clock" id="clockBar" hidden>
+        <button class="nav-btn" id="playBtn" title="播放/暂停">▶</button>
+        <input type="range" id="tSlider" min="0" max="10" step="0.1" value="0" aria-label="时间 t">
+        <output id="tOut">t＝0</output>
+        <select id="speedSel" aria-label="播放速度"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
+      </div>
+    </footer>
+  </main>
+
+  <aside class="notes" id="notes" hidden aria-label="教师备注"></aside>
+</div>
+<script src="js/data.js"></script>
+<script src="js/mathengine.js"></script>
+<script src="js/core.js?v=20"></script>
+<script src="js/pages.js?v=20"></script>
+<script src="js/app.js?v=20"></script>
+</body>
+</html>
