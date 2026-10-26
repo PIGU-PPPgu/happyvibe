@@ -1,0 +1,13 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sb = { window: {} }; new Function('window', src)(sb.window);
+var L = sb.window.LESSON;
+assert.strictEqual(M.div(-6, 2), -3); assert.strictEqual(M.div(-8, -0.5), 16, '除以-1/2=乘-2');
+assert.strictEqual(M.div(0, -5), 0); assert.strictEqual(M.div(5, 0), null, '0除数无意义');
+assert.strictEqual(M.reciprocal(-2), -0.5); assert.strictEqual(M.reciprocal(0), null);
+assert.strictEqual(M.fmt(-0.5), '-1/2');
+assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
+console.log('2.8 数学测试通过');
