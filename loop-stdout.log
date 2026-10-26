@@ -1,9 +1,16 @@
-[2026-10-26T19:44] === loop 启动 ===
-[2026-10-26T19:44] — R1 开始：kdedraw-7a-3-1 字母表示数
-[2026-10-26T19:44]   数学测试 OK: 3.1 数学测试通过
-[2026-10-26T19:44]   构建 66639 字节 / 预览 OK
+[2026-10-26T20:09] === loop 启动 ===
+[2026-10-26T20:09] — R1 开始：kdedraw-7a-3-2 代数式
+[2026-10-26T20:09]   数学测试 失败 1/1: Command failed: node src/interactives/math/kdedraw-7a-3-2/tests/math.test.cjs
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+Assertio
+[2026-10-26T20:09]   ⚠️ 数学测试不过，跳过 kdedraw-7a-3-2
+[2026-10-26T20:09] — R2 开始：kdedraw-7a-3-3 整式
+[2026-10-26T20:09]   数学测试 OK: 3.3 数学测试通过
+[2026-10-26T20:09]   构建 67992 字节 / 预览 OK
 astro_ok
 🌎 Deploying...
-✨ Deployment complete! Take a peek over at https://7882bc57.happyvibe.pages.dev
-[2026-10-26T19:45]   线上字节一致
-[2026-10-26T19:47] — R1 完成：kdedraw-7a-3-1
+✨ Deployment complete! Take a peek over at https://ff4417e2.happyvibe.pages.dev
+[2026-10-26T20:09]   线上字节一致

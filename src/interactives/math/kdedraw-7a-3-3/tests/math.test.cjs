@@ -1,0 +1,14 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sb = { window: {} }; new Function('window', src)(sb.window);
+var L = sb.window.LESSON;
+assert.strictEqual(M.termDeg('3x^2'), 2);
+assert.strictEqual(M.termDeg('-ab'), 2);
+assert.strictEqual(M.termDeg('2x^2-3x+1'.split(/(?=[+-])/)[0]), 2);
+assert.strictEqual(M.termDeg('+7'), 0, '常数 0 次');
+assert.ok(L.monomials.filter(m => m.ok).every(m => m.c != null));
+assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
+console.log('3.3 数学测试通过');
