@@ -1,0 +1,13 @@
+global.window = globalThis;
+require('../js/mathengine.js');
+var M = window.MathEngine, assert = require('assert');
+var fs = require('fs');
+var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
+var sb = { window: {} }; new Function('window', src)(sb.window);
+var L = sb.window.LESSON;
+assert.strictEqual(M.toX(0, 6, 900), 450, '原点居中');
+assert.strictEqual(Math.round(M.toX(6, 6, 900)), 830);
+assert.strictEqual(M.fromX(M.toX(2.5, 6, 900), 6, 900), 2.5, '往返一致');
+assert.strictEqual(M.fromX(M.toX(-3, 6, 900), 6, 900), -3);
+assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
+console.log('2.2 数学测试通过');
