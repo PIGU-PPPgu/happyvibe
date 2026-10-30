@@ -3,12 +3,13 @@
   "use strict";
   var L = K.L, $ = function (id) { return document.getElementById(id); };
   var GROUPS = [
-    { name: "认识", pages: [1, 2] },
-    { name: "探究", num: "1", pages: [3] },
-    { name: "检测与演示", pages: [4, 5] }
+    { name: "情境引入", pages: [1, 2, 3] },
+    { name: "探究一 · 三要素", num: "1", pages: [4, 5] },
+    { name: "探究二 · 数轴上的运动", num: "2", pages: [6, 7, 8, 9] },
+    { name: "归纳与检测", pages: [10, 11] }
   ];
-  var TAGS = { 2: "认识", 3: "探究 · 数一数", 4: "当堂检测" };
-  var HANDS_ON = { 2: "点击", 3: "算一算", 4: "连线" };
+  var TAGS = { 2: "情境 · 温度计", 3: "现场投票", 4: "探究一 · 三要素", 5: "探究一 · 描点", 6: "探究二 · 动点", 7: "探究二 · 记录时刻", 8: "探究二 · 相反数", 9: "探究二 · 比大小", 10: "当堂检测" };
+  var HANDS_ON = { 3: "投票", 4: "拼装", 5: "描点", 6: "拖动", 7: "输入", 8: "折纸", 9: "拖动", 10: "检测" };
   var SLIDE = {};
   L.slides.forEach(function (s) { SLIDE[s.no] = s; });
   SLIDE.demo = { no: "demo", title: "演示台", minutes: 0 };

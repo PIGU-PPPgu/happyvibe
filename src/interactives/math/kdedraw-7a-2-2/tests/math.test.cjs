@@ -5,9 +5,22 @@ var fs = require('fs');
 var src = fs.readFileSync(require('path').join(__dirname, '../js/data.js'), 'utf8');
 var sb = { window: {} }; new Function('window', src)(sb.window);
 var L = sb.window.LESSON;
-assert.strictEqual(M.toX(0, 6, 900), 450, '原点居中');
-assert.strictEqual(Math.round(M.toX(6, 6, 900)), 830);
-assert.strictEqual(M.fromX(M.toX(2.5, 6, 900), 6, 900), 2.5, '往返一致');
-assert.strictEqual(M.fromX(M.toX(-3, 6, 900), 6, 900), -3);
-assert.ok(L.quiz.every(q => q.a >= 0 && q.a < q.opts.length));
-console.log('2.2 数学测试通过');
+// 动点
+assert.strictEqual(M.pos(-4, 2, 3), 2, '3秒到+2');
+assert.strictEqual(M.pos(-4, 2, 0), -4);
+assert.strictEqual(M.pos(0, 2, 2), 4);
+assert.strictEqual(M.dist(-3), 3);
+// 坐标往返
+assert.strictEqual(M.fromX(M.toX(2.5, 6, 900, 80), 6, 900, 80), 2.5);
+assert.strictEqual(M.fromX(M.toX(-3, 6, 900, 80), 6, 900, 80), -3);
+// 输入判定
+assert.ok(M.checkInput('4', '4'));
+assert.ok(M.checkInput('+4', '4', ['+4']));
+assert.ok(M.checkInput('-3,-2', '-3,-2', ['-3、-2']));
+assert.ok(M.checkInput('−3，−2'.replace(/−/g, '-'), '-3,-2', ['-3、-2']));
+assert.ok(!M.checkInput('5', '4'));
+// 比较与数据
+assert.strictEqual(M.cmp(-1, -4), '>');
+assert.strictEqual(L.slides.length, 11);
+L.quiz.forEach(function (q, i) { assert.ok(q.a >= 0 && q.a < q.opts.length, 'quiz' + i); });
+console.log('2.2 旗舰数学测试通过');
