@@ -339,3 +339,9 @@ body { background-image: var(--iso); }
 .clock { border-radius: 999px; border-width: 2px; box-shadow: 3px 3px 0 var(--cast); }
 .side { background-image: var(--grain); }
 body { background-image: var(--grain), var(--iso); }
+
+/* 封面深底上的跑道场景配色（on-dark）：描边转浅、标签转金 */
+svg.on-dark text { fill: #F3D27A; }
+svg.on-dark polygon, svg.on-dark line, svg.on-dark circle, svg.on-dark path { stroke: #FBF7EE; }
+svg.on-dark polygon[fill="#FFFDF8"] { fill: #FBF7EE; }
+svg.on-dark ellipse[fill="rgba(43,35,38,.22)"] { fill: rgba(0,0,0,.35); }

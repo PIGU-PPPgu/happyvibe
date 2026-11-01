@@ -94,17 +94,25 @@
   P[1] = { full: true, build: function (ctx) {
     var cover = box(ctx.root, 0, 0, 1280, 720, { cls: "cover" });
     cover.appendChild(h("h1", { text: "数轴" }));
-    cover.appendChild(h("p", { cls: "lead", text: "糖豆的家在原点。它往右跑、往左跑——每一步都落在一条线上。这条线，就是今天的主角。" }));
-    var holder = box(cover, 150, 330, 680, 260);
-    var dir = 1, v = 0;
-    var draw = function () { holder.innerHTML = ""; runway(holder, { range: 6, dog: v, arrow: true, run: true }); };
-    draw();
-    var iv = setInterval(function () {
-      if (!document.body.contains(holder)) { clearInterval(iv); return; }
-      v += dir * 0.06;
-      if (v > 4.5) dir = -1; if (v < -4.5) dir = 1;
-      draw();
-    }, 40);
+    cover.appendChild(h("div", { cls: "gold-line" }));
+    cover.appendChild(h("div", { cls: "sub", text: "糖豆找家 · 温度计放平就是一条数轴" }));
+    // 底层大场景：糖豆在 2.5D 跑道上往返跑（rAF，参考件同款节奏）
+    var strip = box(cover, 90, 396, 1100, 30, { cls: "t-s", style: "font-family:var(--mono);color:#F3D27A;letter-spacing:.04em" });
+    strip.textContent = "糖豆：从 −4 出发，每秒 2 格 · 家在原点 0 —— 它能到家吗？";
+    var holder = box(cover, 90, 430, 1100, 230);
+    var v = 0, dir = 1, raf = null, last = null;
+    var loop = function (ts) {
+      if (last == null) last = ts;
+      v += dir * (ts - last) / 1000 * 1.5;
+      last = ts;
+      if (v > 4.5) dir = -1;
+      if (v < -4.5) dir = 1;
+      holder.innerHTML = "";
+      var r = runway(holder, { range: 6, dog: v, arrow: true, run: true });
+      r.el.classList.add("on-dark");
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
     cover.appendChild(h("div", { cls: "points" }, [
       h("h2", { text: "本课要点" }),
       h("ol", {}, [
@@ -114,10 +122,9 @@
         "相反数：对称于原点",
         "比大小：右大左小",
       ].map(function (t) { return h("li", { text: t }); })),
-      h("div", { cls: "tail", text: "四幕 11 页 · 每页学生动手 · 记录时刻页你来算" }),
+      h("div", { cls: "tail", text: "四幕 11 页 · 每页学生动手" }),
     ]));
-    cover.appendChild(h("p", { cls: "fig-foot", html: "北师大版七年级上册 · 2.2　<span class='mono'>FIG · 情境引入 · 糖豆找家</span>" }));
-    return { steps: 2, step: function () {}, leave: function () { clearInterval(iv); } };
+    return { steps: 0, step: function () {}, leave: function () { cancelAnimationFrame(raf); } };
   }};
 
   /* ═════════ 第2页 温度计放平（变身动画，4 步） ═════════ */
