@@ -43,22 +43,30 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
     </div>
 
     <section aria-label="自产资源">
-      <div class="filters" role="tablist" aria-label="按学科筛选">
+      {own.length > 0 && (
+        <div class="filters" role="tablist" aria-label="按学科筛选">
         <span class="glabel">学科</span>
         <button class="fchip on" data-f="all" type="button">全部</button>
         {ownSubjects.map((s) => (
           <button class="fchip" data-f={s.slug} type="button" style={`--accent:${s.accent}`}>{s.icon} {s.name}</button>
         ))}
       </div>
-      <div class="filters" aria-label="按年级筛选">
+      )}
+      {own.length > 0 && (
+        <div class="filters" aria-label="按年级筛选">
         <span class="glabel">年级</span><span class="facet" id="facet-grade"></span>
-      </div>
-      <div class="filters" aria-label="按教材筛选">
+        </div>
+      )}
+      {own.length > 0 && (
+        <div class="filters" aria-label="按教材筛选">
         <span class="glabel">教材</span><span class="facet" id="facet-book"></span>
-      </div>
-      <div class="filters" aria-label="按章节筛选">
+        </div>
+      )}
+      {own.length > 0 && (
+        <div class="filters" aria-label="按章节筛选">
         <span class="glabel">章节</span><span class="facet" id="facet-unit"></span>
-      </div>
+        </div>
+      )}
       <div class="cards" id="own-cards">
         {own.map((r) => {
           const s = subj(r.data.subject);
@@ -86,6 +94,7 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
           );
         })}
       </div>
+      {own.length === 0 && <p class="empty-note text-muted">自产资源制作中，将按教材章节陆续上线。</p>}
     </section>
 
     <section class="matrix-wrap" aria-label="学科与学段覆盖矩阵">
@@ -204,6 +213,7 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
   .res-page { padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 22px; }
   .res-title { font-size: 28px; margin: 4px 0 6px; }
   .res-sub { max-width: 760px; line-height: 1.7; }
+  .empty-note { padding: 30px 0; font-size: 15px; }
   .res-stats { display: flex; gap: 14px; flex-wrap: wrap; }
   .stat {
     display: flex; flex-direction: column; gap: 2px;

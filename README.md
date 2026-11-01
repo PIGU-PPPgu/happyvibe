@@ -36,7 +36,7 @@ status: ready           # ready = 已校对；draft = 内容校对中（页面�
 ## 怎么加一条教学资源（资源库）
 
 1. 写资源本体：`src/interactives/<学科>/<名>/` 下 `index.mjs`（入口，用 `_shared/runtime.mjs` 的 `init`）+ `meta.json`（`{"title":"中文名","hint":"一句操作提示"}`）
-2. 写条目：`src/content/resources/<学科>/<名>.md`（frontmatter 照任一黄金样例，如 `src/content/resources/math/math-cube-nets.md`）
+2. 写条目：`src/content/resources/<学科>/<名>.md`（frontmatter 字段与约束见 `src/content.config.ts` 的 resources schema：external 条目必填 url+source，自产条目必填 file，二者互斥）
 3. `npm run build:interactives && npm run check:interactives` 六项全过（命令后可加资源名单独构建校验），再 `npm run build` 看页面
 
 规范细节（形态选择、视觉红线、事实校验）见 `skills/teaching-interactives/SKILL.md`。
