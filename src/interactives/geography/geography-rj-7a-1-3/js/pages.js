@@ -28,7 +28,7 @@
 
     /* --- 地面 --- */
     svg("rect", { x: 0, y: 0, width: 700, height: 520, rx: 10,
-      fill: photo ? "#B6CE9E" : outline ? "#CFE0BC" : "#FFFDF8",
+      fill: photo ? "#B6CE9E" : outline ? "#CFE0BC" : "#FBF7EE",
       stroke: stroke ? INK : "none", "stroke-width": 2 }, base);
     if (photo || outline) {   // 航拍态的树木点缀（固定位置，手绘感）
       [[92, 180], [330, 96], [378, 470], [70, 300], [540, 480], [350, 210], [120, 130], [620, 150]].forEach(function (p) {
@@ -42,49 +42,120 @@
     if (stroke) svg("path", { d: roadPath, fill: "none", stroke: INK, "stroke-width": 1.4, "stroke-dasharray": "1 0", opacity: .55 }, roadL);
 
     /* --- 地物 --- */
+    function drawBuilding(parent, b, name, o2) {   // 手绘楼：屋顶投影 + 门窗细节 + 落地阴影
+      o2 = o2 || {};
+      var cols = o2.cols || 3, gable = o2.roof === "gable";
+      var bodyFill = photo ? "#9B95A3" : outline ? "#E4E0E8" : "#FFFDF8";
+      var roofFill = photo ? "#8E8798" : outline ? "#DDD6E2" : "#F3ECDD";
+      if (!photo)   // 落地阴影（印刷风错位投影）
+        svg("rect", { x: b.x + 5, y: b.y + 7, width: b.w, height: b.h, rx: 4, fill: "rgba(43,35,38,.10)", opacity: o2.op }, parent);
+      // 屋顶
+      if (gable) {
+        svg("path", { d: "M" + (b.x - 7) + " " + (b.y + 2) + " L" + (b.x + b.w + 7) + " " + (b.y + 2) + " L" + (b.x + b.w / 2) + " " + (b.y - 20) + " Z",
+          fill: roofFill, stroke: stroke ? INK : "none", "stroke-width": 2, "stroke-linejoin": "round", opacity: o2.op }, parent);
+        if (!photo) {   // 屋面投影线
+          svg("path", { d: "M" + (b.x - 1) + " " + (b.y - 4) + " L" + (b.x + b.w / 2) + " " + (b.y - 24), fill: "none", stroke: INK, "stroke-width": .9, opacity: .4 }, parent);
+          svg("path", { d: "M" + (b.x + b.w + 1) + " " + (b.y - 4) + " L" + (b.x + b.w / 2) + " " + (b.y - 24), fill: "none", stroke: INK, "stroke-width": .9, opacity: .4 }, parent);
+        }
+      } else {   // 平屋顶挑檐 + 顶面投影线
+        svg("path", { d: "M" + (b.x - 5) + " " + (b.y + 2) + " L" + (b.x + b.w + 5) + " " + (b.y + 2) + " L" + (b.x + b.w - 2) + " " + (b.y - 11) + " L" + (b.x + 2) + " " + (b.y - 11) + " Z",
+          fill: roofFill, stroke: stroke ? INK : "none", "stroke-width": 2, "stroke-linejoin": "round", opacity: o2.op }, parent);
+        if (!photo) svg("line", { x1: b.x + 6, y1: b.y - 5, x2: b.x + b.w - 6, y2: b.y - 5, stroke: INK, "stroke-width": .9, opacity: .45 }, parent);
+      }
+      // 墙身
+      svg("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 2.5,
+        fill: bodyFill, stroke: stroke ? INK : "none", "stroke-width": 2.2, opacity: o2.op }, parent);
+      if (photo) return;
+      if (outline) {   // 描边态：简易格线
+        for (var i = 1; i < cols; i++) svg("line", { x1: b.x + b.w / cols * i, y1: b.y + 4, x2: b.x + b.w / cols * i, y2: b.y + b.h - 4, stroke: INK, "stroke-width": .8, opacity: .35 }, parent);
+        svg("line", { x1: b.x + 4, y1: b.y + b.h / 2, x2: b.x + b.w - 4, y2: b.y + b.h / 2, stroke: INK, "stroke-width": .8, opacity: .35 }, parent);
+        return;
+      }
+      // 符号态：窗（两行，底行中央让位给门）+ 门 + 台阶
+      var dw = 22, dh = Math.min(28, b.h * .3), doorCx = b.x + b.w / 2;
+      var cw2 = (b.w - 24) / cols, ww = Math.min(20, cw2 - 10), wh = Math.min(21, b.h * .2);
+      for (var r2 = 0; r2 < 2; r2++) {
+        var wy = b.y + b.h * (.2 + r2 * .38);
+        for (var c2 = 0; c2 < cols; c2++) {
+          var wx = b.x + 12 + cw2 * c2 + (cw2 - ww) / 2;
+          if (r2 === 1 && Math.abs(wx + ww / 2 - doorCx) < dw / 2 + ww / 2 + 3) continue;   // 底行中央让门
+          svg("rect", { x: wx, y: wy, width: ww, height: wh, rx: 1.5, fill: "#EAE3D2", stroke: INK, "stroke-width": 1.3 }, parent);
+          svg("line", { x1: wx + ww / 2, y1: wy + 2, x2: wx + ww / 2, y2: wy + wh - 2, stroke: INK, "stroke-width": .8, opacity: .55 }, parent);
+        }
+      }
+      svg("rect", { x: doorCx - dw / 2, y: b.y + b.h - dh, width: dw, height: dh, rx: 2, fill: "#EAE3D2", stroke: INK, "stroke-width": 1.6 }, parent);
+      svg("circle", { cx: doorCx + dw / 2 - 5, cy: b.y + b.h - dh / 2, r: 1.3, fill: INK }, parent);
+      svg("line", { x1: doorCx - dw / 2 - 4, y1: b.y + b.h + 3.2, x2: doorCx + dw / 2 + 4, y2: b.y + b.h + 3.2, stroke: INK, "stroke-width": 1.6, "stroke-linecap": "round" }, parent);
+      if (o2.label) {
+        var t = svg("text", { x: b.x + b.w / 2, y: b.y + b.h / 2 + 6, "class": "lab", "font-size": 19, "font-weight": 700, fill: INK }, parent);
+        t.textContent = name;
+      }
+    }
     function drawBlocks() {
       while (blocks.firstChild) blocks.removeChild(blocks.firstChild);
       var op = photo ? 1 : outline ? .42 : 1;
-      // 操场
-      svg("ellipse", { cx: G.field.cx, cy: G.field.cy, rx: G.field.rx, ry: G.field.ry,
-        fill: photo ? "#CE8F79" : outline ? "#F0DCCF" : "#F3ECDD", stroke: stroke ? INK : "none", "stroke-width": 2.4, opacity: op }, blocks);
-      if (photo) svg("ellipse", { cx: G.field.cx, cy: G.field.cy, rx: G.field.rx - 26, ry: G.field.ry - 22, fill: "#A9C98F" }, blocks);
-      else svg("ellipse", { cx: G.field.cx, cy: G.field.cy, rx: G.field.rx - 26, ry: G.field.ry - 22, fill: "none", stroke: INK, "stroke-width": 1, "stroke-dasharray": "4 5", opacity: .7 }, blocks);
-      // 教学楼 / 实验楼
-      [["teach", "教学楼"], ["lab", "实验楼"]].forEach(function (bd) {
-        var b = G[bd[0]];
-        svg("rect", { x: b.x, y: b.y, width: b.w, height: b.h,
-          fill: photo ? "#9B95A3" : outline ? "#E4E0E8" : "#FFFFFF", stroke: stroke ? INK : "none", "stroke-width": 2.2, opacity: op }, blocks);
-        if (!photo) {   // 窗格线
-          var nx = bd[0] === "teach" ? 4 : 3;
-          for (var i = 1; i < nx; i++) svg("line", { x1: b.x + b.w / nx * i, y1: b.y + 4, x2: b.x + b.w / nx * i, y2: b.y + b.h - 4, stroke: INK, "stroke-width": .8, opacity: .35 }, blocks);
-          for (var j = 1; j < 2; j++) svg("line", { x1: b.x + 4, y1: b.y + b.h / 2 * j, x2: b.x + b.w - 4, y2: b.y + b.h / 2 * j, stroke: INK, "stroke-width": .8, opacity: .35 }, blocks);
+      // 操场：手绘跑道（外圈 + 分道弧线 + 内场 + 球门弧）
+      var F = G.field;
+      svg("ellipse", { cx: F.cx, cy: F.cy, rx: F.rx, ry: F.ry,
+        fill: photo ? "#CE8F79" : outline ? "#F0DCCF" : "#F3DFC9", stroke: stroke ? INK : "none", "stroke-width": 2.4, opacity: op }, blocks);
+      if (photo) {
+        svg("ellipse", { cx: F.cx, cy: F.cy, rx: F.rx - 26, ry: F.ry - 22, fill: "#A9C98F" }, blocks);
+      } else {
+        [16, 32].forEach(function (k) {   // 跑道分道弧线
+          svg("ellipse", { cx: F.cx, cy: F.cy, rx: F.rx - k - 10, ry: F.ry - k * .62 - 8, fill: "none", stroke: INK, "stroke-width": .9, opacity: outline ? .4 : .66 }, blocks);
+        });
+        svg("ellipse", { cx: F.cx, cy: F.cy, rx: F.rx - 52, ry: F.ry - 42,   // 内场
+          fill: outline ? "none" : "#DCE8D0", stroke: INK, "stroke-width": outline ? 1 : 1.2,
+          "stroke-dasharray": outline ? "4 5" : "none", opacity: outline ? .7 : .95 }, blocks);
+        if (!outline) {
+          svg("line", { x1: F.cx - F.rx + 52, y1: F.cy, x2: F.cx + F.rx - 52, y2: F.cy, stroke: INK, "stroke-width": .8, opacity: .5 }, blocks);
+          svg("circle", { cx: F.cx, cy: F.cy, r: 5.5, fill: "none", stroke: INK, "stroke-width": .9, opacity: .65 }, blocks);
+          svg("path", { d: "M" + (F.cx - F.rx + 64) + " " + (F.cy - 12) + " A 13 13 0 0 0 " + (F.cx - F.rx + 64) + " " + (F.cy + 12), fill: "none", stroke: INK, "stroke-width": .9, opacity: .55 }, blocks);
+          svg("path", { d: "M" + (F.cx + F.rx - 64) + " " + (F.cy - 12) + " A 13 13 0 0 1 " + (F.cx + F.rx - 64) + " " + (F.cy + 12), fill: "none", stroke: INK, "stroke-width": .9, opacity: .55 }, blocks);
         }
-        if (phase === "symbol") {
-          var t = svg("text", { x: b.x + b.w / 2, y: b.y + b.h / 2 + 6, "class": "lab", "font-size": 19, "font-weight": 700, fill: INK }, blocks);
-          t.textContent = bd[1];
-        }
-      });
-      // 花园
-      svg("circle", { cx: G.garden.cx, cy: G.garden.cy, r: G.garden.r,
+      }
+      // 教学楼 / 实验楼 / 图书馆
+      drawBuilding(blocks, G.teach, "教学楼", { cols: 4, roof: "flat", label: phase === "symbol", op: op });
+      drawBuilding(blocks, G.lab, "实验楼", { cols: 3, roof: "flat", label: phase === "symbol", op: op });
+      if (G.library) drawBuilding(blocks, G.library, "图书馆", { cols: 3, roof: "gable", label: phase === "symbol", op: op });
+      // 花园：花床虚线环 + 五瓣小花
+      var gdn = G.garden;
+      svg("circle", { cx: gdn.cx, cy: gdn.cy, r: gdn.r,
         fill: photo ? "#8FB778" : outline ? "#DDE8D0" : "#FFFFFF", stroke: stroke ? INK : "none", "stroke-width": 2, opacity: op }, blocks);
+      if (!photo) svg("circle", { cx: gdn.cx, cy: gdn.cy, r: gdn.r - 9, fill: "none", stroke: INK, "stroke-width": .9, "stroke-dasharray": "2 5", opacity: .5 }, blocks);
       [[-16, -8], [12, -14], [2, 12]].forEach(function (d) {
-        svg("circle", { cx: G.garden.cx + d[0], cy: G.garden.cy + d[1], r: 5, fill: photo ? "#E7B9C4" : GOLD, stroke: photo ? "none" : INK, "stroke-width": 1 }, blocks);
+        var fx = gdn.cx + d[0], fy = gdn.cy + d[1];
+        if (photo) { svg("circle", { cx: fx, cy: fy, r: 5, fill: "#E7B9C4", opacity: op }, blocks); return; }
+        for (var p = 0; p < 5; p++) {
+          var pa = (p * 72 - 90) * Math.PI / 180;
+          svg("circle", { cx: fx + Math.cos(pa) * 4.4, cy: fy + Math.sin(pa) * 4.4, r: 2.1,
+            fill: outline ? "#FFFFFF" : "#F3DFC9", stroke: outline ? "none" : INK, "stroke-width": .7, opacity: op }, blocks);
+        }
+        svg("circle", { cx: fx, cy: fy, r: 2.6, fill: GOLD, stroke: outline ? "none" : INK, "stroke-width": .9, opacity: op }, blocks);
       });
-      // 社团活动室（小屋）
+      // 社团活动室（小屋）：屋檐双线 + 门 + 圆窗
       var c = G.club, roofY = c.y - 14;
       svg("path", { d: "M" + (c.x - 6) + " " + c.y + " L" + (c.x - 6) + " " + roofY + " L" + (c.x + c.w / 2) + " " + (roofY - 22) + " L" + (c.x + c.w + 6) + " " + roofY + " L" + (c.x + c.w + 6) + " " + (c.y + c.h) + " L" + (c.x - 6) + " " + (c.y + c.h) + " Z",
-        fill: photo ? "#B3A08E" : outline ? "#EFE6D9" : "#FFFFFF", stroke: stroke ? INK : "none", "stroke-width": 2, "stroke-linejoin": "round", opacity: op }, blocks);
+        fill: photo ? "#B3A08E" : outline ? "#EFE6D9" : "#FFFDF8", stroke: stroke ? INK : "none", "stroke-width": 2, "stroke-linejoin": "round", opacity: op }, blocks);
+      if (!photo) {
+        svg("path", { d: "M" + (c.x - 1) + " " + (roofY - 2) + " L" + (c.x + c.w / 2) + " " + (roofY - 24) + " L" + (c.x + c.w + 1) + " " + (roofY - 2), fill: "none", stroke: INK, "stroke-width": .9, opacity: .5 }, blocks);
+        svg("rect", { x: c.x + c.w / 2 - 7, y: c.y + c.h - 18, width: 14, height: 18, rx: 2, fill: "#EAE3D2", stroke: INK, "stroke-width": 1.3 }, blocks);
+        svg("circle", { cx: c.x + c.w / 2, cy: c.y + 16, r: 4.6, fill: "#EAE3D2", stroke: INK, "stroke-width": 1.2 }, blocks);
+        svg("line", { x1: c.x + c.w / 2, y1: c.y + 12.4, x2: c.x + c.w / 2, y2: c.y + 19.6, stroke: INK, "stroke-width": .8, opacity: .6 }, blocks);
+      }
       if (phase === "symbol" && o.clubLabel) {
         var tc = svg("text", { x: c.x + c.w / 2, y: c.y + c.h + 20, "class": "lab", "font-size": 15, "font-weight": 700, fill: PURPLE }, blocks);
         tc.textContent = o.clubLabel;
       }
-      // 校门
-      svg("rect", { x: G.gate.x - 16, y: G.gate.y - 10, width: 8, height: 22, fill: photo ? "#7C7068" : INK }, blocks);
-      svg("rect", { x: G.gate.x + 8, y: G.gate.y - 10, width: 8, height: 22, fill: photo ? "#7C7068" : INK }, blocks);
+      // 校门：门柱 + 门帽 + 弧形横梁
+      var gt = G.gate;
+      svg("rect", { x: gt.x - 16, y: gt.y - 10, width: 8, height: 22, fill: photo ? "#7C7068" : INK }, blocks);
+      svg("rect", { x: gt.x + 8, y: gt.y - 10, width: 8, height: 22, fill: photo ? "#7C7068" : INK }, blocks);
       if (!photo) {
-        svg("path", { d: "M" + (G.gate.x - 18) + " " + (G.gate.y - 12) + " Q" + G.gate.x + " " + (G.gate.y - 34) + " " + (G.gate.x + 18) + " " + (G.gate.y - 12), fill: "none", stroke: INK, "stroke-width": 1.6 }, blocks);
-        var tg = svg("text", { x: G.gate.x, y: G.gate.y + 24, "class": "lab", "font-size": 14 }, blocks);
+        svg("line", { x1: gt.x - 17, y1: gt.y - 13, x2: gt.x - 7, y2: gt.y - 13, stroke: INK, "stroke-width": 2.4, "stroke-linecap": "round" }, blocks);
+        svg("line", { x1: gt.x + 7, y1: gt.y - 13, x2: gt.x + 17, y2: gt.y - 13, stroke: INK, "stroke-width": 2.4, "stroke-linecap": "round" }, blocks);
+        svg("path", { d: "M" + (gt.x - 18) + " " + (gt.y - 12) + " Q" + gt.x + " " + (gt.y - 34) + " " + (gt.x + 18) + " " + (gt.y - 12), fill: "none", stroke: INK, "stroke-width": 1.6 }, blocks);
+        var tg = svg("text", { x: gt.x, y: gt.y + 24, "class": "lab", "font-size": 14 }, blocks);
         tg.textContent = "校门";
       }
     }
@@ -129,28 +200,48 @@
         cap.textContent = "比例尺 " + L.map.scale.label;
       }
       if (o.legend) {
-        var lg = L.map.legend, items = [["操场", "field"], ["教学楼", "teach"], ["花园", "garden"], ["活动室", "club"]];
-        svg("rect", { x: lg.x, y: lg.y, width: lg.w, height: lg.h, rx: 10, fill: "#FFFFFF", stroke: INK, "stroke-width": 2, opacity: .96 }, feats);
-        var lt = svg("text", { x: lg.x + 12, y: lg.y + 26, "class": "lab", "font-size": 15, "font-weight": 700, "text-anchor": "start", fill: PURPLE }, feats);
+        var lg = L.map.legend, items = [["操场", "field"], ["教学楼", "teach"], ["图书馆", "library"], ["花园", "garden"], ["活动室", "club"]];
+        svg("rect", { x: lg.x, y: lg.y, width: lg.w, height: lg.h, rx: 10, fill: "#FFFDF8", stroke: INK, "stroke-width": 2, opacity: .97 }, feats);
+        var lt = svg("text", { x: lg.x + 12, y: lg.y + 25, "class": "lab", "font-size": 15, "font-weight": 700, "text-anchor": "start", fill: PURPLE }, feats);
         lt.textContent = "图例";
         items.forEach(function (it, i) {
-          var yy = lg.y + 50 + i * 22;
-          if (it[1] === "field") svg("ellipse", { cx: lg.x + 24, cy: yy - 4, rx: 14, ry: 7, fill: "#F3ECDD", stroke: INK, "stroke-width": 1.6 }, feats);
-          if (it[1] === "teach") svg("rect", { x: lg.x + 14, y: yy - 11, width: 20, height: 14, fill: "#FFFFFF", stroke: INK, "stroke-width": 1.6 }, feats);
-          if (it[1] === "garden") svg("circle", { cx: lg.x + 24, cy: yy - 4, r: 8, fill: "#FFFFFF", stroke: INK, "stroke-width": 1.6 }, feats);
-          if (it[1] === "club") svg("path", { d: "M" + (lg.x + 15) + " " + yy + " L" + (lg.x + 15) + " " + (yy - 6) + " L" + (lg.x + 24) + " " + (yy - 14) + " L" + (lg.x + 33) + " " + (yy - 6) + " L" + (lg.x + 33) + " " + yy + " Z", fill: "#FFFFFF", stroke: INK, "stroke-width": 1.6 }, feats);
-          var t = svg("text", { x: lg.x + 48, y: yy, "class": "lab", "font-size": 14, "text-anchor": "start" }, feats);
+          var yy = lg.y + 46 + i * 18;
+          if (it[1] === "field") svg("ellipse", { cx: lg.x + 24, cy: yy, rx: 13, ry: 6.5, fill: "#F3DFC9", stroke: INK, "stroke-width": 1.5 }, feats);
+          if (it[1] === "teach") svg("rect", { x: lg.x + 15, y: yy - 7, width: 19, height: 13, rx: 1.5, fill: "#FFFDF8", stroke: INK, "stroke-width": 1.5 }, feats);
+          if (it[1] === "library") svg("path", { d: "M" + (lg.x + 14) + " " + (yy + 7) + " L" + (lg.x + 14) + " " + (yy - 2) + " L" + (lg.x + 24) + " " + (yy - 8) + " L" + (lg.x + 34) + " " + (yy - 2) + " L" + (lg.x + 34) + " " + (yy + 7) + " Z", fill: "#FFFDF8", stroke: INK, "stroke-width": 1.5, "stroke-linejoin": "round" }, feats);
+          if (it[1] === "garden") svg("circle", { cx: lg.x + 24, cy: yy, r: 7.5, fill: "#FFFFFF", stroke: INK, "stroke-width": 1.5 }, feats);
+          if (it[1] === "club") svg("path", { d: "M" + (lg.x + 15) + " " + (yy + 7) + " L" + (lg.x + 15) + " " + (yy - 1) + " L" + (lg.x + 24) + " " + (yy - 8) + " L" + (lg.x + 33) + " " + (yy - 1) + " L" + (lg.x + 33) + " " + (yy + 7) + " Z", fill: "#FFFDF8", stroke: INK, "stroke-width": 1.5, "stroke-linejoin": "round" }, feats);
+          var t = svg("text", { x: lg.x + 46, y: yy + 4.5, "class": "lab", "font-size": 13.5, "text-anchor": "start" }, feats);
           t.textContent = it[0];
         });
       }
-      if (o.compass) {
+      if (o.compass) {   // 罗盘式指北针：双层圆环 + 八方位刻度 + 菱形指针 + N 标
         compassG = svg("g", { "class": "compass" }, feats);
-        svg("circle", { cx: CP.cx, cy: CP.cy, r: CP.r, fill: "#FFFFFF", stroke: INK, "stroke-width": 2 }, compassG);
-        svg("circle", { cx: CP.cx, cy: CP.cy, r: CP.r - 7, fill: "none", stroke: INK, "stroke-width": .8, opacity: .4, "stroke-dasharray": "3 4" }, compassG);
+        svg("circle", { cx: CP.cx, cy: CP.cy, r: CP.r, fill: "#FFFDF8", stroke: INK, "stroke-width": 2.2 }, compassG);
+        svg("circle", { cx: CP.cx, cy: CP.cy, r: CP.r - 5.5, fill: "none", stroke: INK, "stroke-width": .9, opacity: .8 }, compassG);
+        for (var tk = 0; tk < 8; tk++) {
+          var ta = (tk * 45 - 90) * Math.PI / 180, tl = tk % 2 === 0 ? 6.5 : 3.6;
+          svg("line", { x1: CP.cx + Math.cos(ta) * (CP.r - 2.2), y1: CP.cy + Math.sin(ta) * (CP.r - 2.2),
+            x2: CP.cx + Math.cos(ta) * (CP.r - 2.2 - tl), y2: CP.cy + Math.sin(ta) * (CP.r - 2.2 - tl),
+            stroke: INK, "stroke-width": tk % 2 === 0 ? 1.6 : .9, "stroke-linecap": "round" }, compassG);
+        }
         northG = svg("g", {}, compassG);
-        svg("path", { d: "M" + CP.cx + " " + (CP.cy - CP.r + 12) + " L" + (CP.cx - 7) + " " + (CP.cy + 6) + " L" + CP.cx + " " + (CP.cy + 1) + " L" + (CP.cx + 7) + " " + (CP.cy + 6) + " Z", fill: RED, stroke: INK, "stroke-width": 1.4 }, northG);
-        var nt = svg("text", { x: CP.cx, y: CP.cy - CP.r - 6, "class": "lab", "font-size": 15, "font-weight": 700, fill: RED }, northG);
-        nt.textContent = "北";
+        var roseR = CP.r - 11;
+        svg("path", { d: "M" + (CP.cx - roseR * .62) + " " + CP.cy + " L" + CP.cx + " " + (CP.cy - 3.4) + " L" + (CP.cx + roseR * .62) + " " + CP.cy + " L" + CP.cx + " " + (CP.cy + 3.4) + " Z",
+          fill: "#F3ECDD", stroke: INK, "stroke-width": 1.2, "stroke-linejoin": "round" }, northG);
+        svg("path", { d: "M" + CP.cx + " " + (CP.cy + roseR * .72) + " L" + (CP.cx + 4.6) + " " + (CP.cy + 3) + " L" + CP.cx + " " + (CP.cy - 1) + " L" + (CP.cx - 4.6) + " " + (CP.cy + 3) + " Z",
+          fill: "#FFFDF8", stroke: INK, "stroke-width": 1.3, "stroke-linejoin": "round" }, northG);
+        svg("path", { d: "M" + CP.cx + " " + (CP.cy - roseR) + " L" + (CP.cx + 5.5) + " " + (CP.cy - 3) + " L" + CP.cx + " " + (CP.cy + 2.5) + " L" + (CP.cx - 5.5) + " " + (CP.cy - 3) + " Z",
+          fill: PURPLE, stroke: INK, "stroke-width": 1.4, "stroke-linejoin": "round" }, northG);
+        var nt = svg("text", { x: CP.cx, y: CP.cy - roseR + 1, "class": "lab", "font-size": 12, "font-weight": 700, fill: PURPLE }, northG);
+        nt.textContent = "N";
+        var et = svg("text", { x: CP.cx + roseR * .62 + 4.5, y: CP.cy + 3.2, "class": "lab", "font-size": 8.5, "font-weight": 700, fill: MUT }, northG);
+        et.textContent = "E";
+        var wt = svg("text", { x: CP.cx - roseR * .62 - 4.5, y: CP.cy + 3.2, "class": "lab", "font-size": 8.5, "font-weight": 700, fill: MUT }, northG);
+        wt.textContent = "W";
+        var st = svg("text", { x: CP.cx, y: CP.cy + roseR * .72 + 8.5, "class": "lab", "font-size": 8.5, "font-weight": 700, fill: MUT }, northG);
+        st.textContent = "S";
+        svg("circle", { cx: CP.cx, cy: CP.cy, r: 3.6, fill: GOLD, stroke: INK, "stroke-width": 1.2 }, northG);
         northG.setAttribute("transform", "rotate(" + heading + " " + CP.cx + " " + CP.cy + ")");
       }
       if (phase !== "symbol" && !o.noPhotoTag) {   // 航拍照片角标
@@ -168,12 +259,24 @@
       if (o.treasure || o.treasureLit) {
         treasureG = svg("g", { "class": o.treasure ? "pulse" : "pop" }, actors);
         if (o.treasure) {
-          var q = svg("text", { x: cx0, y: cy0 + 14, "font-size": 40, "font-weight": 700, fill: RED, "text-anchor": "middle", "class": "lab" }, treasureG);
+          svg("circle", { cx: cx0, cy: cy0, r: 23, fill: "none", stroke: GOLD, "stroke-width": 2, "stroke-dasharray": "5 5", opacity: .85 }, treasureG);
+          var q = svg("text", { x: cx0, y: cy0 + 14, "font-size": 38, "font-weight": 700, fill: RED, "text-anchor": "middle", "class": "lab" }, treasureG);
           q.textContent = "?";
         } else {
-          svg("circle", { cx: cx0, cy: cy0, r: 30, fill: "none", stroke: GOLD, "stroke-width": 3, opacity: .8 }, treasureG);
-          svg("path", { d: star(cx0, cy0 - 2, 15, 6.5), fill: GOLD, stroke: INK, "stroke-width": 1.8, "stroke-linejoin": "round" }, treasureG);
-          var lb = svg("text", { x: cx0, y: cy0 + 40, "class": "lab", "font-size": 15, "font-weight": 700, fill: PURPLE }, treasureG);
+          for (var ry = 0; ry < 4; ry++) {   // 四道光芒
+            var ra = ry * 90 * Math.PI / 180;
+            svg("line", { x1: cx0 + Math.cos(ra) * 31, y1: cy0 - 2 + Math.sin(ra) * 31, x2: cx0 + Math.cos(ra) * 39, y2: cy0 - 2 + Math.sin(ra) * 39,
+              stroke: GOLD, "stroke-width": 2.4, "stroke-linecap": "round" }, treasureG);
+          }
+          svg("circle", { cx: cx0, cy: cy0, r: 29, fill: "none", stroke: GOLD, "stroke-width": 2.6, "stroke-dasharray": "7 6", opacity: .85 }, treasureG);
+          svg("path", { d: star(cx0, cy0 - 2, 19, 8), fill: GOLD, stroke: INK, "stroke-width": 2, "stroke-linejoin": "round" }, treasureG);
+          // 旗标（活动室左侧）
+          var fx0 = cc.x - 9;
+          svg("line", { x1: fx0, y1: cc.y + cc.h - 2, x2: fx0, y2: cc.y - 16, stroke: INK, "stroke-width": 2.2, "stroke-linecap": "round" }, treasureG);
+          svg("path", { d: "M" + fx0 + " " + (cc.y - 16) + " L" + (fx0 - 17) + " " + (cc.y - 11) + " L" + fx0 + " " + (cc.y - 6) + " Z",
+            fill: RED, stroke: INK, "stroke-width": 1.4, "stroke-linejoin": "round" }, treasureG);
+          svg("circle", { cx: fx0, cy: cc.y - 16, r: 2.2, fill: GOLD, stroke: INK, "stroke-width": 1 }, treasureG);
+          var lb = svg("text", { x: cx0, y: cy0 + 44, "class": "lab", "font-size": 15, "font-weight": 700, fill: PURPLE }, treasureG);
           lb.textContent = "社团活动室";
         }
         if (o.onTreasure) {
@@ -195,12 +298,21 @@
     }
     drawActors();
 
-    /* --- 量测线（方位探究） --- */
+    /* --- 量测线（方位探究）：虚线路径 + 起点/终点标记 --- */
     if (o.link) {
       var a = M.fromCell(o.link[0], GR) || cellCenterOf(o.link[0]), b = cellCenterOf(o.link[1]);
-      svg("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: RED, "stroke-width": 3, "stroke-dasharray": "8 6" }, fx);
-      svg("circle", { cx: a.x, cy: a.y, r: 6, fill: RED, stroke: INK, "stroke-width": 1.6 }, fx);
-      svg("circle", { cx: b.x, cy: b.y, r: 6, fill: RED, stroke: INK, "stroke-width": 1.6 }, fx);
+      var ang = Math.atan2(b.y - a.y, b.x - a.x);
+      var ex = b.x - Math.cos(ang) * 15, ey = b.y - Math.sin(ang) * 15;
+      svg("line", { x1: a.x, y1: a.y, x2: ex, y2: ey, stroke: PURPLE, "stroke-width": 3, "stroke-dasharray": "9 7", "stroke-linecap": "round" }, fx);
+      svg("path", { d: "M" + b.x + " " + b.y + " L" + (b.x - Math.cos(ang - .5) * 15) + " " + (b.y - Math.sin(ang - .5) * 15) + " L" + (b.x - Math.cos(ang + .5) * 15) + " " + (b.y - Math.sin(ang + .5) * 15) + " Z",
+        fill: PURPLE, stroke: INK, "stroke-width": 1.2, "stroke-linejoin": "round" }, fx);
+      svg("circle", { cx: a.x, cy: a.y, r: 7.5, fill: "#FFFFFF", stroke: GREEN, "stroke-width": 3 }, fx);
+      svg("circle", { cx: a.x, cy: a.y, r: 2.6, fill: GREEN }, fx);
+      svg("circle", { cx: b.x, cy: b.y, r: 6.5, fill: "#FFFFFF", stroke: PURPLE, "stroke-width": 3 }, fx);
+      var ltA = svg("text", { x: a.x, y: a.y - 13, "class": "lab", "font-size": 13, "font-weight": 700, fill: GREEN, "text-anchor": "middle" }, fx);
+      ltA.textContent = "起";
+      var ltB = svg("text", { x: b.x, y: b.y - 13, "class": "lab", "font-size": 13, "font-weight": 700, fill: PURPLE, "text-anchor": "middle" }, fx);
+      ltB.textContent = "终";
     }
 
     function cellCenterOf(key) {   // 地标名 → 中心（操场/教学楼等，比格心更准）
@@ -283,15 +395,35 @@
       var dx = WAY[i + 1][0] - WAY[i][0], dy = WAY[i + 1][1] - WAY[i][1], l = Math.sqrt(dx * dx + dy * dy);
       SEGS.push({ a: WAY[i], dx: dx / l, dy: dy / l, l: l, s0: LEN }); LEN += l;
     }
+    // —— 小满：大头娃娃比例 + 书包 + 行走摆臂，头顶名牌 ——
     var hero = svg("g", {}, cm.el);
-    var nameT = svg("text", { y: -46, "text-anchor": "middle", "class": "lab", "font-size": 15, "font-weight": 700, fill: "#F3D27A" }, hero);
+    svg("ellipse", { cy: 2, rx: 13, ry: 4, fill: "rgba(43,35,38,.24)" }, hero);   // 落地阴影
+    var tagG = svg("g", {}, hero);
+    svg("line", { x1: 0, y1: -52, x2: 0, y2: -56.5, stroke: INK, "stroke-width": 1, opacity: .55 }, tagG);
+    svg("rect", { x: -27, y: -74, width: 54, height: 21, rx: 10.5, fill: "#FFFDF8", stroke: INK, "stroke-width": 1.8 }, tagG);
+    var nameT = svg("text", { y: -59, "text-anchor": "middle", "class": "lab", "font-size": 13.5, "font-weight": 700, fill: PURPLE }, tagG);
     nameT.textContent = "小满";
-    var legs = [svg("line", { y1: -16, y2: 0, stroke: INK, "stroke-width": 3.4, "stroke-linecap": "round" }, hero),
-                svg("line", { y1: -16, y2: 0, stroke: INK, "stroke-width": 3.4, "stroke-linecap": "round" }, hero)];
-    var body = svg("ellipse", { cy: -26, rx: 10, ry: 13, fill: "#C98BB8", stroke: INK, "stroke-width": 2 }, hero);
-    var head = svg("circle", { cy: -45, r: 8.5, fill: "#F2C9A0", stroke: INK, "stroke-width": 2 }, hero);
-    var bag = svg("rect", { x: 8, y: -34, width: 11, height: 14, rx: 3, fill: GOLD, stroke: INK, "stroke-width": 1.6 }, hero);
-    var shadow = svg("ellipse", { cy: 2, rx: 13, ry: 4, fill: "rgba(43,35,38,.24)" }, hero);
+    var legs = [svg("line", { y1: -17, y2: 0, stroke: INK, "stroke-width": 3.4, "stroke-linecap": "round" }, hero),
+                svg("line", { y1: -17, y2: 0, stroke: INK, "stroke-width": 3.4, "stroke-linecap": "round" }, hero)];
+    var bobG = svg("g", {}, hero);   // 摆动上身组（走路起伏）
+    svg("path", { d: "M-8.5,-17 L8.5,-17 L6.6,-37 L-6.6,-37 Z", fill: PURPLE, stroke: INK, "stroke-width": 2, "stroke-linejoin": "round" }, bobG);   // 外套
+    svg("line", { x1: 0, y1: -34.5, x2: 0, y2: -19.5, stroke: "#FFFDF8", "stroke-width": 1, opacity: .55 }, bobG);   // 衣襟
+    svg("rect", { x: -7, y: -38.8, width: 14, height: 5.2, rx: 2.6, fill: GOLD, stroke: INK, "stroke-width": 1.2 }, bobG);   // 围巾
+    svg("path", { d: "M-6.4,-35.5 L6.2,-24", stroke: INK, "stroke-width": 1.2, opacity: .65, fill: "none" }, bobG);   // 书包背带
+    var bag = svg("rect", { x: 7.5, y: -36, width: 11.5, height: 15.5, rx: 3.6, fill: GOLD, stroke: INK, "stroke-width": 1.6 }, bobG);   // 书包
+    svg("line", { x1: 7.5, y1: -31.5, x2: 19, y2: -31.5, stroke: INK, "stroke-width": 1.1, opacity: .8 }, bobG);   // 书包盖
+    var arms = [svg("line", { x1: -8, y1: -33, x2: -10, y2: -22, stroke: INK, "stroke-width": 2.6, "stroke-linecap": "round" }, bobG),
+                svg("line", { x1: 8, y1: -33, x2: 10, y2: -22, stroke: INK, "stroke-width": 2.6, "stroke-linecap": "round" }, bobG)];
+    var headG = svg("g", {}, bobG);
+    svg("circle", { cy: -46.5, r: 9.6, fill: "#F2C9A0", stroke: INK, "stroke-width": 2 }, headG);   // 头
+    svg("path", { d: "M-9.6,-46.5 A9.6,9.6 0 0 1 9.6,-46.5 Z", fill: INK }, headG);   // 头发（半圆）
+    svg("circle", { cx: -8.4, cy: -53.5, r: 2.7, fill: INK }, headG);   // 发髻
+    svg("circle", { cx: 8.4, cy: -53.5, r: 2.7, fill: INK }, headG);
+    svg("circle", { cx: -3.2, cy: -45, r: 1.15, fill: INK }, headG);   // 眼
+    svg("circle", { cx: 3.2, cy: -45, r: 1.15, fill: INK }, headG);
+    svg("circle", { cx: -5.2, cy: -42.6, r: 1.5, fill: "#E58BA0", opacity: .55 }, headG);   // 腮红
+    svg("circle", { cx: 5.2, cy: -42.6, r: 1.5, fill: "#E58BA0", opacity: .55 }, headG);
+    svg("path", { d: "M-1.6,-41.4 Q0,-40.2 1.6,-41.4", fill: "none", stroke: INK, "stroke-width": 1, "stroke-linecap": "round" }, headG);   // 嘴
     var t0 = null;
     function placeHero(ms) {
       if (t0 == null) t0 = ms;
@@ -301,12 +433,13 @@
       for (var j = 0; j < SEGS.length; j++) if (dist >= SEGS[j].s0) seg = SEGS[j];
       var d = dist - seg.s0;
       hero.setAttribute("transform", "translate(" + (seg.a[0] + seg.dx * d) + "," + (seg.a[1] + seg.dy * d) + ")");
-      var sw = Math.sin(t * 7) * 5;                   // 摆腿
-      legs[0].setAttribute("x1", -4 + sw); legs[0].setAttribute("x2", -4 - sw * .4);
-      legs[1].setAttribute("x1", 4 - sw); legs[1].setAttribute("x2", 4 + sw * .4);
-      body.setAttribute("cy", -26 + Math.abs(Math.sin(t * 7)) * -1.2);
-      head.setAttribute("cy", -45 + Math.abs(Math.sin(t * 7)) * -1.2);
-      void bag; void shadow;
+      var sw = Math.sin(t * 7);                       // 行走周期
+      legs[0].setAttribute("x1", (-3.6 + sw * 5).toFixed(2)); legs[0].setAttribute("x2", (-3.6 - sw * 2.2).toFixed(2));
+      legs[1].setAttribute("x1", (3.6 - sw * 5).toFixed(2)); legs[1].setAttribute("x2", (3.6 + sw * 2.2).toFixed(2));
+      arms[0].setAttribute("x2", (-10 - sw * 3.2).toFixed(2));   // 手臂与腿反相摆动
+      arms[1].setAttribute("x2", (10 + sw * 3.2).toFixed(2));
+      bobG.setAttribute("transform", "translate(0," + (Math.abs(sw) * -1.3).toFixed(2) + ")");
+      void bag;
     }
     var iv = setInterval(function () {
       if (!document.body.contains(cm.el)) { clearInterval(iv); return; }

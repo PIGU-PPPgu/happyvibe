@@ -8,7 +8,8 @@
   var L = window.LESSON, M = window.MathEngine, f = M.fmt;
   var h = K.h, box = K.box, card = K.card, svg = K.svg;
   var P = (K.PAGES = {});
-  var INK = "#2B2326", PAPER = "#FFFDF8", PURPLE = "#6C2166", GOLD = "#DEAA18", GREEN = "#1E7F4F", RED = "#C0392B";
+  var INK = "#2B2326", PAPER = "#FBF7EE", PURPLE = "#6C2166", GOLD = "#DEAA18", GREEN = "#1E7F4F", RED = "#C0392B";
+  var MONO = '"JetBrains Mono","SF Mono",Menlo,Consolas,monospace';
 
   /* ———— 2.5D 跑道引擎 ————
      o: {range, min?*, dog(数值|null), dog2, dogColor, arrow, origin, ticks, flat, width}
@@ -20,6 +21,8 @@
     var el = svg("svg", { viewBox: "0 0 " + W + " 300", style: "width:100%;height:100%;overflow:visible" }, root);
     var x = function (v) { return M.toX(v, range, W, 80); };
     var LX = x(-range), RX = x(range), yT = 168, depth = 34, dskew = 24, frontH = 30;
+    var dk = !!o.dark;                                   // 封面深底：细节改纸色（配合 .on-dark 的描边转浅）
+    var DET = dk ? "#FBF7EE" : INK;                      // 瞳孔/鼻/嘴等墨点细节色
     var arrowLen = o.arrow === false ? 0 : 34;
     if (o.flat) {
       // 平面模式：普通数轴（中考平面图式）
@@ -39,47 +42,98 @@
       return { x: x, el: el, y: yF };
     }
     // —— 2.5D：正面（前墙）+ 顶面（有厚度的跑道面）+ 右端面 ——
-    svg("polygon", { points: [[LX, yT], [RX + 8, yT], [RX + 8 + dskew, yT - depth], [LX + dskew, yT - depth]].map(function (p) { return p.join(","); }).join(" "),
-      fill: PAPER, stroke: INK, "stroke-width": 2.6, "stroke-linejoin": "round" }, el);                       // 顶面
+    var topPts = [[LX, yT], [RX + 8, yT], [RX + 8 + dskew, yT - depth], [LX + dskew, yT - depth]].map(function (p) { return p.join(","); }).join(" ");
+    svg("polygon", { points: topPts, fill: PAPER, stroke: INK, "stroke-width": 2.6, "stroke-linejoin": "round" }, el);   // 顶面
     svg("polygon", { points: [[LX, yT], [RX + 8, yT], [RX + 8, yT + frontH], [LX, yT + frontH]].map(function (p) { return p.join(","); }).join(" "),
       fill: "#EAD9C8", stroke: INK, "stroke-width": 2.6, "stroke-linejoin": "round" }, el);                    // 正面
     svg("polygon", { points: [[RX + 8, yT], [RX + 8 + dskew, yT - depth], [RX + 8 + dskew, yT - depth + frontH], [RX + 8, yT + frontH]].map(function (p) { return p.join(","); }).join(" "),
       fill: "#D9C4AC", stroke: INK, "stroke-width": 2.6, "stroke-linejoin": "round" }, el);                    // 右端面
-    // 原点刻度（顶面前缘上的红点）
+    // 顶面细微纹理：顺斜面方向的淡细线（裁进顶面，像跑道分道线）
+    runway._c = (runway._c || 0) + 1;
+    var cp = svg("clipPath", { id: "rwtop" + runway._c }, el);
+    svg("polygon", { points: topPts, fill: "#fff", stroke: "none" }, cp);
+    var tg = svg("g", { "clip-path": "url(#rwtop" + runway._c + ")" }, el);
+    for (var xi = LX - dskew - 6; xi < RX + 8 + dskew; xi += 15) {
+      svg("line", { x1: xi, y1: yT + 3, x2: xi + dskew, y2: yT - depth - 3, stroke: INK, "stroke-width": 1, opacity: .07 }, tg);
+    }
+    // 原点刻度（顶面前缘上的紫点）+ 正面下方的「0（原点）」
     if (o.origin !== false) {
       svg("circle", { cx: x(0), cy: yT, r: 6.5, fill: PURPLE, stroke: INK, "stroke-width": 2 }, el);
-      svg("text", { x: x(0), y: yT + frontH + 22, "text-anchor": "middle", "font-size": 16, "font-weight": 700, fill: INK }, el).textContent = "0（原点）";
+      svg("text", { x: x(0), y: yT + frontH + 22, "text-anchor": "middle", "font-size": 16, "font-weight": 700, fill: PURPLE }, el).textContent = "0（原点）";
     }
     // 箭头（顶面右端，向右上伸出）
     if (arrowLen) {
       svg("line", { x1: RX + 8 + dskew, y1: yT - depth, x2: RX + 8 + dskew + arrowLen, y2: yT - depth - 14, stroke: INK, "stroke-width": 4.5, "stroke-linecap": "round" }, el);
       svg("polygon", { points: [[RX + 8 + dskew + arrowLen + 18, yT - depth - 20], [RX + 8 + dskew + arrowLen - 2, yT - depth - 20], [RX + 8 + dskew + arrowLen + 4, yT - depth - 34]].map(function (p) { return p.join(","); }).join(" "), fill: INK }, el);
     }
-    // 均匀刻度：顶面上的短斜线 + 正面上的数字
+    // 均匀刻度：顶面短斜线 + 正面短刻线 + 等宽数字（同一基线、等宽字体）
     if (o.ticks !== false) {
       for (var t = -range; t <= range; t++) {
         if (t === 0) continue;
-        var tx = x(t), ty = yT;
-        svg("line", { x1: tx, y1: ty - 2, x2: tx + dskew * 0.42, y2: ty - depth * 0.42 - 2, stroke: INK, "stroke-width": t % 1 === 0 ? 2 : 1.2, opacity: .8 }, el);
-        if (t % 1 === 0) svg("text", { x: tx + 4, y: yT + frontH - 8, "text-anchor": "middle", "font-size": 15, fill: INK, "font-weight": 600 }, el).textContent = t;
+        var tx = x(t);
+        svg("line", { x1: tx, y1: yT - 2, x2: tx + dskew * 0.42, y2: yT - depth * 0.42 - 2, stroke: INK, "stroke-width": 2, opacity: .85 }, el);
+        svg("line", { x1: tx, y1: yT + 2, x2: tx, y2: yT + 8, stroke: INK, "stroke-width": 1.6, opacity: .9 }, el);
+        svg("text", { x: tx + 5, y: yT + frontH - 6, "text-anchor": "middle", "font-size": 14.5, "font-weight": 600, "font-family": MONO, fill: INK }, el).textContent = t;
       }
     }
-    // 站在跑道上的糖豆（小狗）：影子贴顶面，腿在顶面前缘上方
-    function dog(v, col, name, phase) {
-      var px = x(v), py = yT - 4;
-      svg("ellipse", { cx: px, cy: py, rx: 20, ry: 6, fill: "rgba(43,35,38,.22)" }, el);   // 影子
-      var sw = phase != null ? Math.sin(phase) * 7 : 0;                                     // 跑动摆腿
-      svg("line", { x1: px - 8, y1: py - 14, x2: px - 8 + sw, y2: py, stroke: INK, "stroke-width": 4, "stroke-linecap": "round" }, el);
-      svg("line", { x1: px + 8, y1: py - 14, x2: px + 8 - sw, y2: py, stroke: INK, "stroke-width": 4, "stroke-linecap": "round" }, el);
-      svg("ellipse", { cx: px, cy: py - 22, rx: 17, ry: 12, fill: col, stroke: INK, "stroke-width": 2.6 }, el);
-      svg("circle", { cx: px + 15, cy: py - 34, r: 9.5, fill: col, stroke: INK, "stroke-width": 2.6 }, el);
-      svg("polygon", { points: [[px + 9, py - 41], [px + 11, py - 50], [px + 16, py - 42]].map(function (p) { return p.join(","); }).join(" "), fill: col, stroke: INK, "stroke-width": 2.2 }, el);
-      svg("circle", { cx: px + 19, cy: py - 36, r: 1.8, fill: INK }, el);
-      svg("line", { x1: px - 16, y1: py - 26, x2: px - 26, y2: py - 32 + (phase != null ? Math.sin(phase * 1.3) * 4 : 0), stroke: col, "stroke-width": 5, "stroke-linecap": "round" }, el);
-      svg("text", { x: px, y: py - 58, "text-anchor": "middle", "font-size": 15, "font-weight": 700, fill: PURPLE }, el).textContent = name || (f(v) + " · 糖豆");
+    // 原点上的「家」：紫顶小房子（三角屋顶 + 方身 + 拱形门 + 「家」门牌）
+    if (o.origin !== false) {
+      var hx = x(0), by = yT - 15;
+      svg("polygon", { points: [[hx + 20, by - 24], [hx + 27, by - 31], [hx + 27, by - 8], [hx + 20, by]].map(function (p) { return p.join(","); }).join(" "),
+        fill: "#DCC9D8", stroke: INK, "stroke-width": 2, "stroke-linejoin": "round" }, el);                       // 山墙侧
+      svg("rect", { x: hx - 20, y: by - 24, width: 40, height: 24, rx: 2, fill: "#F0E6EE", stroke: INK, "stroke-width": 2.2 }, el);   // 屋身
+      svg("polygon", { points: [[hx + 25, by - 24], [hx + 32, by - 31], [hx + 7, by - 50], [hx, by - 43]].map(function (p) { return p.join(","); }).join(" "),
+        fill: "#4A1546", stroke: INK, "stroke-width": 2, "stroke-linejoin": "round" }, el);                       // 屋顶侧
+      svg("polygon", { points: [[hx - 25, by - 24], [hx + 25, by - 24], [hx, by - 43]].map(function (p) { return p.join(","); }).join(" "),
+        fill: PURPLE, stroke: INK, "stroke-width": 2.3, "stroke-linejoin": "round" }, el);                         // 屋顶
+      svg("circle", { cx: hx + 10.5, cy: by - 14, r: 3.6, fill: "#FFFDF8", stroke: INK, "stroke-width": 1.5 }, el); // 窗
+      svg("line", { x1: hx + 7, y1: by - 14, x2: hx + 14, y2: by - 14, stroke: INK, "stroke-width": 1 }, el);
+      svg("line", { x1: hx + 10.5, y1: by - 17.2, x2: hx + 10.5, y2: by - 10.8, stroke: INK, "stroke-width": 1 }, el);
+      svg("path", { d: "M " + (hx - 8.5) + " " + by + " L " + (hx - 8.5) + " " + (by - 9) + " Q " + (hx - 8.5) + " " + (by - 14.5) + " " + (hx - 1) + " " + (by - 14.5) +
+        " Q " + (hx + 6.5) + " " + (by - 14.5) + " " + (hx + 6.5) + " " + (by - 9) + " L " + (hx + 6.5) + " " + by + " Z",
+        fill: PURPLE, stroke: INK, "stroke-width": 1.8, "stroke-linejoin": "round" }, el);                          // 拱形门
+      svg("circle", { cx: hx + 3, cy: by - 7, r: 1.5, fill: GOLD }, el);                                           // 门把
+      svg("rect", { x: hx - 9.5, y: by - 34.5, width: 19, height: 10.5, rx: 3, fill: PURPLE, stroke: INK, "stroke-width": 1.6 }, el);   // 门牌
+      svg("text", { x: hx, y: by - 26.2, "text-anchor": "middle", "font-size": 10, "font-weight": 700, fill: "#F3D27A" }, el).textContent = "家";
     }
-    if (o.dog != null) dog(o.dog, GOLD, o.dogName, o.run ? (o.dog * 1.4) : null);
-    if (o.dog2 != null) dog(o.dog2, GREEN, o.dog2Name);
+    // 站在家门口的糖豆（小狗）：金身墨线、垂耳翘尾、跑动四肢交替、眼睛带高光
+    function dog(v, col, name, phase) {
+      var px = x(v), gy = yT - 3;
+      var run = phase != null;
+      var s1 = run ? Math.sin(phase) : 0, s2 = run ? Math.sin(phase + Math.PI) : 0;
+      var wag = run ? Math.sin(phase * 1.4) : 0.35;
+      svg("ellipse", { cx: px, cy: gy + 1, rx: 25, ry: 5.5, fill: "rgba(43,35,38,.22)" }, el);                      // 影子
+      var tx0 = px - 17, ty0 = gy - 30;                                                                             // 翘尾（摇摆）
+      svg("path", { d: "M " + tx0 + " " + ty0 + " Q " + (tx0 - 8) + " " + (ty0 - 10) + " " + (tx0 - 10 + wag * 6) + " " + (ty0 - 10 - Math.abs(wag) * 3),
+        fill: "none", stroke: col, "stroke-width": 5.5, "stroke-linecap": "round" }, el);
+      [{ hx: px - 13, ph: phase + Math.PI }, { hx: px - 8, ph: phase }, { hx: px + 9, ph: phase + Math.PI }, { hx: px + 14, ph: phase }].forEach(function (L2) {
+        var fx = L2.hx + (run ? Math.sin(L2.ph) * 7 : 0);
+        var fy = gy - 1 - (run ? Math.max(0, Math.cos(L2.ph)) * 4 : 0);
+        svg("line", { x1: L2.hx, y1: gy - 24, x2: fx, y2: fy, stroke: INK, "stroke-width": 4, "stroke-linecap": "round" }, el);
+        svg("circle", { cx: fx, cy: fy, r: 2.7, fill: col, stroke: INK, "stroke-width": 1.5 }, el);                  // 爪
+      });
+      svg("rect", { x: px - 19, y: gy - 37, width: 38, height: 25, rx: 12.5, fill: col, stroke: INK, "stroke-width": 2.5 }, el);      // 身体
+      svg("ellipse", { cx: px + 2, cy: gy - 18, rx: 11, ry: 5.5, fill: "#F3D27A", opacity: .55 }, el);              // 肚皮
+      svg("path", { d: "M " + (px + 15) + " " + (gy - 50) + " Q " + (px + 7) + " " + (gy - 46) + " " + (px + 8) + " " + (gy - 36) +
+        " Q " + (px + 9) + " " + (gy - 31) + " " + (px + 14) + " " + (gy - 34) + " Q " + (px + 18) + " " + (gy - 42) + " " + (px + 18) + " " + (gy - 49) + " Z",
+        fill: col, stroke: INK, "stroke-width": 2.2, "stroke-linejoin": "round" }, el);                            // 远耳（垂）
+      svg("circle", { cx: px + 22, cy: gy - 41, r: 12.5, fill: col, stroke: INK, "stroke-width": 2.5 }, el);        // 头
+      svg("ellipse", { cx: px + 30, cy: gy - 36.5, rx: 6.5, ry: 5, fill: col, stroke: INK, "stroke-width": 2.2 }, el); // 口鼻
+      svg("path", { d: "M " + (px + 27 + s2 * 1.5) + " " + (gy - 51) + " Q " + (px + 35 + s2 * 2) + " " + (gy - 48) + " " + (px + 34 + s2 * 2) + " " + (gy - 37) +
+        " Q " + (px + 33 + s2 * 1.5) + " " + (gy - 32) + " " + (px + 28) + " " + (gy - 35) + " Q " + (px + 25) + " " + (gy - 44) + " " + (px + 25) + " " + (gy - 50) + " Z",
+        fill: col, stroke: INK, "stroke-width": 2.2, "stroke-linejoin": "round" }, el);                            // 近耳（垂，跑动后扬）
+      svg("circle", { cx: px + 23.5, cy: gy - 43.5, r: 3.4, fill: "#FFFDF8", stroke: INK, "stroke-width": 1.4 }, el);  // 眼白
+      svg("circle", { cx: px + 24.5, cy: gy - 43.5, r: 1.9, fill: DET }, el);                                      // 瞳孔
+      svg("circle", { cx: px + 25.5, cy: gy - 44.7, r: .8, fill: "#FFFDF8" }, el);                                 // 高光
+      svg("path", { d: "M " + (px + 19.5) + " " + (gy - 49) + " Q " + (px + 23.5) + " " + (gy - 51) + " " + (px + 27.5) + " " + (gy - 49),
+        fill: "none", stroke: INK, "stroke-width": 1.6, "stroke-linecap": "round" }, el);                          // 眉
+      svg("circle", { cx: px + 35.5, cy: gy - 37.5, r: 2.6, fill: DET }, el);                                      // 鼻
+      svg("path", { d: "M " + (px + 34) + " " + (gy - 34.5) + " Q " + (px + 31.5) + " " + (gy - 32) + " " + (px + 29) + " " + (gy - 33.5),
+        fill: "none", stroke: DET, "stroke-width": 1.5, "stroke-linecap": "round" }, el);                          // 嘴
+      svg("text", { x: px, y: gy - 60, "text-anchor": "middle", "font-size": 15, "font-weight": 700, fill: PURPLE }, el).textContent = name || (f(v) + " · 糖豆");
+    }
+    if (o.dog != null) dog(o.dog, o.dogColor || GOLD, o.dogName, o.run ? (o.dog * 1.4) : null);
+    if (o.dog2 != null) dog(o.dog2, o.dog2Color || GREEN, o.dog2Name);
     return { x: x, el: el, y: yT };
   }
   function stage900(root, hgt) { return box(root, 40, 88, 900, hgt || 470, { cls: "mini-stage" }); }
@@ -108,7 +162,7 @@
       if (v > 4.5) dir = -1;
       if (v < -4.5) dir = 1;
       holder.innerHTML = "";
-      var r = runway(holder, { range: 6, dog: v, arrow: true, run: true });
+      var r = runway(holder, { range: 6, dog: v, arrow: true, run: true, dark: true });
       r.el.classList.add("on-dark");
       raf = requestAnimationFrame(loop);
     };
@@ -140,25 +194,32 @@
       var rad = angleDeg * Math.PI / 180;
       var ux = Math.cos(rad), uy = -Math.sin(rad);
       var len = 330;
-      // 管体（有厚度的圆角矩形沿角度）
+      // 管体：圆头双层线（墨边纸芯），任意角度都圆润
       function at(d, off) { return [cx + ux * d - uy * off, cy + uy * d + ux * off]; }
-      var w2 = 17;
-      var p1 = at(-len / 2, -w2), p2 = at(len / 2, -w2), p3 = at(len / 2, w2), p4 = at(-len / 2, w2);
-      svg("polygon", { points: [p1, p2, p3, p4].map(function (p) { return p.join(","); }).join(" "), fill: PAPER, stroke: INK, "stroke-width": 2.6, "stroke-linejoin": "round" }, el);
-      // 刻度：0 居中，每 30px 一格
+      var w2 = 16;
+      var a0 = at(-len / 2, 0), a1 = at(len / 2, 0);
+      svg("line", { x1: a0[0], y1: a0[1], x2: a1[0], y2: a1[1], stroke: INK, "stroke-width": w2 * 2 + 5, "stroke-linecap": "round" }, el);
+      svg("line", { x1: a0[0], y1: a0[1], x2: a1[0], y2: a1[1], stroke: PAPER, "stroke-width": w2 * 2, "stroke-linecap": "round" }, el);
+      svg("line", { x1: a0[0], y1: a0[1], x2: a1[0], y2: a1[1], stroke: "rgba(108,33,102,.25)", "stroke-width": 2.5, "stroke-linecap": "round" }, el);   // 毛细芯线
+      // 刻度：0 居中，每 30px 一格；长刻度 + 等宽数字，短刻度细密
       for (var d = -150; d <= 150; d += 30) {
-        var a = at(d, -w2), b = at(d, d === 0 ? -w2 + 16 : -w2 + 9);
-        svg("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: d === 0 ? PURPLE : INK, "stroke-width": d === 0 ? 3 : 1.6 }, el);
-        if (angleDeg > 60 || d % 60 === 0) {
-          var lbl = at(d, w2 + 16);
-          svg("text", { x: lbl[0], y: lbl[1] + 4, "text-anchor": "middle", "font-size": 13, fill: INK }, el).textContent = String(-d / 30);
+        var major = d % 60 === 0;
+        var a = at(d, -w2), b = at(d, major ? -w2 + 15 : -w2 + 8.5);
+        svg("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: d === 0 ? PURPLE : INK, "stroke-width": d === 0 ? 2.8 : major ? 2 : 1.3,
+          "stroke-linecap": "round", opacity: d === 0 ? 1 : major ? .95 : .8 }, el);
+        if (angleDeg > 60 || major) {
+          var lbl = at(d, w2 + 17);
+          svg("text", { x: lbl[0], y: lbl[1] + 4.5, "text-anchor": "middle", "font-size": 13, "font-weight": d === 0 ? 700 : 500, "font-family": MONO,
+            fill: d === 0 ? PURPLE : INK }, el).textContent = String(-d / 30);
         }
       }
       if (withArrow) {
         var tip = at(len / 2 + 30, 0);
         svg("polygon", { points: [tip, at(len / 2 + 6, -9), at(len / 2 + 6, 9)].map(function (p) { return p.join(","); }).join(" "), fill: INK }, el);
       }
-      svg("circle", { cx: cx, cy: cy, r: 6, fill: PURPLE, stroke: INK, "stroke-width": 2 }, el);
+      // 玻璃泡（转轴）：紫泡 + 深芯
+      svg("circle", { cx: cx, cy: cy, r: 8, fill: PURPLE, stroke: INK, "stroke-width": 2.2 }, el);
+      svg("circle", { cx: cx, cy: cy, r: 3.4, fill: "#4A1546" }, el);
       svg("text", { x: cx + 24, y: cy + 66, "font-size": 15, fill: "#7C7068" }, el).textContent =
         ["温度计：竖着量冷热", "放平 45°……", "完全放平：0 在中间，右边越来越热（正），左边越来越冷（负）", "加上箭头：右边就是正方向"][angleDeg === 90 ? 0 : angleDeg === 45 ? 1 : angleDeg === 0 ? (withArrow ? 3 : 2) : 2];
     }
