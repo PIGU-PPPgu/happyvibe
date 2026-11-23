@@ -3,12 +3,14 @@ dist/
 .astro/
 .DS_Store
 assets/
+!skills/archify/assets/
 shots/
 .playwright-mcp/
 public/videos/
 public/interactives/*
 !public/interactives/topic-roadmap.html
 !public/interactives/harness-pipeline.html
+!public/interactives/skill-eval-flow.html
 scripts/.interactives-report.json
 public/previews/*
 
