@@ -10,7 +10,8 @@
    - **架构图 / 流程图 / 时序图 / 数据流图 → 用 archify**（`skills/archify/`，源自 github.com/tt-a1i/archify，MIT）：按 `skills/archify/SKILL.md` 写类型化 JSON → `node skills/archify/bin/archify.mjs validate <type> <json> --quality showcase` 全绿 → `deliver <type> <json> <输出.html> --quality showcase`。产物是单文件交互 HTML（动画 trace / 搜索 / 聚焦 / 演示模式 F），放 `public/interactives/`，页面用 iframe 嵌入并配「全屏打开」链接；引用路径去掉 `.html` 后缀（Pages 会 308 跳转）。`meta.locale` 用 `zh-CN`
    - 用户点名要哪种就用哪种，不重复造图
 2.5 **做教学 3D/2D 交互资源（资源库）** → 先读 `skills/teaching-interactives/SKILL.md`，按其目录约定与验收命令执行；产物是单文件 HTML，验收 = 六项闸门（`npm run check:interactives`）+ 自测 harness（`node scripts/test_interactives.mjs`，可加 slug 跑单个）全过才算完成
-3. 课程内容在 `src/content/lessons/<模块>/<课>.md`，规范见 README「怎么加一节新课」；教学资源条目在 `src/content/resources/<学科>/<名>.md`，规范见 README「怎么加一条教学资源」
+2.6 **做 Skill 评测 / 往 Skill 工坊加技能 / 改评价标准** → 先读 `skills/skill-evaluation/SKILL.md`。没实测不出分；分数由 `scripts/score_skill.mjs` 从记录的证据算出，`npm run check:skills` 不过不得提交。SkillHub 上的技能只评不转，明确开源许可的才镜像
+3. 课程内容在 `src/content/lessons/<模块>/<课>.md`，规范见 README「怎么加一节新课」；教学资源条目在 `src/content/resources/<学科>/<名>.md`，规范见 README「怎么加一条教学资源」；Skill 工坊条目在 `src/content/skills/<slug>.md`，镜像的技能源码在 `src/skills/<slug>/`（上游原样，不改一字）
 4. 所有视觉产出遵循：傻瓜式步骤（精确到按钮）、图文并茂、无 emoji、大字号、隐私安全（真实学生信息不上线）
 5. **文风红线（AI-isms 清单）**——以下模式一律禁止，出现即重写：
    - 按钮/导航/标题后加解释性括号（如「比赛专区（报名截止）」→ 只写「比赛专区」）
@@ -27,6 +28,8 @@
 | `scripts/build_interactives.mjs` / `check_interactives.mjs` | 教学交互资源单文件构建与六项质量闸门（体积/零外链/无 emoji/双主题/title/全屏） |
 | `scripts/build_resource_previews.mjs` | 资源卡片预览图生成（无头截图到 public/previews/）；交互资源内容改动后必须重跑，否则资源库卡片是旧界面 |
 | `scripts/verify.mjs` | 统一验收入口（`npm run verify`）：构建 → 预览图 → 十二项闸门 → 双主题无头自测，一条命令全链路，任一环失败即中止 |
+| `scripts/audit_skill.mjs` / `check_skills.mjs` / `score_skill.mjs` / `build_skill_packages.mjs` | Skill 工坊：技能静态审查 / 条目校验 / 按证据算分 / 打技能包（规则见 `skills/skill-evaluation/SKILL.md`） |
+| `scripts/check_links.mjs` | 构建后站内链接巡检，列出 404（2026-11-24 基线 38 处遗留坏链，不得新增） |
 | `scripts/make_tutorial_gif.py` | 教程 GIF 加工（聚焦放大/波纹/高亮/字幕条）+ 静态图红框箭头标注（annotate） |
 | `scripts/build_material_packs.py` | 15 学科材料包生成（含二维码，MATERIALS_BASE_URL 可换域名） |
 | `scripts/build_m0_visuals.py` / `build_teaching_visuals.py` | 教学示意图生成（紫金风格） |
@@ -39,3 +42,5 @@
 - 正式地址：https://happyvibe.intelliedu.cc（Cloudflare Pages，项目名 happyvibe，主分支 main 自动为生产）
 - 本地开发：`npm run dev`；构建：`npm run build`（含 Pagefind 索引）
 - 搜索/进度/主题切换均为零依赖原生实现，改动前读 `src/lib/progress.ts` 与 `src/styles/tokens.css`（浅色主题变量在 `:root[data-theme='light']`）
+- 资源中心三个板块各有固定地址，不得改：课件 `/resources/`、Skill 工坊 `/skills/`、工具箱 `/toolbox/`；三个入口页共用 `src/components/ResourceHubHeader.astro`，导航只保留「资源中心」一项
+- archify 产物的查看器支持 `?embed=1&theme=light|dark`（嵌入模式、跟随站点主题）；嵌入时画布越窄字越大，画布宽度不能小于校验器给的下限
