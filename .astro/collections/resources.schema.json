@@ -82,12 +82,32 @@
             "type": "string"
           }
         },
+        "pages": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
         "quickstart": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "maxItems": 5
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
         },
         "relatedLessons": {
           "type": "array",

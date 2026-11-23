@@ -1,0 +1,184 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Skill 评测流程",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "output": "public/interactives/skill-eval-flow.html",
+    "views": [
+      {
+        "id": "whole",
+        "label": "全流程",
+        "focus": [
+          "candidates",
+          "audit",
+          "run",
+          "score",
+          "publish"
+        ],
+        "note": "从候选到入库的主路径，一次只评一个技能。"
+      },
+      {
+        "id": "gates",
+        "label": "两道关口",
+        "focus": [
+          "audit",
+          "reject_red",
+          "score",
+          "reject_low"
+        ],
+        "note": "审查挡红线，定分挡低分；碰到的都不收录。"
+      }
+    ],
+    "legend": {
+      "mode": "hidden"
+    }
+  },
+  "lanes": [
+    {
+      "id": "audit",
+      "label": "评测前审查"
+    },
+    {
+      "id": "test",
+      "label": "在 WorkBuddy 上实测"
+    },
+    {
+      "id": "ship",
+      "label": "定分与入库"
+    }
+  ],
+  "mainPath": [
+    "candidates",
+    "audit",
+    "run",
+    "score",
+    "publish"
+  ],
+  "nodes": [
+    {
+      "id": "candidates",
+      "lane": "audit",
+      "col": 0,
+      "type": "external",
+      "label": "1 候选",
+      "sublabel": "市场逐条挑 · 开源仓库",
+      "width": 176,
+      "height": 60
+    },
+    {
+      "id": "audit",
+      "lane": "audit",
+      "col": 1,
+      "type": "security",
+      "label": "2–4 审查与判定",
+      "sublabel": "隔离下载 · 通读扫描 · 核对许可",
+      "width": 176,
+      "height": 60
+    },
+    {
+      "id": "reject_red",
+      "lane": "audit",
+      "col": 2,
+      "type": "security",
+      "label": "不收录",
+      "sublabel": "触碰红线",
+      "width": 176,
+      "height": 60
+    },
+    {
+      "id": "run",
+      "lane": "test",
+      "col": 1,
+      "type": "backend",
+      "label": "5–6 实测",
+      "sublabel": "装进 WorkBuddy，固定任务跑 3 次",
+      "width": 176,
+      "height": 60
+    },
+    {
+      "id": "score",
+      "lane": "ship",
+      "col": 1,
+      "type": "security",
+      "label": "7 定分",
+      "sublabel": "按截图与记录算分",
+      "width": 176,
+      "height": 60
+    },
+    {
+      "id": "publish",
+      "lane": "ship",
+      "col": 2,
+      "type": "database",
+      "label": "8 入库",
+      "sublabel": "条目 · 档案 · 技能包",
+      "width": 176,
+      "height": 60
+    },
+    {
+      "id": "reject_low",
+      "lane": "ship",
+      "col": 0,
+      "type": "security",
+      "label": "不收录",
+      "sublabel": "总分不足 6.0",
+      "width": 176,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "candidates",
+      "to": "audit"
+    },
+    {
+      "id": "e2",
+      "from": "audit",
+      "to": "reject_red",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e3",
+      "from": "audit",
+      "to": "run",
+      "route": "drop",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "from": "run",
+      "to": "score",
+      "variant": "emphasis",
+      "route": "drop",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e5",
+      "from": "score",
+      "to": "publish",
+      "label": "6.0 分起",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e6",
+      "from": "score",
+      "to": "reject_low",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e7",
+      "from": "publish",
+      "to": "run",
+      "label": "9 上游更新后复测",
+      "variant": "dashed",
+      "role": "return"
+    }
+  ]
+}
