@@ -1,0 +1,195 @@
+---
+/**
+ * 课件卡片：资源中心首页与学科页共用。
+ * 实拍图与标题进详情页，「进入教室」直达全屏课件。
+ * 悬停 350ms 后在实拍图上叠一层实时运行的课件（仅精确指针设备），移开即卸载。
+ */
+import type { CollectionEntry } from 'astro:content';
+import { STAGES, type SubjectMeta } from '../data/subjects';
+import { withBase } from '../lib/urls';
+
+interface Props {
+  r: CollectionEntry<'resources'>;
+  subject: SubjectMeta;
+  /** 是否在实拍图上叠学科角标：首页要，学科页不要 */
+  showSubject?: boolean;
+}
+
+const { r, subject, showSubject = true } = Astro.props;
+const d = r.data;
+const slug = r.id.split('/').pop() ?? r.id;
+const detail = withBase(`/resources/${d.subject}/${slug}/`);
+const live = withBase(`/interactives/${d.file}`);
+const stageLabel = STAGES.find((s) => s.key === d.stage)?.label ?? '';
+const anchor = d.book ? [d.book, d.unit].filter(Boolean).join(' · ') : d.topic;
+const gradeText = `${d.grades.join('、')} 年级 · ${stageLabel}`;
+---
+
+<article
+  class="pcard"
+  data-subject={d.subject}
+  data-grades={d.grades.join(',')}
+  data-book={d.book || ''}
+  data-unit={d.unit || ''}
+  data-live={`${live}?embed=1`}
+>
+  <a class="pv" href={detail} aria-label={`查看 ${d.title} 的教学设计`}>
+    <img loading="lazy" src={withBase(`/previews/${d.file}.jpg`)} alt={`${d.title} 界面实拍`} />
+    {showSubject && <span class="subj-tag" style={`--accent:${subject.accent}`}>{subject.icon} {subject.name}</span>}
+  </a>
+  <div class="pcard-body">
+    <a class="card-title" href={detail}>{d.title}</a>
+    <p class="card-sub">{anchor}</p>
+    <p class="card-desc">{d.usage}</p>
+    {d.tags && d.tags.length > 0 && (
+      <div class="chips">{d.tags.slice(0, 4).map((t) => <span class="chip">{t}</span>)}</div>
+    )}
+  </div>
+  <div class="pcard-foot">
+    <span class="meta mono">
+      {d.status !== 'ready' && <span class="draft">校对中</span>}
+      {gradeText}{d.pages ? ` · 共 ${d.pages} 页` : ''}
+    </span>
+    <span class="foot-links">
+      <a class="go ghost" href={detail}>教学设计</a>
+      <a class="go" href={live} target="_blank" rel="noopener">进入教室 <i aria-hidden="true">→</i></a>
+    </span>
+  </div>
+</article>
+
+<style>
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .pcard:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: var(--shadow); }
+
+  .pv { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; text-decoration: none; background: var(--bg-inset); }
+  .pv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .25s ease, transform .35s ease; }
+  .pcard:hover .pv img { transform: scale(1.03); }
+  .pv iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+  .pv.live img { opacity: 0; }
+  .pv.live iframe { pointer-events: auto; }
+
+  /* 图上的角标都压在实拍图上，文字用固定浅色，深浅主题都要读得清 */
+  .pv span {
+    position: absolute;
+    z-index: 2;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.6;
+    pointer-events: none;
+  }
+  .pv::after {
+    content: '悬停实时预览';
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #f4eef9;
+    background: rgba(12, 7, 20, .66);
+    border: 1px solid rgba(255, 255, 255, .14);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  .pv.live::after { opacity: 0; }
+  .subj-tag {
+    left: 10px;
+    bottom: 10px;
+    font-weight: 600;
+    color: #fff;
+    background: color-mix(in srgb, var(--accent, #8a3d99) 84%, #000);
+    border: 1px solid rgba(255, 255, 255, .28);
+  }
+
+  .pcard-body { display: flex; flex-direction: column; gap: 6px; padding: 14px 18px 6px; flex: 1; }
+  .card-title { color: var(--text); font-weight: 700; font-size: 18px; line-height: 1.45; text-decoration: none; }
+  .card-title:hover { color: var(--gold-soft); text-decoration: none; }
+  .card-sub { font-size: 13.5px; color: var(--gold-soft); }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .chip {
+    font-size: 12px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .pcard-foot {
+    display: flex;
+    flex-wrap: wrap;      /* 窄屏放不下一行时换成两行，不让文字从中间断开 */
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 10px;
+    padding: 10px 18px 16px;
+  }
+  .meta { font-size: 12.5px; color: var(--text-faint); display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+  .draft {
+    color: var(--gold);
+    border: 1px solid var(--line-gold);
+    border-radius: 999px;
+    padding: 1px 9px;
+    font-family: var(--sans);
+    font-size: 12px;
+  }
+  .foot-links { display: inline-flex; align-items: center; gap: 22px; white-space: nowrap; }
+  .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold-soft);
+    text-decoration: none;
+  }
+  .go:hover { text-decoration: none; filter: brightness(1.08); }
+  .go.ghost { font-weight: 500; color: var(--text-muted); }
+  .go.ghost:hover { color: var(--text); }
+  .go i { font-style: normal; transition: transform .18s; }
+  .go:hover i { transform: translateX(4px); }
+</style>
+
+<script>
+  // 悬停 350ms 后以实时 iframe 覆盖实拍图（仅精确指针设备；离开即卸载）
+  if (matchMedia('(pointer: fine)').matches) {
+    for (const card of document.querySelectorAll<HTMLElement>('.pcard[data-live]')) {
+      const pv = card.querySelector<HTMLElement>('.pv');
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      card.addEventListener('mouseenter', () => {
+        timer = setTimeout(() => {
+          const f = document.createElement('iframe');
+          f.loading = 'lazy';
+          f.title = '实时预览';
+          f.src = card.dataset.live!;
+          f.addEventListener('load', () => pv?.classList.add('live'));
+          pv?.appendChild(f);
+        }, 350);
+      });
+      card.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+        pv?.classList.remove('live');
+        pv?.querySelector('iframe')?.remove();
+      });
+    }
+  }
+</script>

@@ -62,8 +62,12 @@ const resources = defineCollection({
       source: z.enum(RESOURCE_SOURCES).optional(),
       usage: z.string(),
       tags: z.array(z.string()).optional(),
+      /** 课件页数（深课件四幕 9 到 11 页） */
+      pages: z.number().int().positive().optional(),
       /** 课堂使用步骤，写之前必须在浏览器里照着点过 */
       quickstart: z.array(z.string()).max(5).optional(),
+      /** 快捷键表：[按键, 作用]，与课件底部提示一致 */
+      keys: z.array(z.tuple([z.string(), z.string()])).optional(),
       /** 相关课程 id，形如 growth/skill-use */
       relatedLessons: z.array(z.string()).optional(),
       status: z.enum(['draft', 'ready']).default('draft'),

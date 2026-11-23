@@ -1,149 +1,90 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import TerminalWindow from '../../components/TerminalWindow.astro';
-import { SUBJECTS, STAGES, subjectBySlug } from '../../data/subjects';
+import ResourceHubHeader from '../../components/ResourceHubHeader.astro';
+import ResourceCard from '../../components/ResourceCard.astro';
+import { SUBJECTS } from '../../data/subjects';
+import { hubCounts } from '../../lib/hubCounts';
 import { withBase } from '../../lib/urls';
 
 const all = await getCollection('resources');
 const own = all.filter((r) => r.data.kind !== 'external').sort((a, b) => a.data.order - b.data.order);
-const ext = all.filter((r) => r.data.kind === 'external');
+const counts = await hubCounts();
+const subjectOf = Object.fromEntries(SUBJECTS.map((s) => [s.slug, s]));
+const countOf = (slug: string) => own.filter((r) => r.data.subject === slug).length;
 
-const ownSubjects = SUBJECTS.filter((s) => own.some((r) => r.data.subject === s.slug));
-const stageLabel = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
-const gradeSet = [...new Set(own.flatMap((r) => r.data.grades))].sort((a, b) => a - b);
-const subj = (slug: string) => subjectBySlug(slug);
-
-// 覆盖矩阵：subject × stage 的资源计数
-const cell = new Map<string, number>();
-for (const r of all) {
-  const k = `${r.data.subject}|${r.data.stage}`;
-  cell.set(k, (cell.get(k) ?? 0) + 1);
-}
-const count = (slug: string, stage: string) => cell.get(`${slug}|${stage}`) ?? 0;
-const subjectTotal = (slug: string) => all.filter((r) => r.data.subject === slug).length;
-const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
+// 筛选器按数量出现：件数少了，筛选器比内容还多
+const SHOW_FACETS = own.length >= 6;
+const valuesOf = (pick: (r: (typeof own)[number]) => string[]) => [...new Set(own.flatMap(pick))].filter(Boolean);
+const FACETS = [
+  { key: 'grade', label: '年级', values: valuesOf((r) => r.data.grades.map(String)) },
+  { key: 'book', label: '教材', values: valuesOf((r) => [r.data.book || '']) },
+  { key: 'unit', label: '章节', values: valuesOf((r) => [r.data.unit || '']) },
+];
 ---
 
-<BaseLayout title="教学资源库" description="K12 学科 3D/2D 交互教学资源：单文件可下载、断网可投屏，按教材章节知识点组织">
+<BaseLayout title="资源中心 · 教学课件" description="K12 学科交互课件：单文件可下载、断网可投屏，按教材章节组织，每件都带教学设计">
   <div class="container res-page">
-    <TerminalWindow title="happyvibe resources">
-      <p class="kicker mono">// RESOURCES · {all.length} 条资源 · {covered}/{SUBJECTS.length} 学科已上线</p>
-      <h1 class="res-title">教学资源库</h1>
-      <p class="res-sub text-muted">
-        自产资源是单文件网页，下载后断网双击即可投屏；每张卡片就是资源实拍界面，悬停可看实时运行效果。
-        外链资源以国家中小学智慧教育平台为主。
-      </p>
-    </TerminalWindow>
+    <ResourceHubHeader active="courseware" counts={counts}>
+      <span slot="note">自产课件是单文件网页，下载后断网双击即可投屏。每件按教材章节组织，都带教学设计与课堂使用步骤。</span>
+    </ResourceHubHeader>
 
-    <div class="res-stats">
-      <div class="stat"><span class="stat-n mono">{own.length}</span><span class="stat-l">自产交互资源</span></div>
-      <div class="stat"><span class="stat-n mono">{ext.length}</span><span class="stat-l">精选外链</span></div>
-      <div class="stat"><span class="stat-n mono">{SUBJECTS.length}</span><span class="stat-l">学科规划</span></div>
-    </div>
+    <section aria-label="教学课件">
+      <div class="head">
+        <div class="filters" role="group" aria-label="按学科筛选">
+          <span class="glabel">学科</span>
+          <button class="fchip on" data-f="all" type="button">全部 <b>{own.length}</b></button>
+          {SUBJECTS.map((s) => {
+            const n = countOf(s.slug);
+            return n > 0 ? (
+              <button class="fchip" data-f={s.slug} data-href={withBase(`/resources/${s.slug}/`)} type="button" style={`--accent:${s.accent}`}>
+                {s.icon} {s.name} <b>{n}</b>
+              </button>
+            ) : (
+              <span class="fchip off" aria-disabled="true">{s.icon} {s.name}</span>
+            );
+          })}
+        </div>
+        <p class="strip-note text-muted" data-sel-note>未上线的学科按教材章节逐件制作。</p>
 
-    <section aria-label="自产资源">
-      {own.length > 0 && (
-        <div class="filters" role="tablist" aria-label="按学科筛选">
-        <span class="glabel">学科</span>
-        <button class="fchip on" data-f="all" type="button">全部</button>
-        {ownSubjects.map((s) => (
-          <button class="fchip" data-f={s.slug} type="button" style={`--accent:${s.accent}`}>{s.icon} {s.name}</button>
+        {SHOW_FACETS && FACETS.map((f) => (
+          <div class="filters" aria-label={`按${f.label}筛选`}>
+            <span class="glabel">{f.label}</span><span class="facet" id={`facet-${f.key}`}></span>
+          </div>
         ))}
       </div>
-      )}
-      {own.length > 0 && (
-        <div class="filters" aria-label="按年级筛选">
-        <span class="glabel">年级</span><span class="facet" id="facet-grade"></span>
-        </div>
-      )}
-      {own.length > 0 && (
-        <div class="filters" aria-label="按教材筛选">
-        <span class="glabel">教材</span><span class="facet" id="facet-book"></span>
-        </div>
-      )}
-      {own.length > 0 && (
-        <div class="filters" aria-label="按章节筛选">
-        <span class="glabel">章节</span><span class="facet" id="facet-unit"></span>
-        </div>
-      )}
-      <div class="cards" id="own-cards">
-        {own.map((r) => {
-          const s = subj(r.data.subject);
-          return (
-            <article class="pcard" data-subject={r.data.subject} data-grades={r.data.grades.join(",")} data-book={r.data.book || ""} data-unit={r.data.unit || ""} data-live={withBase(`/interactives/${r.data.file}?embed=1`)}>
-              <a class="pv" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener" aria-label={`打开 ${r.data.title}`}>
-                <img loading="lazy" src={withBase(`/previews/${r.data.file}.jpg`)} alt={`${r.data.title} 界面实拍`} />
-                <span class="subj-tag" style={`--accent:${s?.accent}`}>{s?.icon} {s?.name}</span>
-                <span class="grade-tag mono">{r.data.grades.join('、')} 年级 · {stageLabel[r.data.stage]}</span>
-                <span class="pv-open">打开</span>
-              </a>
-              <div class="pcard-body">
-                <a class="card-title" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">{r.data.title}</a>
-                <p class="card-sub">{r.data.topic}</p>
-                <p class="card-desc">{r.data.usage}</p>
-                {r.data.tags && r.data.tags.length > 0 && (
-                  <div class="chips">{r.data.tags.slice(0, 4).map((t) => <span class="chip">{t}</span>)}</div>
-                )}
-              </div>
-              <div class="pcard-foot">
-                <span class="badge mono">{r.data.status === 'ready' ? 'READY' : '校对中'}</span>
-                <a class="go" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">进入教室 <i>→</i></a>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-      {own.length === 0 && <p class="empty-note text-muted">自产资源制作中，将按教材章节陆续上线。</p>}
-    </section>
 
-    <section class="matrix-wrap" aria-label="学科与学段覆盖矩阵">
-      <table class="matrix">
-        <thead>
-          <tr>
-            <th scope="col">学科</th>
-            {STAGES.map((s) => <th scope="col">{s.label}</th>)}
-            <th scope="col">合计</th>
-          </tr>
-        </thead>
-        <tbody>
-          {SUBJECTS.map((s) => (
-            <tr class={subjectTotal(s.slug) === 0 ? 'empty' : ''}>
-              <th scope="row">
-                <a href={withBase(`/resources/${s.slug}/`)} class="subj-link">
-                  <span class="subj-icon mono" style={`--accent:${s.accent}`}>{s.icon}</span>
-                  {s.name}
-                </a>
-              </th>
-              {STAGES.map((st) => {
-                const n = count(s.slug, st.key);
-                const inRange = !(s.grades[1] < st.grades[0] || s.grades[0] > st.grades[1]);
-                return <td>{inRange ? (n > 0 ? <span class="cell-n mono" data-n={n}>{n}</span> : <span class="cell-zero">—</span>) : <span class="cell-na"></span>}</td>;
-              })}
-              <td class="mono total">{subjectTotal(s.slug) || ''}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div class="cards" id="own-cards">
+        {own.map((r) => <ResourceCard r={r} subject={subjectOf[r.data.subject]} />)}
+      </div>
+      {own.length === 0 && <p class="empty-note text-muted">课件制作中，将按教材章节陆续上线。</p>}
     </section>
   </div>
 </BaseLayout>
 
 <script>
-  // facet 联动筛选：任一筛选变化后，其余各排选项 = 当前结果集里实际存在的值（带计数），
-  // 失效选择自动收回——选了数学，教材/章节就只剩数学用书与数学章节。
+  // 学科 chip：有课件的学科是筛选按钮，没有的置灰不可点
   const cards = [...document.querySelectorAll<HTMLElement>('.pcard[data-subject]')];
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.fchip[data-f]')];
+  const note = document.querySelector<HTMLElement>('[data-sel-note]');
+  const baseNote = note?.textContent ?? '';
   const state: Record<string, string> = { subject: 'all', grade: 'all', book: 'all', unit: 'all' };
-  const FACETS = [
-    { key: 'grade', el: document.getElementById('facet-grade'), suffix: ' 年级', num: true },
-    { key: 'book', el: document.getElementById('facet-book') },
-    { key: 'unit', el: document.getElementById('facet-unit') },
-  ];
+
+  // 年级 / 教材 / 章节联动（页面渲染了这些筛选排时才存在）
+  const FACETS = [...document.querySelectorAll<HTMLElement>('.facet')].map((el) => ({
+    key: el.id.replace('facet-', ''),
+    el,
+    num: el.id === 'facet-grade',
+    suffix: el.id === 'facet-grade' ? ' 年级' : '',
+  }));
   const valOf = (c: HTMLElement, key: string): string[] =>
-    key === 'subject' ? [c.dataset.subject || '']
-    : key === 'grade' ? (c.dataset.grades || '').split(',').filter(Boolean)
-    : key === 'book' ? [c.dataset.book || '']
-    : [c.dataset.unit || ''];
+    key === 'subject'
+      ? [c.dataset.subject || '']
+      : key === 'grade'
+        ? (c.dataset.grades || '').split(',').filter(Boolean)
+        : key === 'book'
+          ? [c.dataset.book || '']
+          : [c.dataset.unit || ''];
   const matches = (c: HTMLElement, skip?: string) => {
     for (const k of Object.keys(state)) {
       if (k === skip || state[k] === 'all') continue;
@@ -151,186 +92,103 @@ const covered = SUBJECTS.filter((s) => subjectTotal(s.slug) > 0).length;
     }
     return true;
   };
-  const render = () => {
+  // 任一筛选变化后，其余各排的选项 = 当前结果集里实际存在的值（带计数）；失效的选择自动收回
+  const renderFacets = () => {
     cards.forEach((c) => (c.style.display = matches(c) ? '' : 'none'));
     for (const f of FACETS) {
-      if (!f.el) continue;
       const counts = new Map<string, number>();
       for (const c of cards) {
         if (!matches(c, f.key)) continue;
         for (const v of valOf(c, f.key)) if (v) counts.set(v, (counts.get(v) || 0) + 1);
       }
       if (state[f.key] !== 'all' && !counts.has(state[f.key])) state[f.key] = 'all';
-      const opts = [...counts.keys()].sort((a: string, b: string) =>
-        f.num ? Number(a) - Number(b) : a.localeCompare(b, 'zh'));
+      const opts = [...counts.keys()].sort((a, b) => (f.num ? Number(a) - Number(b) : a.localeCompare(b, 'zh')));
       f.el.innerHTML = '';
       const mk = (v: string, text: string) => {
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'gchip' + (state[f.key] === v ? ' on' : '');
         b.textContent = text;
-        b.addEventListener('click', () => { state[f.key] = v; render(); });
-        f.el!.appendChild(b);
+        b.addEventListener('click', () => {
+          state[f.key] = v;
+          renderFacets();
+        });
+        f.el.appendChild(b);
       };
       mk('all', `全部 ${cards.filter((c) => matches(c, f.key)).length}`);
-      for (const v of opts) mk(v, `${v}${f.suffix || ''} ${counts.get(v)}`);
+      for (const v of opts) mk(v, `${v}${f.suffix} ${counts.get(v)}`);
     }
   };
-  const chips = document.querySelectorAll<HTMLButtonElement>('.fchip');
+
+  const refresh = () => {
+    if (FACETS.length > 0) {
+      renderFacets();
+    } else {
+      const key = state.subject;
+      cards.forEach((c) => (c.style.display = key === 'all' || c.dataset.subject === key ? '' : 'none'));
+    }
+    // 选中某学科后，说明行换成该学科的件数与学科页入口
+    const chip = chips.find((c) => c.dataset.f === state.subject);
+    if (!note) return;
+    if (state.subject === 'all' || !chip) {
+      note.textContent = baseNote;
+      return;
+    }
+    const n = cards.filter((c) => c.dataset.subject === state.subject).length;
+    note.textContent = '';
+    note.append(`只看该学科，共 ${n} 件 · `);
+    const a = document.createElement('a');
+    a.href = chip.dataset.href || '';
+    a.textContent = '进入学科页 →';
+    note.append(a);
+  };
+
   chips.forEach((c) =>
     c.addEventListener('click', () => {
       chips.forEach((x) => x.classList.toggle('on', x === c));
       state.subject = c.dataset.f || 'all';
-      render();
+      refresh();
     })
   );
-  render();
-  // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
-  if (matchMedia('(pointer: fine)').matches) {
-    for (const card of document.querySelectorAll<HTMLDivElement>('.pcard[data-live]')) {
-      const pv = card.querySelector<HTMLElement>('.pv');
-      let timer: ReturnType<typeof setTimeout> | undefined;
-      card.addEventListener('mouseenter', () => {
-        timer = setTimeout(() => {
-          const f = document.createElement('iframe');
-          f.loading = 'lazy';
-          f.title = '实时预览';
-          f.src = card.dataset.live!;
-          f.addEventListener('load', () => pv!.classList.add('live'));
-          pv!.appendChild(f);
-        }, 350);
-      });
-      card.addEventListener('mouseleave', () => {
-        clearTimeout(timer);
-        pv?.classList.remove('live');
-        pv?.querySelector('iframe')?.remove();
-      });
-    }
-  }
 </script>
 
 <style>
-  .res-page { padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 22px; }
-  .res-title { font-size: 28px; margin: 4px 0 6px; }
-  .res-sub { max-width: 760px; line-height: 1.7; }
-  .empty-note { padding: 30px 0; font-size: 15px; }
-  .res-stats { display: flex; gap: 14px; flex-wrap: wrap; }
-  .stat {
-    display: flex; flex-direction: column; gap: 2px;
-    padding: 14px 22px; background: var(--bg-panel);
-    border: 1px solid var(--line); border-radius: var(--radius); min-width: 130px;
-  }
-  .stat-n { font-size: 26px; color: var(--gold); font-weight: 700; }
-  .stat-l { font-size: 13px; color: var(--text-muted); }
-
-  .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .res-page { padding-block: 48px 40px; display: flex; flex-direction: column; gap: 22px; }
+  .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .facet { display: inline-flex; flex-wrap: wrap; gap: 8px; }
-  .glabel { font-size: 13px; color: var(--text-faint); }
-  .gchip {
-    font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 999px;
-    border: 1px solid var(--line); background: transparent; color: var(--text-muted);
-    cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  .glabel { font-size: 13px; color: var(--text-faint); margin-right: 4px; }
+  .gchip,
+  .fchip {
+    font: inherit;
+    font-size: 14px;
+    padding: 6px 15px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
   }
+  .fchip b { font-weight: 600; font-family: var(--mono); font-size: 12px; margin-left: 3px; color: var(--text-faint); }
+  .fchip:hover { border-color: var(--accent, var(--line-strong)); color: var(--text); }
+  .fchip:hover b { color: var(--text-muted); }
+  .fchip.on {
+    border-color: var(--accent, var(--gold));
+    color: var(--accent, var(--gold));
+    background: color-mix(in srgb, var(--accent, var(--gold)) 12%, transparent);
+    font-weight: 600;
+  }
+  .fchip.on b { color: inherit; }
+  /* 没上线的学科：置灰、不可点 */
+  .fchip.off { color: var(--text-faint); opacity: .6; cursor: default; border-style: dashed; }
   .gchip:hover { border-color: var(--gold); color: var(--text); }
   .gchip.on { border-color: var(--gold); color: var(--gold); background: rgba(232, 176, 75, .12); font-weight: 600; }
-  .fchip {
-    font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 999px;
-    border: 1px solid var(--line); background: transparent; color: var(--text-muted);
-    cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  .head { display: flex; flex-direction: column; gap: 10px; }
+  .strip-note { margin: 0; font-size: 14px; }
+  .strip-note a { color: var(--gold-soft); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 20px; margin-top: 14px; }
+  .empty-note { padding: 30px 0; font-size: 15px; }
+  @media (max-width: 480px) {
+    .cards { grid-template-columns: 1fr; }
   }
-  .fchip:hover { border-color: var(--accent, var(--line-strong)); color: var(--text); }
-  .fchip.on { border-color: var(--accent, var(--gold)); color: var(--accent, var(--gold)); background: color-mix(in srgb, var(--accent, var(--gold)) 12%, transparent); font-weight: 600; }
-
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px; }
-  .pcard {
-    display: flex; flex-direction: column;
-    background: var(--bg-panel);
-    border: 1px solid var(--line); border-radius: var(--radius);
-    overflow: hidden;
-    transition: border-color .2s, transform .2s, box-shadow .2s;
-  }
-  .pcard:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
-  .pv { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; text-decoration: none; }
-  .pv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .35s ease; }
-  .pcard:hover .pv img { transform: scale(1.03); }
-  .pv iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--bg); pointer-events: none; }
-  .pv img { transition: opacity .25s ease, transform .35s ease; }
-  .pv.live img { opacity: 0; }
-  .pv.live iframe { pointer-events: auto; }
-  .pv::after {
-    content: '悬停实时预览';
-    position: absolute; right: 10px; bottom: 10px; z-index: 2;
-    font-size: 12px; color: var(--text); padding: 3px 9px; border-radius: 999px;
-    background: rgba(10, 6, 16, .62); border: 1px solid var(--line);
-    backdrop-filter: blur(4px); pointer-events: none;
-    transition: opacity .2s;
-  }
-  .pv.live::after { opacity: 0; }
-  .pv-open {
-    position: absolute; left: 10px; top: 10px; z-index: 2;
-    font-size: 12px; padding: 3px 10px; border-radius: 999px;
-    color: #fff; background: var(--cuhk, #6b2077); border: 1px solid rgba(255,255,255,.25);
-    opacity: 0; transition: opacity .2s; pointer-events: none;
-  }
-  .pv:hover .pv-open { opacity: 1; }
-  /* 图上角标：学科左下、学段年级右下（WeduLab 卡式） */
-  .subj-tag {
-    position: absolute; left: 10px; bottom: 10px; z-index: 2;
-    font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
-    color: #fff; background: color-mix(in srgb, var(--accent, #8a3d99) 82%, #000);
-    border: 1px solid rgba(255,255,255,.28); pointer-events: none;
-  }
-  .grade-tag {
-    position: absolute; right: 10px; bottom: 10px; z-index: 2;
-    font-size: 11.5px; padding: 3px 9px; border-radius: 999px;
-    color: var(--text); background: rgba(10, 6, 16, .62); border: 1px solid var(--line);
-    backdrop-filter: blur(4px); pointer-events: none;
-  }
-  .pcard-body { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px 4px; flex: 1; }
-  .card-title { color: var(--text); font-weight: 700; font-size: 17px; text-decoration: none; line-height: 1.45; }
-  .card-title:hover { color: var(--gold-soft); }
-  .card-sub { font-size: 13px; color: var(--gold-soft); letter-spacing: .02em; }
-  .card-desc {
-    font-size: 13.5px; color: var(--text-muted); line-height: 1.62;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-  .chip {
-    font-size: 12px; padding: 2px 9px; border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--cuhk, #8a3d99) 40%, transparent);
-    color: var(--text-muted); white-space: nowrap;
-  }
-  .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 14px; }
-  .pcard-foot .badge { font-size: 11.5px; letter-spacing: .1em; }
-  .go {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 14px; font-weight: 600; color: var(--gold-soft); text-decoration: none;
-  }
-  .go i { font-style: normal; transition: transform .18s; }
-  .go:hover i { transform: translateX(4px); }
-  .badge {
-    font-size: 12px; padding: 2px 8px; border-radius: 999px;
-    border: 1px solid var(--line); color: var(--text-muted); white-space: nowrap;
-    text-decoration: none;
-  }
-
-  .matrix-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
-  .matrix { width: 100%; border-collapse: collapse; min-width: 560px; }
-  .matrix th, .matrix td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); font-size: 15px; }
-  .matrix thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; }
-  .matrix tbody tr:last-child th, .matrix tbody tr:last-child td { border-bottom: none; }
-  .subj-link { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 600; }
-  .subj-link:hover { color: var(--gold-soft); }
-  .subj-icon {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 30px; height: 30px; border-radius: 8px; font-size: 14px;
-    color: var(--accent); border: 1px solid var(--line);
-  }
-  .cell-n {
-    display: inline-flex; min-width: 30px; padding: 3px 9px; justify-content: center;
-    border-radius: 999px; background: rgba(166, 61, 151, 0.16); color: var(--text); font-size: 14px;
-  }
-  .cell-zero { color: var(--text-faint); }
-  .total { color: var(--gold-soft); }
-  tr.empty .subj-link { color: var(--text-muted); }
 </style>

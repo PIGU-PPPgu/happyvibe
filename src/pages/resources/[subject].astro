@@ -1,8 +1,10 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import TerminalWindow from '../../components/TerminalWindow.astro';
+import ResourceHubHeader from '../../components/ResourceHubHeader.astro';
+import ResourceCard from '../../components/ResourceCard.astro';
 import { SUBJECTS, subjectBySlug, STAGES } from '../../data/subjects';
+import { hubCounts } from '../../lib/hubCounts';
 import { withBase } from '../../lib/urls';
 
 export function getStaticPaths() {
@@ -13,120 +15,88 @@ const { subject } = Astro.params;
 const meta = subjectBySlug(subject ?? '');
 if (!meta) return Astro.redirect(withBase('/resources/'));
 
-const rendered = (await getCollection('resources'))
+const all = (await getCollection('resources'))
   .filter((r) => r.data.subject === subject)
-  .sort((a, b) => a.data.order - b.data.order)
-  .map(async (r) => ({ r, Content: (await render(r)).Content }));
-const all = await Promise.all(rendered);
-
-const own = all.filter(({ r }) => r.data.kind !== 'external');
-const ext = all.filter(({ r }) => r.data.kind === 'external');
+  .sort((a, b) => a.data.order - b.data.order);
+const own = all.filter((r) => r.data.kind !== 'external');
+const ext = all.filter((r) => r.data.kind === 'external');
+const counts = await hubCounts();
 
 // 按知识点分组，组内自产在前；组顺序取组内最小 order
 const topics = new Map<string, typeof all>();
-for (const item of all) {
-  const list = topics.get(item.r.data.topic) ?? [];
-  list.push(item);
-  topics.set(item.r.data.topic, list);
+for (const r of all) {
+  const list = topics.get(r.data.topic) ?? [];
+  list.push(r);
+  topics.set(r.data.topic, list);
 }
 const groups = [...topics.entries()]
-  .map(([topic, items]) => {
-    const sorted = [...items].sort((a, b) => a.r.data.order - b.r.data.order);
-    return {
-      topic,
-      own: sorted.filter((i) => i.r.data.kind !== 'external'),
-      ext: sorted.filter((i) => i.r.data.kind === 'external'),
-      order: Math.min(...items.map((i) => i.r.data.order)),
-    };
-  })
+  .map(([topic, items]) => ({
+    topic,
+    own: items.filter((r) => r.data.kind !== 'external'),
+    ext: items.filter((r) => r.data.kind === 'external'),
+    order: Math.min(...items.map((r) => r.data.order)),
+  }))
   .sort((a, b) => a.order - b.order);
 
 const stageLabel = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
-const gradeSet = [...new Set(all.flatMap(({ r }) => r.data.grades))].sort((a, b) => a - b);
-const KIND_LABEL: Record<string, string> = {
-  'interactive-3d': '3D 交互',
-  'interactive-2d': '2D 交互',
-  diagram: '图示',
-  external: '外链',
-};
+const gradeSet = [...new Set(own.flatMap((r) => r.data.grades))].sort((a, b) => a - b);
+const books = [...new Set(own.map((r) => r.data.book).filter(Boolean))].sort();
+const units = [...new Set(own.map((r) => r.data.unit).filter(Boolean))].sort();
 const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平台', phet: 'PhET', geogebra: 'GeoGebra' };
 ---
 
-<BaseLayout title={`${meta.name}教学资源`} description={`${meta.name}学科 3D/2D 交互教学资源，按教材章节知识点组织，单文件可投屏`}>
+<BaseLayout title={`${meta.name}教学课件 · 资源中心`} description={`${meta.name}学科交互课件，按教材章节组织，单文件可投屏`}>
   <div class="container res-page">
-    <TerminalWindow title={`happyvibe resources / ${meta.slug}`}>
-      <p class="kicker mono">// {meta.name} · 自产 {own.length} · 外链 {ext.length}</p>
-      <h1 class="res-title"><span class="mono" style={`color:${meta.accent}`}>{meta.icon}</span> {meta.name}教学资源</h1>
-      <p class="res-sub text-muted">卡片即实拍界面。自产资源点击全屏打开，悬停卡片可看实时运行效果。</p>
-    </TerminalWindow>
+    <ResourceHubHeader active="courseware" counts={counts} />
+
+    <nav class="crumbs mono" aria-label="面包屑">
+      <a href={withBase('/resources/')}>教学课件</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{meta.name}</span>
+    </nav>
+
+    <div class="subject-head">
+      <h2 class="subject-title"><span class="mono" style={`color:${meta.accent}`}>{meta.icon}</span> {meta.name}教学课件</h2>
+      <p class="text-muted">共 {own.length} 件。</p>
+    </div>
 
     {gradeSet.length > 1 && (
-      <div class="gfilter" role="tablist" aria-label="按年级筛选">
+      <div class="filters" role="group" aria-label="按年级筛选">
         <span class="glabel">年级</span>
         <button class="gchip on" data-g="all" type="button">全部</button>
         {gradeSet.map((g) => <button class="gchip" data-g={g} type="button">{g} 年级</button>)}
       </div>
     )}
-    {[...new Set(own.map(({ r }) => r.data.book).filter(Boolean))].length > 1 && (
-      <div class="filters" role="tablist" aria-label="按教材筛选">
+    {books.length > 1 && (
+      <div class="filters" role="group" aria-label="按教材筛选">
         <span class="glabel">教材</span>
         <button class="gchip on" data-b="all" type="button">全部</button>
-        {[...new Set(own.map(({ r }) => r.data.book).filter(Boolean))].sort().map((b) => <button class="gchip" data-b={b} type="button">{b}</button>)}
+        {books.map((b) => <button class="gchip" data-b={b} type="button">{b}</button>)}
       </div>
     )}
-    {[...new Set(own.map(({ r }) => r.data.unit).filter(Boolean))].length > 1 && (
-      <div class="filters" role="tablist" aria-label="按章节筛选">
+    {units.length > 1 && (
+      <div class="filters" role="group" aria-label="按章节筛选">
         <span class="glabel">章节</span>
         <button class="gchip on" data-u="all" type="button">全部</button>
-        {[...new Set(own.map(({ r }) => r.data.unit).filter(Boolean))].sort().map((u) => <button class="gchip" data-u={u} type="button">{u}</button>)}
+        {units.map((u) => <button class="gchip" data-u={u} type="button">{u}</button>)}
       </div>
     )}
 
-    {groups.length === 0 && <p class="empty-note text-muted">该学科资源制作中。</p>}
+    {groups.length === 0 && <p class="empty-note text-muted">该学科的课件制作中。</p>}
 
     {groups.map((g) => (
       <section class="topic">
-        <h2 class="topic-title">{g.topic}</h2>
+        <h3 class="topic-title">{g.topic}</h3>
         <div class="cards">
-          {g.own.map(({ r, Content }) => (
-            <article class="pcard" data-live={withBase(`/interactives/${r.data.file}?embed=1`)} data-grades={r.data.grades.join(",")} data-book={r.data.book || ""} data-unit={r.data.unit || ""}>
-              <a
-                class="pv"
-                href={withBase(`/interactives/${r.data.file}`)}
-                target="_blank"
-                rel="noopener"
-                aria-label={`打开 ${r.data.title}`}
-              >
-                <img loading="lazy" src={withBase(`/previews/${r.data.file}.jpg`)} alt={`${r.data.title} 界面实拍`} />
-                <span class="grade-tag mono">{r.data.grades.join('、')} 年级 · {stageLabel[r.data.stage]}</span>
-                <span class="pv-open">打开</span>
-              </a>
-              <div class="pcard-body">
-                <a class="card-title" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">{r.data.title}</a>
-                <p class="card-sub">{r.data.topic}</p>
-                <p class="card-desc">{r.data.usage}</p>
-                {r.data.tags && r.data.tags.length > 0 && (
-                  <div class="chips">{r.data.tags.slice(0, 4).map((t) => <span class="chip">{t}</span>)}</div>
-                )}
-              </div>
-              <div class="pcard-foot">
-                <span class="badge mono">{r.data.status === 'ready' ? 'READY' : '校对中'}</span>
-                <a class="go" href={withBase(`/interactives/${r.data.file}`)} target="_blank" rel="noopener">进入教室 <i>→</i></a>
-              </div>
-              <details class="card-body">
-                <summary>教学设计与使用步骤</summary>
-                <div class="body-md"><Content /></div>
-              </details>
-            </article>
-          ))}
+          {g.own.map((r) => <ResourceCard r={r} subject={meta} showSubject={false} />)}
         </div>
         {g.ext.length > 0 && (
           <div class="elist">
-            {g.ext.map(({ r }) => (
+            {g.ext.map((r) => (
               <a class="ecard" href={r.data.url} target="_blank" rel="noopener">
                 <span class="ecard-title">{r.data.title}</span>
                 <span class="ecard-meta">
-                  {SOURCE_LABEL[r.data.source] && <span class="esrc">{SOURCE_LABEL[r.data.source]}</span>}
+                  {SOURCE_LABEL[r.data.source || ''] && <span class="esrc">{SOURCE_LABEL[r.data.source || '']}</span>}
                   <span>{stageLabel[r.data.stage]}</span>
                   <span class="earrow" aria-hidden="true">↗</span>
                 </span>
@@ -140,7 +110,6 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
 </BaseLayout>
 
 <script>
-  // 年级筛选
   const fstate = { grade: 'all', book: 'all', unit: 'all' };
   const applyF = () => {
     document.querySelectorAll<HTMLElement>('.pcard[data-grades]').forEach((card) => {
@@ -150,7 +119,7 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
       card.style.display = okG && okB && okU ? '' : 'none';
     });
   };
-  const bindF = (sel, key, attr) => {
+  const bindF = (sel: string, key: 'grade' | 'book' | 'unit', attr: string) => {
     const chips = document.querySelectorAll<HTMLButtonElement>(sel);
     chips.forEach((c) =>
       c.addEventListener('click', () => {
@@ -163,133 +132,52 @@ const SOURCE_LABEL: Record<string, string> = { smartedu: '国家智慧教育平�
   bindF('.gchip[data-g]', 'grade', 'g');
   bindF('.gchip[data-b]', 'book', 'b');
   bindF('.gchip[data-u]', 'unit', 'u');
-  // 悬停 350ms 后以实时 iframe 覆盖预览图（仅精确指针设备；离开即卸载）
-  if (matchMedia('(pointer: fine)').matches) {
-    for (const card of document.querySelectorAll<HTMLDivElement>('.pcard[data-live]')) {
-      const pv = card.querySelector<HTMLElement>('.pv');
-      let timer: ReturnType<typeof setTimeout> | undefined;
-      card.addEventListener('mouseenter', () => {
-        timer = setTimeout(() => {
-          const f = document.createElement('iframe');
-          f.loading = 'lazy';
-          f.title = '实时预览';
-          f.src = card.dataset.live!;
-          f.addEventListener('load', () => pv!.classList.add('live'));
-          pv!.appendChild(f);
-        }, 350);
-      });
-      card.addEventListener('mouseleave', () => {
-        clearTimeout(timer);
-        pv?.classList.remove('live');
-        pv?.querySelector('iframe')?.remove();
-      });
-    }
-  }
 </script>
 
 <style>
-  .res-page { padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 26px; }
-  .res-title { font-size: 28px; margin: 4px 0 6px; }
-  .res-sub { line-height: 1.7; }
+  .res-page { padding-block: 48px 40px; display: flex; flex-direction: column; gap: 20px; }
+  .crumbs { font-size: 13px; display: flex; gap: 8px; color: var(--text-faint); }
+  .crumbs a { color: var(--text-muted); }
+  .crumbs a:hover { color: var(--gold-soft); }
+  .subject-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .subject-title { margin: 0; font-size: 24px; }
+  .subject-head p { margin: 0; font-size: 14px; }
   .empty-note { padding: 30px 0; }
   .topic { display: flex; flex-direction: column; gap: 12px; }
-  .topic-title { font-size: 19px; color: var(--gold-soft); border-left: 3px solid var(--gold); padding-left: 10px; }
-  .gfilter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .glabel { font-size: 13px; color: var(--text-faint); }
+  .topic-title { margin: 0; font-size: 18px; color: var(--gold-soft); border-left: 3px solid var(--gold); padding-left: 10px; }
+  .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .glabel { font-size: 13px; color: var(--text-faint); margin-right: 4px; }
   .gchip {
-    font: inherit; font-size: 13.5px; padding: 5px 14px; border-radius: 999px;
-    border: 1px solid var(--line); background: transparent; color: var(--text-muted);
-    cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+    font: inherit;
+    font-size: 13.5px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
   }
   .gchip:hover { border-color: var(--gold); color: var(--text); }
   .gchip.on { border-color: var(--gold); color: var(--gold); background: rgba(232, 176, 75, .12); font-weight: 600; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px; }
-
-  /* ---------- 自产资源：实拍效果图卡片 ---------- */
-  .pcard {
-    display: flex; flex-direction: column;
-    background: var(--bg-panel);
-    border: 1px solid var(--line); border-radius: var(--radius);
-    overflow: hidden;
-    transition: border-color .2s, transform .2s, box-shadow .2s;
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 20px; }
+  @media (max-width: 480px) {
+    .cards { grid-template-columns: 1fr; }
   }
-  .pcard:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.35); }
-  .grade-tag {
-    position: absolute; right: 10px; bottom: 10px; z-index: 2;
-    font-size: 11.5px; padding: 3px 9px; border-radius: 999px;
-    color: var(--text); background: rgba(10, 6, 16, .62); border: 1px solid var(--line);
-    backdrop-filter: blur(4px); pointer-events: none;
-  }
-  .pcard-body { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px 4px; flex: 1; }
-  .card-sub { font-size: 13px; color: var(--gold-soft); letter-spacing: .02em; }
-  .card-desc {
-    font-size: 13.5px; color: var(--text-muted); line-height: 1.62;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-  .chip {
-    font-size: 12px; padding: 2px 9px; border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--cuhk, #8a3d99) 40%, transparent);
-    color: var(--text-muted); white-space: nowrap;
-  }
-  .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 12px; }
-  .pcard-foot .badge { font-size: 11.5px; letter-spacing: .1em; }
-  .go {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 14px; font-weight: 600; color: var(--gold-soft); text-decoration: none;
-  }
-  .go i { font-style: normal; transition: transform .18s; }
-  .go:hover i { transform: translateX(4px); }
-  .pv { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; text-decoration: none; }
-  .pv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .35s ease; }
-  .pcard:hover .pv img { transform: scale(1.03); }
-  .pv iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--bg); pointer-events: none; }
-  .pv img { transition: opacity .25s ease, transform .35s ease; }
-  .pv.live img { opacity: 0; }
-  .pv.live iframe { pointer-events: auto; }
-  .pv::after {
-    content: '悬停实时预览';
-    position: absolute; right: 10px; bottom: 10px; z-index: 2;
-    font-size: 12px; color: var(--text); padding: 3px 9px; border-radius: 999px;
-    background: rgba(10, 6, 16, .62); border: 1px solid var(--line);
-    backdrop-filter: blur(4px); pointer-events: none;
-    transition: opacity .2s;
-  }
-  .pv.live::after { opacity: 0; }
-  .pv-open {
-    position: absolute; left: 10px; top: 10px; z-index: 2;
-    font-size: 12px; padding: 3px 10px; border-radius: 999px;
-    color: #fff; background: var(--cuhk, #6b2077); border: 1px solid rgba(255,255,255,.25);
-    opacity: 0; transition: opacity .2s; pointer-events: none;
-  }
-  .pv:hover .pv-open { opacity: 1; }
-  .pcard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 2px 14px 0; }
-  .card-title { color: var(--text); font-weight: 600; font-size: 16px; text-decoration: none; line-height: 1.5; }
-  .card-title:hover { color: var(--gold-soft); }
-  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px; }
-  .card-usage { font-size: 14px; color: var(--text-muted); line-height: 1.7; padding: 0 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .badge {
-    font-size: 12px; padding: 2px 8px; border-radius: 999px;
-    border: 1px solid var(--line); color: var(--text-muted); white-space: nowrap;
-  }
-  .badge.kind[data-kind='interactive-3d'] { color: #6EC1FF; border-color: rgba(110, 193, 255, 0.4); }
-  .badge.kind[data-kind='interactive-2d'] { color: #7CE38B; border-color: rgba(124, 227, 139, 0.4); }
-  .badge.draft { color: var(--gold); }
-  .card-body { font-size: 14px; padding: 0 14px 14px; }
-  .card-body summary { cursor: pointer; color: var(--text-faint); font-size: 13px; }
-  .card-body .body-md { margin-top: 8px; color: var(--text-muted); line-height: 1.8; }
-  .card-body .body-md :global(p) { margin: 0 0 6px; }
-  .card-body .body-md :global(ol), .card-body .body-md :global(ul) { padding-left: 18px; }
-  .card-body .body-md :global(table) { font-size: 13px; }
-  .card-body .body-md :global(th), .card-body .body-md :global(td) { padding: 4px 8px; }
 
   /* ---------- 外链资源：紧凑行 ---------- */
   .elist { display: flex; flex-direction: column; gap: 8px; }
   .ecard {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-    padding: 11px 16px; background: var(--bg-panel);
-    border: 1px solid var(--line); border-radius: var(--radius);
-    text-decoration: none; transition: border-color .2s;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 16px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: border-color .2s;
   }
   .ecard:hover { border-color: var(--line-strong); }
   .ecard-title { color: var(--text); font-size: 15px; font-weight: 500; line-height: 1.5; }
