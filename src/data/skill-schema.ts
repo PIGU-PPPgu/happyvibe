@@ -10,6 +10,11 @@ const DIM_KEYS = ['value', 'quality', 'ease', 'edu', 'safety'] as const;
 
 const Dim = z.number().int().min(1).max(5);
 const Line = z.string().trim().min(1);
+/** YAML 会把 2026-11-24 解析成 Date；带引号才是字符串。两种写法都收，统一成 YYYY-MM-DD。 */
+const Ymd = z.preprocess(
+  (v) => (v instanceof Date ? v.toISOString().slice(0, 10) : v),
+  z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD')
+);
 
 export const skillSchema = z
   .object({
@@ -49,7 +54,7 @@ export const skillSchema = z
         verdict: Line,
         weakness: Line,
         tested: z.object({
-          date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD'),
+          date: Ymd,
           agent: Line,
           model: Line,
           by: z.enum(['ai', 'teacher']),

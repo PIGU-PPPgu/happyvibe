@@ -82,6 +82,19 @@
             "type": "string"
           }
         },
+        "quickstart": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 5
+        },
+        "relatedLessons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "status": {
           "type": "string",
           "enum": [

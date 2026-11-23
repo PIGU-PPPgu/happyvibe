@@ -9,6 +9,11 @@ const stages = [
     desc: 'esbuild 树摇打包 + 模板注入（港中深紫 UI / 检测引擎 / 键盘翻环节）',
     cmd: ['node', 'scripts/build_interactives.mjs'],
   },
+  {
+    name: 'Skill 工坊校验',
+    desc: '条目 schema / 分数与证据重算一致 / 检查单对齐 / 证据截图 / 技能包新鲜 / 无 emoji 与填充词',
+    cmd: ['node', 'scripts/check_skills.mjs'],
+  },
   ...(fast
     ? []
     : [{
