@@ -1,0 +1,90 @@
+---
+/**
+ * 评分卡：总分、档位、五个维度的条与一句依据、证据标记、评测环境。
+ * 技能详情页右栏用；卡片上的小条不在这里。
+ */
+import { DIMS } from '../data/skill-standard';
+import type { ScoreFrontmatter } from '../data/skill-schema';
+import { EVIDENCE_LABEL, envLine } from '../lib/skillLabels';
+import type { Dims } from '../lib/skillScore';
+
+interface Props {
+  total: number;
+  tier: string;
+  dims: Dims;
+  notes: ScoreFrontmatter['notes'];
+  tested: ScoreFrontmatter['tested'];
+  platformScore?: { score: number; url: string };
+  overrides?: ScoreFrontmatter['overrides'];
+}
+
+const { total, tier, dims, notes, tested, platformScore, overrides = [] } = Astro.props;
+const strong = total >= 8;
+---
+
+<div class:list={['score-card', { strong }]}>
+  <div class="score-top">
+    <p class="score-num"><span class="n">{total.toFixed(1)}</span><span class="of mono">/ 10</span></p>
+    <span class="tier">{tier}</span>
+  </div>
+
+  <ul class="bars">
+    {DIMS.map((d) => (
+      <li>
+        <div class="bar-head">
+          <span class="bl">{d.label}</span>
+          <span class="bv mono">{dims[d.key]} / 5</span>
+        </div>
+        <div class="bar" role="img" aria-label={`${d.label} ${dims[d.key]} 分，满分 5 分`}>
+          <i style={`width:${(dims[d.key] / 5) * 100}%`} />
+        </div>
+        <p class="bn">{notes[d.key]}</p>
+        {overrides.filter((o) => o.dim === d.key).map((o) => <p class="bn ov">教研调整：{o.reason}</p>)}
+      </li>
+    ))}
+  </ul>
+
+  <p class="evi">
+    <span class="mark">{EVIDENCE_LABEL[tested.by]}</span>
+    <span class="env">{envLine(tested)}</span>
+  </p>
+
+  {platformScore && (
+    <p class="ps">
+      平台 AI 评分 <a href={platformScore.url} target="_blank" rel="noopener">{platformScore.score} / 5 →</a>
+    </p>
+  )}
+</div>
+
+<style>
+  .score-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); padding: 18px 20px; }
+  .score-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .score-num { margin: 0; line-height: 1; display: flex; align-items: baseline; gap: 6px; }
+  .score-num .n { font-size: 44px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+  .score-card.strong .score-num .n { color: var(--gold-soft); }
+  .score-num .of { font-size: 14px; color: var(--text-faint); }
+  .tier {
+    font-size: 15px; font-weight: 600; padding: 3px 12px; border-radius: 999px;
+    border: 1px solid var(--line-strong); color: var(--text-muted); white-space: nowrap;
+  }
+  .score-card.strong .tier { border-color: var(--line-gold); color: var(--gold-soft); }
+
+  .bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .bar-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 14.5px; }
+  .bl { font-weight: 600; }
+  .bv { font-size: 12.5px; color: var(--text-faint); }
+  .bar { height: 8px; border-radius: 999px; background: var(--bg-inset); border: 1px solid var(--line); overflow: hidden; margin-top: 5px; }
+  .bar i { display: block; height: 100%; background: var(--purple-bright); border-radius: 999px; }
+  .score-card.strong .bar i { background: linear-gradient(90deg, var(--purple-bright), var(--gold)); }
+  .bn { margin: 6px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--text-muted); }
+  .bn.ov { color: var(--gold-soft); }
+
+  .evi { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+  .mark {
+    font-size: 12.5px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+    border: 1px solid var(--line-strong); color: var(--text); white-space: nowrap;
+  }
+  .env { font-size: 12.5px; color: var(--text-faint); line-height: 1.6; }
+  .ps { margin: 10px 0 0; font-size: 13px; color: var(--text-muted); }
+  .ps a { color: var(--gold-soft); }
+</style>

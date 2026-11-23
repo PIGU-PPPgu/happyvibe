@@ -1,0 +1,80 @@
+---
+/**
+ * 已实测技能的卡片：名称、替你做什么、总分与档位、五维小条、一句话理由、平台与证据标记。
+ */
+import { DIMS } from '../data/skill-standard';
+import { EVIDENCE_LABEL, PLATFORM_LABEL, categoryLabel } from '../lib/skillLabels';
+import type { ScoredSkill } from '../lib/skillEntries';
+import { withBase } from '../lib/urls';
+
+interface Props {
+  skill: ScoredSkill;
+}
+
+const { skill } = Astro.props;
+const data = skill.data;
+const dims = skill.dims;
+const detail = withBase(`/skills/${skill.slug}/`);
+const platforms = data.platforms.map((p) => PLATFORM_LABEL[p] ?? p).join('、');
+---
+
+<article class:list={['sk-card', { strong: skill.total >= 8 }]} data-skill-card data-category={data.category} data-date={data.score.tested.date} data-total={skill.total}>
+  <div class="sk-head">
+    <h3 class="sk-title"><a href={detail}>{data.title}</a></h3>
+    <p class="sk-score"><span class="n">{skill.total.toFixed(1)}</span><span class="tier">{skill.tier}</span></p>
+  </div>
+  <p class="sk-does">{data.does}</p>
+  <p class="sk-verdict">{data.score.verdict}</p>
+
+  <ul class="mini-bars" aria-label="五个维度">
+    {DIMS.map((d) => (
+      <li>
+        <span class="ml">{d.label}</span>
+        <span class="mb"><i style={`width:${(dims[d.key] / 5) * 100}%`} /></span>
+        <span class="mv mono">{dims[d.key]}</span>
+      </li>
+    ))}
+  </ul>
+
+  <div class="sk-foot">
+    <span class="badge cat">{categoryLabel(data.category)}</span>
+    <span class="foot-text">{platforms} · {EVIDENCE_LABEL[data.score.tested.by]} · {data.score.tested.date}</span>
+    <a class="go" href={detail}>查看详情 →</a>
+  </div>
+</article>
+
+<style>
+  .sk-card {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 18px 20px 16px;
+    border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel);
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .sk-card:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: var(--shadow); }
+  .sk-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+  .sk-title { margin: 0; font-size: 19px; line-height: 1.4; }
+  .sk-title a { color: var(--text); text-decoration: none; }
+  .sk-title a:hover { color: var(--gold-soft); text-decoration: none; }
+  .sk-score { margin: 0; display: flex; align-items: baseline; gap: 8px; flex: none; }
+  .sk-score .n { font-size: 30px; font-weight: 700; line-height: 1; color: var(--text); }
+  .sk-card.strong .sk-score .n { color: var(--gold-soft); }
+  .sk-score .tier { font-size: 13px; font-weight: 600; color: var(--text-muted); border: 1px solid var(--line-strong); border-radius: 999px; padding: 1px 9px; }
+  .sk-card.strong .tier { color: var(--gold-soft); border-color: var(--line-gold); }
+
+  .sk-does { margin: 0; font-size: 15.5px; line-height: 1.7; }
+  .sk-verdict { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--text-muted); border-left: 3px solid var(--gold); padding-left: 10px; }
+
+  .mini-bars { list-style: none; margin: 2px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; }
+  .mini-bars li { display: grid; grid-template-columns: 52px 1fr 18px; align-items: center; gap: 8px; font-size: 13px; }
+  .ml { color: var(--text-muted); }
+  .mb { height: 6px; border-radius: 999px; background: var(--bg-inset); border: 1px solid var(--line); overflow: hidden; }
+  .mb i { display: block; height: 100%; background: var(--purple-bright); border-radius: 999px; }
+  .sk-card.strong .mb i { background: linear-gradient(90deg, var(--purple-bright), var(--gold)); }
+  .mv { font-size: 12px; color: var(--text-faint); text-align: right; }
+
+  .sk-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .badge { font-size: 12.5px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text); white-space: nowrap; }
+  .foot-text { font-size: 13px; color: var(--text-faint); }
+  .go { margin-left: auto; font-size: 14px; font-weight: 600; color: var(--gold-soft); text-decoration: none; white-space: nowrap; }
+  .go:hover { text-decoration: none; }
+</style>

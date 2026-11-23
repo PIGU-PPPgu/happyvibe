@@ -38,7 +38,7 @@ export async function loadSkills(): Promise<SkillGroups> {
     .filter((e) => isScored(e.data))
     .map((e) => {
       const summary = summaryOf(e.data);
-      return { ...e, total: summary.total, tier: summary.tier, evidence: evidenceOf(e.data) };
+      return { ...e, dims: summary.dims, total: summary.total, tier: summary.tier, evidence: evidenceOf(e.data) };
     })
     .sort((a, b) => b.total - a.total || byDateDesc(a, b));
   const pending = entries.filter((e) => e.data.status === 'pending').sort((a, b) => a.data.title.localeCompare(b.data.title, 'zh'));
