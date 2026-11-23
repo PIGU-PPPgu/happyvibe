@@ -5,16 +5,18 @@ const nav = [
   { href: '/modules/', label: '课程模块', code: '01' },
   { href: '/path/', label: '学习路线图', code: '02' },
   { href: '/contest/', label: '比赛专区', code: '03' },
-  { href: '/toolbox/', label: '工具箱', code: '04' },
-  { href: '/resources/', label: '资源库', code: '05' },
-  { href: '/analytics/', label: '数据看板', code: '06' },
-  { href: '/about/', label: '关于', code: '07' },
+  { href: '/resources/', label: '资源中心', code: '04' },
+  { href: '/analytics/', label: '数据看板', code: '05' },
+  { href: '/about/', label: '关于', code: '06' },
 ];
+// 资源中心的三个板块各有自己的地址，进了任何一个都算在「资源中心」里
+const HUB_PATHS = ['/resources/', '/skills/', '/toolbox/'];
 const path = Astro.url.pathname;
 const isActive = (href: string, anchor?: boolean) => {
   const target = withBase(href);
   if (anchor) return false;
   if (href === '/') return path === withBase('/') || path === withBase('');
+  if (href === '/resources/') return HUB_PATHS.some((p) => path.startsWith(withBase(p)));
   return path.startsWith(target);
 };
 ---
@@ -147,7 +149,7 @@ const isActive = (href: string, anchor?: boolean) => {
     .main-nav { display: flex; }
     .menu-toggle { display: none; }
   }
-  /* 900–1280px：八个导航项压缩字号与间距，保证单行放下 */
+  /* 900–1280px：导航项压缩字号与间距，保证单行放下 */
   @media (min-width: 900px) and (max-width: 1279px) {
     .header-inner { gap: 10px; }
     .logo-cn { display: none; }

@@ -1,0 +1,66 @@
+---
+/**
+ * 资源中心页头：课件、Skill 工坊、工具箱三个板块的入口页共用。
+ * 三个板块各保留自己的地址（/resources/、/skills/、/toolbox/），这里只放统一标题与板块切换。
+ */
+import TerminalWindow from './TerminalWindow.astro';
+import { withBase } from '../lib/urls';
+import type { HubCounts } from '../lib/hubCounts';
+
+interface Props {
+  active: 'courseware' | 'skills' | 'toolbox';
+  counts: HubCounts;
+}
+
+const { active, counts } = Astro.props;
+
+const TABS = [
+  { key: 'courseware', href: '/resources/', label: '教学课件', count: counts.courseware },
+  { key: 'skills', href: '/skills/', label: 'Skill 工坊', count: counts.skills },
+  { key: 'toolbox', href: '/toolbox/', label: '工具箱', count: counts.tools },
+] as const;
+---
+
+<TerminalWindow title="happyvibe resource hub">
+  <p class="kicker mono">
+    // RESOURCE HUB · <span class="k">课件 {counts.courseware}</span> · <span class="k">Skill {counts.skills}</span> · <span class="k">工具 {counts.tools}</span>
+  </p>
+  <h1 class="hub-title">资源中心</h1>
+  <p class="hub-sub text-muted">课件上课投屏，Skill 交给 AI 干活，工具打开就能用。</p>
+  <nav class="hub-tabs" aria-label="资源中心板块">
+    {TABS.map((t) => (
+      <a
+        href={withBase(t.href)}
+        class:list={['hub-tab', { on: t.key === active }]}
+        aria-current={t.key === active ? 'page' : undefined}
+      >
+        {t.label}<span class="hub-n mono">{t.count}</span>
+      </a>
+    ))}
+  </nav>
+  {Astro.slots.has('note') && <p class="hub-note text-muted"><slot name="note" /></p>}
+</TerminalWindow>
+
+<style>
+  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
+  .k { white-space: nowrap; }
+  .hub-title { margin: 0 0 6px; font-size: clamp(26px, 4vw, 36px); line-height: 1.3; }
+  .hub-sub { margin: 0; font-size: 15px; }
+  .hub-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .hub-tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--text-muted); font-size: 14.5px;
+    text-decoration: none;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .hub-tab:hover { border-color: var(--gold); color: var(--text); text-decoration: none; }
+  .hub-tab.on {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(232, 176, 75, .12); font-weight: 600;
+  }
+  .hub-n { font-size: 12px; color: var(--text-faint); }
+  .hub-tab.on .hub-n { color: var(--gold-soft); }
+  .hub-note { margin: 16px 0 0; font-size: 14.5px; max-width: 760px; line-height: 1.7; }
+  .hub-note :global(strong) { color: var(--text); }
+</style>

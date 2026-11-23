@@ -7,6 +7,8 @@ import ModuleCarousel from '../components/ModuleCarousel.astro';
 import OnboardingTour from '../components/OnboardingTour.astro';
 import { withBase } from '../lib/urls';
 import { SUBJECTS } from '../data/subjects';
+import { MODULES } from '../data/modules';
+import { loadSkills } from '../lib/skillEntries';
 
 const lessons = await getCollection('lessons');
 const totalLessons = lessons.length;
@@ -14,8 +16,15 @@ const moduleCount = new Set(lessons.map((l) => l.data.module)).size;
 
 const resources = await getCollection('resources');
 const ownCount = resources.filter((r) => r.data.kind !== 'external').length;
-const extCount = resources.filter((r) => r.data.kind === 'external').length;
 const liveSubjects = SUBJECTS.filter((s) => resources.some((r) => r.data.subject === s.slug));
+
+const toolCount = (await getCollection('tools')).length;
+const { tested } = await loadSkills();
+const hubFacts = [
+  `${ownCount} 件自产课件可下载、断网可投屏`,
+  ...(tested.length ? [`${tested.length} 个 Skill 在 WorkBuddy 上实测过并给了分`] : []),
+  `${toolCount} 个工具`,
+];
 
 const heroLines = [
   '$ happyvibe --start',
@@ -40,8 +49,7 @@ const heroLines = [
       <div class="hero-cta">
         <a class="btn btn-gold" href={withBase('/modules/software/wb-01-start/')}>▶ 开始学习</a>
         <span class="hero-alt">
-          <a href={withBase('/resources/')}>资源库</a> · <a href={withBase('/contest/')}>比赛专区</a> · <a href={withBase('/challenge/')}>21 天挑战</a> ·
-          <a href={withBase('/toolbox/')}>工具箱</a> ·
+          <a href={withBase('/resources/')}>资源中心</a> · <a href={withBase('/contest/')}>比赛专区</a> · <a href={withBase('/challenge/')}>21 天挑战</a> ·
           <button data-search-open type="button">搜索</button>
         </span>
       </div>
@@ -51,17 +59,15 @@ const heroLines = [
   <section class="container res-entry">
     <a class="card res-card" href={withBase('/resources/')}>
       <div class="res-info">
-        <h2 class="res-t">教学资源库</h2>
-        <p class="res-d text-muted">
-          K12 学科 3D/2D 交互课件：{ownCount} 个自产资源可下载、断网可投屏，{extCount} 条精选外链以国家中小学智慧教育平台为主。
-        </p>
+        <h2 class="res-t">资源中心</h2>
+        <p class="res-d text-muted">课件、Skill 和工具都在这里：{hubFacts.join('；')}。</p>
         <div class="res-chips">
           {liveSubjects.map((s) => (
             <span class="res-chip mono" style={`--accent:${s.accent}`}>{s.name}</span>
           ))}
         </div>
       </div>
-      <span class="btn btn-gold">进入资源库 →</span>
+      <span class="btn btn-gold">进入资源中心 →</span>
     </a>
   </section>
 
@@ -100,7 +106,7 @@ const heroLines = [
     <a class="card sm-card" href={withBase('/sitemap/')}>
       <div>
         <h2 class="sm-t">站内地图</h2>
-        <p class="sm-d text-muted">9 个页面 · 10 个模块 · {totalLessons} 节课，知识图谱加目录树——找不到东西就进这页。</p>
+        <p class="sm-d text-muted">{MODULES.length} 个模块 · {totalLessons} 节课，知识图谱加目录树——找不到东西就进这页。</p>
       </div>
       <span class="btn btn-gold">进去看 →</span>
     </a>
@@ -134,7 +140,7 @@ const heroLines = [
   .hero-alt { font-size: 13.5px; color: var(--text-muted); display: inline-flex; gap: 8px; }
   .hero-alt a, .hero-alt button { color: var(--gold-soft); background: none; border: 0; cursor: pointer; font-size: 13.5px; padding: 0; }
   .start-here { margin-top: 52px; }
-  .sh-title { font-size: 20px; margin: 0 0 16px; color: #ffd34d; }
+  .sh-title { font-size: 20px; margin: 0 0 16px; color: var(--gold-soft); }
   .start-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
   .start-card { padding: 20px 22px; color: var(--text); display: flex; flex-direction: column; gap: 6px; }
   .start-card:hover { text-decoration: none; }
@@ -217,8 +223,8 @@ const heroLines = [
       } else if (ids.length) {
         slot.textContent = '> 全部学完了，你就是科组的技术担当！';
         btn.hidden = false;
-        btn.textContent = '再逛逛工具箱 →';
-        btn.href = withBase('/toolbox/');
+        btn.textContent = '去资源中心逛逛 →';
+        btn.href = withBase('/resources/');
       }
     }
   }

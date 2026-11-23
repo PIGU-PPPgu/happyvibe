@@ -1,11 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import TerminalWindow from '../components/TerminalWindow.astro';
 import ToolRail from '../components/ToolRail.astro';
+import ResourceHubHeader from '../components/ResourceHubHeader.astro';
+import { hubCounts } from '../lib/hubCounts';
 import { TOOLBOX_CATS } from '../data/toolbox';
 
 const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
+const counts = await hubCounts();
 
 // 空分类不出卡片；补进工具后自动出现
 const cats = TOOLBOX_CATS
@@ -23,15 +25,11 @@ const railCards = [
 ];
 ---
 
-<BaseLayout title="工具箱" description="班主任工具、教学工具、Skill 脚本、设计资源——左侧选分类，右侧出工具">
+<BaseLayout title="资源中心 · 工具箱" description="班主任工具、教学工具、Skill 脚本、设计资源——资源中心三个板块之一">
   <div class="container toolbox-page">
-    <TerminalWindow title="happyvibe toolbox">
-      <p class="kicker mono">// TOOLBOX · {tools.length} 个工具 · {cats.length} 个分类</p>
-      <h1 class="tb-title">工具箱</h1>
-      <p class="tb-sub text-muted">
-        原则不变：<strong>大量重复、有固定流程的活才交给工具</strong>；涉及学生信息的界面分享前请脱敏。
-      </p>
-    </TerminalWindow>
+    <ResourceHubHeader active="toolbox" counts={counts}>
+      <span slot="note">原则不变：<strong>大量重复、有固定流程的活才交给工具</strong>；涉及学生信息的界面分享前请脱敏。</span>
+    </ResourceHubHeader>
 
     <!-- 分类条：窄屏显示（宽屏用左侧卡组） -->
     <nav class="cat-bar" id="cat-bar">
@@ -96,9 +94,6 @@ const railCards = [
 
 <style>
   .toolbox-page { padding: 48px 0 20px; display: flex; flex-direction: column; gap: 24px; }
-  .kicker { font-size: 13px; color: var(--gold); margin: 0 0 10px; }
-  .tb-title { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
-  .tb-sub { margin: 0; max-width: 640px; }
 
   .tb-layout {
     display: grid; grid-template-columns: 268px minmax(0, 1fr);
