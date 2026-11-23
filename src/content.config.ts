@@ -1,6 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { SUBJECT_SLUGS } from './data/subjects';
+import { skillSchema } from './data/skill-schema';
 
 export const MODULE_SLUGS = [
   'basics',
@@ -61,6 +62,10 @@ const resources = defineCollection({
       source: z.enum(RESOURCE_SOURCES).optional(),
       usage: z.string(),
       tags: z.array(z.string()).optional(),
+      /** 课堂使用步骤，写之前必须在浏览器里照着点过 */
+      quickstart: z.array(z.string()).max(5).optional(),
+      /** 相关课程 id，形如 growth/skill-use */
+      relatedLessons: z.array(z.string()).optional(),
       status: z.enum(['draft', 'ready']).default('draft'),
       order: z.number().default(99),
     })
@@ -69,4 +74,10 @@ const resources = defineCollection({
     }),
 });
 
-export const collections = { lessons, tools, resources };
+/** Skill 工坊条目。字段约束在 skill-schema.ts，与 scripts/check_skills.mjs 共用 */
+const skills = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/skills' }),
+  schema: skillSchema,
+});
+
+export const collections = { lessons, tools, resources, skills };

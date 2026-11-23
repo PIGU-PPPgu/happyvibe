@@ -134,6 +134,14 @@ export const CATEGORIES: readonly CategoryDef[] = [
   { key: 'office', label: '公文事务', icon: '¶', module: 'class-management' },
 ];
 
+/** 需要做教材章节抽检的品类。 */
+export const TEXTBOOK_CATEGORIES: readonly CategoryKey[] = ['lesson-plan', 'assignment'];
+
+/** 允许镜像到站内的许可证。不在这个清单里的只评不转。 */
+export const MIRROR_LICENSES: readonly string[] = [
+  'MIT', 'MIT-0', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'CC-BY-4.0',
+];
+
 export interface CheckItem {
   id: string;
   /** Q 计入出活，E 计入懂教育 */
