@@ -132,7 +132,7 @@ import { REQUEST_BUDGET, dedupe, pickMeta, prescreen } from './skilllab/scan_ski
     if (!rec.valid) continue;
     writeFileSync(
       `${LABD}/judge-raw/${rec.id}.json`,
-      JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement()), ...(rec.task === 'LP-2' ? { toolUses: 1 } : {}) })
+      JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement()), ...(rec.id === 'free-tier-selftest-skill-LP-2-1' ? { toolUses: 1 } : {}) })
     );
   }
   const judgedOnce = cli('ingest-judgements', BATCH, 'free-tier');
