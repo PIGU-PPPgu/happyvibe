@@ -5,7 +5,7 @@ import ScoreCard from '../../components/ScoreCard.astro';
 import { CHECKLISTS, TASKS } from '../../data/skill-standard';
 import type { ScoreFrontmatter } from '../../data/skill-schema';
 import { isScored, summaryOf } from '../../lib/skillEntryCore';
-import { COMPOSITION_LABEL, EVIDENCE_LABEL, PLATFORM_LABEL, REQUIRES_LABEL, categoryLabel, formatSeconds } from '../../lib/skillLabels';
+import { COMPOSITION_LABEL, EVIDENCE_LABEL, LAYER_LABEL, PLATFORM_LABEL, REQUIRES_LABEL, categoryLabel, formatSeconds } from '../../lib/skillLabels';
 import { withBase } from '../../lib/urls';
 
 export async function getStaticPaths() {
@@ -38,6 +38,8 @@ const allRuns = s ? [...mainRuns, ...otherRuns] : [];
 const checklist = s ? (CHECKLISTS[d.category] ?? []) : [];
 const checkOf = (id: string) => s?.checklist.find((c) => c.id === id);
 const shots = allRuns.filter((r) => r.shot).slice(0, 3);
+// 后台点名加载：技能一定被用到，「会不会自动触发」没有测
+const named = s?.tested.loadedBy === 'named';
 
 const AUDIT_LABEL = {
   network: { none: '不联网', declared: '有外联，说明书里写明了', undeclared: '有外联，说明书没写' },
@@ -62,7 +64,7 @@ const badge = (d: typeof entry.data) => [
   d.distribution === 'mirror' ? '开源镜像' : '只评不转',
   ...d.requires.map((r) => `需要${REQUIRES_LABEL[r] ?? r}`),
 ];
-const statusLine = d.status === 'tested' ? `${EVIDENCE_LABEL[s!.tested.by]} · ${s!.tested.date}` : d.status === 'pending' ? '待测' : '不收录';
+const statusLine = d.status === 'tested' ? `${LAYER_LABEL[s!.tested.layer]} · ${EVIDENCE_LABEL[s!.tested.by]} · ${s!.tested.date}` : d.status === 'pending' ? '待测' : '不收录';
 ---
 
 <BaseLayout title={`${d.title} · Skill 工坊`} description={d.does}>
@@ -89,7 +91,7 @@ const statusLine = d.status === 'tested' ? `${EVIDENCE_LABEL[s!.tested.by]} · $
     </header>
 
     {d.status === 'pending' && (
-      <p class="notice text-muted">这个技能已通过静态审查，还没有在 WorkBuddy 上实测，所以没有分数，也没有安装步骤。评测完成后这一页会补上评分卡与评测档案。</p>
+      <p class="notice text-muted">这个技能已通过静态审查，还没有实测，所以没有分数，也没有安装步骤。评测完成后这一页会补上评分卡与评测档案。</p>
     )}
     {d.status === 'rejected' && (
       <p class="notice reject">不收录：{d.rejectReason}</p>
@@ -168,16 +170,17 @@ const statusLine = d.status === 'tested' ? `${EVIDENCE_LABEL[s!.tested.by]} · $
             <h3 class="sk-h3">实测记录</h3>
             <div class="tbl-wrap">
               <table class="tbl">
-                <thead><tr><th scope="col">轮次</th><th scope="col">任务</th><th scope="col">技能触发</th><th scope="col">耗时</th><th scope="col">修改处数</th><th scope="col">严重错误</th></tr></thead>
+                <thead><tr><th scope="col">轮次</th><th scope="col">任务</th><th scope="col">技能触发</th><th scope="col">耗时</th><th scope="col">修改处数</th><th scope="col">严重错误</th><th scope="col">产出</th></tr></thead>
                 <tbody>
                   {allRuns.map((r, i) => (
                     <tr>
                       <td class="mono">{i + 1}</td>
                       <td class="mono">{r.task}</td>
-                      <td class:list={[{ ok: r.triggered }, { bad: !r.triggered }]}>{r.triggered ? '是' : '否'}</td>
+                      <td class:list={[{ ok: r.triggered }, { bad: !r.triggered }]}>{named ? '点名加载' : r.triggered ? '是' : '否'}</td>
                       <td>{formatSeconds(r.seconds)}</td>
                       <td>{r.edits}</td>
                       <td class:list={[{ bad: r.severe > 0 }]}>{r.severe}</td>
+                      <td>{r.output ? <a href={withBase(r.output)} target="_blank" rel="noopener">原文</a> : '—'}</td>
                     </tr>
                   ))}
                   <tr class="base">
@@ -187,6 +190,7 @@ const statusLine = d.status === 'tested' ? `${EVIDENCE_LABEL[s!.tested.by]} · $
                     <td>{formatSeconds(s!.baseline.seconds)}</td>
                     <td>{s!.baseline.edits}</td>
                     <td class:list={[{ bad: s!.baseline.severe > 0 }]}>{s!.baseline.severe}</td>
+                    <td>—</td>
                   </tr>
                 </tbody>
               </table>
@@ -220,12 +224,12 @@ const statusLine = d.status === 'tested' ? `${EVIDENCE_LABEL[s!.tested.by]} · $
             <h3 class="sk-h3">静态审查</h3>
             <ul class="facts">
               {auditFacts.map((f) => <li>{f}</li>)}
-              <li>{s!.platformComplete ? '在 WorkBuddy 上功能完整' : '在 WorkBuddy 上功能不完整'}</li>
+              <li>{s!.platformComplete ? '在 WorkBuddy 上功能完整' : s!.tested.layer === 'workbuddy' ? '在 WorkBuddy 上功能不完整' : '没有在 WorkBuddy 上核对功能与安装步骤'}</li>
             </ul>
 
             {(entry.body ?? '').trim() && (
               <>
-                <h3 class="sk-h3">输出样例与修改处清单</h3>
+                <h3 class="sk-h3">输出样例、修改处与评注</h3>
                 <div class="prose"><Content /></div>
               </>
             )}
@@ -261,7 +265,7 @@ const statusLine = d.status === 'tested' ? `${EVIDENCE_LABEL[s!.tested.by]} · $
 
       <aside class="sk-aside">
         {scored && summary && s && (
-          <ScoreCard total={summary.total} tier={summary.tier} dims={summary.dims} notes={s.notes} tested={s.tested} platformScore={d.source.platformScore} overrides={s.overrides} />
+          <ScoreCard total={summary.total} tier={summary.tier} dims={summary.dims} notes={s.notes} tested={s.tested} platformScore={d.source.platformScore} overrides={s.overrides} prior={s.prior} />
         )}
         <div class="src">
           <h2 class="src-h">来源</h2>
