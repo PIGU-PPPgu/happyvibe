@@ -2,14 +2,15 @@
 // 跑法：node scripts/test_skilllab.mjs（或 npm run test:skilllab）
 // 前半是纯函数断言，后半用自测批次把命令行走一遍，跑完即删。
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { CHECKLISTS, TASKS } from '../src/data/skill-standard.ts';
 import { PREAMBLE, SKILL_LEAD, buildPrompt, leakCheck, parseOutput, readSkillDir, skillBlock } from './skilllab/prompt.mjs';
 import { LAYER_MODELS, buildPlan } from './skilllab/plan.mjs';
 import { autoChecks, examFacts, gradeStats, letterFacts, lessonPlanFacts, textbookCheck } from './skilllab/auto_checks.mjs';
 import { judgePrompt, parseJudgement } from './skilllab/judge_prompt.mjs';
 import { assembleEvidence, factNotes } from './skilllab/assemble_core.mjs';
-import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { REQUEST_BUDGET, dedupe, pickMeta, prescreen } from './skilllab/scan_skillhub.mjs';
 
 const task = (id) => TASKS.find((t) => t.id === id);
 
@@ -201,6 +202,25 @@ assert.throws(() => assembleEvidence({ category: 'lesson-plan', mainTask: 'LP-1'
   assert.equal(notes.safety, '不联网，不用密钥，不存学生信息。');
 }
 
+// ---------- SkillHub 初筛 ----------
+{
+  const item = {
+    name: '初中数学教案助手', slug: 'lesson-x', namespace: { handle: 'teacher_ai' }, score: 12.5, installs: 3,
+    subCategories: [{ key: 'edu-course-design', name: '课程设计' }], source: 'community', verified: false,
+    description_zh: '帮老师写教案。\n面向初中。',
+  };
+  const m = pickMeta(item);
+  assert.equal(m.link, 'https://skillhub.cn/skills/teacher_ai/lesson-x');
+  assert.deepEqual(m.subs, ['edu-course-design']);
+  assert.equal(m.hint, '帮老师写教案。 面向初中。');
+  assert.deepEqual(prescreen(m), { keep: true, why: '' });
+  assert.equal(prescreen({ ...m, hint: '需要配置 API Key 后调用接口' }).why, 'api-wrapper');
+  assert.equal(prescreen({ ...m, name: '育儿专家', hint: '' }).why, 'not-k12');
+  assert.equal(prescreen({ ...m, name: '效率工具', hint: '帮你整理日程' }).why, 'no-teacher-signal');
+  assert.equal(dedupe([m, { ...m }, { ...m, slug: 'other' }]).length, 2);
+  assert.equal(REQUEST_BUDGET, 15);
+}
+
 // ---------- 只读技能目录 ----------
 {
   const files = readSkillDir('scripts/skilllab/fixtures/selftest-skill');
@@ -223,6 +243,7 @@ assert.equal(parseOutput(`<<<成品>>>\n${'数'.repeat(300)}`).ok, false, '缺�
   assert.equal(leakCheck('老师好，这是一份全新的教案。', files), false);
   assert.equal(leakCheck('老师好。', [{ path: 'SKILL.md', text: '短' }]), false, '太短的技能原文不参与比对');
 }
+
 // ---------- 命令行全流程，自测批次 _selftest，跑完即删 ----------
 const BATCH = '_selftest';
 const EVALD = `docs/skill-evals/${BATCH}`;
@@ -277,6 +298,13 @@ try {
   assert.equal(plan.runs.length, 8, '一个备课教案技能：主任务 3 轮、副任务 1 轮、对照 4 轮');
   assert.ok(existsSync(`${LABD}/prompts/${plan.runs[0].id}.txt`));
   assert.ok(cliErr('plan', BATCH, 'desktop').includes('层级只能是'), '不认识的层级要报错');
+  {
+    const todo = JSON.parse(cli('todo', BATCH, 'free-tier', '3'));
+    assert.equal(todo.length, 3);
+    assert.equal(todo[0].id, plan.runs[0].id);
+    assert.equal(todo[0].model, LAYER_MODELS['free-tier']);
+    assert.ok(todo[0].prompt.endsWith('/prompts/free-tier-selftest-skill-LP-1-1.txt'));
+  }
 
   // 第 2 轮动过工具，作废
   mkdirSync(`${LABD}/raw-free-tier`, { recursive: true });
@@ -294,15 +322,24 @@ try {
   writeFileSync(`${LABD}/raw-free-tier/${retry.id}.json`, JSON.stringify(raw('s2', 120)));
   assert.ok(cli('ingest', BATCH, 'free-tier').includes('有效 8，作废 1'), '重跑后 8 轮有效，作废那轮的记录还留着');
   assert.ok(cli('judge-prompts', BATCH, 'free-tier').includes('8 份评审提示'));
+  assert.equal(JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length, 8, '8 轮待评审');
 
-  // 评审：全部合格，每轮 2 处修改处
+  // 评审：全部合格，每轮 2 处修改处；LP-2 那轮的评审会话动过工具，不算
   mkdirSync(`${LABD}/judge-raw`, { recursive: true });
   for (const f of readdirSync(`${EVALD}/runs/free-tier`)) {
     const rec = JSON.parse(readFileSync(`${EVALD}/runs/free-tier/${f}`, 'utf8'));
     if (!rec.valid) continue;
-    writeFileSync(`${LABD}/judge-raw/${rec.id}.json`, JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement()) }));
+    writeFileSync(
+      `${LABD}/judge-raw/${rec.id}.json`,
+      JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement()), ...(rec.id === 'free-tier-selftest-skill-LP-2-1' ? { toolUses: 1 } : {}) })
+    );
   }
-  assert.ok(cli('ingest-judgements', BATCH, 'free-tier').includes('评审并入 8 轮，引文可疑 0 轮'));
+  const judgedOnce = cli('ingest-judgements', BATCH, 'free-tier');
+  assert.ok(judgedOnce.includes('评审并入 7 轮') && judgedOnce.includes('动过工具'), judgedOnce);
+  writeFileSync(`${LABD}/judge-raw/free-tier-selftest-skill-LP-2-1.json`, JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement()) }));
+  const judgedTwice = cli('ingest-judgements', BATCH, 'free-tier');
+  assert.ok(judgedTwice.includes('评审并入 8 轮，引文可疑 0 轮'), judgedTwice);
+  assert.equal(JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length, 0, '都评审过了，待评审清单为空');
   const printed = cli('score', BATCH, 'selftest-skill', 'free-tier');
   assert.ok(printed.includes('总分'), printed);
   assert.ok(printed.includes('检查单：LP1 LP2'), printed);
@@ -314,12 +351,43 @@ try {
   assert.ok(entry.includes('#### 我看到的'));
   assert.ok(existsSync('public/skill-reports/selftest-skill/free-tier/free-tier-selftest-skill-LP-1-1.md'), '原始产出拷到站内目录');
 
+  // 正文引文核对：一句引得到，一句引不到
+  writeFileSync(
+    `${ENTRIES}/selftest-skill.md`,
+    entry.replace('#### 我看到的\n\n待写', `#### 我看到的\n\n产出里写了「${'数'.repeat(20)}」，但没有「这是一句产出里没有的话」。\n\n${'看'.repeat(50)}`)
+  );
+  const quotesOut = cliErr('quotes', BATCH, 'selftest-skill', '--entries-dir', ENTRIES);
+  assert.ok(quotesOut.includes('找不到引文：这是一句产出里没有的话') && quotesOut.includes('找不到 1 处'), quotesOut);
+
   cli('report', BATCH, '--out', `${EVALD}/report.json`);
   const report = JSON.parse(readFileSync(`${EVALD}/report.json`, 'utf8'));
   assert.equal(report.runs.valid, 8);
   assert.equal(report.runs.void, 1);
   assert.equal(report.funnel.ran, 1);
   assert.equal(report.judge.judged, 8);
+
+  // 人工复核汇总
+  mkdirSync(`${LABD}/review`, { recursive: true });
+  mkdirSync(`${LABD}/scan`, { recursive: true });
+  const review = (slug) => ({
+    slug, name: `复核 ${slug}`, url: `https://example.invalid/${slug}`, source: 'github', verdict: 'ran', why: '自测',
+    category: 'lesson-plan', rating: 4, title: `复核 ${slug}`, does: '自测用。', summary: '自测用，不是真技能。',
+    dir: 'scripts/skilllab/fixtures/selftest-skill', license: 'MIT', version: '0.0.0', author: '自测',
+    composition: 'prompt', requires: [], audit: { network: 'none', credentials: false, studentData: 'none', overRead: false },
+    trigger: '帮我写教案', examples: ['帮我写一节数轴的教案'],
+  });
+  writeFileSync(`${LABD}/review/a.json`, JSON.stringify(review('review-a')));
+  writeFileSync(`${LABD}/review/b.json`, JSON.stringify({ ...review('review-b'), license: null }));
+  writeFileSync(`${LABD}/review/c.json`, JSON.stringify({ slug: 'review-c', name: '复核 c', url: '', source: 'skillhub', verdict: 'out', why: '面向家长，不是老师', category: null }));
+  writeFileSync(`${LABD}/review/d.json`, JSON.stringify({ slug: 'review-d', name: '复核 d', url: '', source: 'skillhub', verdict: 'redline', why: '读取凭据文件', category: null }));
+  writeFileSync(`${LABD}/scan/skillhub.json`, JSON.stringify({ unique: 900 }));
+  assert.ok(cli('review-merge', BATCH).includes('候选 2 个'));
+  const screening = JSON.parse(readFileSync(`${EVALD}/screening.json`, 'utf8'));
+  assert.equal(screening.reviewed, 4);
+  assert.equal(screening.items.length, 4);
+  assert.deepEqual(screening.scanned, { skillhub: 900, github: 0, other: 0 });
+  const cands = JSON.parse(readFileSync(`${EVALD}/candidates.json`, 'utf8'));
+  assert.deepEqual(cands.map((c) => [c.slug, c.distribution]), [['review-a', 'mirror'], ['review-b', 'link']], '许可证在清单内才镜像');
 } finally {
   cleanup();
 }

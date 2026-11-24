@@ -1,10 +1,10 @@
 // Skill 实测台：排计划、出提示、收产出、出评审提示、收评审、合成条目、出报告。
-// 会话的开、等、导出不在脚本里，由主会话用会话工具做，步骤见 skills/skill-evaluation/SKILL.md。
+// 会话的开、等、导出不在脚本里，由主会话用子代理做，步骤见 skills/skill-evaluation/SKILL.md。
 // 设计见 docs/superpowers/specs/2026-11-24-skill-eval-background-harness-design.md
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import yaml from 'js-yaml';
-import { CHECKLISTS } from '../src/data/skill-standard.ts';
+import { CHECKLISTS, MIRROR_LICENSES } from '../src/data/skill-standard.ts';
 import { computeDims, tierOf, total } from '../src/lib/skillScore.ts';
 import { parseFrontmatter } from './lib/frontmatter.mjs';
 import { assembleEvidence, factNotes } from './skilllab/assemble_core.mjs';
@@ -15,6 +15,7 @@ import { buildPrompt, leakCheck, parseOutput, readSkillDir } from './skilllab/pr
 
 const AGENT = 'ZCode 后台会话';
 const JUDGE_MODEL = 'GLM-5.3';
+const JUDGE_MODEL_ID = 'account:bigmodel-individual-coding-plan/GLM-5.3';
 const CSV = 'public/skill-tasks/grade-sample.csv';
 const EVAL = (batch) => `docs/skill-evals/${batch}`;
 const LAB = (batch) => `.skilllab/${batch}`;
@@ -23,6 +24,9 @@ const runsDir = (batch, layer) => `${EVAL(batch)}/runs/${layer}`;
 const today = () => new Date().toISOString().slice(0, 10);
 /** 条目正文骨架。三节先放「待写」，校验脚本会拦，读过产出后才能提交。 */
 const BODY_SKELETON = ['#### 输出样例', '', '待写', '', '#### 修改处清单', '', '待写', '', '#### 我看到的', '', '待写'].join('\n');
+/** 品类上限，起步值。超出的留在名单里，结论改记 out。 */
+const CAPS = { 'lesson-plan': 15, assignment: 8, analysis: 6, 'home-school': 6 };
+const DEFAULT_INSTALL = { workbuddy: ['下载技能包', '打开 WorkBuddy，进入技能页', '点添加技能，选上传技能，选中刚下载的压缩包'] };
 const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   plan <批次> <层级>                    读 candidates.json，写运行计划与提示文件
   rerun <批次> <层级> <轮次号>          给作废的轮次追加一次重跑
@@ -31,6 +35,9 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   ingest-judgements <批次> <层级>       核查交回的评审，并入运行记录
   score <批次> <slug> <层级> [--write]  把一个技能的证据合成 score；--write 写进条目
   report <批次> [--out <文件>]          汇总成报告数据
+  todo <批次> <层级> [数量] [--judge]   列出待开或待评审的轮次，给开会话的子代理用
+  review-merge <批次>                   汇总人工复核记录，写初筛名单与候选表
+  quotes <批次> <slug>                  核对条目正文里的引文都能在原始产出里找到
 层级取 free-tier 或 same-model。`;
 
 const readJson = (p) => JSON.parse(readFileSync(p, 'utf8'));
@@ -165,10 +172,16 @@ function cmdIngestJudgements(batch, layer) {
   for (const r of listRuns(batch, layer).filter((x) => x.valid)) {
     const rawPath = `${LAB(batch)}/judge-raw/${r.id}.json`;
     if (!existsSync(rawPath)) continue;
+    const raw = readJson(rawPath);
+    if (raw.toolUses) {
+      failed++;
+      console.log(`  x ${r.id}：评审会话动过工具，不算`);
+      continue;
+    }
     const output = readFileSync(`${EVAL(batch)}/${r.output}`, 'utf8').replace(/\s+/g, ' ');
     let j;
     try {
-      j = parseJudgement(readJson(rawPath).finalText);
+      j = parseJudgement(raw.finalText);
     } catch (err) {
       failed++;
       console.log(`  x ${r.id}：${err.message}`);
@@ -358,6 +371,118 @@ function cmdReport(batch, { out = 'src/data/skill-eval-report.json' } = {}) {
   console.log(`已写入 ${out}：海选出分 ${report.funnel.ran} 个，同款复核 ${report.funnel.confirmed} 个，运行 ${runs.valid}/${runs.planned} 轮有效`);
 }
 
+/** 列出待开（或待评审）的轮次。清单走标准输出，提示走标准错误。 */
+function cmdTodo(batch, layer, limit = 8, { judge = false } = {}) {
+  let todo;
+  if (judge) {
+    todo = listRuns(batch, layer)
+      .filter((r) => r.valid && !r.judgement && !existsSync(`${LAB(batch)}/judge-raw/${r.id}.json`))
+      .map((r) => ({ id: r.id, prompt: `${LAB(batch)}/judge/${r.id}.txt`, model: JUDGE_MODEL_ID }));
+  } else {
+    const plan = readJson(planPath(batch, layer));
+    todo = plan.runs
+      .filter((r) => !existsSync(`${LAB(batch)}/raw-${layer}/${r.id}.json`) && !existsSync(`${runsDir(batch, layer)}/${r.id}.json`))
+      .map((r) => ({ id: r.id, prompt: `${LAB(batch)}/prompts/${r.id}.txt`, model: r.model }));
+  }
+  const shown = todo.slice(0, limit);
+  console.log(JSON.stringify(shown));
+  console.error(`${batch} / ${layer}：${judge ? '待评审' : '待开'} ${todo.length} 轮，这次列出 ${shown.length} 轮`);
+}
+
+/** 一条复核记录变成候选表里的一项。条目文件已存在时，描述性字段以条目为准。 */
+function toCandidate(r, entriesDir) {
+  const file = `${entriesDir}/${r.slug}.md`;
+  const fromEntry = existsSync(file) ? parseFrontmatter(readFileSync(file, 'utf8')).data : {};
+  const kind = r.source === 'other' ? 'own' : r.source;
+  const c = {
+    slug: r.slug,
+    title: r.title,
+    category: r.category,
+    does: r.does,
+    summary: r.summary,
+    dir: r.dir,
+    origin: kind,
+    source: {
+      kind,
+      author: r.author ?? '',
+      url: r.url,
+      ...(r.repo ? { repo: r.repo } : {}),
+      ...(r.path ? { path: r.path } : {}),
+      ...(r.commit ? { commit: r.commit } : {}),
+      ...(r.license ? { license: r.license } : {}),
+      ...(r.version ? { version: r.version } : {}),
+    },
+    distribution: r.license && MIRROR_LICENSES.includes(r.license) ? 'mirror' : 'link',
+    platforms: r.platforms ?? ['workbuddy', 'generic'],
+    composition: r.composition ?? 'prompt',
+    requires: r.requires ?? [],
+    install: r.install ?? DEFAULT_INSTALL,
+    trigger: r.trigger ?? '',
+    examples: r.examples ?? [],
+    cautions: r.cautions ?? [],
+    audit: r.audit,
+    textOnly: Boolean(r.textOnly),
+  };
+  if (fromEntry.name) {
+    for (const k of ['title', 'category', 'does', 'summary', 'source', 'distribution', 'platforms', 'composition', 'requires', 'install']) {
+      if (fromEntry[k] !== undefined) c[k] = fromEntry[k];
+    }
+  }
+  return c;
+}
+
+/** 汇总人工复核记录：写初筛名单与候选表。候选表按品类上限截取，同品类里评分高的先进。 */
+function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
+  const dir = `${LAB(batch)}/review`;
+  must(existsSync(dir), `没有复核记录目录 ${dir}`);
+  const records = readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => readJson(join(dir, f)));
+  const scanned = {};
+  for (const s of ['skillhub', 'github', 'other']) {
+    const p = `${LAB(batch)}/scan/${s}.json`;
+    scanned[s] = existsSync(p) ? (readJson(p).unique ?? readJson(p).length ?? 0) : 0;
+  }
+  const kept = {};
+  const candidates = [];
+  const items = records
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .map((r) => {
+      let verdict = r.verdict;
+      let reason = r.why ?? '';
+      if (verdict === 'ran') {
+        const n = kept[r.category] ?? 0;
+        if (n >= (CAPS[r.category] ?? 0)) {
+          verdict = 'out';
+          reason = `候选已满：${reason}`;
+        } else {
+          kept[r.category] = n + 1;
+          candidates.push(toCandidate(r, entriesDir));
+        }
+      }
+      return { name: r.name, url: r.url ?? '', source: r.source ?? 'other', category: r.category ?? null, verdict, reason };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+  candidates.sort((a, b) => a.category.localeCompare(b.category) || a.slug.localeCompare(b.slug));
+  writeJson(`${EVAL(batch)}/screening.json`, { scanned, reviewed: items.length, items });
+  writeJson(`${EVAL(batch)}/candidates.json`, candidates);
+  const byCat = {};
+  for (const c of candidates) byCat[c.category] = (byCat[c.category] ?? 0) + 1;
+  console.log(`复核 ${items.length} 个；候选 ${candidates.length} 个：${JSON.stringify(byCat)}；淘汰 ${items.length - candidates.length} 个`);
+}
+
+/** 条目正文里「」里的引文，必须能在该技能的原始产出（各轮与对照）里找到。 */
+function cmdQuotes(batch, slug, { entriesDir = 'src/content/skills' } = {}) {
+  const file = `${entriesDir}/${slug}.md`;
+  must(existsSync(file), `没有条目 ${file}`);
+  const { body } = parseFrontmatter(readFileSync(file, 'utf8'));
+  const outputs = readdirSync(`${EVAL(batch)}/outputs`).filter((f) => f.includes(`-${slug}-`) || f.includes('-baseline-'));
+  const hay = outputs.map((f) => readFileSync(`${EVAL(batch)}/outputs/${f}`, 'utf8').replace(/\s+/g, ' ')).join('\n');
+  const quotes = [...body.matchAll(/「([^「」]{6,})」/g)].map((m) => m[1].replace(/\s+/g, ' '));
+  const miss = quotes.filter((q) => !hay.includes(q));
+  for (const q of miss) console.log(`  x 找不到引文：${q}`);
+  console.log(`${slug}：正文引文 ${quotes.length} 处，找不到 ${miss.length} 处`);
+  if (miss.length) process.exitCode = 1;
+}
+
 const [cmd, ...rest] = process.argv.slice(2);
 /** 取出并移除 `--名 值` 形式的选项，返回值 */
 const flag = (name) => {
@@ -374,6 +499,9 @@ try {
     const write = rest.includes('--write');
     cmdScore(rest[0], rest[1], rest[2], { write, entriesDir: flag('--entries-dir') ?? 'src/content/skills' });
   } else if (cmd === 'report') cmdReport(rest[0], { out: flag('--out') ?? 'src/data/skill-eval-report.json' });
+  else if (cmd === 'todo') cmdTodo(rest[0], rest[1], Number(rest[2] ?? 8), { judge: rest.includes('--judge') });
+  else if (cmd === 'review-merge') cmdReviewMerge(rest[0], { entriesDir: flag('--entries-dir') ?? 'src/content/skills' });
+  else if (cmd === 'quotes') cmdQuotes(rest[0], rest[1], { entriesDir: flag('--entries-dir') ?? 'src/content/skills' });
   else {
     console.error(USAGE);
     process.exit(2);
