@@ -4,7 +4,7 @@
   "github": 103,
   "other": 0
  },
- "reviewed": 265,
+ "reviewed": 280,
  "items": [
   {
    "name": "01-parent-daily-notice",
@@ -367,6 +367,22 @@
    "reason": "看名称与说明剔除：给学生讲题"
   },
   {
+   "name": "班主任家长会全流程策划与发言稿",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/dgshhfgdfsd",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.20 元/次），结果要从作者服务端经微信 Agent Pay 取回，并要求先查包内的 知识库.md 和 专业提示词.md"
+  },
+  {
+   "name": "备课 备课全流程 教案设计 说课稿 课堂练习 分层试题 课件生成 课堂互动小游戏 教师备课 K12 TI",
+   "url": "https://skillhub.cn/skills/user_e98bb88e/lesson-prep-flow-ti",
+   "source": "skillhub",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：面向中小学教师备课，按准备、分析、设计、产出、复核五个阶段出体检表、备课包、教案和说课稿，核心是教案，属备课教案；靠模板和参考文件工作，不依赖付费接口"
+  },
+  {
    "name": "备课技能",
    "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/k12-kg/skills/lesson-prep",
    "source": "github",
@@ -429,6 +445,30 @@
    "category": null,
    "verdict": "out",
    "reason": "看名称与说明剔除：名称与说明对不上，实际是表格处理"
+  },
+  {
+   "name": "高中数学组卷助手",
+   "url": "https://skillhub.cn/skills/user_edb2f80a/mathtest",
+   "source": "skillhub",
+   "category": "assignment",
+   "verdict": "out",
+   "reason": "候选已满：面向高中数学教师出练习题、作业题和整卷，附解题过程和评分点，属命题作业；纯文字指引，出 Word 要调用另外的 docx 技能"
+  },
+  {
+   "name": "高中数学作业批改助手",
+   "url": "https://skillhub.cn/skills/user_edb2f80a/math-subjective-grade",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：面向教师批改学生手写的数学解答题，按步给分并出批改报告，属学情分析；纯文字指引，靠模型读图，不依赖接口"
+  },
+  {
+   "name": "高中英语语篇改编、阅读命题与讲解复用",
+   "url": "https://skillhub.cn/skills/user_3a1a0042/reading-exam-explanation-pipeline",
+   "source": "skillhub",
+   "category": "assignment",
+   "verdict": "out",
+   "reason": "候选已满：面向高中英语教师和教研员的阅读命题，把一篇英文语篇改成阅读理解题，出命题蓝图、答案解析、8 列细目表和可选 PPT，属命题作业；词汇分级、表格和 PPT 由本地脚本生成，不依赖付费接口"
   },
   {
    "name": "高中月度学情追踪与计划调整",
@@ -503,6 +543,14 @@
    "reason": "看名称与说明剔除：面向家长"
   },
   {
+   "name": "教案＋分层作业三份Word",
+   "url": "https://skillhub.cn/skills/user_bea77b30/jiaoan-fenceng-word",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "教案、分层作业和答案由作者服务端生成，按次付费 3.90 元，经支付宝 AI 支付取回成稿；本机脚本只负责付款和排版"
+  },
+  {
    "name": "教案设计",
    "url": "https://skillhub.cn/skills/user_9a99d900/zh-lesson",
    "source": "skillhub",
@@ -543,6 +591,30 @@
    "reason": "看名称与说明剔除：转课件，属于课件品类，还没有检查单"
   },
   {
+   "name": "教学设计·微课习题讲解",
+   "url": "https://skillhub.cn/skills/user_738c00b9/micro-lesson-teacher",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "课件、微课视频、配音、出镜片段和口诀歌都靠 Beatra 付费引擎按积分生成，SKILL.md 大半篇幅是付费确认卡和计费规则；主体产物是课件和视频，也属于课件品类"
+  },
+  {
+   "name": "试卷讲评助手",
+   "url": "https://skillhub.cn/skills/user_255e018d/grading-paper-ppt",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "把试卷转成一页一题的讲评 PPTX 课件，属于课件品类，还没有检查单；版面落地依赖 workbuddy-pptx 技能"
+  },
+  {
+   "name": "试卷生成与答题卡",
+   "url": "https://skillhub.cn/skills/org-ln4nqpas/exam-paper-generator",
+   "source": "skillhub",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "面向一线教师和教研组出阶段考试卷，先出双向细目表和初稿，确认后由本地脚本渲染 Word、PDF 和答题卡，属命题作业；MIT 许可，不依赖外部接口"
+  },
+  {
    "name": "数学备课设计",
    "url": "https://github.com/hezkvectory/hermes-edu-skills/tree/main/skills/teacher-tools/teacher-math-lesson-planning",
    "source": "github",
@@ -581,6 +653,14 @@
    "category": null,
    "verdict": "out",
    "reason": "看名称与说明剔除：陪孩子写作业"
+  },
+  {
+   "name": "小学科学作业助手（小实验·观察记录）",
+   "url": "https://skillhub.cn/skills/user_140a98d6/xiaoxue-kexue-zuoye-zhushou",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向家长和学生完成老师布置的科学实验和观察记录作业，不是给教师用的出题、批改或备课工具"
   },
   {
    "name": "小学全科模拟卷批改与学情诊断报告",
@@ -647,6 +727,14 @@
    "reason": "候选已满：面向中职/高中考试成绩统计的流程说明，由 Agent 按说明书现写 Python 把机考 zip 转成年级总表和班级报表，无付费与外部依赖，未命中红线"
   },
   {
+   "name": "学情反馈与家长沟通",
+   "url": "https://skillhub.cn/skills/kunlungrowth/learning-report",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "ran",
+   "reason": "面向中小学教师，把课堂、作业和测验的观察写成发给家长的三段式学情反馈，说明书排第一的用途是学情反馈，归学情分析；纯文字指引加一个本地校验脚本，不依赖接口"
+  },
+  {
    "name": "学情分析师",
    "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/general/xiaozhi-teach-student-analyzer",
    "source": "github",
@@ -703,6 +791,14 @@
    "reason": "候选已满：面向 K12 教培学管师及班主任、学校教师的班级学情仪表盘技能，靠自带 Python 脚本出单文件 HTML 看板，不联网，未命中红线"
   },
   {
+   "name": "学页｜作业设计与模板工具",
+   "url": "https://skillhub.cn/skills/xuyeedu/homework-toolkit",
+   "source": "skillhub",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "面向中小学教师设计分层作业、单元作业和实践作业，产出学生作业卷和教师版设计文书，属命题作业；靠方法论、模板和两个本地脚本，出 Word 依赖 WorkBuddy 内置技能"
+  },
+  {
    "name": "英语讲评课件（试卷·作业本）",
    "url": "https://skillhub.cn/skills/user_ca4d2a07/exam-review-deck",
    "source": "skillhub",
@@ -719,12 +815,28 @@
    "reason": "知识查询依赖 k12-kg 知识图谱连接器"
   },
   {
+   "name": "智能组卷出题",
+   "url": "https://skillhub.cn/skills/kunlungrowth/edu-paper-builder",
+   "source": "skillhub",
+   "category": "assignment",
+   "verdict": "out",
+   "reason": "候选已满：面向中小学教师组卷，给题目、答案和评分标准，属命题作业；纯文字指引，不依赖接口；正文只有四步流程和通用护栏，并要求在结果末尾附企业推广凭据"
+  },
+  {
    "name": "智学慧眼·作业审核",
    "url": "https://skillhub.cn/skills/user_2cd4d9a9/homework-checker",
    "source": "skillhub",
    "category": null,
    "verdict": "out",
    "reason": "看名称与说明剔除：面向孩子"
+  },
+  {
+   "name": "中小学分层作业设计与命题",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/dftghdxfxsx",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.20 元/次），结果要从作者服务端经微信 Agent Pay 取回，并要求先查包内的 知识库.md 和 专业提示词.md"
   },
   {
    "name": "中小学试卷试题分析",
@@ -765,6 +877,14 @@
    "category": null,
    "verdict": "out",
    "reason": "看名称与说明剔除：给孩子检查作业"
+  },
+  {
+   "name": "作业批改归因官",
+   "url": "https://skillhub.cn/skills/user_179d3c94/homework-grader",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：面向小学教师，用本地脚本 hwgrade.py 对照答案键批全班答卷并做错因和知识点归因，属学情分析；纯本地、不联网、不调模型；价值全在脚本，脚本未取回"
   },
   {
    "name": "作业引导 思路启发 自主解题",
@@ -1467,16 +1587,16 @@
    "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-differentiation",
    "source": "github",
    "category": "lesson-plan",
-   "verdict": "ran",
-   "reason": "把老师已有的一节课改编成教师分层方案和学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 知识图谱也能用。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+   "verdict": "out",
+   "reason": "与 k12-lesson-differentiation 的技能说明逐字相同，只测一份：把老师已有的一节课改编成教师分层方案和学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 知识图谱也能用。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
   },
   {
    "name": "k12-lesson-differentiation",
    "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-differentiation",
    "source": "github",
    "category": "lesson-plan",
-   "verdict": "out",
-   "reason": "与 agent-skills--k12-lesson-differentiation 的技能说明逐字相同，只测一份：把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 课标库也能运行；5 个脚本逐行看过，只把 JSON 渲染成 Word 和 HTML，不读取凭据、不删除文件；缺 python-docx 时会自动 pip 安装"
+   "verdict": "ran",
+   "reason": "把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 课标库也能运行；5 个脚本逐行看过，只把 JSON 渲染成 Word 和 HTML，不读取凭据、不删除文件；缺 python-docx 时会自动 pip 安装"
   },
   {
    "name": "k12-lesson-plan-creation",
@@ -1683,8 +1803,8 @@
    "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/explicit-instruction/practice-problem-sequence-designer",
    "source": "github",
    "category": "assignment",
-   "verdict": "ran",
-   "reason": "说明书定位是给教师设计练习题序列，属命题作业；纯文字技能，没有脚本和外部接口"
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计练习题序列，属命题作业；纯文字技能，没有脚本和外部接口"
   },
   {
    "name": "project-brief-designer",
@@ -1731,8 +1851,8 @@
    "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/retrieval-practice-generator",
    "source": "github",
    "category": "assignment",
-   "verdict": "ran",
-   "reason": "说明书定位是给教师设计提取练习题，属命题作业；纯文字技能，没有脚本和外部接口"
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计提取练习题，属命题作业；纯文字技能，没有脚本和外部接口"
   },
   {
    "name": "risk-assessment-referral",
@@ -1899,8 +2019,8 @@
    "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a7-error-attribution",
    "source": "github",
    "category": "analysis",
-   "verdict": "ran",
-   "reason": "对学生错题做归因并给出订正方案，同时回写学生画像，属学情分析；目录里只有 SKILL.md"
+   "verdict": "out",
+   "reason": "候选已满：对学生错题做归因并给出订正方案，同时回写学生画像，属学情分析；目录里只有 SKILL.md"
   },
   {
    "name": "teacher-a8-practice-drill",

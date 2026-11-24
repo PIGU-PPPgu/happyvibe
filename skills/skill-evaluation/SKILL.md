@@ -29,7 +29,7 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 1. **初筛**。来源三处：SkillHub 教育学习分类（`node scripts/skilllab/scan_skillhub.mjs` 按教师向关键词取元数据，一批不超过 15 次请求）、GitHub 与公开技能目录、教师投稿。入围条件：面向中小学教师或班主任的日常工作；形态是技能说明；不依赖付费接口、外部引擎或必须的密钥；拿得到全文。
 2. **人工复核**。逐个读 SKILL.md，定品类，写一句话用途和两三句说明。结论写进 `.skilllab/<批次>/review/<slug>.json`，`node scripts/skilllab.mjs review-merge <批次>` 汇总成 `docs/skill-evals/<批次>/screening.json` 与 `candidates.json`。
 3. **静态审查**。`node scripts/audit_skill.mjs <技能目录>` 出文件清单、风险模式、外部域名、许可证，然后通读全部文件。带脚本执行、联网、读取凭据、破坏性命令模式的，不进实测。红线见标准数据里的 `RED_LINES`。
-4. **转载判定**。许可证在 `MIRROR_LICENSES` 里才镜像：技能目录原样拷到 `src/skills/<slug>/`，逐文件核对，仓库级许可证放 `_meta`，记下上游提交号。否则条目标 `distribution: link`，只评不转。
+4. **转载判定**。许可证在 `MIRROR_LICENSES` 里才镜像：候选表定下来后跑 `node scripts/skilllab/mirror.mjs <批次>`，它把技能目录原样拷到 `src/skills/<slug>/`，技能目录里没有许可证文本的从上游仓库取一份放到 `src/skills/_meta/<slug>/LICENSE`，拷完逐文件比对，已在站内的不动。记下上游提交号。否则条目标 `distribution: link`，只评不转。
 5. **进候选表**。`candidates.json` 的每一项由 `review-merge` 从复核记录生成，字段见 `scripts/skilllab.mjs` 里的 `toCandidate`。`audit` 一项在静态审查时填。
 6. **排计划、出提示**。`node scripts/skilllab.mjs plan <批次> free-tier`。
 7. **开会话**。见下一节。

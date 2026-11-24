@@ -567,7 +567,8 @@ function toCandidate(r, entriesDir) {
 }
 
 /** 汇总人工复核记录：写初筛名单与候选表。候选表按品类上限截取，同品类里评分高的先进，同分按名称顺序。
- *  技能说明逐字相同的几份只测一份：已有条目的优先，其次评分高、名称靠前的。 */
+ *  技能说明逐字相同的几份只测一份：已有条目的优先，其次自带许可证文本的（多半是原版），再次名称靠前的。
+ *  这一步不看评分：同文的两份评分不同，只是复核的人不同。 */
 function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
   const dir = `${LAB(batch)}/review`;
   must(existsSync(dir), `没有复核记录目录 ${dir}`);
@@ -578,6 +579,8 @@ function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
     const p = `${LAB(batch)}/scan/${s}.json`;
     scanned[s] = existsSync(p) ? (readJson(p).unique ?? readJson(p).length ?? 0) : 0;
   }
+  const hasEntry = (r) => Number(existsSync(`${entriesDir}/${r.slug}.md`));
+  const hasLicense = (r) => Number(['LICENSE', 'LICENSE.md', 'LICENSE.txt'].some((n) => existsSync(`${r.dir}/${n}`)));
   const sameText = new Map();
   {
     const groups = new Map();
@@ -588,12 +591,7 @@ function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
     }
     for (const list of groups.values()) {
       if (list.length < 2) continue;
-      list.sort(
-        (a, b) =>
-          Number(existsSync(`${entriesDir}/${b.slug}.md`)) - Number(existsSync(`${entriesDir}/${a.slug}.md`)) ||
-          (b.rating ?? 0) - (a.rating ?? 0) ||
-          String(a.slug).localeCompare(String(b.slug))
-      );
+      list.sort((a, b) => hasEntry(b) - hasEntry(a) || hasLicense(b) - hasLicense(a) || String(a.slug).localeCompare(String(b.slug)));
       for (const r of list.slice(1)) sameText.set(r, list[0]);
     }
   }
