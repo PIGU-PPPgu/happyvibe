@@ -19,8 +19,8 @@ export const STALE_MONTHS = 6;
 export const BODY_SECTIONS = ['修改处清单', '我看到的'];
 /** 正文每节至少这么多字，空节不算写了。 */
 export const BODY_MIN_CHARS = 40;
-/** 没写完时脚本会先放进这些词，提交前必须换成真内容。 */
-export const PLACEHOLDER_RE = /待写|待补/;
+/** 没写完时脚本会先放进这些词，提交前必须换成真内容。只认前后不挨汉字的，免得误伤「有待补充」这类正常句子。 */
+export const PLACEHOLDER_RE = /(?<![\u4e00-\u9fff])待[写补](?![\u4e00-\u9fff])/;
 
 /** 站内自己写的文本（不含上游技能原文）。 */
 function authoredText(d, body) {
@@ -79,7 +79,7 @@ function checkTested(slug, d, body, ctx, errors, warnings) {
   }
 
   for (const title of BODY_SECTIONS) {
-    const section = new RegExp(`(?:^|\\n)#{3,4}\\s*${title}\\s*\\n([\\s\\S]*?)(?=\\n#{2,4}\\s|$)`);
+    const section = new RegExp(`^#{3,4}[ \\t]*${title}[ \\t]*\\r?$\\n([\\s\\S]*?)(?=^#{2,4}\\s|(?![\\s\\S]))`, 'm');
     const m = body.match(section);
     if (!m) errors.push(`已实测条目的正文缺「${title}」一节，用三或四级标题`);
     else if (m[1].trim().length < BODY_MIN_CHARS) errors.push(`已实测条目正文里的「${title}」一节不足 ${BODY_MIN_CHARS} 字，要写具体内容`);
@@ -102,7 +102,10 @@ export function checkEntry(slug, d, body, ctx) {
   if (emoji) errors.push(`站内文本含 emoji：${[...new Set(emoji)].join(' ')}`);
   for (const f of FILLER_WORDS) if (text.includes(f)) errors.push(`站内文本含「${f}」，属于填充词或替读者下结论`);
   if (d.status === 'tested') {
-    if (PLACEHOLDER_RE.test(`${d.score.verdict}\n${d.score.weakness}\n${body}`)) errors.push('一句话理由、短板或正文里还留着「待写」，提交前要换成真内容');
+    for (const [field, text] of [['一句话理由', d.score.verdict], ['短板', d.score.weakness], ['正文', body]]) {
+      const hit = text.match(PLACEHOLDER_RE);
+      if (hit) errors.push(`${field}里还留着「${hit[0]}」，提交前要换成真内容`);
+    }
     checkTested(slug, d, body, ctx, errors, warnings);
   }
   return { errors, warnings };

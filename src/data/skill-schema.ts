@@ -2,12 +2,12 @@
 // 字段含义见 docs/superpowers/specs/2026-11-24-resource-center-skill-workshop-design.md §4.1
 // 纯模块：不碰 astro:content，node 可直跑。
 import { z } from 'zod';
-import { CATEGORIES, MIRROR_LICENSES, TEXTBOOK_CATEGORIES } from './skill-standard.ts';
+import { CATEGORIES, LAYERS, MIRROR_LICENSES, TEXTBOOK_CATEGORIES } from './skill-standard.ts';
 import type { CategoryKey, DimKey, LayerKey } from './skill-standard.ts';
 
 const CATEGORY_KEYS = CATEGORIES.map((c) => c.key) as [CategoryKey, ...CategoryKey[]];
 const DIM_KEYS = ['value', 'quality', 'ease', 'edu', 'safety'] as const;
-const LAYER_KEYS = ['workbuddy', 'same-model', 'free-tier'] as [LayerKey, ...LayerKey[]];
+const LAYER_KEYS = LAYERS.map((l) => l.key) as [LayerKey, ...LayerKey[]];
 
 const Dim = z.number().int().min(1).max(5);
 const Line = z.string().trim().min(1);
@@ -128,6 +128,11 @@ export const skillSchema = z
     }
     if (s.textbookCheck && s.textbookCheck.passed > s.textbookCheck.total) {
       issue('抽检通过数不能超过总数', ['score', 'textbookCheck']);
+    }
+    for (const r of s.runs) {
+      if (r.output && !r.output.startsWith(`/skill-reports/${d.name}/${s.tested.layer}/`)) {
+        issue(`原始产出的路径要对得上本技能与本次层级：${r.output}`, ['score', 'runs']);
+      }
     }
     if (s.tested.layer !== 'workbuddy' && s.platformComplete) {
       issue('后台实测没有核对 WorkBuddy 上的功能，platformComplete 必须记 false', ['score', 'platformComplete']);

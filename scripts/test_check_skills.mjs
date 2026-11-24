@@ -124,6 +124,17 @@ const confirmed = mutate((d) => {
 assert.deepEqual(run(confirmed), [], '同款复核带上一层海选结果是合法的');
 assert.equal(schemaOk(background((d) => { d.score.runs[0].output = '/etc/passwd'; })), false, '产出路径只能在 skill-reports 下');
 assert.ok(schemaOk(background((d) => { d.score.runs[0].output = '/skill-reports/demo-skill/free-tier/LP-1-1.md'; })), '产出路径的合法写法应通过');
+assert.equal(schemaOk(background((d) => { d.score.runs[0].output = '/skill-reports/other-skill/free-tier/LP-1-1.md'; })), false, '产出路径指向别的技能应被拒绝');
+for (const l of LAYERS) {
+  const d = background((x) => {
+    x.score.tested.layer = l.key;
+  });
+  if (l.key === 'workbuddy') {
+    d.score.platformComplete = true;
+    d.score.dims.ease = 5;
+  }
+  assert.ok(schemaOk(d), `层级 ${l.key} 应被 schema 接受`);
+}
 
 // 状态约束
 assert.equal(schemaOk(mutate((d) => { d.status = 'pending'; })), false, '待测条目不得带 score');
@@ -140,16 +151,18 @@ assert.ok(run(mutate((d) => { d.score.verdict = '这就是满分答案'; })).som
 
 // 原始产出与正文两节
 const noOutput = { ...ctxOk, exists: (p) => !p.endsWith('LP-1-1.md') };
-const withOutput = mutate((d) => {
-  Object.assign(d.score.tested, { layer: 'free-tier', loadedBy: 'named' });
-  d.score.platformComplete = false;
-  d.score.dims.ease = 4;
+const withOutput = background((d) => {
   d.score.runs[0].output = '/skill-reports/demo-skill/free-tier/LP-1-1.md';
 });
 assert.ok(run(withOutput, noOutput).some((e) => e.includes('原始产出不存在')));
 assert.deepEqual(run(withOutput), [], '产出文件在时不该报错');
 assert.ok(run(base(), ctxOk, '').some((e) => e.includes('缺「修改处清单」')));
 assert.ok(run(base(), ctxOk, '#### 修改处清单\n\n太短\n\n#### 我看到的\n\n' + '看'.repeat(60)).some((e) => e.includes('「修改处清单」一节不足 40 字')));
+assert.ok(run(base(), ctxOk, '#### 修改处清单\n\n#### 我看到的\n\n' + '看'.repeat(60)).some((e) => e.includes('「修改处清单」一节不足 40 字')), '留空的一节紧跟下一个标题也要报');
+assert.deepEqual(run(base(), ctxOk, BODY.replaceAll('#### ', '### ')), [], '三级标题也可以');
+assert.ok(run(base(), ctxOk, BODY.replaceAll('#### ', '## ')).some((e) => e.includes('缺「修改处清单」')), '二级标题不算');
+assert.ok(run(mutate((d) => { d.score.weakness = '待补'; })).some((e) => e.includes('短板里还留着「待补」')), '短板里的待补也要拦');
+assert.equal(run(mutate((d) => { d.cautions = ['安装说明有待补充，期待写作课的老师待补考后再看。']; })).some((e) => e.includes('待补') || e.includes('待写')), false, '正常句子里的字不拦');
 const placeholderBody = BODY.slice(0, BODY.indexOf('#### 我看到的')) + '#### 我看到的\n\n待写';
 assert.ok(run(base(), ctxOk, placeholderBody).some((e) => e.includes('待写')), '我看到的整节还是待写');
 assert.ok(run(mutate((d) => { d.score.verdict = '待写'; })).some((e) => e.includes('待写')), '一句话理由不能留着待写');
