@@ -15,7 +15,7 @@ import { parseFrontmatter } from './lib/frontmatter.mjs';
 import { MAX_FILE_BYTES, PREAMBLE, SKILL_LEAD, buildPrompt, leakCheck, parseOutput, readSkillDir, skillBlock } from './skilllab/prompt.mjs';
 import { LAYER_MODELS, buildPlan } from './skilllab/plan.mjs';
 import { autoChecks, examFacts, gradeStats, letterFacts, lessonPlanFacts, textbookCheck } from './skilllab/auto_checks.mjs';
-import { judgePrompt, parseJudgement } from './skilllab/judge_prompt.mjs';
+import { judgePrompt, parseJudgement, quoteFound } from './skilllab/judge_prompt.mjs';
 import { assembleEvidence, factNotes } from './skilllab/assemble_core.mjs';
 import { REQUEST_BUDGET, dedupe, pickMeta, prescreen } from './skilllab/scan_skillhub.mjs';
 import { bootstrapText, summarizeRollout } from './skilllab/rollout.mjs';
@@ -165,6 +165,16 @@ const judgement = {
 assert.throws(() => parseJudgement('没有结果'), /没有 JSON/);
 assert.throws(() => parseJudgement('{"checklist": []}'), /缺 checklist、edits 或 severe/);
 assert.throws(() => parseJudgement('{不是 json}'), /不是合法 JSON/);
+{
+  // 引文核对：整条找得到算；不相邻的几行接成一条、每行都逐字找得到也算；编出来的不算
+  const output = '## 一、基本信息 教材：北师大版七年级上册 课题：2.2 数轴 课型：新授课 ## 五、教学过程 环节一：复习导入（5 分钟） 说明。';
+  assert.equal(quoteFound('教材：北师大版七年级上册', output), true);
+  assert.equal(quoteFound('课题：2.2 数轴\n课型：新授课', output), true, '相邻的两行接在一起，压平后就是原文');
+  assert.equal(quoteFound('教材：北师大版七年级上册\n环节一：复习导入（5 分钟）', output), true, '不相邻的两行各自逐字都在');
+  assert.equal(quoteFound('教材：北师大版七年级上册\n环节一：复习导入（6 分钟）', output), false, '有一行被改了数字');
+  assert.equal(quoteFound('。\n课题：\n课型：\n说明', output), false, '只有几个短词碰巧都在，不算依据');
+  assert.equal(quoteFound('', output), false, '空引文算找不到');
+}
 
 // ---------- 证据合成 ----------
 /** 造一轮评审：fail 里的检查单编号不过，每处修改都带引文 */

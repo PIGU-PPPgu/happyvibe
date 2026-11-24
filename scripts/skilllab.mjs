@@ -9,7 +9,7 @@ import { computeDims, tierOf, total } from '../src/lib/skillScore.ts';
 import { parseFrontmatter } from './lib/frontmatter.mjs';
 import { assembleEvidence, factNotes } from './skilllab/assemble_core.mjs';
 import { autoChecks } from './skilllab/auto_checks.mjs';
-import { judgePrompt, parseJudgement } from './skilllab/judge_prompt.mjs';
+import { judgePrompt, parseJudgement, quoteFound } from './skilllab/judge_prompt.mjs';
 import { LAYER_MODELS, buildPlan, modelShort, tasksFor } from './skilllab/plan.mjs';
 import { buildPrompt, leakCheck, parseOutput, readSkillDir } from './skilllab/prompt.mjs';
 import { bootstrapText, summarizeRollout } from './skilllab/rollout.mjs';
@@ -233,8 +233,8 @@ function cmdIngestJudgements(batch, layer) {
       continue;
     }
     // 每一条都要有引文。空引文算找不到；一条引文都没有的评审整份算可疑
-    const quotes = [...j.checklist, ...j.edits, ...j.severe].map((x) => x.quote.replace(/\s+/g, ' ').trim());
-    const miss = quotes.filter((q) => !q || !output.includes(q)).length;
+    const quotes = [...j.checklist, ...j.edits, ...j.severe].map((x) => x.quote);
+    const miss = quotes.filter((q) => !quoteFound(q, output)).length;
     r.judgement = { ...j, quotes: quotes.length, quoteMiss: miss, suspect: quotes.length === 0 || miss / quotes.length > 0.3 };
     if (r.judgement.suspect) {
       suspect++;
