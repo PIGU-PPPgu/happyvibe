@@ -46,7 +46,7 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 - **只传一句话**：开会话时 `prompt` 用待开清单里的 `bootstrap` 字段，原样传入，不改一个字。清单用 `node scripts/skilllab.mjs todo <批次> <层级> 8` 取。这句话让会话自己用 Read 工具读提示文件。新会话里只读工具不用用户批准，命令和写操作都要，所以会话能做的只有这一次读取。
 - **项目与模型**：项目用 `happyvibe`。它的目录是 iCloud 那份副本，与实测无关，提示文件用的是规范仓库的绝对路径。模型用清单里的 `model`。一批同时开 8 个。
 - **登记**：每开一个会话记下 `轮次号=会话号`，用 `node scripts/skilllab.mjs ledger <批次> <层级> <轮次号>=<会话号> …` 登记，评审加 `--judge`。
-- **等**：`WaitSessions`，mode 用 all。停在「等待批准」上的会话不要处理，它会被判作废。
+- **等**：`node scripts/skilllab/wait.mjs <批次> <层级> [--judge]`，隔 20 秒查一次，直到没有还在跑的会话，最多等 9 分钟（`--minutes` 可调到 30）。它只读会话库。停在「等待批准」上的会话不要处理，它会被判作废。没跑成的轮次（汇总行的「没跑成」）仍在待开清单里，下一波会重新列出。
 - **收**：`node scripts/skilllab.mjs collect <批次> <层级>`，评审加 `--judge`。它只读登记过的会话，核对这一轮只做了一次读取、读的正是提示文件、文件内容与计划里的指纹一致，写出 `raw-<层级>/<轮次号>.json`，字段是 `{ sessionId, promptMatches, toolUses, extraToolUses, startedAt, endedAt, finalText }`。
 - **有效性**：读提示文件之外出现任何工具调用、读的不是指定文件、提示被改过、没收尾，都作废，`ingest` 与 `ingest-judgements` 逐轮核查。被拒的评审交回文件会改名为 `.rejected`，这一轮重新排进待评审清单。待评审清单用 `todo <批次> <层级> 8 --judge` 取。
 - **收尾**：会话标题改成 `[实测] <轮次号>` 或 `[评审] <轮次号>`，跑完归档，不占用户的会话列表。
