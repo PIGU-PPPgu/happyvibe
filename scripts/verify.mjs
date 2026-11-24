@@ -14,6 +14,11 @@ const stages = [
     desc: '条目 schema / 分数与证据重算一致 / 检查单对齐 / 证据截图 / 技能包新鲜 / 无 emoji 与填充词',
     cmd: ['node', 'scripts/check_skills.mjs'],
   },
+  {
+    name: 'Skill 实测台自测',
+    desc: '提示拼装 / 运行计划 / 脚本可判定事实 / 评审解析 / 证据合成 / 命令行全流程',
+    cmd: ['node', 'scripts/test_skilllab.mjs'],
+  },
   ...(fast
     ? []
     : [{
