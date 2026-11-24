@@ -37,7 +37,7 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 9. **评审**。`node scripts/skilllab.mjs judge-prompts <批次> free-tier`，开评审会话，交回后 `node scripts/skilllab.mjs ingest-judgements <批次> free-tier`。引文可疑的轮次（超过三成引文在产出里找不到）要人看，`score` 不会用它们。人看过产出后，用 `node scripts/skilllab.mjs trust <批次> <层级> <轮次号>` 标记为可以采用。
 10. **抽检**。随机抽两成已评审的产出，不少于 10 份，按同一口径重判，与评审结果比对。严重错误数不一致超过 1 份，或修改处数偏差超过 30% 的超过五分之一，整批重判。结果写 `docs/skill-evals/<批次>/spotcheck.json`：`{ "spotChecked": 12, "redone": false, "note": "抽了 12 份，严重错误数全部一致，修改处数偏差最大 18%" }`。
 11. **出分、写条目**。`node scripts/skilllab.mjs score <批次> <slug> free-tier --write`。然后读产出，补一句话理由 `verdict`、短板 `weakness`、正文三节（输出样例、修改处清单、我看到的），每处引原文。`npm run check:skills` 不过不得提交。
-12. **复核、报告、页面**。海选总分前 10（触红线与抽检未过的除外）把 `candidates.json` 里只留这十个，`plan <批次> same-model` 起重跑一遍，`score --write` 会把海选分数存进 `prior`。最后 `node scripts/skilllab.mjs report <批次>`，构建，截图亲眼看过，提交。
+12. **复核、报告、页面**。海选总分前 10（触红线与抽检未过的除外）用 `node scripts/skilllab.mjs plan <批次> same-model --only <slug,slug,…>` 只给这十个排计划，`candidates.json` 原样保留，海选那份证据链才不断，`score --write` 会把海选分数存进 `prior`。最后 `node scripts/skilllab.mjs report <批次>`，构建，截图亲眼看过，提交。
 
 ## 会话怎么开
 
@@ -46,7 +46,7 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 - **实测会话**：`CreateSession`，项目用 `hv-skilllab`，模型用 `docs/skill-evals/<批次>/plan-<层级>.json` 里的 `model`，提示逐字取 `.skilllab/<批次>/prompts/<轮次号>.txt`。一批同时开 8 个。待开清单用 `node scripts/skilllab.mjs todo <批次> <层级> 8` 取。
 - **记时间**：开会话时记 `startedAt`，等到完成记 `endedAt`，都是 ISO 时间。
 - **导出**：子代理读会话消息，写 `.skilllab/<批次>/raw-<层级>/<轮次号>.json`，字段是 `{ sessionId, promptMatches, toolUses, startedAt, endedAt, finalText }`。`promptMatches` 是首条用户消息与提示文件去掉首尾空白后逐字相等；`toolUses` 是消息里工具调用的次数；`finalText` 是最后一条助手消息的原文。
-- **评审会话**：模型用 `account:bigmodel-individual-coding-plan/GLM-5.3`，提示取 `.skilllab/<批次>/judge/<轮次号>.txt`，交回到 `judge-raw/<轮次号>.json`，字段同实测，至少要有 `{ sessionId, finalText }`。待评审清单用 `todo <批次> <层级> 8 --judge` 取。
+- **评审会话**：模型用 `account:bigmodel-individual-coding-plan/GLM-5.3`，提示取 `.skilllab/<批次>/judge/<轮次号>.txt`，交回到 `judge-raw/<轮次号>.json`，字段同实测，`toolUses` 必须带且为 0，缺了按动过工具处理。被拒的交回文件会改名为 `.rejected`，这一轮重新排进待评审清单。待评审清单用 `todo <批次> <层级> 8 --judge` 取。
 - **收尾**：会话标题改成 `[实测] <轮次号>` 或 `[评审] <轮次号>`，跑完归档，不占用户的会话列表。
 
 ## 脚本不替你做的事

@@ -1,7 +1,7 @@
 // SkillHub 初筛：按教师向关键词取列表元数据，一批不超过 REQUEST_BUDGET 次请求。
 // 只取筛查要用的字段，不取技能全文，不做定时同步。协议禁止批量导出与再分发，所以输出只能写进 .skilllab/。
 // 用法：node scripts/skilllab/scan_skillhub.mjs .skilllab/<批次>/scan/skillhub.json
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -63,10 +63,18 @@ async function main() {
   const all = [];
   let used = 0;
   for (const keyword of KEYWORDS) {
+    const rawFile = `${rawDir}/${keyword}.json`;
+    // 这个词上次已经取回就不再请求：中途失败后重跑，不会把预算用光
+    if (existsSync(rawFile)) {
+      const rows = JSON.parse(readFileSync(rawFile, 'utf8'));
+      all.push(...rows);
+      console.log(`「${keyword}」沿用上次取回的 ${rows.length} 条`);
+      continue;
+    }
     used++;
     if (used > REQUEST_BUDGET) throw new Error('超过请求预算');
     const rows = (await fetchPage(keyword)).map(pickMeta);
-    writeFileSync(`${rawDir}/${keyword}.json`, JSON.stringify(rows, null, 1));
+    writeFileSync(rawFile, JSON.stringify(rows, null, 1));
     all.push(...rows);
     console.log(`「${keyword}」取回 ${rows.length} 条`);
     await sleep(1500);

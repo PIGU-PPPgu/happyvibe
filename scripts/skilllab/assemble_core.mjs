@@ -33,11 +33,9 @@ export function assembleEvidence({ category, mainTask, runs, baseline, textbookC
       note: fails.length ? `${fails.length} 轮不过：${fails[0].note}` : '',
     };
   });
-  let textbookCheck;
-  if (textbookCheckOf) {
-    const per = main.map(textbookCheckOf);
-    textbookCheck = { total: per.length, passed: per.filter((x) => x.total > 0 && x.passed === x.total).length };
-  }
+  // 只有带教材标识的任务才有这一项，学情分析、家校沟通没有
+  const per = textbookCheckOf ? main.map(textbookCheckOf).filter(Boolean) : [];
+  const textbookCheck = per.length ? { total: per.length, passed: per.filter((x) => x.passed === x.total).length } : undefined;
   return {
     runs: runs.map((r) => ({
       task: r.task,

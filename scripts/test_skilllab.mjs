@@ -3,9 +3,15 @@
 // 前半是纯函数断言，后半用自测批次把命令行走一遍，跑完即删。
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { CHECKLISTS, TASKS } from '../src/data/skill-standard.ts';
-import { PREAMBLE, SKILL_LEAD, buildPrompt, leakCheck, parseOutput, readSkillDir, skillBlock } from './skilllab/prompt.mjs';
+import { skillSchema } from '../src/data/skill-schema.ts';
+import { recomputeMismatches } from '../src/lib/skillEntryCore.ts';
+import { checkEntry } from './lib/check_skills_core.mjs';
+import { parseFrontmatter } from './lib/frontmatter.mjs';
+import { MAX_FILE_BYTES, PREAMBLE, SKILL_LEAD, buildPrompt, leakCheck, parseOutput, readSkillDir, skillBlock } from './skilllab/prompt.mjs';
 import { LAYER_MODELS, buildPlan } from './skilllab/plan.mjs';
 import { autoChecks, examFacts, gradeStats, letterFacts, lessonPlanFacts, textbookCheck } from './skilllab/auto_checks.mjs';
 import { judgePrompt, parseJudgement } from './skilllab/judge_prompt.mjs';
@@ -25,7 +31,7 @@ assert.equal(
   const block = skillBlock(files);
   assert.equal(
     block.text,
-    '<<<技能说明\n文件清单：\n- SKILL.md\n- notes/a.md\n- scripts/run.py（脚本或二进制，不带内容）\n\n--- 文件 SKILL.md ---\n# 假技能\n先列目标。\n\n--- 文件 notes/a.md ---\n参考甲\n技能说明>>>',
+    '<<<技能说明\n文件清单：\n- SKILL.md\n- notes/a.md\n- scripts/run.py（脚本、二进制或过大的文件，不带内容）\n\n--- 文件 SKILL.md ---\n# 假技能\n先列目标。\n\n--- 文件 notes/a.md ---\n参考甲\n技能说明>>>',
     'SKILL.md 排最前，脚本只列文件名'
   );
   assert.equal(block.chars, '# 假技能\n先列目标。'.length + '参考甲'.length);
@@ -35,6 +41,10 @@ assert.equal(
   const block = skillBlock([{ path: 'SKILL.md', text: '甲'.repeat(40000) }]);
   assert.equal(block.truncated, true);
   assert.equal(block.chars, 30000, '技能文字超过上限就截断');
+}
+{
+  const block = skillBlock(Array.from({ length: 205 }, (_, i) => ({ path: `f${i}.md`, text: '短' })));
+  assert.ok(block.text.includes('- …另有 5 个文件'), '清单超过条数上限时只列前 200 条');
 }
 {
   const p = buildPrompt('LP-1', { files: [{ path: 'SKILL.md', text: '先列目标。' }] });
@@ -121,6 +131,7 @@ const CSV = '学号,语文,数学,英语\nS01,90,,80\nS02,60,55,\n';
 assert.deepEqual(textbookCheck('LP-1', '北师大版七年级数轴'), { total: 3, passed: 3 });
 assert.deepEqual(textbookCheck('LP-1', '人教版'), { total: 3, passed: 0 });
 assert.equal(autoChecks('LP-1', '北师大版七年级数轴').textbook.passed, 3);
+assert.equal('textbook' in autoChecks('HS-1', '各位家长好'), false, '家校沟通的任务没有教材标识');
 assert.equal(autoChecks('HS-1', '各位家长好').taskId, 'HS-1');
 
 // ---------- 评审提示与评审结果 ----------
@@ -152,7 +163,7 @@ assert.throws(() => parseJudgement('{"checklist": []}'), /缺 checklist、edits 
 assert.throws(() => parseJudgement('{不是 json}'), /不是合法 JSON/);
 
 // ---------- 证据合成 ----------
-/** 造一轮评审：fail 里的检查单编号不过 */
+/** 造一轮评审：fail 里的检查单编号不过，每处修改都带引文 */
 const judge = (fail = [], edits = 2, severe = 0) => ({
   checklist: CHECKLISTS['lesson-plan'].map((c) => ({ id: c.id, pass: !fail.includes(c.id), quote: '引文', note: fail.includes(c.id) ? `缺 ${c.id}` : '' })),
   edits: Array.from({ length: edits }, (_, i) => ({ quote: `引文${i}`, problem: '要改' })),
@@ -179,6 +190,14 @@ const judge = (fail = [], edits = 2, severe = 0) => ({
   assert.equal(ev.checklist.find((c) => c.id === 'LP1').pass, true);
   assert.equal(ev.checklist.length, 12);
   assert.deepEqual(ev.textbookCheck, { total: 3, passed: 2 }, '第 3 轮教材标识不齐');
+}
+{
+  // 家校沟通的任务没有教材标识，不出教材核对，也不能因为取不到而崩
+  const runs = [1, 2, 3].map((round) => ({ task: 'HS-1', round, seconds: 60, judgement: judge([], 2, 0), auto: {} }));
+  const baseline = [1, 2, 3].map(() => ({ edits: 6, severe: 0, seconds: 70 }));
+  const withOf = assembleEvidence({ category: 'home-school', mainTask: 'HS-1', runs, baseline, textbookCheckOf: (r) => r.auto?.textbook });
+  assert.equal('textbookCheck' in withOf, false, '没有教材标识就不出这一项');
+  assert.equal('textbookCheck' in assembleEvidence({ category: 'home-school', mainTask: 'HS-1', runs, baseline }), false);
 }
 assert.throws(() => assembleEvidence({ category: 'lesson-plan', mainTask: 'LP-1', runs: [], baseline: [] }), /需要 3 轮有效运行/);
 {
@@ -228,6 +247,24 @@ assert.throws(() => assembleEvidence({ category: 'lesson-plan', mainTask: 'LP-1'
   assert.ok(files[0].text.includes('selftest-skill'));
   assert.equal(files[1].text, undefined, '二进制文件只带路径');
 }
+{
+  // 设防：符号链接不收，node_modules 不进，过大的文本文件只列文件名
+  const dir = mkdtempSync(join(tmpdir(), 'hv-skilllab-'));
+  try {
+    mkdirSync(join(dir, 'node_modules', 'x'), { recursive: true });
+    writeFileSync(join(dir, 'SKILL.md'), '# 甲\n正文。');
+    writeFileSync(join(dir, 'node_modules/x/SKILL.md'), '# 不该被读到');
+    writeFileSync(join(dir, 'big.md'), '大'.repeat(Math.floor(MAX_FILE_BYTES / 3) + 10));
+    symlinkSync('/etc/hosts', join(dir, 'leak.md'));
+    const files = readSkillDir(dir);
+    assert.deepEqual(files.map((f) => f.path), ['SKILL.md', 'big.md'], '符号链接与 node_modules 都不收');
+    assert.equal(files[0].text, '# 甲\n正文。');
+    assert.equal(files[1].text, undefined, '过大的文本文件只列文件名');
+    assert.ok(!files.some((f) => (f.text ?? '').includes('不该被读到')), 'node_modules 里的内容不进提示');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
 
 // ---------- 产出解析 ----------
 assert.deepEqual(parseOutput(`<<<成品>>>\n${'数'.repeat(300)}\n<<<结束>>>`), { ok: true, body: '数'.repeat(300), reason: '' });
@@ -259,6 +296,17 @@ const SELFTEST_CANDIDATE = {
   trigger: '帮我写教案', examples: ['帮我写一节数轴的教案'],
   audit: { network: 'none', credentials: false, studentData: 'none', overRead: false },
 };
+/** 家校沟通品类的自测候选：没有版本号，该用提交号前七位顶上 */
+const LETTER_CANDIDATE = {
+  slug: 'selftest-letter', title: '自测家校信', category: 'home-school',
+  does: '命令行自测用的假技能。', summary: '不是真技能，只用来把命令行走一遍。',
+  dir: 'scripts/skilllab/fixtures/selftest-skill', origin: 'own',
+  source: { kind: 'own', author: '自测', url: 'https://example.invalid/selftest-letter', commit: 'abcdef1234567890' },
+  distribution: 'link', platforms: ['generic'], composition: 'prompt', requires: [],
+  install: { workbuddy: ['打开来源页', '进入技能页', '上传技能包'] },
+  trigger: '帮我给家长写一封信', examples: ['帮我给全班家长写一封信'],
+  audit: { network: 'none', credentials: false, studentData: 'none', overRead: false },
+};
 const cli = (...args) => execFileSync(process.execPath, ['scripts/skilllab.mjs', ...args], { encoding: 'utf8' });
 const cliErr = (...args) => {
   try {
@@ -269,11 +317,11 @@ const cliErr = (...args) => {
   }
 };
 const cleanup = () => {
-  for (const p of [EVALD, LABD, ENTRIES, 'public/skill-reports/selftest-skill']) rmSync(p, { recursive: true, force: true });
+  for (const p of [EVALD, LABD, ENTRIES, 'public/skill-reports/selftest-skill', 'public/skill-reports/selftest-letter']) rmSync(p, { recursive: true, force: true });
 };
 /** 评审结果要能在产出里找到引文才不会被当成可疑，样例产出全是「数」，引文就写「数」 */
-const outputJudgement = () => {
-  const j = judge([], 2, 0);
+const outputJudgement = (edits = 2) => {
+  const j = judge([], edits, 0);
   for (const c of j.checklist) c.quote = '数';
   for (const e of [...j.edits, ...j.severe]) e.quote = '数';
   return j;
@@ -286,6 +334,29 @@ const raw = (sessionId, seconds, toolUses = 0) => ({
   endedAt: new Date(Date.parse('2026-11-24T10:00:00Z') + seconds * 1000).toISOString(),
   finalText: `<<<成品>>>\n${'数'.repeat(400)}\n<<<结束>>>`,
 });
+/** 任意品类的合格评审样例：检查单全过，修改处各带引文 */
+const judgementFor = (category, edits = 2) => ({
+  checklist: CHECKLISTS[category].map((c) => ({ id: c.id, pass: true, quote: '数', note: '' })),
+  edits: Array.from({ length: edits }, () => ({ quote: '数', problem: '要改' })),
+  severe: [],
+});
+const GOOD_BODY = [
+  '#### 输出样例', '', '这里是自测用的输出样例文字，只占位置，要写够四十字才能通过正文两节的长度检查，所以再多写几个字。', '',
+  '#### 修改处清单', '', '这里是自测用的修改处说明，只占位置，要写够四十字才能通过正文两节的长度检查，所以再多写几个字。', '',
+  '#### 我看到的', '', '这里是自测用的观察记录，只占位置，要写够四十字才能通过正文两节的长度检查，所以再多写几个字。',
+].join('\n');
+/** 命令行写出的条目要过得了站内的校验：把该由人来写的字段填上之后，schema、交叉规则、按证据重算三样都不许报错 */
+const validateEntry = (slug) => {
+  const { data } = parseFrontmatter(readFileSync(`${ENTRIES}/${slug}.md`, 'utf8'));
+  data.score.verdict = '自测用的一句话理由，写够长度，不含填充词。';
+  data.score.weakness = '自测用的一句话短板，写够长度，不含填充词。';
+  const parsed = skillSchema.parse(data);
+  const errors = checkEntry(slug, parsed, GOOD_BODY, { exists: () => true, mtime: () => 1, newestMtime: () => 0 }).errors;
+  assert.deepEqual(errors, [], `条目没过校验：${errors.join('；')}`);
+  assert.deepEqual(recomputeMismatches(parsed), [], '按证据重算，与命令行写出的维度对不上');
+  return data;
+};
+const todoJudge = () => JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length;
 
 cleanup();
 try {
@@ -294,6 +365,7 @@ try {
   writeFileSync(`${EVALD}/screening.json`, JSON.stringify({ scanned: { other: 1 }, items: [{ name: '自测假技能', url: '', source: 'other', category: 'lesson-plan', verdict: 'ran', reason: '自测' }] }));
 
   assert.ok(cli('plan', BATCH, 'free-tier').includes('1 个技能，8 轮运行'));
+  assert.ok(cliErr('plan', BATCH, 'free-tier', '--only', 'nope').includes('找不到'), '--only 里没有的技能要报错');
   const plan = JSON.parse(readFileSync(`${EVALD}/plan-free-tier.json`, 'utf8'));
   assert.equal(plan.runs.length, 8, '一个备课教案技能：主任务 3 轮、副任务 1 轮、对照 4 轮');
   assert.ok(existsSync(`${LABD}/prompts/${plan.runs[0].id}.txt`));
@@ -305,6 +377,7 @@ try {
     assert.equal(todo[0].model, LAYER_MODELS['free-tier']);
     assert.ok(todo[0].prompt.endsWith('/prompts/free-tier-selftest-skill-LP-1-1.txt'));
   }
+  assert.ok(Array.isArray(JSON.parse(cli('todo', BATCH, 'free-tier', '--judge'))), 'todo 省略数量时也能带 --judge');
 
   // 第 2 轮动过工具，作废
   mkdirSync(`${LABD}/raw-free-tier`, { recursive: true });
@@ -322,41 +395,42 @@ try {
   writeFileSync(`${LABD}/raw-free-tier/${retry.id}.json`, JSON.stringify(raw('s2', 120)));
   assert.ok(cli('ingest', BATCH, 'free-tier').includes('有效 8，作废 1'), '重跑后 8 轮有效，作废那轮的记录还留着');
   assert.ok(cli('judge-prompts', BATCH, 'free-tier').includes('8 份评审提示'));
-  assert.equal(JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length, 8, '8 轮待评审');
+  assert.equal(todoJudge(), 8, '8 轮待评审');
 
-  // 评审：全部合格，每轮 2 处修改处；LP-2 那轮的评审会话动过工具，不算
+  // 评审：主任务三轮各 5 处修改，对照三轮各 10 处，副任务一轮 9 处。
+  // LP-2 那轮的评审会话动过工具；LP-1 第 3 轮的交回没报工具调用次数。两份都不算，重新排队。
   mkdirSync(`${LABD}/judge-raw`, { recursive: true });
   for (const f of readdirSync(`${EVALD}/runs/free-tier`)) {
     const rec = JSON.parse(readFileSync(`${EVALD}/runs/free-tier/${f}`, 'utf8'));
     if (!rec.valid) continue;
-    writeFileSync(
-      `${LABD}/judge-raw/${rec.id}.json`,
-      JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement()), ...(rec.id === 'free-tier-selftest-skill-LP-2-1' ? { toolUses: 1 } : {}) })
-    );
+    const edits = rec.kind === 'baseline' ? 10 : rec.task === 'LP-2' ? 9 : 5;
+    const tool = rec.id === 'free-tier-selftest-skill-LP-2-1' ? { toolUses: 1 } : rec.id === 'free-tier-selftest-skill-LP-1-3' ? {} : { toolUses: 0 };
+    writeFileSync(`${LABD}/judge-raw/${rec.id}.json`, JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement(edits)), ...tool }));
   }
   const judgedOnce = cli('ingest-judgements', BATCH, 'free-tier');
-  assert.ok(judgedOnce.includes('评审并入 7 轮') && judgedOnce.includes('动过工具'), judgedOnce);
-  writeFileSync(`${LABD}/judge-raw/free-tier-selftest-skill-LP-2-1.json`, JSON.stringify({ sessionId: 'j1', finalText: JSON.stringify(outputJudgement()) }));
-  const judgedTwice = cli('ingest-judgements', BATCH, 'free-tier');
-  assert.ok(judgedTwice.includes('评审并入 8 轮，引文可疑 0 轮'), judgedTwice);
-  assert.equal(JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length, 0, '都评审过了，待评审清单为空');
+  assert.ok(judgedOnce.includes('评审并入 6 轮') && judgedOnce.includes('动过工具'), judgedOnce);
+  assert.equal(todoJudge(), 2, '被拒的两轮重新排进待评审');
+  assert.ok(existsSync(`${LABD}/judge-raw/free-tier-selftest-skill-LP-2-1.json.rejected`), '被拒的交回文件改名留档');
 
-  // 重复 ingest 不抹掉评审
-  cli('ingest', BATCH, 'free-tier');
-  assert.equal(JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length, 0, '重复 ingest 后评审还在');
-
-  // 引文对不上的评审标为可疑，出分不用它；人看过、点了头才采用
-  const suspicious = outputJudgement();
-  for (const c of suspicious.checklist) c.quote = '产出里没有的一句引文';
-  for (const e of [...suspicious.edits, ...suspicious.severe]) e.quote = '产出里没有的一句引文';
-  writeFileSync(`${LABD}/judge-raw/free-tier-selftest-skill-LP-1-3.json`, JSON.stringify({ sessionId: 'j9', finalText: JSON.stringify(suspicious) }));
-  assert.ok(cli('ingest-judgements', BATCH, 'free-tier').includes('引文可疑 1 轮'));
+  // 引文全是空的评审整份算可疑，出分不用它；人看过、点了头才采用
+  const emptyQuotes = outputJudgement(5);
+  for (const c of emptyQuotes.checklist) c.quote = '';
+  for (const e of [...emptyQuotes.edits, ...emptyQuotes.severe]) e.quote = '';
+  writeFileSync(`${LABD}/judge-raw/free-tier-selftest-skill-LP-1-3.json`, JSON.stringify({ sessionId: 'j9', toolUses: 0, finalText: JSON.stringify(emptyQuotes) }));
+  assert.ok(cli('ingest-judgements', BATCH, 'free-tier').includes('引文可疑 1 轮'), '一条引文都没有的评审是可疑的');
   assert.ok(cliErr('score', BATCH, 'selftest-skill', 'free-tier').includes('引文可疑'), '可疑的轮次不拿来出分');
   cli('trust', BATCH, 'free-tier', 'free-tier-selftest-skill-LP-1-3');
-  assert.ok(cli('ingest-judgements', BATCH, 'free-tier').includes('引文可疑 0 轮'), '人看过之后不再标可疑');
+  writeFileSync(`${LABD}/judge-raw/free-tier-selftest-skill-LP-2-1.json`, JSON.stringify({ sessionId: 'j1', toolUses: 0, finalText: JSON.stringify(outputJudgement(9)) }));
+  const judgedTwice = cli('ingest-judgements', BATCH, 'free-tier');
+  assert.ok(judgedTwice.includes('评审并入 7 轮，引文可疑 0 轮'), judgedTwice);
+  assert.equal(todoJudge(), 0, '都评审过了，待评审清单为空');
+  cli('ingest', BATCH, 'free-tier');
+  assert.equal(todoJudge(), 0, '重复收产出后评审还在');
+
   const printed = cli('score', BATCH, 'selftest-skill', 'free-tier');
   assert.ok(printed.includes('总分'), printed);
   assert.ok(printed.includes('检查单：LP1 LP2'), printed);
+  assert.ok(printed.includes('3 轮平均要改 5 处，不装技能的对照是 10 处，少改 50%'), `副任务那一轮不该进算分：${printed}`);
 
   cli('score', BATCH, 'selftest-skill', 'free-tier', '--write', '--entries-dir', ENTRIES);
   const entry = readFileSync(`${ENTRIES}/selftest-skill.md`, 'utf8');
@@ -364,12 +438,21 @@ try {
   assert.ok(entry.includes('verdict: 待写'), '一句话理由先留待写，读过产出后再补');
   assert.ok(entry.includes('#### 我看到的'));
   assert.ok(existsSync('public/skill-reports/selftest-skill/free-tier/free-tier-selftest-skill-LP-1-1.md'), '原始产出拷到站内目录');
+  const written = validateEntry('selftest-skill');
+  assert.equal(written.score.runs.length, 4, '四轮都存进条目');
+  assert.equal(written.score.dims.value, 5, '省时按主任务三轮算：少改一半，每日任务得 5');
 
   // 同一层级重算：人写的一句话理由与短板保留
   writeFileSync(`${ENTRIES}/selftest-skill.md`, entry.replace('verdict: 待写', 'verdict: 真理由').replace('weakness: 待写', 'weakness: 真短板'));
   cli('score', BATCH, 'selftest-skill', 'free-tier', '--write', '--entries-dir', ENTRIES);
   const rewritten = readFileSync(`${ENTRIES}/selftest-skill.md`, 'utf8');
   assert.ok(rewritten.includes('verdict: 真理由') && rewritten.includes('weakness: 真短板'), '重算不抹掉人写的一句话理由与短板');
+
+  // 条目已经在更高层级时，不用海选的分数覆盖
+  writeFileSync(`${ENTRIES}/selftest-skill.md`, rewritten.replace('layer: free-tier', 'layer: same-model'));
+  assert.ok(cliErr('score', BATCH, 'selftest-skill', 'free-tier', '--write', '--entries-dir', ENTRIES).includes('不用「free-tier」层覆盖'), '低层级不能覆盖高层级');
+  assert.ok(readFileSync(`${ENTRIES}/selftest-skill.md`, 'utf8').includes('layer: same-model'), '拒绝时条目原样不动');
+  cli('score', BATCH, 'selftest-skill', 'free-tier', '--write', '--entries-dir', ENTRIES, '--force-layer');
 
   // 正文引文核对：一句引得到，一句引不到
   writeFileSync(
@@ -407,7 +490,35 @@ try {
   assert.equal(screening.items.length, 4);
   assert.deepEqual(screening.scanned, { skillhub: 900, github: 0, other: 0 });
   const cands = JSON.parse(readFileSync(`${EVALD}/candidates.json`, 'utf8'));
-  assert.deepEqual(cands.map((c) => [c.slug, c.distribution]), [['review-a', 'mirror'], ['review-b', 'link']], '许可证在清单内才镜像');
+  assert.deepEqual(
+    cands.map((c) => [c.slug, c.distribution, c.install.workbuddy[0]]),
+    [
+      ['review-a', 'mirror', '下载技能包'],
+      ['review-b', 'link', '打开来源页，按页面说明取得技能包'],
+    ],
+    '许可证在清单内才镜像；缺省安装步骤按转载方式分'
+  );
+
+  // 家校沟通品类：没有教材标识，也要能出分、过得了校验；没有版本号时用提交号
+  rmSync(`${EVALD}/runs`, { recursive: true, force: true });
+  rmSync(`${LABD}/judge-raw`, { recursive: true, force: true });
+  rmSync(`${LABD}/raw-free-tier`, { recursive: true, force: true });
+  writeFileSync(`${EVALD}/candidates.json`, JSON.stringify([LETTER_CANDIDATE]));
+  assert.ok(cli('plan', BATCH, 'free-tier').includes('1 个技能，6 轮运行'));
+  const letterPlan = JSON.parse(readFileSync(`${EVALD}/plan-free-tier.json`, 'utf8'));
+  mkdirSync(`${LABD}/raw-free-tier`, { recursive: true });
+  for (const r of letterPlan.runs) writeFileSync(`${LABD}/raw-free-tier/${r.id}.json`, JSON.stringify(raw('s', 60)));
+  assert.ok(cli('ingest', BATCH, 'free-tier').includes('有效 6，作废 0'));
+  assert.ok(cli('judge-prompts', BATCH, 'free-tier').includes('6 份评审提示'));
+  mkdirSync(`${LABD}/judge-raw`, { recursive: true });
+  for (const r of letterPlan.runs) {
+    writeFileSync(`${LABD}/judge-raw/${r.id}.json`, JSON.stringify({ sessionId: 'j', toolUses: 0, finalText: JSON.stringify(judgementFor('home-school', r.kind === 'baseline' ? 6 : 2)) }));
+  }
+  assert.ok(cli('ingest-judgements', BATCH, 'free-tier').includes('评审并入 6 轮，引文可疑 0 轮'));
+  cli('score', BATCH, 'selftest-letter', 'free-tier', '--write', '--entries-dir', ENTRIES);
+  const letter = validateEntry('selftest-letter');
+  assert.equal('textbookCheck' in letter.score, false, '家校沟通不出教材核对');
+  assert.equal(letter.score.tested.skillVersion, 'abcdef1', '没有版本号时用提交号前七位');
 } finally {
   cleanup();
 }

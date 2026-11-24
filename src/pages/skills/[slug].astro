@@ -218,7 +218,7 @@ const statusLine = d.status === 'tested' ? `${LAYER_LABEL[s!.tested.layer]} · $
             </div>
 
             {s!.textbookCheck && (
-              <p class="fact">教材抽检：抽 {s!.textbookCheck.total} 个章节核对教材版本与章节，通过 {s!.textbookCheck.passed} 个。</p>
+              <p class="fact">{s!.tested.layer === 'workbuddy' ? `教材抽检：抽 ${s!.textbookCheck.total} 个章节核对教材版本与章节，通过 ${s!.textbookCheck.passed} 个。` : `教材标识核对：${s!.textbookCheck.total} 轮里有 ${s!.textbookCheck.passed} 轮把任务指定的教材版本、年级、章节写全。`}</p>
             )}
 
             <h3 class="sk-h3">静态审查</h3>

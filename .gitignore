@@ -19,3 +19,4 @@ scripts/.visual-review.json
 *.b64.mjs
 public/skills/
 .skilllab/
+src/content/skills/zz-preview-*.md

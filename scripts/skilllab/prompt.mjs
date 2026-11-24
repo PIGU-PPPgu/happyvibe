@@ -2,7 +2,7 @@
 // 纯函数加只读的目录读取，node 可直跑（scripts/test_skilllab.mjs）。设计见
 // docs/superpowers/specs/2026-11-24-skill-eval-background-harness-design.md §4.2、§4.3
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
 import { TASKS } from '../../src/data/skill-standard.ts';
 
@@ -20,6 +20,10 @@ export const SKILL_TEXT_LIMIT = 30000;
 /** 产出少于这个字数不算有效 */
 export const MIN_OUTPUT_CHARS = 300;
 const TEXT_EXT = new Set(['.md', '.txt', '.json', '.yaml', '.yml', '.csv', '.xml', '.html', '.css']);
+/** 单个文本文件超过这个字节数就不带内容，只列文件名 */
+export const MAX_FILE_BYTES = 200000;
+/** 文件清单最多列这么多条 */
+export const MAX_LISTING = 200;
 const OPEN = '<<<成品>>>';
 const CLOSE = '<<<结束>>>';
 
@@ -33,10 +37,12 @@ export function readSkillDir(dir) {
     for (const e of readdirSync(d, { withFileTypes: true })) {
       const p = join(d, e.name);
       if (e.isDirectory()) {
-        if (e.name !== '.git') walk(p);
-      } else {
+        if (e.name !== '.git' && e.name !== 'node_modules') walk(p);
+      } else if (e.isFile()) {
+        // 符号链接不跟：它可能指向技能目录之外的任何文件
         const path = relative(dir, p);
-        files.push(TEXT_EXT.has(extname(e.name).toLowerCase()) ? { path, text: readFileSync(p, 'utf8') } : { path });
+        const text = TEXT_EXT.has(extname(e.name).toLowerCase()) && statSync(p).size <= MAX_FILE_BYTES;
+        files.push(text ? { path, text: readFileSync(p, 'utf8') } : { path });
       }
     }
   };
@@ -62,7 +68,8 @@ export function skillBlock(unsorted) {
     used += body.length;
     parts.push(`--- 文件 ${f.path} ---\n${body}`);
   }
-  const listing = [...texts.map((f) => `- ${f.path}`), ...others.map((p) => `- ${p}（脚本或二进制，不带内容）`)];
+  const all = [...texts.map((f) => `- ${f.path}`), ...others.map((p) => `- ${p}（脚本、二进制或过大的文件，不带内容）`)];
+  const listing = all.length > MAX_LISTING ? [...all.slice(0, MAX_LISTING), `- …另有 ${all.length - MAX_LISTING} 个文件`] : all;
   return {
     text: `<<<技能说明\n文件清单：\n${listing.join('\n')}\n\n${parts.join('\n\n')}\n技能说明>>>`,
     truncated,
