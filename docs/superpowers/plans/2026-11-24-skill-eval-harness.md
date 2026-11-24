@@ -284,7 +284,7 @@ const LAYER_KEYS = ['workbuddy', 'same-model', 'free-tier'] as [LayerKey, ...Lay
               /** 原始产出的站内路径 */
               output: z
                 .string()
-                .regex(/^\/skill-reports\/[a-z0-9][a-z0-9-]*\/[a-z0-9-]+\/[a-z0-9.-]+\.md$/, '要写成 /skill-reports/<slug>/<层级>/<轮次>.md')
+                .regex(/^\/skill-reports\/[a-z0-9][a-z0-9-]*\/[a-z0-9-]+\/[A-Za-z0-9.-]+\.md$/, '要写成 /skill-reports/<slug>/<层级>/<轮次>.md')
                 .optional(),
             })
           )
@@ -335,7 +335,7 @@ cd ~/src/happyvibe && git add src/data/skill-schema.ts scripts/test_check_skills
 ### Task 3: 校验规则补三条
 
 **Files:**
-- Modify: `scripts/lib/check_skills_core.mjs`、`scripts/check_skills.mjs`
+- Modify: `scripts/lib/check_skills_core.mjs`
 - Test: `scripts/test_check_skills.mjs`
 
 **Interfaces:**
