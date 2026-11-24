@@ -91,7 +91,7 @@ assert.ok(STANDARD.changes[0].startsWith('1.1（'), '变更记录最新的写在
 - [ ] **Step 2: 跑一下，确认失败**
 
 Run: `cd ~/src/happyvibe && node scripts/test_check_skills.mjs`
-Expected: 抛出 `TypeError: Cannot read properties of undefined (reading 'map')`，因为 `LAYERS` 还不存在。
+Expected: 加载 `scripts/test_check_skills.mjs` 时报 `SyntaxError: The requested module '…/skill-standard.ts' does not provide an export named 'LAYERS'`，因为 `LAYERS` 还不存在。
 
 - [ ] **Step 3: 加 `LAYERS`**
 
@@ -158,7 +158,7 @@ export const TERMS: readonly { term: string; meaning: string }[] = [
   { term: '修改处', meaning: '老师必须改动才能用的一处。错别字一句算一处；缺一个必备栏目算一处；一段空话算一处。每处在评测档案里列出来。' },
   { term: '严重错误', meaning: '老师没发现就会交上去的错误，如公式算错、编造课标条目、数据对不上。' },
   { term: '触发', meaning: '不点名技能，只按老师平时说话的方式发出任务，技能被调用记为触发。后台点名加载时不测这一项，标「触发未测」。' },
-  { term: '对照', meaning: '不装技能，同一任务、同一模型、新会话各跑一遍，作为「不装技能」的参照。' },
+  { term: '对照', meaning: '不装技能，同一任务、同一模型，各开新会话跑 3 轮取平均，作为「不装技能」的参照。' },
   { term: '实测层级', meaning: '分数在哪一层测出来的：WorkBuddy 实测、同款复核、免费档海选。层级只决定用哪份证据当主分，不参与算分。' },
   { term: '点名加载', meaning: '把技能说明直接写进提示。技能一定被用到，但它会不会被自动调用没有测。' },
   { term: '抽检', meaning: '每个批次随机抽两成已评审的产出，由人按同一口径重判。对不上就整批重判。' },
