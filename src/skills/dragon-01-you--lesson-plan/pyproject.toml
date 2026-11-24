@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lesson-plan-skill"
+version = "1.0.0"
+description = "AI-Powered Lesson Plan Generator for Claude Code"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Dragon-01-you", email = "your-email@example.com"},
+]
+keywords = [
+    "lesson-plan",
+    "ai",
+    "claude-code",
+    "education",
+    "teaching",
+    "bloom-taxonomy",
+    "differentiation",
+    "教案",
+    "教学设计",
+    "人工智能",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/Dragon-01-you/lesson-plan-skill"
+Documentation = "https://github.com/Dragon-01-you/lesson-plan-skill#readme"
+Repository = "https://github.com/Dragon-01-you/lesson-plan-skill"
+Issues = "https://github.com/Dragon-01-you/lesson-plan-skill/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "ruff>=0.1.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py38"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]

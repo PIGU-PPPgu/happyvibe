@@ -1,0 +1,107 @@
+{
+  "version": "0.1",
+  "description": "备课/写教案 Skill 评估用例",
+  "evals": [
+    {
+      "id": "basic-math",
+      "name": "基础数学教案",
+      "input": "帮我写一份小学三年级数学《两位数乘法》的教案",
+      "expected": {
+        "subject": "数学",
+        "grade": "3",
+        "topic": "两位数乘法",
+        "duration": 45,
+        "required_sections": ["教学目标", "学习周期", "课前测验", "课后测验", "差异化教学"],
+        "bloom_verbs": ["运用", "计算", "解决"],
+        "time_sum": 45
+      }
+    },
+    {
+      "id": "physics-high",
+      "name": "高中物理教案",
+      "input": "帮我写一份高一物理《牛顿第二定律》的教案，45分钟",
+      "expected": {
+        "subject": "物理",
+        "grade": "10",
+        "topic": "牛顿第二定律",
+        "duration": 45,
+        "required_sections": ["教学目标", "学习周期", "前置知识", "关键学习点", "常见误解", "关键词", "课前测验", "课后测验", "差异化教学"],
+        "bloom_verbs": ["解释", "运用", "计算", "分析"],
+        "misconceptions": true,
+        "time_sum": 45
+      }
+    },
+    {
+      "id": "chinese-middle",
+      "name": "初中语文教案",
+      "input": "帮我设计一节初二语文《背影》的课",
+      "expected": {
+        "subject": "语文",
+        "grade": "8",
+        "topic": "背影",
+        "duration": 45,
+        "required_sections": ["教学目标", "学习周期", "课前测验", "课后测验"],
+        "bloom_verbs": ["分析", "评价", "解释"],
+        "time_sum": 45
+      }
+    },
+    {
+      "id": "english-primary",
+      "name": "小学英语教案",
+      "input": "帮我写一份小学四年级英语《My Family》的教案，30分钟",
+      "expected": {
+        "subject": "英语",
+        "grade": "4",
+        "topic": "My Family",
+        "duration": 30,
+        "required_sections": ["教学目标", "学习周期", "差异化教学"],
+        "differentiation": ["ELL", "SPED", "Gifted"],
+        "time_sum": 30
+      }
+    },
+    {
+      "id": "no-grade",
+      "name": "未指定年级",
+      "input": "帮我写一份数学《分数》的教案",
+      "expected": {
+        "should_ask": "年级",
+        "subject": "数学",
+        "topic": "分数"
+      }
+    },
+    {
+      "id": "with-style",
+      "name": "带风格配置",
+      "input": "帮我写一份高中化学《氧化还原反应》的教案，参考我的教学风格",
+      "expected": {
+        "subject": "化学",
+        "grade": "10-12",
+        "topic": "氧化还原反应",
+        "style_analysis": true
+      }
+    },
+    {
+      "id": "ppt-request",
+      "name": "要求生成PPT",
+      "input": "帮我做一节初中物理《光的折射》的教案和PPT",
+      "expected": {
+        "subject": "物理",
+        "grade": "7-9",
+        "topic": "光的折射",
+        "outputs": ["教案", "PPT"],
+        "ppt_format": "MARP"
+      }
+    },
+    {
+      "id": "full-package",
+      "name": "完整课程包",
+      "input": "帮我写一份高中生物《细胞分裂》的教案，需要学生讲义、测验和评分标准",
+      "expected": {
+        "subject": "生物",
+        "grade": "10-12",
+        "topic": "细胞分裂",
+        "outputs": ["教案", "学生讲义", "测验", "评分标准"]
+      }
+    }
+  ]
+}

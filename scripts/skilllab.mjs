@@ -529,13 +529,16 @@ function toCandidate(r, entriesDir) {
   const file = `${entriesDir}/${r.slug}.md`;
   const fromEntry = existsSync(file) ? parseFrontmatter(readFileSync(file, 'utf8')).data : {};
   const kind = r.source === 'other' ? 'own' : r.source;
+  // 只有开源仓库的技能才镜像。SkillHub 的协议不许转载，那里的技能一律只评不转，说明书里写了开源许可也一样
+  const mirror = kind !== 'skillhub' && Boolean(r.license && MIRROR_LICENSES.includes(r.license));
   const c = {
     slug: r.slug,
     title: r.title,
     category: r.category,
     does: r.does,
     summary: r.summary,
-    dir: r.dir,
+    // 已经镜像进站内的，以站内那份为准：实测用的就是将来发布的内容
+    dir: existsSync(`src/skills/${r.slug}/SKILL.md`) ? `src/skills/${r.slug}` : r.dir,
     origin: kind,
     source: {
       kind,
@@ -547,11 +550,11 @@ function toCandidate(r, entriesDir) {
       ...(r.license ? { license: r.license } : {}),
       ...(r.version ? { version: r.version } : {}),
     },
-    distribution: r.license && MIRROR_LICENSES.includes(r.license) ? 'mirror' : 'link',
+    distribution: mirror ? 'mirror' : 'link',
     platforms: r.platforms ?? ['workbuddy', 'generic'],
     composition: r.composition ?? 'prompt',
     requires: r.requires ?? [],
-    install: r.install ?? DEFAULT_INSTALL[r.license && MIRROR_LICENSES.includes(r.license) ? 'mirror' : 'link'],
+    install: r.install ?? DEFAULT_INSTALL[mirror ? 'mirror' : 'link'],
     trigger: r.trigger ?? '',
     examples: r.examples ?? [],
     cautions: r.cautions ?? [],
@@ -566,7 +569,7 @@ function toCandidate(r, entriesDir) {
   return c;
 }
 
-/** 汇总人工复核记录：写初筛名单与候选表。候选表按品类上限截取，同品类里评分高的先进，同分按名称顺序。
+/** 汇总人工复核记录：写初筛名单与候选表。候选表按品类上限截取：同品类里评分高的先进，同分时站内已有条目的先进，再按名称顺序。
  *  技能说明逐字相同的几份只测一份：已有条目的优先，其次自带许可证文本的（多半是原版），再次名称靠前的。
  *  这一步不看评分：同文的两份评分不同，只是复核的人不同。 */
 function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
@@ -598,7 +601,8 @@ function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
   const kept = {};
   const candidates = [];
   const items = records
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || String(a.slug ?? a.name).localeCompare(String(b.slug ?? b.name)))
+    // 同分时站内已有条目的先进：它们已经挂在工坊里，该先测
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || hasEntry(b) - hasEntry(a) || String(a.slug ?? a.name).localeCompare(String(b.slug ?? b.name)))
     .map((r) => {
       let verdict = r.verdict;
       let reason = r.why ?? '';

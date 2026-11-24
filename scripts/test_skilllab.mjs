@@ -617,14 +617,16 @@ try {
   mkdirSync('scripts/skilllab/fixtures/selftest-skill-copy', { recursive: true });
   writeFileSync('scripts/skilllab/fixtures/selftest-skill-copy/SKILL.md', readFileSync(`${skillDir}/SKILL.md`, 'utf8').replace(/\n/g, '\r\n\r\n'));
   writeFileSync(`${LABD}/review/e.json`, JSON.stringify({ ...review('review-e'), rating: 3, dir: 'scripts/skilllab/fixtures/selftest-skill-copy' }));
+  // SkillHub 上的技能一律只评不转，说明书里写了 MIT 也一样
+  writeFileSync(`${LABD}/review/f.json`, JSON.stringify({ ...review('review-f'), source: 'skillhub', dir: '' }));
   writeFileSync(`${LABD}/scan/skillhub.json`, JSON.stringify({ unique: 900 }));
   // 静态审查的输出也放在 review 目录里，它不是复核记录
   writeFileSync(`${LABD}/review/review-a.audit.json`, JSON.stringify({ files: ['SKILL.md'], risks: [] }));
   const merged = cli('review-merge', BATCH);
-  assert.ok(merged.includes('候选 2 个'), merged);
+  assert.ok(merged.includes('候选 3 个'), merged);
   const screening = JSON.parse(readFileSync(`${EVALD}/screening.json`, 'utf8'));
-  assert.equal(screening.reviewed, 5);
-  assert.equal(screening.items.length, 5);
+  assert.equal(screening.reviewed, 6);
+  assert.equal(screening.items.length, 6);
   assert.ok(screening.items.find((x) => x.name === '复核 review-e').reason.includes('与 review-a 的技能说明逐字相同'), '重复的技能说明只测一份');
   assert.deepEqual(screening.scanned, { skillhub: 900, github: 0, other: 0 });
   const cands = JSON.parse(readFileSync(`${EVALD}/candidates.json`, 'utf8'));
@@ -633,8 +635,9 @@ try {
     [
       ['review-a', 'mirror', '下载技能包'],
       ['review-b', 'link', '打开来源页，按页面说明取得技能包'],
+      ['review-f', 'link', '打开来源页，按页面说明取得技能包'],
     ],
-    '许可证在清单内才镜像；缺省安装步骤按转载方式分'
+    '许可证在清单内才镜像；SkillHub 的只评不转；缺省安装步骤按转载方式分'
   );
 
   // 家校沟通品类：没有教材标识，也要能出分、过得了校验；没有版本号时用提交号
