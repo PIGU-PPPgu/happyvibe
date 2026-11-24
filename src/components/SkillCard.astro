@@ -3,7 +3,7 @@
  * 已实测技能的卡片：名称、替你做什么、总分与档位、五维小条、一句话理由、平台与证据标记。
  */
 import { DIMS } from '../data/skill-standard';
-import { EVIDENCE_LABEL, PLATFORM_LABEL, categoryLabel } from '../lib/skillLabels';
+import { EVIDENCE_LABEL, LAYER_LABEL, PLATFORM_LABEL, categoryLabel } from '../lib/skillLabels';
 import type { ScoredSkill } from '../lib/skillEntries';
 import { withBase } from '../lib/urls';
 
@@ -38,7 +38,7 @@ const platforms = data.platforms.map((p) => PLATFORM_LABEL[p] ?? p).join('、');
 
   <div class="sk-foot">
     <span class="badge cat">{categoryLabel(data.category)}</span>
-    <span class="foot-text">{platforms} · {EVIDENCE_LABEL[data.score.tested.by]} · {data.score.tested.date}</span>
+    <span class="foot-text">{platforms} · {LAYER_LABEL[data.score.tested.layer]} · {EVIDENCE_LABEL[data.score.tested.by]} · {data.score.tested.date}</span>
     <a class="go" href={detail}>查看详情 →</a>
   </div>
 </article>

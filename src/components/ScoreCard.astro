@@ -5,7 +5,7 @@
  */
 import { DIMS } from '../data/skill-standard';
 import type { ScoreFrontmatter } from '../data/skill-schema';
-import { EVIDENCE_LABEL, envLine } from '../lib/skillLabels';
+import { EVIDENCE_LABEL, LAYER_LABEL, envLine } from '../lib/skillLabels';
 import type { Dims } from '../lib/skillScore';
 
 interface Props {
@@ -16,9 +16,10 @@ interface Props {
   tested: ScoreFrontmatter['tested'];
   platformScore?: { score: number; url: string };
   overrides?: ScoreFrontmatter['overrides'];
+  prior?: ScoreFrontmatter['prior'];
 }
 
-const { total, tier, dims, notes, tested, platformScore, overrides = [] } = Astro.props;
+const { total, tier, dims, notes, tested, platformScore, overrides = [], prior } = Astro.props;
 const strong = total >= 8;
 ---
 
@@ -27,6 +28,12 @@ const strong = total >= 8;
     <p class="score-num"><span class="n">{total.toFixed(1)}</span><span class="of mono">/ 10</span></p>
     <span class="tier">{tier}</span>
   </div>
+
+  <p class="layer-line">
+    <span class="layer">{LAYER_LABEL[tested.layer]}</span>
+    {tested.loadedBy === 'named' && <span class="untested">触发未测</span>}
+  </p>
+  {prior && <p class="prior">{LAYER_LABEL[prior.layer]} {prior.total.toFixed(1)}，{LAYER_LABEL[tested.layer]} {total.toFixed(1)}</p>}
 
   <ul class="bars">
     {DIMS.map((d) => (
@@ -67,6 +74,16 @@ const strong = total >= 8;
     font-size: 15px; font-weight: 600; padding: 3px 12px; border-radius: 999px;
     border: 1px solid var(--line-strong); color: var(--text-muted); white-space: nowrap;
   }
+  .layer-line { margin: -6px 0 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .layer {
+    font-size: 12.5px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+    border: 1px solid var(--line-strong); color: var(--text); white-space: nowrap;
+  }
+  .untested {
+    font-size: 12.5px; padding: 2px 10px; border-radius: 999px;
+    border: 1px dashed var(--line-strong); color: var(--text-muted); white-space: nowrap;
+  }
+  .prior { margin: 0 0 14px; font-size: 13px; color: var(--text-faint); }
   .score-card.strong .tier { border-color: var(--line-gold); color: var(--gold-soft); }
 
   .bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }

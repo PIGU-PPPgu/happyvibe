@@ -1,6 +1,6 @@
 // 技能条目里各个枚举值在页面上显示的名字。纯数据，页面共用。
 import type { CategoryKey } from '../data/skill-standard.ts';
-import { CATEGORIES } from '../data/skill-standard.ts';
+import { CATEGORIES, LAYERS } from '../data/skill-standard.ts';
 import type { Evidence, DimKey } from './skillScore.ts';
 import { DIMS } from '../data/skill-standard.ts';
 
@@ -31,6 +31,12 @@ export const EVIDENCE_LABEL: Record<string, string> = {
   ai: 'AI 代测',
   teacher: '教师试用',
 };
+
+/** 实测层级在页面上的名字 */
+export const LAYER_LABEL: Record<string, string> = Object.fromEntries(LAYERS.map((l) => [l.key, l.label]));
+
+/** 层级高低，数字越大越可信 */
+export const LAYER_RANK: Record<string, number> = { 'free-tier': 1, 'same-model': 2, workbuddy: 3 };
 
 export const STATUS_LABEL: Record<string, string> = {
   tested: '已实测',
