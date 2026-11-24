@@ -13,6 +13,7 @@
     "check:interactives": "node scripts/check_interactives.mjs",
     "check:links": "node scripts/check_links.mjs",
     "test:score": "node scripts/test_skill_score.mjs && node scripts/test_check_skills.mjs",
+    "test:skilllab": "node scripts/test_skilllab.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "optimize:images": "node scripts/optimize_images.mjs",
