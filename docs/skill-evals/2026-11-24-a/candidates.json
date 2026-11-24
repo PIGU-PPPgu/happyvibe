@@ -1,0 +1,1702 @@
+[
+ {
+  "slug": "edupi--04-grade-analysis-summary",
+  "title": "成绩分析结论",
+  "category": "analysis",
+  "does": "把成绩、排名和进退步情况整理成班级成绩分析结论稿",
+  "summary": "一次考试后整理成班级整体、重点学生、进退步等分析结论，可出家长会版和年级组汇报版；没有对比数据时只做本次横向结论。 目录里有说明书、templates.md 和脱敏样例。",
+  "dir": ".skilllab/2026-11-24-a/fetched/edupi--04-grade-analysis-summary",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/04-grade-analysis-summary",
+   "repo": "PIGU-PPPgu/edupi",
+   "path": "skills/04-grade-analysis-summary",
+   "commit": "fc89b3bc899a55b0fdad61b8f37e238d950f37c6"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我把这次月考成绩整理成班级分析",
+  "examples": [
+   "这是期中成绩表，帮我找出进步最大、退步明显和重点关注的学生。"
+  ],
+  "cautions": [
+   "SKILL.md 要求输出风格遵循 skills/_shared/VOICE_ANCHOR.md，该文件在仓库 skills/ 目录下，不在技能目录里",
+   "仓库 EduPi 是研究型智能体运行时，这些技能是其中 skills/ 目录下的场景说明，可单独使用",
+   "frontmatter 的 name 是数字开头的目录名"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "satloot-score-analysis",
+  "title": "成绩统计分析",
+  "category": "analysis",
+  "does": "把考试成绩 Excel 或 CSV 算成平均分、及格率、优秀率、分数段、小题得分率和班级对比，另存为带图的新 Excel。",
+  "summary": "产出一个新的 Excel 工作簿，含小结、汇总、分数段、小题得分率、班级对比和进退步多个工作表及柱状图，原表不改。适合中小学教师做考后质量分析和试卷讲评。前提是本机有 Python 3.8+ 和 openpyxl；全程本机处理，不联网，不做排名榜。",
+  "dir": ".skilllab/2026-11-24-a/fetched/satloot-score-analysis",
+  "origin": "skillhub",
+  "source": {
+   "kind": "skillhub",
+   "author": "satloot",
+   "url": "https://skillhub.cn/skills/user_9b6e0382/satloot-score-analysis",
+   "version": "0.1.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我统计一下这次月考成绩",
+  "examples": [
+   "这是这次月考的成绩表，帮我算各科和总分的平均分、及格率、优秀率和分数段。",
+   "这是本次和上次的成绩表，比一比谁进步大、谁退步大。"
+  ],
+  "cautions": [
+   "这个技能的价值主要靠脚本实现，后台实测只评了它的文字指引",
+   "说明书引用的 scripts/score_analysis.py 和 references/compliance.md 未取回，未做审查，静态审查只看到 SKILL.md。",
+   "需要本机有 Python 3.8+ 和 openpyxl；缺组件时只提示安装命令，由老师决定是否安装。",
+   "说明书自带合规约束：不做排名榜，不做发家长群的成绩单，结果文件只供教师内部使用。",
+   "不读老版本 .xls 和 WPS 的 .et 文件，不处理两行合并的复杂表头。"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": true
+ },
+ {
+  "slug": "teacher-a1-diagnosis",
+  "title": "学情诊断",
+  "category": "analysis",
+  "does": "根据测评卷、作业或口头描述评估学生掌握度、薄弱点和最近发展区，生成学生画像",
+  "summary": "教学全流程的教前环节，按五类错因归因，把画像写到共享文件 state/<学生名>.json 并用脚本校验。面向带班或一对一教学的教师，全学科通用；需要和总协调器 teacher-workflow 放在同一目录。",
+  "dir": ".skilllab/2026-11-24-a/fetched/teacher-workflow-skills--teacher-a1-diagnosis",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a1-diagnosis",
+   "repo": "huapg/teacher-workflow-skills",
+   "path": "teacher-a1-diagnosis",
+   "commit": "31871dbd6c917f8c24fdadb94dcb6dcfe5cd0e6c",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我摸一下底，看看这个学生现在什么水平",
+  "examples": [
+   "这是学生的一份测评卷，帮我诊断薄弱点，给出最近发展区和教学起点。"
+  ],
+  "cautions": [
+   "依赖同仓库的 teacher-workflow 技能目录（相对路径 ../teacher-workflow/references 与 state），需要整套安装",
+   "画像文件以学生姓名命名，存在 teacher-workflow/state/ 下；写入后要运行 python ../teacher-workflow/scripts/validate_profile.py 校验"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": true
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "teacher-a7-error-attribution",
+  "title": "错题归因",
+  "category": "analysis",
+  "does": "对学生错题判断错在哪里并归入五类错因，给出订正说明和同类题建议",
+  "summary": "教学全流程的教中环节，先看学生的作答过程定位断点，再归因到概念、审题、计算、公式、变式五类，并把结论回写学生画像。全学科通用。",
+  "dir": ".skilllab/2026-11-24-a/fetched/teacher-workflow-skills--teacher-a7-error-attribution",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a7-error-attribution",
+   "repo": "huapg/teacher-workflow-skills",
+   "path": "teacher-a7-error-attribution",
+   "commit": "31871dbd6c917f8c24fdadb94dcb6dcfe5cd0e6c",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "这道题学生老是错，帮我分析是哪一类原因",
+  "examples": [
+   "这是学生的错题和作答过程，帮我归因并给出订正说明和同类题。"
+  ],
+  "cautions": [
+   "依赖同仓库的 teacher-workflow 技能目录（相对路径 ../teacher-workflow/references 与 state），需要整套安装",
+   "画像文件以学生姓名命名，存在 teacher-workflow/state/ 下；写入后要运行 python ../teacher-workflow/scripts/validate_profile.py 校验"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": true
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "xiaozhi-teach-student-analyzer",
+  "title": "学情分析师",
+  "category": "analysis",
+  "does": "把班级成绩表变成班级画像、知识点得分率、分层和教学调整建议",
+  "summary": "适合小学到高中。输入成绩表后输出学情报告、知识点得分率和讲评重点。只用学号或化名，不写学生真实姓名，也不做公开排名。",
+  "dir": "src/skills/xiaozhi-teach-student-analyzer",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "repo": "qizhitang/xiaozhi-skills",
+   "path": "teacher/general/xiaozhi-teach-student-analyzer",
+   "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/general/xiaozhi-teach-student-analyzer",
+   "commit": "40a2d005219d",
+   "license": "MIT",
+   "version": "2.12.7",
+   "author": "小智伴学"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "claude-code",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我分析这次单元练习的逐题得分，哪些知识点得分率最低",
+  "examples": "这是八年级数学一次函数单元练习的逐题得分表，第一列是座号，最后一行是每题满分。帮我算每个知识点的得分率和逐题难度，并给出分层和下周教学建议。",
+  "cautions": [
+   "声明依赖平台能力 M、X、F、K；没有 F 时由老师直接粘贴文本表格，没有 X 时不输出跨次对比",
+   "成绩表第一列只填学号或座号，正文禁止填真实姓名",
+   "逐题统计和分层结果先生成待确认条目，老师确认后才写入班级工作区",
+   "启用前的统考试题和试测成绩按正文要求不得输入"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "xueqingfenxi",
+  "title": "学情分析专家",
+  "category": "analysis",
+  "does": "根据前测、作业或单元测验数据统计逐题得分率和错因，生成一份 Word 版学情分析报告。",
+  "summary": "产出含核心发现、整体概况、逐题与知识点分析、共性问题、需个别关注的学生、教学建议和教案用学情分析的 Word 报告。适合中小学教师备课时确定教学起点，或讲评课找问题。前提是本机有 Python 及 pandas 等库；没有数据时改为帮教师设计前测题和数据模板。",
+  "dir": ".skilllab/2026-11-24-a/fetched/xueqingfenxi",
+  "origin": "skillhub",
+  "source": {
+   "kind": "skillhub",
+   "author": "",
+   "url": "https://skillhub.cn/skills/user_b0ac8c86/xueqingfenxi",
+   "version": "2.0.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python",
+   "platform-tool"
+  ],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我做一份这次单元测验的学情分析",
+  "examples": [
+   "这是五年级数学分数的意义单元测验的得分表，帮我分析错因，出一份学情分析报告。",
+   "我下周要讲小数除法，还没有前测数据，帮我设计前测题和数据模板。"
+  ],
+  "cautions": [
+   "这个技能的价值主要靠脚本实现，后台实测只评了它的文字指引",
+   "说明书引用的 scripts/、references/、assets/ 和 examples/ 未取回，未做审查；需要 Python 及 pandas 等库，说明书没有列全。",
+   "第 5、6 步引用平台专用路径 /mnt/skills/public/docx/SKILL.md 和 SendUserFile 工具，其他环境要换成自己的文件交付方式。",
+   "前测设计模式下还要另外生成 Word 前测题。"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": true
+ },
+ {
+  "slug": "china-k12-teacher-skills--china-k12-check-understanding",
+  "title": "中国 K12 理解检测",
+  "category": "assignment",
+  "does": "为一个学习目标设计 1 到 3 道形成性理解检测题，并告诉老师每种回答说明学生卡在哪、下一步怎么教",
+  "summary": "用真实误解构造选项或短任务，附教师读数指南和交付前的质量门。说明书明确这不是十题测验或考试卷；目录里只有说明书。",
+  "dir": ".skilllab/2026-11-24-a/fetched/china-k12-teacher-skills--china-k12-check-understanding",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/china-k12-check-understanding",
+   "repo": "myvipbackup2/china-k12-teacher-skills",
+   "path": "skills/china-k12-check-understanding",
+   "commit": "f1c6c4420e7d90d3f9daf9fc204a0a26230921d6",
+   "license": "Apache-2.0"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我出一道检测题，看看学生听懂分数意义没有",
+  "examples": [
+   "我要教三年级“周长”，帮我设计两道能看出学生误区的小检测。"
+  ],
+  "cautions": [],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "doubao-quiz-generator",
+  "title": "测验题目生成",
+  "category": "assignment",
+  "does": "按学习主题、年级和用途生成不同难度的选择题、判断题与简答题，附答案与解析",
+  "summary": "英文技能，先确认主题、年级和用途，再按形成性检测、单元测验等目的出题，干扰项要求来自真实误解。纯文字技能，没有附属文件；来自个人导出的豆包办公内置技能归档，仓库没有许可证。",
+  "dir": ".skilllab/2026-11-24-a/fetched/doubao-workbuddy-qwenwork-skills--doubao--quiz-generator",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/doubao/skills/quiz-generator",
+   "repo": "ahang1598/doubao-workbuddy-qwenwork-skills",
+   "path": "doubao/skills/quiz-generator",
+   "commit": "83f3fd6a0d8d31a6d6fff86fef72ba8aa236e3ad"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我出一组分数加减法的测验题",
+  "examples": [
+   "Give my 5th graders a 10-question quiz on adding fractions with unlike denominators, with answer key."
+  ],
+  "cautions": [
+   "英文技能",
+   "来自个人导出的豆包办公内置技能归档，仓库没有许可证，原始出处是豆包办公平台"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "education-agent-skills--criterion-referenced-rubric-generator",
+  "title": "评分量规",
+  "category": "assignment",
+  "does": "为一项任务或学习目标生成带描述性等级的评分量规",
+  "summary": "英文技能，说明书带证据来源、输入输出字段、提示词和示例输出。面向英语课堂的中小学教师，只产出题目或评价工具文本，不依赖脚本或外部接口。",
+  "dir": ".skilllab/2026-11-24-a/fetched/education-agent-skills--criterion-referenced-rubric-generator",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/criterion-referenced-rubric-generator",
+   "repo": "GarethManning/education-agent-skills",
+   "path": "skills/curriculum-assessment/criterion-referenced-rubric-generator",
+   "commit": "135d6275e7db0657d70b147f46d3191c5430677d",
+   "version": "1.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我给这份写作任务做评分量规",
+  "examples": [
+   "给七年级的议论文写作任务生成一份四级评分量规。"
+  ],
+  "cautions": [
+   "英文技能，示例按英语课堂的年级和学科写",
+   "仓库许可证在 GitHub 上识别为 NOASSERTION",
+   "部分输入项（student_profiles、success_criteria）注明来自 context engine，仓库里没有这个上下文引擎，属可选项"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "education-agent-skills--hinge-question-designer",
+  "title": "课中诊断问题",
+  "category": "assignment",
+  "does": "设计一道能判断学生能否继续往下学的课中诊断问题",
+  "summary": "英文技能，说明书带证据来源、输入输出字段、提示词和示例输出。面向英语课堂的中小学教师，只产出题目或评价工具文本，不依赖脚本或外部接口。",
+  "dir": ".skilllab/2026-11-24-a/fetched/education-agent-skills--hinge-question-designer",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/questioning-discussion/hinge-question-designer",
+   "repo": "GarethManning/education-agent-skills",
+   "path": "skills/questioning-discussion/hinge-question-designer",
+   "commit": "135d6275e7db0657d70b147f46d3191c5430677d",
+   "version": "1.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我出一道能看出学生懂没懂的课中检测题",
+  "examples": [
+   "我在教光合作用，帮我设计一道课中诊断问题，能看出学生是否分得清光反应和暗反应。"
+  ],
+  "cautions": [
+   "英文技能，示例按英语课堂的年级和学科写",
+   "仓库许可证在 GitHub 上识别为 NOASSERTION",
+   "部分输入项（student_profiles、success_criteria）注明来自 context engine，仓库里没有这个上下文引擎，属可选项"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "education-agent-skills--practice-problem-sequence-designer",
+  "title": "练习题序列",
+  "category": "assignment",
+  "does": "生成难度递进、有变化策略的练习题序列，用于练习单和作业",
+  "summary": "英文技能，说明书带证据来源、输入输出字段、提示词和示例输出。面向英语课堂的中小学教师，只产出题目或评价工具文本，不依赖脚本或外部接口。",
+  "dir": ".skilllab/2026-11-24-a/fetched/education-agent-skills--practice-problem-sequence-designer",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/explicit-instruction/practice-problem-sequence-designer",
+   "repo": "GarethManning/education-agent-skills",
+   "path": "skills/explicit-instruction/practice-problem-sequence-designer",
+   "commit": "135d6275e7db0657d70b147f46d3191c5430677d",
+   "version": "1.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我出一组从易到难的一元一次方程练习题",
+  "examples": [
+   "给七年级学生出一组解一元一次方程的练习题，12 题，难度递进。"
+  ],
+  "cautions": [
+   "英文技能，示例按英语课堂的年级和学科写",
+   "仓库许可证在 GitHub 上识别为 NOASSERTION",
+   "部分输入项（student_profiles、success_criteria）注明来自 context engine，仓库里没有这个上下文引擎，属可选项"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "education-agent-skills--retrieval-practice-generator",
+  "title": "提取练习题",
+  "category": "assignment",
+  "does": "按主题生成不同难度的提取练习题，用于课前小测和复习",
+  "summary": "英文技能，说明书带证据来源、输入输出字段、提示词和示例输出。面向英语课堂的中小学教师，只产出题目或评价工具文本，不依赖脚本或外部接口。",
+  "dir": ".skilllab/2026-11-24-a/fetched/education-agent-skills--retrieval-practice-generator",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/retrieval-practice-generator",
+   "repo": "GarethManning/education-agent-skills",
+   "path": "skills/memory-learning-science/retrieval-practice-generator",
+   "commit": "135d6275e7db0657d70b147f46d3191c5430677d",
+   "version": "1.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我出几道复习分数的提取练习题",
+  "examples": [
+   "给六年级学生出 8 道分数乘法的提取练习题，分三个难度。"
+  ],
+  "cautions": [
+   "英文技能，示例按英语课堂的年级和学科写",
+   "仓库许可证在 GitHub 上识别为 NOASSERTION",
+   "部分输入项（student_profiles、success_criteria）注明来自 context engine，仓库里没有这个上下文引擎，属可选项"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "teacher-a3-question-gen",
+  "title": "变式出题",
+  "category": "assignment",
+  "does": "基于知识点或原题生成变式题组，按难度分层，带答案与解析，可组卷或做分层作业",
+  "summary": "教学全流程的教前环节，全学科通用，数学做了示范。按 L1 到 L4 配比出题，有原题时用参数替换、情境改编等手法变式；出题规范以 teacher-workflow 的 question-format.md 为准。",
+  "dir": ".skilllab/2026-11-24-a/fetched/teacher-workflow-skills--teacher-a3-question-gen",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a3-question-gen",
+   "repo": "huapg/teacher-workflow-skills",
+   "path": "teacher-a3-question-gen",
+   "commit": "31871dbd6c917f8c24fdadb94dcb6dcfe5cd0e6c",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我出一组一元二次方程的变式题",
+  "examples": [
+   "围绕这道题出 5 道变式题，难度从基础到综合，带答案和解析。"
+  ],
+  "cautions": [
+   "依赖同仓库的 teacher-workflow 技能目录（相对路径 ../teacher-workflow/references 与 state），需要整套安装",
+   "画像文件以学生姓名命名，存在 teacher-workflow/state/ 下；写入后要运行 python ../teacher-workflow/scripts/validate_profile.py 校验"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "xiaozhi-teach-exam-designer",
+  "title": "测评设计师",
+  "category": "assignment",
+  "does": "按双向细目表出一份单元练习或试卷，带难度梯度、答案和评分细则",
+  "summary": "适合小学到高中。产出试卷、双向细目表和评分标准，题目按难度分梯度。出题前会自检答案与条件，生成的题标注「请人工验算」。",
+  "dir": "src/skills/xiaozhi-teach-exam-designer",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "repo": "qizhitang/xiaozhi-skills",
+   "path": "teacher/general/xiaozhi-teach-exam-designer",
+   "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/general/xiaozhi-teach-exam-designer",
+   "commit": "40a2d005219d",
+   "license": "MIT",
+   "version": "2.12.7",
+   "author": "小智伴学"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "claude-code",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我出一份一次函数的单元练习",
+  "examples": "八年级数学，出一份一次函数的单元练习，15 分钟课堂用，基础、中等、较难按 6:3:1，带双向细目表、答案和评分标准。",
+  "cautions": [
+   "声明依赖平台能力 M（跨会话记忆）、F（表格导入导出）、X（跨会话统计）；没有 F 时细目表以文本表格给出，没有 X 时不引用历史逐题统计",
+   "写入班级工作区的细目表条目一律先生成待确认条目，老师逐条确认后才落库",
+   "高中数学、英语、历史的命题转给同库学科技能，这三科在这里只拿到细目表和评分格式；道德与法治、思想政治不生成题目和答案"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "class-assistant",
+  "title": "班主任助理",
+  "category": "home-school",
+  "does": "替班主任起草家长群通知、家长会提纲、评语等文案，并用脚本做成绩分析和考勤统计",
+  "summary": "一个技能带 43 个班主任场景（通知、一对一家长沟通、家长会、成绩分析、学生跟踪、班务台账等）和 3 个 Python 脚本，产出可直接复制的文案以及成绩、考勤报告。面向中小学班主任，脚本需要 pandas 和 openpyxl。学生跟踪记录以学生姓名为键存在本地 data/student_tracker.json。",
+  "dir": ".skilllab/2026-11-24-a/fetched/class-teacher-skills",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/PIGU-PPPgu/class-teacher-skills",
+   "repo": "PIGU-PPPgu/class-teacher-skills",
+   "commit": "fd8487f34ec7373239895a3da06f52efc6c3e3c5",
+   "license": "MIT",
+   "version": "1.0.0"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我起草一个明天升旗穿校服的家长群通知",
+  "examples": [
+   "帮我起草一个明天升旗穿校服的家长群通知，正式版和简洁版各一条。",
+   "分析这次月考成绩表，找出重点关注学生和进步最大的学生。"
+  ],
+  "cautions": [
+   "技能目录 154 个文本文件，scenarios/ 下 43 个场景各带模板和脱敏样例；取回时没有取 pptx 等二进制",
+   "scripts/student_tracker.py 把学生姓名和谈话记录存到技能目录下的 data/student_tracker.json，SKILL.md 要求不要提交真实学生数据",
+   "SKILL.md 写明自动发群、自动外发还没有打通",
+   "AGENT_INSTRUCTIONS.md 要求涉及外发时先给草稿再等确认"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "edu-parent-comm",
+  "title": "家校沟通稿",
+  "category": "home-school",
+  "does": "替老师和班主任起草家长信、微信、面谈脚本和家长会发言",
+  "summary": "发布者是认证企业昆仑增长，不需要 API Key。按沟通目的分表扬进步、问题反馈、邀约家长会、危机处理四类，学生信息缺失时用占位符、不编造。",
+  "dir": ".skilllab/2026-11-24-a/fetched/edu-parent-comm",
+  "origin": "skillhub",
+  "source": {
+   "kind": "skillhub",
+   "author": "昆仑增长（深圳）技术有限公司",
+   "url": "https://skillhub.cn/skills/kunlungrowth/edu-parent-comm",
+   "version": "1.1.2"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我给一位家长写条微信，反馈孩子最近上课讲话的情况",
+  "examples": "学生小宇，四年级，数学最近三次单元考 72、65、68，上课爱接话。帮我写一条给家长的微信，反馈成绩下滑并请家长配合抓听课。",
+  "cautions": [
+   "正文要求每条结果末尾附带「本专业结果由昆仑增长·企业AI赋能中心官方引擎生成」，文末另有一段企业服务推广",
+   "含自伤、欺凌等危机场景的沟通稿，正文限定为只写关心、建议面谈和转介，不做诊断"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "edupi--01-parent-daily-notice",
+  "title": "家长群日常通知",
+  "category": "home-school",
+  "does": "把老师口头信息整理成可直接发家长群的日常通知",
+  "summary": "把事项、时间、要求整理成一条家长群通知，可切换正式版、简洁版和需要回执的版本。 目录里有说明书、templates.md 和脱敏样例。",
+  "dir": ".skilllab/2026-11-24-a/fetched/edupi--01-parent-daily-notice",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/01-parent-daily-notice",
+   "repo": "PIGU-PPPgu/edupi",
+   "path": "skills/01-parent-daily-notice",
+   "commit": "fc89b3bc899a55b0fdad61b8f37e238d950f37c6"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我写一个明天升旗穿校服的家长群通知",
+  "examples": [
+   "帮我写一个周五春游的家长群通知，需要家长回复“收到”。"
+  ],
+  "cautions": [
+   "SKILL.md 要求输出风格遵循 skills/_shared/VOICE_ANCHOR.md，该文件在仓库 skills/ 目录下，不在技能目录里",
+   "仓库 EduPi 是研究型智能体运行时，这些技能是其中 skills/ 目录下的场景说明，可单独使用",
+   "frontmatter 的 name 是数字开头的目录名"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "edupi--02-parent-1on1-message",
+  "title": "一对一家长沟通",
+  "category": "home-school",
+  "does": "起草发给单个家长的沟通消息，先说观察到的事实，再给配合建议",
+  "summary": "按日常反馈、问题提醒、进步反馈等场景起草给一位家长的沟通稿，可选温和版、正式版和电话沟通提纲。 目录里有说明书、templates.md 和脱敏样例。",
+  "dir": ".skilllab/2026-11-24-a/fetched/edupi--02-parent-1on1-message",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/02-parent-1on1-message",
+   "repo": "PIGU-PPPgu/edupi",
+   "path": "skills/02-parent-1on1-message",
+   "commit": "fc89b3bc899a55b0fdad61b8f37e238d950f37c6"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我写一条发给小明妈妈的沟通消息",
+  "examples": [
+   "这名学生这周作业两次没交，帮我写一条发给家长的沟通消息，语气温和一点。"
+  ],
+  "cautions": [
+   "SKILL.md 要求输出风格遵循 skills/_shared/VOICE_ANCHOR.md，该文件在仓库 skills/ 目录下，不在技能目录里",
+   "仓库 EduPi 是研究型智能体运行时，这些技能是其中 skills/ 目录下的场景说明，可单独使用",
+   "frontmatter 的 name 是数字开头的目录名"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "edupi--05-parent-meeting-outline",
+  "title": "家长会发言提纲",
+  "category": "home-school",
+  "does": "生成家长会发言提纲，覆盖班级整体情况、学习表现、家校配合建议",
+  "summary": "按 3、5、10 分钟时长组织提纲，先讲整体不点名批评；可出照读版和 PPT 提纲版。 目录里有说明书、templates.md 和脱敏样例。",
+  "dir": ".skilllab/2026-11-24-a/fetched/edupi--05-parent-meeting-outline",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/05-parent-meeting-outline",
+   "repo": "PIGU-PPPgu/edupi",
+   "path": "skills/05-parent-meeting-outline",
+   "commit": "fc89b3bc899a55b0fdad61b8f37e238d950f37c6"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我写一份家长会发言提纲",
+  "examples": [
+   "期中家长会，帮我写一份 5 分钟的发言提纲，附两条家校配合建议。"
+  ],
+  "cautions": [
+   "SKILL.md 要求输出风格遵循 skills/_shared/VOICE_ANCHOR.md，该文件在仓库 skills/ 目录下，不在技能目录里",
+   "仓库 EduPi 是研究型智能体运行时，这些技能是其中 skills/ 目录下的场景说明，可单独使用",
+   "frontmatter 的 name 是数字开头的目录名"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "teacher-a10-parent-feedback",
+  "title": "家长反馈",
+  "category": "home-school",
+  "does": "根据学情画像和近期表现起草发给家长的反馈，含学情摘要、进步点、待改进和在家建议",
+  "summary": "教学全流程的教后环节，按日常沟通、家长会、阶段报告等场景调整语气和长度，只讲学习相关事实，不贴标签。全学科通用，可直接发给家长。",
+  "dir": ".skilllab/2026-11-24-a/fetched/teacher-workflow-skills--teacher-a10-parent-feedback",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a10-parent-feedback",
+   "repo": "huapg/teacher-workflow-skills",
+   "path": "teacher-a10-parent-feedback",
+   "commit": "31871dbd6c917f8c24fdadb94dcb6dcfe5cd0e6c",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我写一段这学期给家长的反馈",
+  "examples": [
+   "这名学生这学期计算进步明显但审题还粗心，帮我写一段给家长的反馈。"
+  ],
+  "cautions": [
+   "依赖同仓库的 teacher-workflow 技能目录（相对路径 ../teacher-workflow/references 与 state），需要整套安装",
+   "画像文件以学生姓名命名，存在 teacher-workflow/state/ 下；写入后要运行 python ../teacher-workflow/scripts/validate_profile.py 校验"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": true
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "agent-skills--k12-lesson-differentiation",
+  "title": "K12 课时分层",
+  "category": "lesson-plan",
+  "does": "把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单",
+  "summary": "按低于、达到、高于年级水平三层改编已有课，共用内容只写一次，再用脚本渲染成可编辑文档。按美国课标编写，英文输出；Word 输出需要 Python 和 python-docx。",
+  "dir": ".skilllab/2026-11-24-a/fetched/agent-skills--k12-lesson-differentiation",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-differentiation",
+   "repo": "learning-commons-org/agent-skills",
+   "path": "skills/k12-lesson-differentiation",
+   "commit": "b23623c8b50fe0f5fd4e657b1d3c0e3e6618ada6",
+   "license": "Apache-2.0"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "我班学生水平差别很大，帮我把这节课分成三层",
+  "examples": [
+   "这是我的一节分数课教案，帮我做基础、达标、拓展三层的学习单。"
+  ],
+  "cautions": [
+   "课标和学科参考按美国 CCSS、NGSS、C3 编写，输出为英文",
+   "scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install python-docx==1.1.2，需要联网",
+   "正文要求对老师只说教师语言，不提工具名、文件名、JSON 和渲染；出错时说明文档没做成",
+   "教师用 URL 提供课时时要先获取并读取该链接",
+   "learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "agent-skills--k12-lesson-plan-creation",
+  "title": "K12 教案与材料",
+  "category": "lesson-plan",
+  "does": "为数学、英语语言艺术、科学、社会课生成一节课的教案、学生材料和课堂观察表，导出成可编辑的 Word 文档",
+  "summary": "先按学科加载对应参考文件，写一份 lesson.json 作为共同底稿，再用脚本渲染出教案、学生材料、观察表等相互一致的文档。按美国课标（CCSS、NGSS、C3）编写，英文输出；Word 输出需要 Python 和 python-docx。",
+  "dir": ".skilllab/2026-11-24-a/fetched/agent-skills--k12-lesson-plan-creation",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-plan-creation",
+   "repo": "learning-commons-org/agent-skills",
+   "path": "skills/k12-lesson-plan-creation",
+   "commit": "b23623c8b50fe0f5fd4e657b1d3c0e3e6618ada6",
+   "license": "Apache-2.0"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "我明天要给五年级学生讲长除法，帮我做一份教案",
+  "examples": [
+   "我明天要给五年级学生讲长除法，帮我做完整的一套：教案、学生材料和观察表。"
+  ],
+  "cautions": [
+   "课标和学科参考按美国 CCSS、NGSS、C3 编写，输出为英文",
+   "scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install python-docx==1.1.2，需要联网",
+   "正文要求对老师只说「Word 文档」，不提工具名、文件名和脚本；出错时说文档没做成，不说脚本失败",
+   "能做 Design 页面的平台走页面渲染，否则走 Word；连上 Learning Commons 知识图谱时会调用它查课标，不连时教案末尾加一句未使用知识图谱",
+   "learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "china-k12-teacher-skills--china-k12-lesson-differentiation",
+  "title": "中国 K12 课时分层",
+  "category": "lesson-plan",
+  "does": "把老师已有的一节课、任务单或练习改成基础、提升、挑战三层支架",
+  "summary": "保持同一个核心目标，只调整入口、支架、表示方式和开放度，输出三层学生任务文本和教师巡视观察点。只改造已有的课，不从零写教案；目录里只有说明书。",
+  "dir": ".skilllab/2026-11-24-a/fetched/china-k12-teacher-skills--china-k12-lesson-differentiation",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/china-k12-lesson-differentiation",
+   "repo": "myvipbackup2/china-k12-teacher-skills",
+   "path": "skills/china-k12-lesson-differentiation",
+   "commit": "f1c6c4420e7d90d3f9daf9fc204a0a26230921d6",
+   "license": "Apache-2.0"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "我班学生水平差异大，帮我把这节课做分层",
+  "examples": [
+   "这是我的一节数学课任务单，帮我改成基础、提升、挑战三层。"
+  ],
+  "cautions": [],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "china-k12-teacher-skills--china-k12-lesson-planning",
+  "title": "中国 K12 备课",
+  "category": "lesson-plan",
+  "does": "从零设计一节可上课的课时方案，含目标、学习证据、按分钟流程、教师提问、误解应对和 Exit Ticket",
+  "summary": "面向中国基础教育教师，按“学生经历、目标与评价对齐、课堂流程”的顺序产出课时方案，可按需读取地区 Profile。目录里只有说明书，Word 和 PPT 交给运行环境自带的文档能力。",
+  "dir": ".skilllab/2026-11-24-a/fetched/china-k12-teacher-skills--china-k12-lesson-planning",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/china-k12-lesson-planning",
+   "repo": "myvipbackup2/china-k12-teacher-skills",
+   "path": "skills/china-k12-lesson-planning",
+   "commit": "f1c6c4420e7d90d3f9daf9fc204a0a26230921d6",
+   "license": "Apache-2.0"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我备课，明天要上三年级数学《分数的初步认识》",
+  "examples": [
+   "帮我设计一节课：五年级语文《慈母情深》，40 分钟。"
+  ],
+  "cautions": [
+   "技能目录里只有 SKILL.md；说明书提到的 references/profiles/ 在仓库根目录的 profiles/ 下，单个技能安装时读不到",
+   "仓库自带的 Profile 只有上海小学信息科技一份"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "dragon-01-you--lesson-plan",
+  "title": "K12 教案生成",
+  "category": "lesson-plan",
+  "does": "按课题、年级、学科生成一节课的教案，含 Bloom 目标、学习周期、前置知识、常见误解和差异化版本",
+  "summary": "面向 K-12 教师，中文输出，先从措辞推断年级、学科和课时，只问一个问题，再按模板生成教案，可追加学生讲义、MARP 版 PPT 大纲、评分标准和测验。附 22 份参考文件（各科完整教案示例、活动模板、差异化策略）。",
+  "dir": ".skilllab/2026-11-24-a/fetched/dragon-01-you--lesson-plan-skill--lesson-plan",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/Dragon-01-you/lesson-plan-skill/tree/master/skills/lesson-plan",
+   "repo": "Dragon-01-you/lesson-plan-skill",
+   "path": "skills/lesson-plan",
+   "commit": "6a9e62b8ec89bd4301e9dc36f7bdf7feb2e2c891",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我写一份高一物理《牛顿第二定律》的教案，45分钟",
+  "examples": [
+   "帮我写一份初中语文《背影》的教案，45分钟。"
+  ],
+  "cautions": [
+   "第 3 步写 RAG 检索和 Proven Template，仓库里没有对应的知识库或检索脚本",
+   "说明书引用的 references/grade-calibration.md、references/standards/、references/misconceptions/ 不在仓库里",
+   "可选的风格文件路径是 ~/.eduagent/soul.md，由用户提供",
+   "仓库根目录的 scripts/lesson-generator.py 和 quality-checker.py 没有被 SKILL.md 引用，只用到标准库"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "hs-it-lesson-design",
+  "title": "高中信息技术教学设计",
+  "category": "lesson-plan",
+  "does": "按高中信息技术课程标准生成一节课或一个单元的教学设计、学生任务单、分层任务和形成性评价工具",
+  "summary": "面向普通高中信息技术教师，先做合规检查（不回显学生姓名和真实考试题），再引用课标内容要求原文撰写教学设计。附课标摘录、教案模板、任务单模板、分层指南和合规话术 5 份参考文件。",
+  "dir": ".skilllab/2026-11-24-a/fetched/hs-it-lesson-design",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/aymwoo/hs-it-lesson-design",
+   "repo": "aymwoo/hs-it-lesson-design",
+   "commit": "f899d76f80173b9e52d50715c979d8ad5ba6622c",
+   "version": "1.2"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我备一节高中信息技术课，必修1 数据与计算",
+  "examples": [
+   "帮我设计高中信息技术必修 1“数据与计算”的一节课，45 分钟，附学生任务单。"
+  ],
+  "cautions": [
+   "GitHub 识别不出许可证；SKILL.md 自述 CC BY 4.0（skill 原创内容），课程标准原文版权归教育部",
+   "第 5 步要求对照 evals/rubric.csv 自查，仓库里没有 evals 目录",
+   "有代码执行环境时要求运行全部示例代码并做边界值测试"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "k12-lesson-differentiation",
+  "title": "K12 课程分层设计",
+  "category": "lesson-plan",
+  "does": "把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单，可导出 Word",
+  "summary": "产出 1 份教师用分层方案和低于、达到、高于年级水平的 3 份学生分层学习单，在 Claude 上做成可编辑文档或设计页，其他环境用内置 Python 脚本渲染成 Word 和 HTML。面向美国中小学数学、英语、科学、社会学科教师，以 CCSS、NGSS 和州课标为基准，能识别 Illustrative Mathematics 和 OpenSciEd 课程，不连 Learning Commons 课标库也能用。会请老师提供学生英语水平、IEP、504 等信息来调整分层。",
+  "dir": ".skilllab/2026-11-24-a/fetched/k12-teacher-skills--k12-lesson-differentiation",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "Anthropic、Learning Commons",
+   "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-differentiation",
+   "repo": "anthropics/k12-teacher-skills",
+   "path": "plugin/skills/k12-lesson-differentiation",
+   "commit": "31fd6dbb0c07cb50bb3ce7f62a4135a393bd0e8c",
+   "license": "Apache-2.0"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "claude-code",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python",
+   "network"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "把这份教案改成分层版，我班学生水平差很多",
+  "examples": [
+   "这是我的《一次函数》教案，帮我做成三个层次的版本，低于、达到、高于年级水平各一份。",
+   "把 4.NF.A.1 这节课做成三份分层学习单，班里有英语新手学生，需要句子支架。"
+  ],
+  "cautions": [
+   "脚本发现缺少 python-docx 时会自动执行 pip install 联网安装 python-docx==1.1.2；装不上就只输出 HTML，并报错退出",
+   "输出目录里同名的 .docx 和 .html 会被直接覆盖，不提示",
+   "说明书要求 Agent 不打开、不查看渲染脚本，直接运行；对老师不提工具名和文件名，脚本出错时只说文档没能生成",
+   "会请老师提供学生英语水平、IEP、504 等信息，并写进 differentiation.json 和输出文档，测试时用虚构信息",
+   "以美国 CCSS、NGSS 和州课标为基准，默认用全国课标，社会学科会先问老师在哪个州；国内老师直接用，课标条目对不上",
+   "老师给的是链接时，会联网抓取这份教案",
+   "开工前会先问老师要完整版还是先看草稿",
+   "Claude 文档和设计页只在 Claude 上可用，其他环境走 Word 路径"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "k12-lesson-plan-creation",
+  "title": "K12 教案与材料",
+  "category": "lesson-plan",
+  "does": "生成一节课的教案、学生材料和课堂观察表，能导出成 Word",
+  "summary": "Anthropic 与 Learning Commons 出品，附公开的教案评分量规。以美国课标为基准，完整功能依赖 Claude 的课标连接器。国内老师直接用，教材版本和课标条目对不上。",
+  "dir": "src/skills/k12-lesson-plan-creation",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "repo": "anthropics/k12-teacher-skills",
+   "path": "plugin/skills/k12-lesson-plan-creation",
+   "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-plan-creation",
+   "commit": "31fd6dbb0c07",
+   "license": "Apache-2.0",
+   "author": "Anthropic、Learning Commons"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "claude-code",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "我明天要给五年级学生讲长除法，帮我做一份教案",
+  "examples": "我明天要给五年级学生讲长除法，帮我做完整的一套：教案、学生材料和观察表。",
+  "cautions": [
+   "课标和学科参考按美国 CCSS、NGSS、C3 编写，输出为英文",
+   "scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install python-docx==1.1.2，需要联网",
+   "正文要求对老师只说「Word 文档」，不提工具名、文件名和脚本；出错时说文档没做成，不说脚本失败",
+   "能做 Design 页面的平台走页面渲染，否则走 Word；连上 Learning Commons 知识图谱时会调用它查课标，不连时教案末尾加一句未使用知识图谱"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "k12-skills--k12-lesson-differentiation",
+  "title": "K-12 课时分层教学（中国本土化）",
+  "category": "lesson-plan",
+  "does": "把已有课时分层为基础层、提高层、拓展层，输出 1 份教师方案和 3 份学生材料的 Word 文档",
+  "summary": "learning-commons 分层技能的中国本土化版本，中文说明书，内嵌义务教育 2022 版 13 个学科的课标参考文件，不依赖外部连接器。学生页用“基础练习、提升练习、挑战练习”等任务名区分，不出现层级标签。",
+  "dir": ".skilllab/2026-11-24-a/fetched/k12-skills--k12-lesson-differentiation",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/flyboat403/k12-skills/tree/main/k12-lesson-differentiation",
+   "repo": "flyboat403/k12-skills",
+   "path": "k12-lesson-differentiation",
+   "commit": "339a1118e168037606c35e57c748d74ab27ff386",
+   "version": "1.0.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "我班学生水平参差不齐，帮我把这节课做分层",
+  "examples": [
+   "这是我的一节四年级数学课教案，帮我做基础层、提高层、拓展层三层材料。"
+  ],
+  "cautions": [
+   "技能目录约 10MB、2295 个文件（课标全文和 wiki），安装体积大；取回时只镜像了说明书、顶层参考文件和脚本",
+   "scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install python-docx==1.1.2；render_documents.py 的 --clean 选项会删除输出目录里不属于本次渲染的 .docx 和 .html，默认不启用",
+   "frontmatter 声明 Apache-2.0 并保留 Anthropic、Learning Commons 版权头；仓库里没有 LICENSE 文件，GitHub 识别为无许可证",
+   "正文要求对老师不说工具名、JSON 和“渲染”"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "k12-skills--k12-lesson-planning",
+  "title": "K-12 课时教案规划（中国本土化）",
+  "category": "lesson-plan",
+  "does": "从零生成一节课的教案、学生材料、听课记录表和分层材料，渲染成 Word 文档",
+  "summary": "learning-commons 技能的中国本土化版本，中文说明书，自带 2022 版义务教育 13 个学科、高中 10 个学科和中职 11 个学科的课标参考文件，不依赖外部连接器。按“澄清、锚定课标、构建教案”的流程先写 lesson.json，再用 Python 脚本渲染。",
+  "dir": ".skilllab/2026-11-24-a/fetched/k12-skills--k12-lesson-planning",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/flyboat403/k12-skills/tree/main/k12-lesson-planning",
+   "repo": "flyboat403/k12-skills",
+   "path": "k12-lesson-planning",
+   "commit": "339a1118e168037606c35e57c748d74ab27ff386",
+   "version": "1.0.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "我要教五年级语文《慈母情深》，帮我写一节课的教案",
+  "examples": [
+   "明天要上五年级数学“分数加减法”，帮我生成教案、学生任务单和听课记录表。"
+  ],
+  "cautions": [
+   "第六步要求教师确认后删除 lesson.json 和 *.html 工作文件（技能自己生成的中间文件）",
+   "技能目录约 10MB、2295 个文件（课标全文和 wiki），安装体积大；取回时只镜像了说明书、顶层参考文件和脚本",
+   "scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install python-docx==1.1.2；render_documents.py 的 --clean 选项会删除输出目录里不属于本次渲染的 .docx 和 .html，默认不启用",
+   "frontmatter 声明 Apache-2.0 并保留 Anthropic、Learning Commons 版权头；仓库里没有 LICENSE 文件，GitHub 识别为无许可证",
+   "正文要求对老师不说工具名、JSON 和“渲染”"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "k12-teacher-skills--china-k12-lesson-differentiation",
+  "title": "中国 K-12 差异化教学",
+  "category": "lesson-plan",
+  "does": "把教师已有的课例改造成一份教师差异化方案和三份不贴能力标签的学生任务单",
+  "summary": "面向中国大陆小学、初中、普通高中课堂，保持同一课程标准和核心任务，只调整进入路径和支架强度；学生材料只用 Group A、B、C 等中性名称。先写 differentiation.json 再渲染成 Word；附课标依据、差异化原则、学科路线和 7 个脚本。",
+  "dir": ".skilllab/2026-11-24-a/fetched/k12-teacher-skills--k12-teacher-skill-differentiation",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/confusedstardust/K12_Teacher_Skills/tree/main/k12-teacher-skill-differentiation",
+   "repo": "confusedstardust/K12_Teacher_Skills",
+   "path": "k12-teacher-skill-differentiation",
+   "commit": "03b82dfaa8700285af15fd1228f0fa39df7d3c68",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "请根据我提供的教案做差异化改造，三个小组保留同一个学习目标",
+  "examples": [
+   "这是我的初中数学教案，帮我做基础、达标、拓展三层任务，输出教师方案和三份任务单。"
+  ],
+  "cautions": [
+   "Word 成品依赖 Python 脚本：先用 scripts/validate_material_source.py 校验 JSON，再渲染 docx 和 html，需要 python-docx；scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install",
+   "说明书要求用宿主的结构化输入工具（request_user_input、AskUserQuestion）提问，没有时退化为 A/B/C 选项消息",
+   "交付后按 references/narrativeos-case-guidance.md 引导教师去 NarrativeOS 教师资源广场看案例，每次备课引导一次",
+   "frontmatter 的 name 与 myvipbackup2/china-k12-teacher-skills 里的同名技能重名，记录用仓库前缀区分",
+   "仓库另提供用 uvx 启动的 k12-teacher MCP，可选"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "k12-teacher-skills--china-k12-lesson-planning",
+  "title": "中国 K-12 课程设计",
+  "category": "lesson-plan",
+  "does": "为中国小学、初中、高中教师从零生成教学设计、学生学习材料和课堂观察记录表",
+  "summary": "覆盖语文、数学、英语、道法、历史、地理、科学、物理、化学、生物、信息科技等国家课程，按现行课标和教师所用教材位置设计，先写 lesson.json 再渲染成可编辑的 Word 文档。附 6 份学科参考、课标依据、文档结构和 7 个脚本。",
+  "dir": ".skilllab/2026-11-24-a/fetched/k12-teacher-skills--k12-teacher-skill-planning",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/confusedstardust/K12_Teacher_Skills/tree/main/k12-teacher-skill-planning",
+   "repo": "confusedstardust/K12_Teacher_Skills",
+   "path": "k12-teacher-skill-planning",
+   "commit": "03b82dfaa8700285af15fd1228f0fa39df7d3c68",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "scripts",
+  "requires": [
+   "python"
+  ],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我给五年级数学《三角形的面积》备一节 45 分钟的课",
+  "examples": [
+   "请用中国 K-12 课程设计，为五年级数学《三角形的面积》设计一节 45 分钟的课，最后交付可编辑的 Word。"
+  ],
+  "cautions": [
+   "Word 成品依赖 Python 脚本：先用 scripts/validate_material_source.py 校验 JSON，再渲染 docx 和 html，需要 python-docx；scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install",
+   "说明书要求用宿主的结构化输入工具（request_user_input、AskUserQuestion）提问，没有时退化为 A/B/C 选项消息",
+   "交付后按 references/narrativeos-case-guidance.md 引导教师去 NarrativeOS 教师资源广场看案例，每次备课引导一次",
+   "frontmatter 的 name 与 myvipbackup2/china-k12-teacher-skills 里的同名技能重名，记录用仓库前缀区分",
+   "仓库另提供用 uvx 启动的 k12-teacher MCP，可选"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "primary-math-lesson-plans",
+  "title": "小学数学备课",
+  "category": "lesson-plan",
+  "does": "按年级和知识点生成小学数学备课大纲，老师确认后可再生成 PPT 课件或导出 Word 教案",
+  "summary": "覆盖小学 1 到 6 年级知识点，输出教学目标、重难点、教学准备、40 分钟教学过程、课堂练习和分层作业六模块大纲，附 Markdown 大纲模板和 PPT 设计规范。第一步要用 web_search 补充课标要求；生成 PPT 和 Word 的两个 Node 脚本不在仓库里。",
+  "dir": ".skilllab/2026-11-24-a/fetched/primary-math-lesson-plans-skill",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "一池",
+   "url": "https://github.com/gooqijun/primary-math-lesson-plans-skill",
+   "repo": "gooqijun/primary-math-lesson-plans-skill",
+   "commit": "b5eab1ea624b9400a18f291593043fd96afc18c2",
+   "version": "2.0.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [
+   "network"
+  ],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "小学三年级上册 两位数乘一位数 备课",
+  "examples": [
+   "小学五年级下册 分数的意义 备课",
+   "备课大纲可以，生成PPT"
+  ],
+  "cautions": [
+   "SKILL.md 引用的 tools/gen_ppt_v2.js、gen_docx_template.js 和 node_modules 不在仓库里，PPT 与 Word 导出按仓库内容跑不起来",
+   "frontmatter 是 openclaw 格式，name 是中文“小学数学备课”，工具列表里有 bash、file、web_search",
+   "ppt/ 和 templates/ 下的 pptx、docx 没有取回"
+  ],
+  "audit": {
+   "network": "declared",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "teacher-a2-lesson-prep",
+  "title": "课时备课",
+  "category": "lesson-plan",
+  "does": "按课题、年级和学情生成一节课的完整教案，含三维目标、重难点、教学环节、分层任务、板书和作业",
+  "summary": "教学全流程的教前环节，全学科通用，数学做了示范。有学情画像时读取共享画像让目标贴合最近发展区，没有时按通用假设并标注；目录里只有说明书。",
+  "dir": ".skilllab/2026-11-24-a/fetched/teacher-workflow-skills--teacher-a2-lesson-prep",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a2-lesson-prep",
+   "repo": "huapg/teacher-workflow-skills",
+   "path": "teacher-a2-lesson-prep",
+   "commit": "31871dbd6c917f8c24fdadb94dcb6dcfe5cd0e6c",
+   "license": "MIT"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我备一节课，初二数学 一次函数的图象",
+  "examples": [
+   "帮我写一节初二数学“一次函数的图象”的新授课教案，45 分钟。"
+  ],
+  "cautions": [
+   "依赖同仓库的 teacher-workflow 技能目录（相对路径 ../teacher-workflow/references 与 state），需要整套安装",
+   "画像文件以学生姓名命名，存在 teacher-workflow/state/ 下；写入后要运行 python ../teacher-workflow/scripts/validate_profile.py 校验"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "xiaozhi-teach-lesson-planner",
+  "title": "教案设计器",
+  "category": "lesson-plan",
+  "does": "用逆向设计把一节课写成目标、评估、活动一致的教案，带分层任务和提问链",
+  "summary": "适合小学到高中的科任老师。产出含预期结果、评估证据、六段环节时间、板书和风险预案的教案。A/B/C 分层要配合它的学情分析师，单独安装时只出基础版并注明「无学情」。",
+  "dir": "src/skills/xiaozhi-teach-lesson-planner",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "repo": "qizhitang/xiaozhi-skills",
+   "path": "teacher/general/xiaozhi-teach-lesson-planner",
+   "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/general/xiaozhi-teach-lesson-planner",
+   "commit": "40a2d005219d",
+   "license": "MIT",
+   "version": "2.12.7",
+   "author": "小智伴学"
+  },
+  "distribution": "mirror",
+  "platforms": [
+   "workbuddy",
+   "claude-code",
+   "generic"
+  ],
+  "composition": "resources",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "下载技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中刚下载的压缩包"
+   ]
+  },
+  "trigger": "帮我设计一节《一次函数》的新课教案",
+  "examples": "八年级数学，帮我设计一节《一次函数》新课教案，45 分钟，要有评估证据、提问链和分层任务。",
+  "cautions": [
+   "声明依赖平台能力 M（跨会话记忆）和 K（日期感知）；没有 K 时先问今天日期再排课时",
+   "A/B/C 分层只从班级工作区的 studentTiers 读，由学情分析师写入；没有这项数据时不分层",
+   "高中数学、物理、化学、生物学、地理、历史的学科内容优先转给同库学科技能，没装时照出，并在教案开头注明未按该科课标核对",
+   "一次最多输出 3 个课时的完整教案"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "local",
+   "overRead": false
+  },
+  "textOnly": false
+ }
+]

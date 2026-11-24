@@ -1,0 +1,129 @@
+{
+ "id": "free-tier-baseline-LP-1-1",
+ "kind": "baseline",
+ "slug": null,
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_af046c0b-2b9e-4996-a26a-31ae24800e2a",
+ "startedAt": "2026-11-24T12:11:10.713Z",
+ "endedAt": "2026-11-24T12:12:50.489Z",
+ "seconds": 100,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-baseline-LP-1-1.md",
+ "auto": {
+  "taskId": "LP-1",
+  "segmentMinutes": [
+   5,
+   12,
+   10,
+   10,
+   3,
+   4,
+   3,
+   5,
+   3
+  ],
+  "segmentMinutesSum": 55,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "LP1",
+    "pass": true,
+    "quote": "- 教材：北师大版七年级上册 第二章 有理数及其运算\n- 课题：2.2 数轴（第1课时）",
+    "note": ""
+   },
+   {
+    "id": "LP2",
+    "pass": true,
+    "quote": "1. 经历从温度计等实际情境中抽象出数轴的过程，能说出数轴的概念和三要素（原点、正方向、单位长度），能按步骤正确画出数轴。",
+    "note": ""
+   },
+   {
+    "id": "LP3",
+    "pass": true,
+    "quote": "设计意图：例1 由数找点、例2 由点读数，双向训练对应关系；追问直指“符号由方向决定”这一易错点。",
+    "note": ""
+   },
+   {
+    "id": "LP4",
+    "pass": false,
+    "quote": "设计意图：判断题集中暴露缺要素、单位不均等典型错误；互查清单把作图规范变成可操作的动作",
+    "note": "易错点散在追问、判断题与设计意图里，写了老师怎么应对，但没有逐条写学生为什么错（错误成因），如为什么会把 -2 读成 2、为什么会认为正方向必须向右"
+   },
+   {
+    "id": "LP5",
+    "pass": true,
+    "quote": "## 六、教学过程（共45分钟）",
+    "note": ""
+   },
+   {
+    "id": "LP6",
+    "pass": true,
+    "quote": "师生共同回答三个问题收束本课：",
+    "note": ""
+   },
+   {
+    "id": "LP7",
+    "pass": true,
+    "quote": "先完成的学生做练习C（提升，3分钟）",
+    "note": ""
+   },
+   {
+    "id": "LP8",
+    "pass": true,
+    "quote": "全体完成练习A（判断，3分钟）：",
+    "note": ""
+   },
+   {
+    "id": "LP9",
+    "pass": true,
+    "quote": "例1 画一条数轴，并在数轴上表示出 -4、-1.5、0、2、3。",
+    "note": ""
+   },
+   {
+    "id": "LP10",
+    "pass": true,
+    "quote": "规定了原点、正方向和单位长度的直线叫做数轴",
+    "note": ""
+   },
+   {
+    "id": "LP11",
+    "pass": true,
+    "quote": "## 一、基本信息",
+    "note": ""
+   },
+   {
+    "id": "LP12",
+    "pass": false,
+    "quote": "从“看得见的温度计”过渡到“画在纸上的数轴”，再过渡到“数与点的一一对应”，抽象程度逐级提高，是本课要跨越的台阶。",
+    "note": "无大段空话，但正文约两千字，加上六段设计意图与学情分析，按学校常规教案排版超出 1 至 2 页口径，缺篇幅压缩"
+   }
+  ],
+  "edits": [
+   {
+    "quote": "设计意图：借助学生熟悉的实物，把“零基准点、方向、相同间隔”三个特征显性化，为数轴三要素的抽象做准备。",
+    "problem": "全文约两千字，常规排版超两页；老师需删减或合并六段设计意图、压缩学情分析，把篇幅压到两页以内"
+   },
+   {
+    "quote": "教师追问：点 A 在原点左侧 2 个单位，为什么读作 -2 而不是 2？",
+    "problem": "易错点只写了应对动作，没写学生为什么错；老师需逐条补写错误成因（如只看距离忽略方向、把生活方向感带进数轴），再对应给出应对办法"
+   }
+  ],
+  "severe": [],
+  "quotes": 14,
+  "quoteMiss": 0,
+  "suspect": false
+ }
+}

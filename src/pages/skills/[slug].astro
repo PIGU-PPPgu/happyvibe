@@ -7,6 +7,7 @@ import type { ScoreFrontmatter } from '../../data/skill-schema';
 import { isScored, summaryOf } from '../../lib/skillEntryCore';
 import { COMPOSITION_LABEL, EVIDENCE_LABEL, LAYER_LABEL, PLATFORM_LABEL, REQUIRES_LABEL, categoryLabel, formatSeconds } from '../../lib/skillLabels';
 import { withBase } from '../../lib/urls';
+import '../../styles/table.css';
 
 export async function getStaticPaths() {
   const skills = await getCollection('skills');
@@ -206,10 +207,10 @@ const statusLine = d.status === 'tested' ? `${LAYER_LABEL[s!.tested.layer]} · $
                     const r = checkOf(it.id);
                     return (
                       <tr>
-                        <td class="mono">{it.id}</td>
-                        <td>{it.kind === 'Q' ? '出活' : it.rule ? '懂教育 · 规矩' : '懂教育'}</td>
+                        <td class="mono now">{it.id}</td>
+                        <td class="now">{it.kind === 'Q' ? '出活' : it.rule ? '懂教育 · 规矩' : '懂教育'}</td>
                         <td>{it.text}{r?.note && <span class="cnote">{r.note}</span>}</td>
-                        <td class:list={[{ ok: r?.pass === true }, { bad: r?.pass !== true }]}>{r?.pass === true ? '通过' : '不过'}</td>
+                        <td class:list={[{ now: true, ok: r?.pass === true }, { bad: r?.pass !== true }]}>{r?.pass === true ? '通过' : '不过'}</td>
                       </tr>
                     );
                   })}
@@ -349,11 +350,6 @@ const statusLine = d.status === 'tested' ? `${LAYER_LABEL[s!.tested.layer]} · $
 
   .task { margin: 0 0 8px; font-size: 15px; line-height: 1.8; }
   .tid { display: inline-block; min-width: 58px; color: var(--gold-soft); margin-right: 10px; }
-  .tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
-  .tbl { width: 100%; border-collapse: collapse; font-size: 15px; }
-  .tbl th, .tbl td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
-  .tbl thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; white-space: nowrap; }
-  .tbl tbody tr:last-child td { border-bottom: none; }
   .tbl .base td { color: var(--text-muted); }
   .ok { color: var(--text); }
   .bad { color: var(--gold-soft); font-weight: 600; }

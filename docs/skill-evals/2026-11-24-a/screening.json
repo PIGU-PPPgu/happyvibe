@@ -1,0 +1,2130 @@
+{
+ "scanned": {
+  "skillhub": 1040,
+  "github": 103,
+  "other": 0
+ },
+ "reviewed": 265,
+ "items": [
+  {
+   "name": "01-parent-daily-notice",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/01-parent-daily-notice",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "ran",
+   "reason": "班主任场景技能，把老师口头信息整理成可直接发家长群的日常通知，属家校沟通；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "02-parent-1on1-message",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/02-parent-1on1-message",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "ran",
+   "reason": "班主任场景技能，起草发给单个家长的沟通消息，先说观察到的事实，再给配合建议，属家校沟通；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "03-student-comments",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/03-student-comments",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "学生评语，属学生评价品类，不属于四个品类"
+  },
+  {
+   "name": "04-grade-analysis-summary",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/04-grade-analysis-summary",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "ran",
+   "reason": "班主任场景技能，把成绩、排名和进退步情况整理成班级成绩分析结论稿，属学情分析；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "05-parent-meeting-outline",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/05-parent-meeting-outline",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "ran",
+   "reason": "班主任场景技能，生成家长会发言提纲，覆盖班级整体情况、学习表现、家校配合建议，属家校沟通；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "06-weekly-class-plan",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/06-weekly-class-plan",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "07-conversation-record",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/07-conversation-record",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "08-incident-report",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/08-incident-report",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "09-homework-missing-summary",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/09-homework-missing-summary",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "10-class-meeting-outline",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/10-class-meeting-outline",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "11-activity-runbook",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/11-activity-runbook",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "12-duty-roster",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/12-duty-roster",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "13-daily-class-report",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/13-daily-class-report",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "14-weekly-class-report",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/14-weekly-class-report",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "15-monthly-class-report",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/15-monthly-class-report",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "16-leave-record",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/16-leave-record",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "17-home-visit-record",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/17-home-visit-record",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "out",
+   "reason": "候选已满：班主任场景技能，把家访背景、沟通内容、共识和后续跟进整理成内部留档记录，属家校沟通；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "18-discipline-record",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/18-discipline-record",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "19-praise-and-encouragement",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/19-praise-and-encouragement",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "20-exam-reminder-summary",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/20-exam-reminder-summary",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "out",
+   "reason": "候选已满：班主任场景技能，生成考前提醒稿或考后班级总结稿，可出家长群版、学生版和教师内部版，属家校沟通；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "21-key-student-tracking",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/21-key-student-tracking",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：班主任场景技能，把需要持续关注的学生情况整理成可更新的跟踪清单，属学情分析；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "21cnjy-resource",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/21cnjy-edu-resource/skills/21cnjy-resource",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "21 世纪教育网教学资源检索与下载，靠连接器的 search_resources、download_with_tokens 等工具，要求注册账号、开通校网通并配置 MCP 密钥"
+  },
+  {
+   "name": "22-daily-class-report",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/22-daily-class-report",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "23-weekly-class-report",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/23-weekly-class-report",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "24-monthly-class-report",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/24-monthly-class-report",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "25-parent-meeting-summary-followup",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/25-parent-meeting-summary-followup",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "out",
+   "reason": "候选已满：班主任场景技能，把家长会的核心内容、家长反馈和后续行动整理成会后总结，属家校沟通；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "26-parent-communication-ledger",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/26-parent-communication-ledger",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "out",
+   "reason": "候选已满：班主任场景技能，把与家长的沟通记录整理成可回溯、可跟进的结构化台账，属家校沟通；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "27-homework-followup-ledger",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/27-homework-followup-ledger",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "28-leave-return-followup",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/28-leave-return-followup",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "29-key-student-observation-card",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/29-key-student-observation-card",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：班主任场景技能，把重点学生在学习、纪律、情绪、同伴互动等方面的阶段表现整理成固定字段的观察卡，属学情分析；目录里有 SKILL.md、templates.md 和脱敏样例，没有脚本和外部接口"
+  },
+  {
+   "name": "30-class-task-checklist",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/30-class-task-checklist",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "31-weekly-class-metrics",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/31-weekly-class-metrics",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "32-monthly-class-metrics",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/32-monthly-class-metrics",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "33-seat-arrangement",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/33-seat-arrangement",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "34-group-assignment",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/34-group-assignment",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "35-class-cadre-assignment",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/35-class-cadre-assignment",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "36-classroom-task-assignment",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/36-classroom-task-assignment",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "37-peer-support-pairing",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/37-peer-support-pairing",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "38-rotation-duty-schedule",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/38-rotation-duty-schedule",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "39-points-reward-system",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/39-points-reward-system",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "40-class-arrangement",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/40-class-arrangement",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "41-research-proposal",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/41-research-proposal",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "教育科研课题的选题、申报书和结题报告，属教研课题品类，不属于四个品类"
+  },
+  {
+   "name": "42-gamified-class-management",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/42-gamified-class-management",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "43-smart-seat-grouping",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/43-smart-seat-grouping",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "班主任班务类场景（班务记录、台账、排座分组、班级报告等），属班级管理品类，还没有检查单"
+  },
+  {
+   "name": "班主任.Skill · 作业辅导拍题讲解",
+   "url": "https://skillhub.cn/skills/user_4d351074/banzhuren-tutor",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：给学生讲题"
+  },
+  {
+   "name": "备课技能",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/k12-kg/skills/lesson-prep",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "备课六阶段依赖 k12-kg MCP 服务和连接器授权"
+  },
+  {
+   "name": "备课与教案规划",
+   "url": "https://skillhub.cn/skills/org-b6kzcl68/k-12-v2",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：付费引流"
+  },
+  {
+   "name": "测评设计师",
+   "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/general/xiaozhi-teach-exam-designer",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "面向小学到高中老师的命题技能，按双向细目表出单元练习或试卷并配评分标准；纯文字指引加参考模板，无脚本、接口和密钥，平台能力缺失时有写明的降级做法"
+  },
+  {
+   "name": "成绩分析·平均分及格率优秀率·分数段·小题得分率·班级对比",
+   "url": "https://skillhub.cn/skills/user_9b6e0382/satloot-score-analysis",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "ran",
+   "reason": "面向中小学教师的成绩统计技能，靠自带 Python 脚本在本机算平均分、三率、分数段、小题得分率并另存新 Excel，不联网、不做排名榜，未命中红线"
+  },
+  {
+   "name": "初中备课",
+   "url": "https://skillhub.cn/skills/indiv-qf/qf-junior-high-lesson-prep",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：名称与说明对不上，实际是公文写作"
+  },
+  {
+   "name": "初中全科｜学情报告生成",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/fgdfhgsdgfd",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.10 元/次），触发对象是家长，出家长版与学生版学情报告，答案依赖包内知识库"
+  },
+  {
+   "name": "初中试卷分析与提分诊断",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/fgtfdhfdfdf",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.10 元/次），服务对象是初中学生与陪学家长而不是教师，答案依赖包内知识库"
+  },
+  {
+   "name": "高中备课助手",
+   "url": "https://skillhub.cn/skills/indiv-qf/qf-senior-high-lesson-prep",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：名称与说明对不上，实际是表格处理"
+  },
+  {
+   "name": "高中月度学情追踪与计划调整",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/fghgfgdfdf",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.10 元/次），服务对象是高中生与陪跑家长而不是教师，答案依赖包内知识库"
+  },
+  {
+   "name": "高中周学情报告与家长沟通",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/fghdffgg",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.10 元/次），服务对象是高中生与陪跑家长而不是教师，答案依赖包内知识库"
+  },
+  {
+   "name": "果盟精选 2097（作业公示与总量核查器）",
+   "url": "https://skillhub.cn/skills/guomeng/gmai-edu-homework-public-002a",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：与另一条重复"
+  },
+  {
+   "name": "果盟精选 4635（作业时间管理表批量改写指令包）",
+   "url": "https://skillhub.cn/skills/guomeng/gmai-mid-17-6ffe",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：与另一条重复"
+  },
+  {
+   "name": "湖北技能高考学情诊断",
+   "url": "https://skillhub.cn/skills/user_a0976db5/hubei-exam-diagnose",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：中职技能高考，不是中小学常规教学"
+  },
+  {
+   "name": "混合式教学设计创新大赛参赛小帮手",
+   "url": "https://skillhub.cn/skills/user_72b898e0/blended-learning-instructional-design",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：高校教师为主"
+  },
+  {
+   "name": "家校沟通稿",
+   "url": "https://skillhub.cn/skills/kunlungrowth/edu-parent-comm",
+   "source": "skillhub",
+   "category": "home-school",
+   "verdict": "ran",
+   "reason": "面向中小学教师与班主任起草家长信、微信、面谈脚本和家长会发言，只有一份 SKILL.md，纯文字指引，无脚本、接口或密钥要求"
+  },
+  {
+   "name": "家长沟通助手",
+   "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/independent/xiaozhi-teach-parent-communication",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向独立教师（一对一、小班、校外培训）的家长沟通：元数据分类为独立教师，正文写明只管独立教师工作空间的学员，学校班级的家长版转给学情分析师"
+  },
+  {
+   "name": "家长作业批改工作台",
+   "url": "https://skillhub.cn/skills/user_5e6068f7/zuoyepigai",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向家长"
+  },
+  {
+   "name": "教案设计",
+   "url": "https://skillhub.cn/skills/user_9a99d900/zh-lesson",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：按次付费"
+  },
+  {
+   "name": "教案设计器",
+   "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/general/xiaozhi-teach-lesson-planner",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向小学到高中老师的备课技能，用逆向设计写目标、评估证据、课堂环节、提问链和分层任务；纯文字指引加模板，无脚本、接口和密钥，拿不到学情数据时输出基础版教案"
+  },
+  {
+   "name": "教案生成 (Lesson Plan Package Generator)",
+   "url": "https://github.com/AndyJuang/lesson-plan-skill",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "每份中文文件都要求先跑外部 MCP 工具 mcp__zhtw-mcp__zhtw 润稿，流程用 TaskCreate 建任务；输出繁体中文、台湾用语，面向台湾教师"
+  },
+  {
+   "name": "教案生成技能",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/k12-kg/skills/lesson-plan",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "教案生成以 k12-kg 知识图谱为数据底座，Word 靠连接器的 render_lesson 工具渲染"
+  },
+  {
+   "name": "教案转互动课件 · 悦技",
+   "url": "https://skillhub.cn/skills/user_aa98a84b/yue-lesson-interactive",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：转课件，属于课件品类，还没有检查单"
+  },
+  {
+   "name": "数学备课设计",
+   "url": "https://github.com/hezkvectory/hermes-edu-skills/tree/main/skills/teacher-tools/teacher-math-lesson-planning",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：面向中小学数学教师备课，只有一份 SKILL.md，纯文字指引，无脚本和接口；在通用备课结构上加了学情起点和出口检测"
+  },
+  {
+   "name": "通用备课设计",
+   "url": "https://github.com/hezkvectory/hermes-edu-skills/tree/main/skills/teacher-tools/teacher-lesson-planning",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：面向中小学教师备课，只有一份 SKILL.md，纯文字指引，无脚本和接口；元数据声明的 Hermes 平台工具在正文里有不依赖工具的替代做法"
+  },
+  {
+   "name": "小学班级成绩分析",
+   "url": "https://skillhub.cn/skills/user_22ee289d/elementary-grades-analyzer",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：面向小学及中小学教师的班级成绩分析技能，靠自带 analyze_grades.py 出 Excel 报表、图表、文字报告和汇报 PPT，未命中红线；脚本缺依赖时会自动安装"
+  },
+  {
+   "name": "小学班主任学情汇总",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/fdgyfddfds",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.20 元/次，微信 Agent Pay），答案依赖包内 知识库.md 与 专业提示词.md，并要求库未覆盖时调用外部检索"
+  },
+  {
+   "name": "小学低年级作业陪伴",
+   "url": "https://skillhub.cn/skills/user_5909df59/parenting-pro",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：陪孩子写作业"
+  },
+  {
+   "name": "小学全科模拟卷批改与学情诊断报告",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/fggfdshghjhn",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "按次付费技能（0.10 元/次），面向家庭自编练习分析，使用对象是孩子或家长而不是教师，答案依赖包内知识库"
+  },
+  {
+   "name": "小学生考试复盘学情报告",
+   "url": "https://skillhub.cn/skills/org-61cldd5y/fggsdfdff",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向学生本人"
+  },
+  {
+   "name": "小学数学备课",
+   "url": "https://github.com/gooqijun/primary-math-lesson-plans-skill",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向小学数学教师，输入年级和知识点生成备课大纲，附大纲模板和 PPT 设计规范两份参考文件；说明书引用的 gen_ppt_v2.js 和 gen_docx_template.js 不在仓库里"
+  },
+  {
+   "name": "小学数学老师专用必备：小学数学老师工作台 - 教案作业错题一次出齐",
+   "url": "https://skillhub.cn/skills/org-jhpvj52p/flamingotech-math-teacher-kit",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向家长"
+  },
+  {
+   "name": "小学学情与错题分析助手",
+   "url": "https://skillhub.cn/skills/user_d361140a/edu-learning-analytics",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：面向小学教师的纯提示词技能，统计成绩与错题分布并给补练建议，无付费与外部依赖；正文约 600 字，未声明任何附属文件"
+  },
+  {
+   "name": "小学语文单元课前学情分析",
+   "url": "https://skillhub.cn/skills/user_fa72a9f4/primary-chinese-learning-analysis-v2",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：依赖外部知识库"
+  },
+  {
+   "name": "小学作业检查与错因诊断",
+   "url": "https://skillhub.cn/skills/user_837f0c87/xiaoxue-zuoye-zhenduan",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向家长"
+  },
+  {
+   "name": "行者-成绩统计",
+   "url": "https://skillhub.cn/skills/user_30f4352f/xz3z",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：面向中职/高中考试成绩统计的流程说明，由 Agent 按说明书现写 Python 把机考 zip 转成年级总表和班级报表，无付费与外部依赖，未命中红线"
+  },
+  {
+   "name": "学情分析师",
+   "url": "https://github.com/qizhitang/xiaozhi-skills/tree/main/teacher/general/xiaozhi-teach-student-analyzer",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "ran",
+   "reason": "面向小学到高中老师，把老师粘贴的逐题分数表算成班级画像、知识点得分率、逐题难度和区分度、分层与教学建议；纯文字指引加模板，无脚本、接口和密钥"
+  },
+  {
+   "name": "学情分析专家",
+   "url": "https://skillhub.cn/skills/user_b0ac8c86/xueqingfenxi",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "ran",
+   "reason": "面向中小学教师备课的学情分析技能，靠自带脚本统计得分率与错因并生成 Word 报告，只用学生编号，未命中红线"
+  },
+  {
+   "name": "学情看板",
+   "url": "https://skillhub.cn/skills/user_12aa9699/viz-universal-k12",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：面向中小学成绩管理的学情看板技能，靠自带 Python 脚本把成绩明细表转成单文件离线 HTML 看板，可出逐题诊断卡与家长报告，不联网，未命中红线"
+  },
+  {
+   "name": "学情诊断报告",
+   "url": "https://skillhub.cn/skills/user_447e59de/learning-diagnostic-report",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向测评机构"
+  },
+  {
+   "name": "学情诊断分析",
+   "url": "https://skillhub.cn/skills/user_c774f8e9/student-learning-diagnosis-report",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：高校"
+  },
+  {
+   "name": "学生作业诊断助手（家长版）",
+   "url": "https://skillhub.cn/skills/user_89fe5b60/homework-diagnosis",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向家长"
+  },
+  {
+   "name": "学页｜学情进度仪表盘",
+   "url": "https://skillhub.cn/skills/xuyeedu/progress-dashboard",
+   "source": "skillhub",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：面向 K12 教培学管师及班主任、学校教师的班级学情仪表盘技能，靠自带 Python 脚本出单文件 HTML 看板，不联网，未命中红线"
+  },
+  {
+   "name": "英语讲评课件（试卷·作业本）",
+   "url": "https://skillhub.cn/skills/user_ca4d2a07/exam-review-deck",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：讲评课件，属于课件品类，还没有检查单"
+  },
+  {
+   "name": "知识查询技能",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/k12-kg/skills/kg-qa",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "知识查询依赖 k12-kg 知识图谱连接器"
+  },
+  {
+   "name": "智学慧眼·作业审核",
+   "url": "https://skillhub.cn/skills/user_2cd4d9a9/homework-checker",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向孩子"
+  },
+  {
+   "name": "中小学试卷试题分析",
+   "url": "https://skillhub.cn/skills/user_cce12b87/exam-analyz",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：单题解题图解，不属于四个品类"
+  },
+  {
+   "name": "中小学作业辅导老师",
+   "url": "https://skillhub.cn/skills/kunlungrowth/kunlun-homework-tutor",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：给学生辅导"
+  },
+  {
+   "name": "组卷技能",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/k12-kg/skills/exam-assembly",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "组卷依赖 k12-kg MCP 服务（k12.ezquiz.com 外网知识服务）和连接器 OAuth 授权"
+  },
+  {
+   "name": "作业辅导 思路引导 苏格拉底提问",
+   "url": "https://skillhub.cn/skills/user_a10ab3ad/homework-solution-guide",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：给学生答疑"
+  },
+  {
+   "name": "作业检查助手",
+   "url": "https://skillhub.cn/skills/user_e1d00e01/homework-checker",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：给孩子检查作业"
+  },
+  {
+   "name": "作业引导 思路启发 自主解题",
+   "url": "https://skillhub.cn/skills//homework-solution-guide",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：给学生答疑，与另一条重复"
+  },
+  {
+   "name": "作业引导 思路启发 自主解题",
+   "url": "https://skillhub.cn/skills/user_2fd890c9/homework-solution-guide",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：给学生答疑，与另一条重复"
+  },
+  {
+   "name": "academic-language-sentence-frame-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/eal-language-development/academic-language-sentence-frame-generator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Generate tiered sentence frames for academic tasks that scaffold language production across proficiency levels」（目录分组 eal-language-development），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "academic-tutor",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/skills/academic-tutor",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向大学生的苏格拉底式解题与论文指导"
+  },
+  {
+   "name": "aiclass-teaching-skill",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/aiclass-teaching/skills",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "腾讯未来教室连接器技能，安装 Connector 并授权后才能调用 3 个工具"
+  },
+  {
+   "name": "argument-structure-scaffold-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/literacy-critical-thinking/argument-structure-scaffold-generator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Generate argument structure scaffolds using Toulmin, PEEL, or CER frameworks for a specific claim or question」（目录分组 literacy-critical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "assessment-validity-checker",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/assessment-validity-checker",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计评估效度审查，属命题作业；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "auto-exam-anxiety-response",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/auto-exam-anxiety-response",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "学生考前焦虑识别与应对，属心理关怀；正文 356 个非空白字符，目录里只有 SKILL.md，不属于四个品类"
+  },
+  {
+   "name": "AutoSkill SkillBank",
+   "url": "https://github.com/ECNU-ICALK/AutoSkill",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "科研代码仓库（技能自进化框架），SkillBank 下 5593 个 SKILL.md 是由提示词转换来的研究数据，仓库没有许可证；按名称筛出 121 个与教学有关的，抽查 5 个都是单条提示词转换件（1.8KB 到 3.1KB），其中 2 个正文不到 500 字"
+  },
+  {
+   "name": "backwards-design-unit-planner",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/backwards-design-unit-planner",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Plan a unit using backwards design from desired outcomes through assessment evidence to learning activities」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "central-historical-question-evaluator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/central-historical-question-evaluator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Evaluate a teacher-drafted central historical question for its capacity to drive genuine historical inquiry」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "checking-for-understanding-protocol-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/explicit-instruction/checking-for-understanding-protocol-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a checking-for-understanding protocol with specific techniques for each lesson stage」（目录分组 explicit-instruction），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "china-k12-check-understanding",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/china-k12-check-understanding",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "为教师设计 1 到 3 道形成性检测题并配读数指南，属命题作业；目录里只有 SKILL.md，正文 578 个非空白字符"
+  },
+  {
+   "name": "china-k12-lesson-differentiation",
+   "url": "https://github.com/confusedstardust/K12_Teacher_Skills/tree/main/k12-teacher-skill-differentiation",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "把教师已有课例改造成同一课标下的差异化方案和三份学生任务单，属备课教案；附参考文件和渲染脚本，写明不索取姓名和诊断报告"
+  },
+  {
+   "name": "china-k12-lesson-differentiation",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/china-k12-lesson-differentiation",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "把教师已有的课改造成三层支架，属备课教案；目录里只有 SKILL.md，正文 547 个非空白字符"
+  },
+  {
+   "name": "china-k12-lesson-planning",
+   "url": "https://github.com/confusedstardust/K12_Teacher_Skills/tree/main/k12-teacher-skill-planning",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向中国大陆小学、初中、普通高中教师从零生成教学设计和学生材料，属备课教案；按国家课程标准设计，附学科参考文件和渲染脚本"
+  },
+  {
+   "name": "china-k12-lesson-planning",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/china-k12-lesson-planning",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向中国基础教育教师从零设计课时方案，属备课教案；目录里只有 SKILL.md，正文 1461 个非空白字符，没有脚本和外部接口"
+  },
+  {
+   "name": "china-k12-teacher-skills--china-k12-lesson-prep",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/china-k12-lesson-prep",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "正文 478 个非空白字符，不到 500 字，目录里只有 SKILL.md"
+  },
+  {
+   "name": "china-k12-teacher-skills--kid-friendly-explainer-cn",
+   "url": "https://github.com/myvipbackup2/china-k12-teacher-skills/tree/main/skills/kid-friendly-explainer-cn",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "正文 405 个非空白字符，不到 500 字，目录里只有 SKILL.md；用途是给小学生讲解概念，也不属于四个品类"
+  },
+  {
+   "name": "class-assistant",
+   "url": "https://github.com/PIGU-PPPgu/class-teacher-skills",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "ran",
+   "reason": "面向班主任，说明书排第一的用途是家长通知起草，另有家长会提纲和成绩分析；附 3 个本地脚本和 43 个场景文件，场景文件统一写明先生成草稿、不直接外发"
+  },
+  {
+   "name": "class-teacher-market-scan",
+   "url": "https://github.com/PIGU-PPPgu/class-teacher-skills/tree/main/companion/class-teacher-market-scan",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "不是教师工作技能：用于调研班主任类 skill 的市场和本机记忆系统（memtensor）配置验收，正文是结论模板和作者本机路径记录"
+  },
+  {
+   "name": "close-reading-skill-builder",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/close-reading-skill-builder",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Build students' capacity to read historical documents closely — attending to word choice, tone, and rhetoric as evidence of perspective」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "cnki-edu-ai-zujuan-paper",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-ai-zujuan-paper",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cnki-edu-curriculum-standards-explainer",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-curriculum-standards-explainer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cnki-edu-daily-comm-scripts",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-daily-comm-scripts",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cnki-edu-exam-score-analysis",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-exam-score-analysis",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cnki-edu-gen-teachingdesign",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-gen-teachingdesign",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cnki-edu-homework-design",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-homework-design",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cnki-edu-parent-meeting-speech",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-parent-meeting-speech",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cnki-edu-student-semester-comment",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/cnki-edu/skills/cnki-edu-student-semester-comment",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 连接器或专家包里的技能，依赖平台连接器"
+  },
+  {
+   "name": "cognitive-load-analyser",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/cognitive-load-analyser",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Analyse a learning task for cognitive load problems and recommend specific design improvements」（目录分组 memory-learning-science），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "competency-unpacker",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/competency-unpacker",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Unpack a broad standard or competency descriptor into specific, assessable success criteria and sub-skills」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "contextualisation-skill-builder",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/contextualisation-skill-builder",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Build students' capacity to place historical documents in their temporal and social context」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "corroboration-skill-builder",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/corroboration-skill-builder",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Build students' capacity to compare accounts across multiple historical sources — identifying agreements, contradictions, and gaps」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "criterion-referenced-rubric-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/criterion-referenced-rubric-generator",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "说明书定位是给教师设计评分量规，属命题作业；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "critical-thinking-task-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/literacy-critical-thinking/critical-thinking-task-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a critical thinking task targeting specific skills like evaluating evidence, identifying bias, or analysing arguments」（目录分组 literacy-critical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "culturally-responsive-teaching-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/global-cross-cultural-pedagogies/culturally-responsive-teaching-designer",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计文化回应教学改造，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "curriculum-knowledge-architecture-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/curriculum-knowledge-architecture-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Map the epistemic structure of a subject to determine knowledge types and inform curriculum sequencing」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "dialogic-teaching-move-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/questioning-discussion/dialogic-teaching-move-generator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Generate follow-up teaching moves that extend student thinking after a specific classroom response」（目录分组 questioning-discussion），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "differentiation-adapter",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/differentiation-adapter",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计学习需求差异化适配，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "disciplinary-writing-scaffold",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/literacy-critical-thinking/disciplinary-writing-scaffold",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Create a writing scaffold teaching the genre conventions specific to an academic discipline」（目录分组 literacy-critical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "discipline-specific-critical-thinking-task-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/discipline-specific-critical-thinking-task-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design discipline-specific critical thinking tasks grounded in knowledge-contingent reasoning rather than generic skills」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "discussion-protocol-selector",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/questioning-discussion/discussion-protocol-selector",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Select and configure a structured discussion protocol matched to the purpose, topic, and group readiness」（目录分组 questioning-discussion），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "document-based-lesson-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/document-based-lesson-designer",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计史料探究课设计，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "dual-coding-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/dual-coding-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a visual complement to verbal content using dual coding principles for stronger encoding」（目录分组 memory-learning-science），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "edu-analytic-geometry",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/edu-analytic-geometry",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "把解析几何题做成交互教学网页，属课件品类，依赖 Python 和 sympy，不属于四个品类"
+  },
+  {
+   "name": "edu-chem-reaction",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/edu-chem-reaction",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "把化学反应做成微观 3D 交互演示网页，属课件品类，不属于四个品类"
+  },
+  {
+   "name": "edu-connect",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/edu-next/skills/edu-connect",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "Edu Next 平台连接器的连接、OAuth 与技能同步说明"
+  },
+  {
+   "name": "edu-solid-geometry",
+   "url": "https://github.com/PIGU-PPPgu/edupi/tree/main/skills/edu-solid-geometry",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "把立体几何题解成交互教学网页，属课件品类，依赖 Python 和 sympy，不属于四个品类"
+  },
+  {
+   "name": "education",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/skills/education",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向学生的学习计划、测验、闪卡通用技能"
+  },
+  {
+   "name": "education-content-iteration",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/doubao/skills/education-content-iteration",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "通用的教育内容润色与迭代技能（教学文本、课件大纲、讲座框架等），案例是职业教育课程，不专指中小学教师"
+  },
+  {
+   "name": "elaborative-interrogation-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/elaborative-interrogation-generator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Generate elaborative interrogation prompts that deepen encoding through targeted why and how questions」（目录分组 memory-learning-science），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "english-curriculum-design",
+   "url": "https://github.com/louisaye7-source/k12-english-curriculum-design-skill",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：面向 K12 英语教师，上传原版教材后输出 Lesson Plan、Unit Assessment 等成果，附 7 份参考、4 份模板和 4 个 Python 脚本；仓库没有许可证"
+  },
+  {
+   "name": "english-exam-writing-reviewer",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/skills/english-exam-writing-reviewer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "四六级和考研英语作文批改"
+  },
+  {
+   "name": "error-analysis-protocol",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/self-regulated-learning/error-analysis-protocol",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计错误分析方案，属学情分析；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "exam-comparison",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/c30/skills/exam-comparison",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "iClass30 考试对比，先在 WorkBuddy 浏览器登录授权，再调 c30 连接器的 compare_exams 等工具"
+  },
+  {
+   "name": "exam-interview-training",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/doubao/skills/exam-interview-training",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向考生的备考和面试模拟训练，不是教师工作技能"
+  },
+  {
+   "name": "exam-learning-analysis",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/c30/skills/exam-learning-analysis",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "iClass30 考试成绩分析，先在 WorkBuddy 浏览器登录授权，再调 c30 的 MCP 工具"
+  },
+  {
+   "name": "exam-prep-coach",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/doubao/skills/exam-prep-coach",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向学生的四六级、考研、考证备考规划，不是教师工作技能"
+  },
+  {
+   "name": "explicit-instruction-sequence-builder",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/explicit-instruction/explicit-instruction-sequence-builder",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计直接教学序列，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "family-education-expert",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/experts/family-education-ma/skills/family-education-expert",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "家庭教育专家“马老师”的家长咨询主入口技能，面向家长而不是教师"
+  },
+  {
+   "name": "feedback-quality-analyser",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/feedback-quality-analyser",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计反馈质量分析，属学情分析；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "feifei-companion",
+   "url": "https://github.com/SimonsTang/feifei-companion",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向学生和家长的 K12 学习陪伴系统，正文约 4.3 万字符，包含学习辅导、心理陪伴、亲子沟通等模块，不是教师工作技能"
+  },
+  {
+   "name": "formative-assessment-technique-selector",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/formative-assessment-technique-selector",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Select the right formative assessment technique for a specific learning moment, purpose, and age group」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "fun-englishzone",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/qwenwork/skills/fun-englishzone",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向学习者的英语老师人格技能（词汇、语法、发音、阅读、写作陪练），不是教师工作技能"
+  },
+  {
+   "name": "fun-mathclass",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/qwenwork/skills/fun-mathclass",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向学习者的数学老师人格技能，生成互动练习和可视化，不是教师工作技能"
+  },
+  {
+   "name": "gap-analysis-from-student-work",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/gap-analysis-from-student-work",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计学生作业差距分析，属学情分析；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "generate-9th-grade-physics-lesson-plan",
+   "url": "https://github.com/PGYMT/dsh-grade9-physics-lesson-plan-skill",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "九年级物理教案技能，但绑定作者本机 DSH 工作区（~/dsh-workspace、~/.dsh/skills 软链）和 auto-organize-work-files 技能；备课调研必做，要先读本地资源包再联网抓取；脚本依赖 Pillow、ffmpeg、tesseract，课件核对要在 Windows 下用希沃白板"
+  },
+  {
+   "name": "GMAI-作业公示与总量核查器",
+   "url": "https://skillhub.cn/skills/guomeng/gmai-edu-homework-public",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：属于班级管理，该品类还没有检查单"
+  },
+  {
+   "name": "GMAI-作业时间管理表批量改写指令包",
+   "url": "https://skillhub.cn/skills/guomeng/st-mid-17",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向中学生本人"
+  },
+  {
+   "name": "goal-setting-protocol-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/self-regulated-learning/goal-setting-protocol-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a structured goal-setting protocol using SMART or implementation-intention frameworks for students」（目录分组 self-regulated-learning），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "hinge-question-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/questioning-discussion/hinge-question-designer",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "说明书定位是给教师设计课中诊断问题，属命题作业；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "historical-document-set-curator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/historical-document-set-curator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a document set for a document-based lesson — selecting and sequencing sources for analytical tension around a central question」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "historical-source-adapter",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/historical-source-adapter",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Adapt a historical primary source for classroom use — modifying complexity and length while preserving features for sourcing, close reading, and corroboration」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "historical-thinking-assessment-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/historical-thinking-assessment-designer",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计历史思维评估设计，属命题作业；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "historical-thinking-strategy-modelling-guide",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/historical-thinking-strategy-modelling-guide",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a teacher think-aloud that models historical thinking strategies with a specific document」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "homework-grading",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/duifene-homework-grading/skills/homework-grading",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "对分易平台作业批改，通过 5 个 MCP 工具读作业、打分、写回，需要教师在连接器里填访问密钥"
+  },
+  {
+   "name": "hs-it-lesson-design",
+   "url": "https://github.com/aymwoo/hs-it-lesson-design",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向普通高中信息技术教师，按 2017 年版课标生成教学设计、学生任务单、分层任务和评价工具，属备课教案；附 5 份参考文件，没有脚本"
+  },
+  {
+   "name": "interactive-learning-cards",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/qwenwork/skills/interactive-learning-cards",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "为教师制作闪卡和测验的交互式课堂应用（HTML），属课件品类"
+  },
+  {
+   "name": "interleaving-unit-planner",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/interleaving-unit-planner",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Redesign a blocked topic sequence into an interleaved plan with mixed practice across related topics」（目录分组 memory-learning-science），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "joyread-reading",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/joyread-english/skills/joyread-reading",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绘本伴读连接器技能（双语绘本、点读网页、陪读视频），面向家长和孩子"
+  },
+  {
+   "name": "K12 错题学情辅导（家长版）",
+   "url": "https://skillhub.cn/skills/user_0482ac7a/k12-study-tutor",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "看名称与说明剔除：面向家长"
+  },
+  {
+   "name": "K12 教案与材料",
+   "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-plan-creation",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向 K-12 教师，按学科参考文件写 lesson.json，再用随附 Python 脚本渲染成 Word 和 HTML；可选的 Learning Commons 知识图谱不连也能用"
+  },
+  {
+   "name": "k12-check-for-understanding",
+   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-check-for-understanding",
+   "source": "github",
+   "category": null,
+   "verdict": "redline",
+   "reason": "说明书要求对老师隐瞒操作：检索、连接器调用和自检步骤“stays invisible”，未连知识图谱时页脚不说明检索情况，并要求任何消息里都不出现工具、文件名和校验内容。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+  },
+  {
+   "name": "k12-check-for-understanding",
+   "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-check-for-understanding",
+   "source": "github",
+   "category": null,
+   "verdict": "redline",
+   "reason": "说明书要求对老师隐瞒操作：检索、连接器调用和自检步骤对老师不可见，原文是 stays invisible 和「The teacher never sees this」；不告诉老师有没有查过课标库，原文是「nothing about what was or wasn't retrieved」；还禁止在任何文件和对话中标注来源"
+  },
+  {
+   "name": "k12-fixing-lesson-plans",
+   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-fixing-lesson-plans",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：审查 K-12 教师的已有教案并产出修订版教案，属备课教案；目录里有 SKILL.md 和 3 份参考文件，没有脚本；许可证 Apache-2.0"
+  },
+  {
+   "name": "k12-lesson-differentiation",
+   "url": "https://github.com/flyboat403/k12-skills/tree/main/k12-lesson-differentiation",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向义务教育、普通高中（中职参照）教师把已有课时分层，属备课教案；说明书中文，内嵌课标参考文件，附渲染脚本，不依赖外部连接器"
+  },
+  {
+   "name": "k12-lesson-differentiation",
+   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-differentiation",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "把老师已有的一节课改编成教师分层方案和学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 知识图谱也能用。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+  },
+  {
+   "name": "k12-lesson-differentiation",
+   "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-differentiation",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 课标库也能运行；5 个脚本逐行看过，只把 JSON 渲染成 Word 和 HTML，不读取凭据、不删除文件；缺 python-docx 时会自动 pip 安装"
+  },
+  {
+   "name": "k12-lesson-plan-creation",
+   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-plan-creation",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向 K-12 教师按学科参考文件写 lesson.json，再用随附 Python 脚本渲染 Word 和 HTML；可选的 Learning Commons 知识图谱不连也能用。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+  },
+  {
+   "name": "k12-lesson-planning",
+   "url": "https://github.com/flyboat403/k12-skills/tree/main/k12-lesson-planning",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向义务教育、普通高中（中职参照）教师从零生成课时方案，属备课教案；说明书中文，内嵌各学科课标参考文件，附 6 个渲染脚本，不依赖外部连接器"
+  },
+  {
+   "name": "k12-lesson-prep",
+   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-prep",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "正文只有一段，约 970 个非空白字符，目录里只有 SKILL.md，没有参考文件和脚本。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+  },
+  {
+   "name": "k12-lesson-prep",
+   "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-prep",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "正文只有一段，213 个英文单词，约 1186 个字符，目录里除 SKILL.md 外只有 LICENSE，没有参考文件和脚本"
+  },
+  {
+   "name": "K12智能老师",
+   "url": "https://skillhub.cn/skills/user_6d79eef2/k12-smart-teacher",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向家长和学生的一对一错题辅导：首次对话向家长询问孩子姓名和年级并写入记忆文件，用教师语气直接给学生讲题，不是给老师用的备课、命题或家校沟通工具"
+  },
+  {
+   "name": "K2F 教案",
+   "url": "https://github.com/suzheng/k2f/tree/main/skills/education/k2f-lesson-plan",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "产出依赖外部引擎：正文写明先安装核心技能 npx skills add suzheng/k2f --skill k2f，第二步把蓝图交给 k2f 技能和 K2F 引擎排版导出"
+  },
+  {
+   "name": "ko12-lesson-differentiation",
+   "url": "https://github.com/raphysicst-create/science-teacher-skills/tree/main/plugin/skills/ko12-lesson-differentiation",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向韩国小学初中科学教师：说明书主体是韩文，写明只处理科学学科，产出韩文 한글(HWPX) 文档，渲染脚本在 scripts/render_lesson_hwpx.py；可选的韩国课标学习图谱 MCP 配置在仓库 .mcp.json 里"
+  },
+  {
+   "name": "ko12-lesson-planning",
+   "url": "https://github.com/raphysicst-create/science-teacher-skills/tree/main/plugin/skills/ko12-lesson-planning",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向韩国小学初中科学教师：说明书主体是韩文，写明只处理科学学科，产出韩文 한글(HWPX) 文档，渲染脚本在 scripts/render_lesson_hwpx.py；可选的韩国课标学习图谱 MCP 配置在仓库 .mcp.json 里"
+  },
+  {
+   "name": "kud-knowledge-type-mapper",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/kud-knowledge-type-mapper",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Classify curriculum content into Know, Understand, and Do categories to align teaching and assessment approaches」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "language-demand-analyser",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/eal-language-development/language-demand-analyser",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Analyse the language demands of a classroom task to identify barriers for EAL and multilingual learners」（目录分组 eal-language-development），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "learning-analytics-interpretation-guide",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/ai-learning-science/learning-analytics-interpretation-guide",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计学习数据解读，属学情分析；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "learning-progression-builder",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/learning-progression-builder",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Build a learning progression showing prerequisite-to-mastery steps for a target skill or understanding」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "lesson-observation-protocol-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/professional-learning/lesson-observation-protocol-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a focused lesson observation protocol with specific look-fors and evidence collection methods」（目录分组 professional-learning），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "lesson-opening-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/explicit-instruction/lesson-opening-designer",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计课堂导入设计，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "lesson-plan",
+   "url": "https://github.com/Dragon-01-you/lesson-plan-skill/tree/master/skills/lesson-plan",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "面向 K-12 教师的中文教案技能，SKILL.md 454 行，附 22 份学科示例和模板参考文件；许可证 MIT"
+  },
+  {
+   "name": "lesson-plan-assistant",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/qwenwork/skills/lesson-plan-assistant",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向 QoderWork（千问办公）平台：Word 生成靠平台内置 docx 技能，交付用 present_files 工具，输出目录是 ~/.qwenworkcn/workspace/<chatId>/outputs/"
+  },
+  {
+   "name": "lesson-plan-batch-workflow",
+   "url": "https://github.com/Kyan0704/shangdian-lesson-plan-skill",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向高职院校教务系统：解析授课计划、批量生成教案 Excel，再用浏览器自动化登录 jwapp 教务系统逐课次填报，默认入口是上海电子信息职业技术学院；不是中小学教师技能"
+  },
+  {
+   "name": "lesson-planning-core",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/experts/fbsir-beike-yi/skills/lesson-planning-core",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：面向教师的本地备课流程，主产物是教案草稿、课堂流程卡或任务包，属备课教案；说明书要求不覆盖原文件、不自动家校发送，没有脚本"
+  },
+  {
+   "name": "lesson-study-cycle-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/professional-learning/lesson-study-cycle-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a complete lesson study cycle from research question through collaborative planning to research lesson」（目录分组 professional-learning），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "media-literacy-deconstruction-protocol",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/literacy-critical-thinking/media-literacy-deconstruction-protocol",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a media deconstruction protocol analysing persuasion, bias, or representation in media texts」（目录分组 literacy-critical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "metacognitive-prompt-library",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/self-regulated-learning/metacognitive-prompt-library",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Build a library of metacognitive prompts targeting planning, monitoring, or evaluation for a specific task」（目录分组 self-regulated-learning），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "open-lesson",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/skills/open-lesson",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "用 shell 的 curl 调 openLesson 辅导平台 API"
+  },
+  {
+   "name": "outreach-communication",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/experts/family-education-ma/skills/outreach-communication",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "家庭教育专家“马老师”对外发声与内容创作技能，面向研究者、媒体和讲师"
+  },
+  {
+   "name": "perma-based-lesson-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/wellbeing-motivation-agency/perma-based-lesson-designer",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计融入幸福感的教案，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "perspective-taking-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/questioning-discussion/perspective-taking-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design structured perspective-taking activities with anti-projection guardrails」（目录分组 questioning-discussion），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "practice-problem-sequence-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/explicit-instruction/practice-problem-sequence-designer",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "说明书定位是给教师设计练习题序列，属命题作业；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "project-brief-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/project-brief-designer",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计项目式学习任务书，属命题作业；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "quiz-generator",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/doubao/skills/quiz-generator",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "按学习主题和年级生成带答案解析的测验题，属命题作业；纯文字技能，没有脚本和外部接口；来源是第三方归档仓库"
+  },
+  {
+   "name": "reading-comprehension-strategy-selector",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/literacy-critical-thinking/reading-comprehension-strategy-selector",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Select and sequence reading comprehension strategies matched to a specific text's challenges and demands」（目录分组 literacy-critical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "reading-explorer-lesson-plan",
+   "url": "https://github.com/CathyErer/reading-explorer-lesson-plan-skill/tree/main/reading-explorer-lesson-plan",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：面向教 Reading Explorer 教材的英语教师，输入教材页生成 Lesson Plan 等材料，正文 6.5 万字符；许可证 MIT"
+  },
+  {
+   "name": "res-family-intervention",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/experts/family-education-ma/skills/res-family-intervention",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "家庭教育专家“马老师”的家庭关系修复技能，面向家长"
+  },
+  {
+   "name": "retrieval-practice-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/retrieval-practice-generator",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "说明书定位是给教师设计提取练习题，属命题作业；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "risk-assessment-referral",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/experts/family-education-ma/skills/risk-assessment-referral",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "家庭教育专家“马老师”的高风险情况评估与转介技能，面向家长"
+  },
+  {
+   "name": "scaffolded-task-modifier",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/eal-language-development/scaffolded-task-modifier",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Modify a classroom task with language scaffolds that preserve cognitive demand for EAL learners」（目录分组 eal-language-development），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "school-sentiment-monitor",
+   "url": "https://github.com/ahang1598/doubao-workbuddy-qwenwork-skills/tree/main/qwenwork/skills/school-sentiment-monitor",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "学校在社交平台的舆情监控，要求用户自备微博、小红书等账号并通过 QoderWork 浏览器连接器登录采集"
+  },
+  {
+   "name": "scope-and-sequence-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/scope-and-sequence-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a scope and sequence showing vertical and horizontal curriculum coherence across a programme or year」（目录分组 curriculum-assessment），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "self-regulation-scaffold-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/self-regulated-learning/self-regulation-scaffold-generator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Generate scaffolds supporting student self-regulation across planning, monitoring, and evaluation phases」（目录分组 self-regulated-learning），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "sheltered-instruction-lesson-modifier",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/eal-language-development/sheltered-instruction-lesson-modifier",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计SIOP 教案改造，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "socratic-questioning-sequence-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/questioning-discussion/socratic-questioning-sequence-generator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Generate a Socratic questioning sequence that develops conceptual understanding through guided inquiry」（目录分组 questioning-discussion），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "source-credibility-evaluation-protocol",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/literacy-critical-thinking/source-credibility-evaluation-protocol",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a source evaluation protocol using lateral reading and credibility checks for digital information」（目录分组 literacy-critical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "sourcing-skill-builder",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/historical-thinking/sourcing-skill-builder",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Build students' capacity to interrogate a historical source before reading — asking who authored it, when, why, and what this means for reliability」（目录分组 historical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "spaced-practice-scheduler",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/spaced-practice-scheduler",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a spaced retrieval schedule for any topic list and timeline」（目录分组 memory-learning-science），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "standard-lesson-plan",
+   "url": "https://github.com/Taricoffee/-Standard-Lesson-Plan-Skill/tree/main/github-upload-standard-lesson-plan/standard-lesson-plan",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：把来源材料改写成固定学校格式的 Word 教案，属备课教案；格式绑定“两江新区实验中学三段五学六有”，附一个 docx 清理脚本；仓库没有许可证"
+  },
+  {
+   "name": "study-strategy-selector",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/self-regulated-learning/study-strategy-selector",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Select evidence-based study strategies matched to material type, learning goal, and student habits」（目录分组 self-regulated-learning），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "teachany",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/skills/teachany",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "K-12 交互课件制作并发布到 TeachAny 平台，属课件品类"
+  },
+  {
+   "name": "teacher-a1-diagnosis",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a1-diagnosis",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "ran",
+   "reason": "开课前评估学生掌握度、薄弱点与最近发展区并产出学生画像，属学情分析；目录里只有 SKILL.md，画像由 teacher-workflow 的校验脚本检查"
+  },
+  {
+   "name": "teacher-a10-parent-feedback",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a10-parent-feedback",
+   "source": "github",
+   "category": "home-school",
+   "verdict": "ran",
+   "reason": "把学情与表现写成给家长的反馈文案，属家校沟通；目录里只有 SKILL.md，正文 705 个非空白字符"
+  },
+  {
+   "name": "teacher-a2-lesson-prep",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a2-lesson-prep",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "ran",
+   "reason": "根据教学目标与学情生成完整教案，属备课教案；目录里只有 SKILL.md，正文 788 个非空白字符"
+  },
+  {
+   "name": "teacher-a3-question-gen",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a3-question-gen",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "ran",
+   "reason": "基于知识点或原题生成变式题组、试卷和分层作业，属命题作业；目录里只有 SKILL.md，正文 700 个非空白字符"
+  },
+  {
+   "name": "teacher-a4-lecture-notes",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a4-lecture-notes",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "产出课堂讲义、板书和课件文案，属课件品类，还没有检查单"
+  },
+  {
+   "name": "teacher-a5-realtime-qa",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a5-realtime-qa",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "面向学生提问的实时答疑和讲题，不属于四个品类"
+  },
+  {
+   "name": "teacher-a6-homework-grading",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a6-homework-grading",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：批改作业和试卷，产出成绩单、错题汇总和共性分析并回写学生画像，归到学情分析；目录里只有 SKILL.md"
+  },
+  {
+   "name": "teacher-a7-error-attribution",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a7-error-attribution",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "ran",
+   "reason": "对学生错题做归因并给出订正方案，同时回写学生画像，属学情分析；目录里只有 SKILL.md"
+  },
+  {
+   "name": "teacher-a8-practice-drill",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a8-practice-drill",
+   "source": "github",
+   "category": "assignment",
+   "verdict": "out",
+   "reason": "候选已满：生成专项训练题和练习单，属命题作业；目录里只有 SKILL.md，正文 773 个非空白字符"
+  },
+  {
+   "name": "teacher-a9-learning-plan",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-a9-learning-plan",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "产出学习计划，属学习规划品类，不属于四个品类"
+  },
+  {
+   "name": "teacher-skills (QingdaoAcademy)",
+   "url": "https://github.com/QingdaoAcademy/teacher-skills",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "仓库只有 LICENSE 和 李瑞瑞.md 两个文件，没有 SKILL.md；李瑞瑞.md 是一段数学竞赛教练的人设提示词，不是技能说明"
+  },
+  {
+   "name": "teacher-workflow",
+   "url": "https://github.com/huapg/teacher-workflow-skills/tree/main/teacher-workflow",
+   "source": "github",
+   "category": "analysis",
+   "verdict": "out",
+   "reason": "候选已满：十环节路由与共享学生画像的总协调器，环节表排第一的是学情诊断，归到学情分析；执行依赖同仓库十个 teacher-a* 技能"
+  },
+  {
+   "name": "Teaching Skills (university professors)",
+   "url": "https://github.com/YujxZJCN/teaching-skills",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "仓库说明写明是 university professors 的教学流程套件，15 个技能的说明书都以 for university professors 定位；抽查 lesson-builder、assessment-architect、cohort-analyst 三个，不是中小学教师技能"
+  },
+  {
+   "name": "tencent-edu-assistant",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/tencent-edu-assistant/skills/tencent-edu-assistant",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "WorkBuddy 学习空间页面专用，先调 get_page_context 取页面上下文"
+  },
+  {
+   "name": "text-complexity-analyser",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/literacy-critical-thinking/text-complexity-analyser",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Analyse text complexity across quantitative, qualitative, and reader-task dimensions with scaffolding recommendations」（目录分组 literacy-critical-thinking），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "think-aloud-script-generator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/explicit-instruction/think-aloud-script-generator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Script a teacher think-aloud demonstrating expert reasoning processes for a specific task」（目录分组 explicit-instruction），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "three-part-lesson-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/montessori-alternative-approaches/three-part-lesson-designer",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计蒙台梭利三段式课时，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "tutor-skills",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/skills/tutor-skills",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "把文档转成 Obsidian 学习库供自学，面向自学者"
+  },
+  {
+   "name": "udl-barrier-anticipator",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/inclusive-design/udl-barrier-anticipator",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Predicts access barriers in a learning task before delivery, given a learner variability profile」（目录分组 inclusive-design），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "udl-lesson-auditor",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/inclusive-design/udl-lesson-auditor",
+   "source": "github",
+   "category": "lesson-plan",
+   "verdict": "out",
+   "reason": "候选已满：说明书定位是给教师设计UDL 教案审查，属备课教案；纯文字技能，没有脚本和外部接口"
+  },
+  {
+   "name": "udl-options-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/inclusive-design/udl-options-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Generates multiple means of engagement, representation, and action/expression for a given learning goal」（目录分组 inclusive-design），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "vocabulary-tiering-tool",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/eal-language-development/vocabulary-tiering-tool",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Tier vocabulary from a text or topic into everyday, academic, and technical categories with teaching priorities」（目录分组 eal-language-development），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "vox-teacher-api",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/vox-teacher/skills/vox-teacher-api",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "一起作业教师端接口说明，靠连接器携带登录 cookie 调用生产接口"
+  },
+  {
+   "name": "worked-example-fading-designer",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/memory-learning-science/worked-example-fading-designer",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "按说明书，用途是「Design a worked example fading sequence from fully worked examples through to independent practice」（目录分组 memory-learning-science），不属于备课教案、命题作业、学情分析、家校沟通四类；没有逐行审读全文"
+  },
+  {
+   "name": "xuanpian-schedule",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanpian-schedule/skills",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "连接器技能，要求先把 token 填进连接器设置的授权 Token 字段"
+  },
+  {
+   "name": "xuanxing-assessment-idp",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-assessment-idp",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "xuanxing-catalog-discovery",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-catalog-discovery",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "xuanxing-growth-map",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-growth-map",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "xuanxing-shared",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-shared",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "xuanxing-study-progress",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-study-progress",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "xuanxing-study-todo",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-study-todo",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "xuanxing-teaching-todo",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-teaching-todo",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "xuanxing-training-admin",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/xuanxing/skills/xuanxing-training-admin",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "绚星（Xuanxing）企业培训平台连接器技能，先读 xuanxing-shared 确认连接与授权；不是中小学教师工作技能"
+  },
+  {
+   "name": "YB学校体育成绩分析报告2",
+   "url": "https://skillhub.cn/skills/user_0ac01916/yb-pe-fitness-score-report-yanbo",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "redline",
+   "reason": "说明书要求「发现同目录有易混淆的旧命名产物，主动送回收站或明确告知使用者」，属于删除用户文件"
+  },
+  {
+   "name": "YB学校体育成绩分析图表1",
+   "url": "https://skillhub.cn/skills/user_0ac01916/yb-pe-fitness-score-charts-yanbo",
+   "source": "skillhub",
+   "category": null,
+   "verdict": "redline",
+   "reason": "说明书要求「发现同目录有易混淆的旧命名产物，主动送回收站或明确告知使用者」，属于删除用户文件"
+  },
+  {
+   "name": "zuoye-user-info",
+   "url": "https://github.com/infometa/workbuddyskills/tree/main/connectors/vox-teacher/skills/zuoye-user-info",
+   "source": "github",
+   "category": null,
+   "verdict": "out",
+   "reason": "一起作业教师账号与授权状态查询，靠 vox-teacher 连接器"
+  }
+ ]
+}
