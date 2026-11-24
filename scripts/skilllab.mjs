@@ -2,7 +2,7 @@
 // 会话的开、等、导出不在脚本里，由主会话用子代理做，步骤见 skills/skill-evaluation/SKILL.md。
 // 设计见 docs/superpowers/specs/2026-11-24-skill-eval-background-harness-design.md
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import yaml from 'js-yaml';
 import { CHECKLISTS, MIRROR_LICENSES } from '../src/data/skill-standard.ts';
 import { computeDims, tierOf, total } from '../src/lib/skillScore.ts';
@@ -12,10 +12,13 @@ import { autoChecks } from './skilllab/auto_checks.mjs';
 import { judgePrompt, parseJudgement } from './skilllab/judge_prompt.mjs';
 import { LAYER_MODELS, buildPlan, modelShort, tasksFor } from './skilllab/plan.mjs';
 import { buildPrompt, leakCheck, parseOutput, readSkillDir } from './skilllab/prompt.mjs';
+import { bootstrapText, mainTurns, summarizeRollout } from './skilllab/rollout.mjs';
 
 const AGENT = 'ZCode 后台会话';
 const JUDGE_MODEL = 'GLM-5.3';
 const JUDGE_MODEL_ID = 'account:bigmodel-individual-coding-plan/GLM-5.3';
+/** ZCode 的会话记录目录，每个会话一个 model-io-<会话号>.jsonl。自测时用环境变量指到临时目录。只读登记过的会话，不枚举整个目录。 */
+const ROLLOUT_DIR = process.env.SKILLLAB_ROLLOUT_DIR ?? `${process.env.HOME}/.zcode/cli/rollout`;
 const CSV = 'public/skill-tasks/grade-sample.csv';
 const EVAL = (batch) => `docs/skill-evals/${batch}`;
 const LAB = (batch) => `.skilllab/${batch}`;
@@ -46,6 +49,8 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   review-merge <批次>                   汇总人工复核记录，写初筛名单与候选表
   quotes <批次> <slug>                  核对条目正文里的引文都能在原始产出里找到
   trust <批次> <层级> <轮次号>          引文可疑的评审，人看过后标记为可以采用
+  ledger <批次> <层级> <轮次号>=<会话号>…  登记开会话得到的会话号（评审加 --judge）
+  collect <批次> <层级> [--judge]      从会话记录里取出结果，写成 raw 或 judge-raw 文件
 层级取 free-tier 或 same-model。`;
 
 const readJson = (p) => JSON.parse(readFileSync(p, 'utf8'));
@@ -131,7 +136,9 @@ function cmdIngest(batch, layer) {
     const raw = readJson(rawPath);
     const out = parseOutput(raw.finalText);
     const reasons = [];
-    if (raw.toolUses !== 0) reasons.push(`会话里出现了 ${raw.toolUses ?? '未知次数'} 次工具调用`);
+    // 只允许一次工具调用：读指定的提示文件。读提示文件之外每一次都算，没报次数的也算
+    const extra = raw.extraToolUses ?? raw.toolUses;
+    if (extra !== 0) reasons.push(`读提示文件之外还出现了 ${extra ?? '未知次数'} 工具调用`);
     if (raw.promptMatches !== true) reasons.push('会话里的提示与计划不一致');
     if (!out.ok) reasons.push(out.reason);
     // 镜像的技能原文本来就在站内，不查照搬；只评不转的才查
@@ -200,8 +207,8 @@ function cmdIngestJudgements(batch, layer) {
     const rawPath = `${LAB(batch)}/judge-raw/${r.id}.json`;
     if (!existsSync(rawPath)) continue;
     const raw = readJson(rawPath);
-    // 没报工具调用次数也算动过工具：评审会话的交回必须带 toolUses，且为 0
-    if (raw.toolUses !== 0) {
+    // 评审会话只允许读提示文件那一次工具调用；没报次数的也算动过工具
+    if ((raw.extraToolUses ?? raw.toolUses) !== 0) {
       failed++;
       renameSync(rawPath, `${rawPath}.rejected`);
       console.log(`  x ${r.id}：评审会话动过工具或没报工具调用次数，不算`);
@@ -421,18 +428,24 @@ function cmdReport(batch, { out = 'src/data/skill-eval-report.json' } = {}) {
   console.log(`已写入 ${out}：海选出分 ${report.funnel.ran} 个，同款复核 ${report.funnel.confirmed} 个，运行 ${runs.valid}/${runs.planned} 轮有效`);
 }
 
+/** 待开清单里的一项：带着开会话时原样传入的那句话，和提示文件的绝对路径。 */
+function openItem(batch, runId, kind, model) {
+  const promptAbs = resolve(`${LAB(batch)}/${kind}/${runId}.txt`);
+  return { id: runId, model, prompt: `${LAB(batch)}/${kind}/${runId}.txt`, promptAbs, bootstrap: bootstrapText(promptAbs) };
+}
+
 /** 列出待开（或待评审）的轮次。清单走标准输出，提示走标准错误。 */
 function cmdTodo(batch, layer, limit = 8, { judge = false } = {}) {
   let todo;
   if (judge) {
     todo = listRuns(batch, layer)
       .filter((r) => r.valid && !r.judgement && !existsSync(`${LAB(batch)}/judge-raw/${r.id}.json`))
-      .map((r) => ({ id: r.id, prompt: `${LAB(batch)}/judge/${r.id}.txt`, model: JUDGE_MODEL_ID }));
+      .map((r) => openItem(batch, r.id, 'judge', JUDGE_MODEL_ID));
   } else {
     const plan = readJson(planPath(batch, layer));
     todo = plan.runs
       .filter((r) => !existsSync(`${LAB(batch)}/raw-${layer}/${r.id}.json`) && !existsSync(`${runsDir(batch, layer)}/${r.id}.json`))
-      .map((r) => ({ id: r.id, prompt: `${LAB(batch)}/prompts/${r.id}.txt`, model: r.model }));
+      .map((r) => openItem(batch, r.id, 'prompts', r.model));
   }
   const shown = todo.slice(0, limit);
   console.log(JSON.stringify(shown));
@@ -485,7 +498,8 @@ function toCandidate(r, entriesDir) {
 function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
   const dir = `${LAB(batch)}/review`;
   must(existsSync(dir), `没有复核记录目录 ${dir}`);
-  const records = readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => readJson(join(dir, f)));
+  // 同目录里还有静态审查的输出（<slug>.audit.json），那不是复核记录
+  const records = readdirSync(dir).filter((f) => f.endsWith('.json') && !f.endsWith('.audit.json')).map((f) => readJson(join(dir, f)));
   const scanned = {};
   for (const s of ['skillhub', 'github', 'other']) {
     const p = `${LAB(batch)}/scan/${s}.json`;
@@ -508,7 +522,7 @@ function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
           candidates.push(toCandidate(r, entriesDir));
         }
       }
-      return { name: r.name, url: r.url ?? '', source: r.source ?? 'other', category: r.category ?? null, verdict, reason };
+      return { name: r.name ?? r.slug ?? '', url: r.url ?? '', source: r.source ?? 'other', category: r.category ?? null, verdict, reason };
     })
     .sort((a, b) => a.name.localeCompare(b.name, 'zh'));
   candidates.sort((a, b) => a.category.localeCompare(b.category) || a.slug.localeCompare(b.slug));
@@ -531,6 +545,52 @@ function cmdQuotes(batch, slug, { entriesDir = 'src/content/skills' } = {}) {
   for (const q of miss) console.log(`  x 找不到引文：${q}`);
   console.log(`${slug}：正文引文 ${quotes.length} 处，找不到 ${miss.length} 处`);
   if (miss.length) process.exitCode = 1;
+}
+
+const ledgerFile = (batch, layer, judge) => `${LAB(batch)}/${judge ? 'sessions-judge.json' : `sessions-${layer}.json`}`;
+
+/** 登记会话号：开会话的人每开一个就记一笔，<轮次号>=<会话号>。 */
+function cmdLedger(batch, layer, pairs, { judge = false } = {}) {
+  const file = ledgerFile(batch, layer, judge);
+  const all = existsSync(file) ? readJson(file) : {};
+  for (const p of pairs) {
+    const i = p.indexOf('=');
+    must(i > 0, `登记项要写成 <轮次号>=<会话号>：${p}`);
+    all[p.slice(0, i)] = p.slice(i + 1);
+  }
+  writeJson(file, all);
+  console.log(`已登记 ${pairs.length} 个会话，${file} 里共 ${Object.keys(all).length} 个`);
+}
+
+/**
+ * 从会话记录里取出每一轮的结果，写成与手写交回文件同形的 raw 文件。只读登记过的会话。
+ * 会话还在跑、或者停在工具调用上的，先不收。
+ */
+function cmdCollect(batch, layer, { judge = false } = {}) {
+  const file = ledgerFile(batch, layer, judge);
+  must(existsSync(file), `没有会话登记表 ${file}`);
+  const ledger = readJson(file);
+  const plan = judge ? { runs: [] } : readJson(planPath(batch, layer));
+  const outDir = judge ? `${LAB(batch)}/judge-raw` : `${LAB(batch)}/raw-${layer}`;
+  const tally = { done: 0, running: 0, missing: 0 };
+  for (const [runId, sessionId] of Object.entries(ledger)) {
+    const rollout = `${ROLLOUT_DIR}/model-io-${sessionId}.jsonl`;
+    if (!existsSync(rollout)) {
+      tally.missing++;
+      continue;
+    }
+    const lines = mainTurns(readFileSync(rollout, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
+    if (!lines.length || lines.at(-1)?.response?.finishReason !== 'stop') {
+      tally.running++;
+      continue;
+    }
+    const promptAbs = resolve(`${LAB(batch)}/${judge ? 'judge' : 'prompts'}/${runId}.txt`);
+    const promptText = readFileSync(promptAbs, 'utf8');
+    const promptHash = judge ? undefined : plan.runs.find((r) => r.id === runId)?.promptHash;
+    writeJson(`${outDir}/${runId}.json`, { sessionId, ...summarizeRollout(lines, { promptAbs, promptHash, promptText }) });
+    tally.done++;
+  }
+  console.log(`${batch}：${judge ? '评审会话' : `${layer} 会话`} ${Object.keys(ledger).length} 个，已收 ${tally.done} 个，还没收尾 ${tally.running} 个，没有记录 ${tally.missing} 个`);
 }
 
 /** 引文可疑的评审，人看过产出后标记为可以采用。 */
@@ -565,6 +625,11 @@ try {
   else if (cmd === 'review-merge') cmdReviewMerge(rest[0], { entriesDir: flag('--entries-dir') ?? 'src/content/skills' });
   else if (cmd === 'quotes') cmdQuotes(rest[0], rest[1], { entriesDir: flag('--entries-dir') ?? 'src/content/skills' });
   else if (cmd === 'trust') cmdTrust(rest[0], rest[1], rest[2]);
+  else if (cmd === 'collect') cmdCollect(rest[0], rest[1], { judge: rest.includes('--judge') });
+  else if (cmd === 'ledger') {
+    const judge = rest.includes('--judge');
+    cmdLedger(rest[0], rest[1], rest.slice(2).filter((x) => !x.startsWith('--')), { judge });
+  }
   else {
     console.error(USAGE);
     process.exit(2);

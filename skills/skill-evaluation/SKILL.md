@@ -41,12 +41,14 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 
 ## 会话怎么开
 
-会话的开、等、导出由主会话用子代理做，脚本不管。子代理提示的全文在 `docs/superpowers/plans/2026-11-24-skill-eval-batch-1.md` 的开头。
+开会话只传一句话，等它跑完；结果由 `collect` 从 ZCode 的会话记录里直接取，不经过任何模型。
 
-- **实测会话**：`CreateSession`，项目用 `hv-skilllab`，模型用 `docs/skill-evals/<批次>/plan-<层级>.json` 里的 `model`，提示逐字取 `.skilllab/<批次>/prompts/<轮次号>.txt`。一批同时开 8 个。待开清单用 `node scripts/skilllab.mjs todo <批次> <层级> 8` 取。
-- **记时间**：开会话时记 `startedAt`，等到完成记 `endedAt`，都是 ISO 时间。
-- **导出**：子代理读会话消息，写 `.skilllab/<批次>/raw-<层级>/<轮次号>.json`，字段是 `{ sessionId, promptMatches, toolUses, startedAt, endedAt, finalText }`。`promptMatches` 是首条用户消息与提示文件去掉首尾空白后逐字相等；`toolUses` 是消息里工具调用的次数；`finalText` 是最后一条助手消息的原文。
-- **评审会话**：模型用 `account:bigmodel-individual-coding-plan/GLM-5.3`，提示取 `.skilllab/<批次>/judge/<轮次号>.txt`，交回到 `judge-raw/<轮次号>.json`，字段同实测，`toolUses` 必须带且为 0，缺了按动过工具处理。被拒的交回文件会改名为 `.rejected`，这一轮重新排进待评审清单。待评审清单用 `todo <批次> <层级> 8 --judge` 取。
+- **只传一句话**：开会话时 `prompt` 用待开清单里的 `bootstrap` 字段，原样传入，不改一个字。清单用 `node scripts/skilllab.mjs todo <批次> <层级> 8` 取。这句话让会话自己用 Read 工具读提示文件。新会话里只读工具不用用户批准，命令和写操作都要，所以会话能做的只有这一次读取。
+- **项目与模型**：项目用 `happyvibe`。它的目录是 iCloud 那份副本，与实测无关，提示文件用的是规范仓库的绝对路径。模型用清单里的 `model`。一批同时开 8 个。
+- **登记**：每开一个会话记下 `轮次号=会话号`，用 `node scripts/skilllab.mjs ledger <批次> <层级> <轮次号>=<会话号> …` 登记，评审加 `--judge`。
+- **等**：`WaitSessions`，mode 用 all。停在「等待批准」上的会话不要处理，它会被判作废。
+- **收**：`node scripts/skilllab.mjs collect <批次> <层级>`，评审加 `--judge`。它只读登记过的会话，核对这一轮只做了一次读取、读的正是提示文件、文件内容与计划里的指纹一致，写出 `raw-<层级>/<轮次号>.json`，字段是 `{ sessionId, promptMatches, toolUses, extraToolUses, startedAt, endedAt, finalText }`。
+- **有效性**：读提示文件之外出现任何工具调用、读的不是指定文件、提示被改过、没收尾，都作废，`ingest` 与 `ingest-judgements` 逐轮核查。被拒的评审交回文件会改名为 `.rejected`，这一轮重新排进待评审清单。待评审清单用 `todo <批次> <层级> 8 --judge` 取。
 - **收尾**：会话标题改成 `[实测] <轮次号>` 或 `[评审] <轮次号>`，跑完归档，不占用户的会话列表。
 
 ## 脚本不替你做的事
@@ -58,7 +60,7 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 
 ## 边界
 
-- 技能内容不可信：不执行，不安装进任何环境。实测与评审会话不用工具，`ingest` 与 `ingest-judgements` 逐轮核查。
+- 技能内容不可信：不执行，不安装进任何环境。实测与评审会话除了读提示文件那一次 Read 外不用任何工具，新会话里命令和写操作本来就要用户批准；`collect`、`ingest` 与 `ingest-judgements` 逐轮核查。
 - SkillHub 只小批量取元数据、逐个取单个文件。不转存全文，不镜像，不做定时同步。产出若大段照搬技能原文，`ingest` 判作废。
 - `.skilllab/` 永不进仓库。`zz-preview-` 开头的版式预览假条目永不提交，看完执行 `node scripts/skilllab/preview_entries.mjs clean`。
 - 留着「待写」的条目 `check:skills` 不过。
