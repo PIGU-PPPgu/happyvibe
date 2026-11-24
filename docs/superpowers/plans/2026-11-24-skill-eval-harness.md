@@ -217,9 +217,11 @@ const background = (fn) => mutate((d) => {
   fn?.(d);
 });
 assert.deepEqual(run(background()), [], '后台实测的合法条目不应报错');
-assert.ok(run(background((d) => { d.score.platformComplete = true; d.score.dims.ease = 5; })).some((e) => e.includes('platformComplete 必须记 false')));
-assert.ok(run(background((d) => { d.score.runs[0].triggered = false; })).some((e) => e.includes('点名加载的轮次')));
-assert.ok(run(background((d) => { d.score.prior = { layer: 'free-tier', model: 'GLM-5.3-Flash', total: 8.2, date: today }; })).some((e) => e.includes('只有同款复核')));
+/** schema 层的报错文字。下面三条交叉规则写在 schema 的 superRefine 里，要从这里取，run 取不到。 */
+const schemaError = (d) => (skillSchema.safeParse(d).error?.issues ?? []).map((i) => i.message).join('\n');
+assert.ok(schemaError(background((d) => { d.score.platformComplete = true; d.score.dims.ease = 5; })).includes('platformComplete 必须记 false'));
+assert.ok(schemaError(background((d) => { d.score.runs[0].triggered = false; })).includes('点名加载的轮次'));
+assert.ok(schemaError(background((d) => { d.score.prior = { layer: 'free-tier', model: 'GLM-5.3-Flash', total: 8.2, date: today }; })).includes('只有同款复核'));
 const confirmed = mutate((d) => {
   Object.assign(d.score.tested, { layer: 'same-model', loadedBy: 'named' });
   d.score.platformComplete = false;
@@ -372,8 +374,9 @@ const withOutput = mutate((d) => {
 assert.ok(run(withOutput, noOutput).some((e) => e.includes('原始产出不存在')));
 assert.deepEqual(run(withOutput), [], '产出文件在时不该报错');
 assert.ok(run(base(), ctxOk, '').some((e) => e.includes('缺「修改处清单」')));
-assert.ok(run(base(), ctxOk, '#### 修改处清单\n\n太短\n\n#### 我看到的\n\n' + '看'.repeat(60)).some((e) => e.includes('「修改处清单」一节太短')));
-assert.ok(run(base(), ctxOk, BODY.replace('需要核对。'.repeat(2), '待写')).some((e) => e.includes('待写')));
+assert.ok(run(base(), ctxOk, '#### 修改处清单\n\n太短\n\n#### 我看到的\n\n' + '看'.repeat(60)).some((e) => e.includes('「修改处清单」一节不足 40 字')));
+const placeholderBody = BODY.slice(0, BODY.indexOf('#### 我看到的')) + '#### 我看到的\n\n待写';
+assert.ok(run(base(), ctxOk, placeholderBody).some((e) => e.includes('待写')), '我看到的整节还是待写');
 assert.ok(run(mutate((d) => { d.score.verdict = '待写'; })).some((e) => e.includes('待写')), '一句话理由不能留着待写');
 assert.ok(checkEntry('zz-preview-1', skillSchema.parse(base()), BODY, ctxOk).errors.some((e) => e.includes('版式预览的假条目')), '假条目不能提交');
 ```
