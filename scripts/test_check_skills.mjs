@@ -22,7 +22,7 @@ const base = () => ({
     task: 'LP-1', dims: { value: 5, quality: 5, ease: 5, edu: 5, safety: 5 },
     notes: { value: '依据', quality: '依据', ease: '依据', edu: '依据', safety: '依据' },
     verdict: '一句话理由', weakness: '短板一句话',
-    tested: { date: today, agent: 'WorkBuddy 桌面版 5.9.3', model: 'auto', by: 'ai', skillVersion: '1.0.0' },
+    tested: { date: today, agent: 'WorkBuddy 桌面版 5.9.3', model: 'auto', by: 'ai', skillVersion: '1.0.0', layer: 'workbuddy', loadedBy: 'natural' },
     platformComplete: true,
     runs: [1, 2, 3].map(() => ({ task: 'LP-1', triggered: true, seconds: 90, edits: 2, severe: 0 })),
     baseline: { edits: 8, severe: 1, seconds: 70 },
@@ -92,6 +92,32 @@ assert.ok(run(mirror(), { exists: () => true, mtime: (p) => (p.endsWith('.zip') 
 assert.ok(run(mirror(), { exists: () => false, mtime: () => null, newestMtime: () => null }).some((e) => e.includes('缺少技能包')));
 assert.equal(schemaOk(mutate((d) => { d.distribution = 'mirror'; d.source.license = 'Custom'; })), false, '许可证不在清单内不得镜像');
 assert.equal(schemaOk(mutate((d) => { d.distribution = 'mirror'; delete d.source.license; })), false, '没有许可证不得镜像');
+
+// 实测层级与点名加载
+assert.equal(schemaOk(mutate((d) => { delete d.score.tested.layer; })), false, '缺实测层级应被 schema 拒绝');
+assert.equal(schemaOk(mutate((d) => { delete d.score.tested.loadedBy; })), false, '缺加载方式应被 schema 拒绝');
+/** 后台实测的合法条目：好上手按上限 4 分 */
+const background = (fn) => mutate((d) => {
+  Object.assign(d.score.tested, { layer: 'free-tier', loadedBy: 'named' });
+  d.score.platformComplete = false;
+  d.score.dims.ease = 4;
+  fn?.(d);
+});
+assert.deepEqual(run(background()), [], '后台实测的合法条目不应报错');
+/** schema 层的报错文字。下面三条交叉规则写在 schema 的 superRefine 里，要从这里取，run 取不到。 */
+const schemaError = (d) => (skillSchema.safeParse(d).error?.issues ?? []).map((i) => i.message).join('\n');
+assert.ok(schemaError(background((d) => { d.score.platformComplete = true; d.score.dims.ease = 5; })).includes('platformComplete 必须记 false'));
+assert.ok(schemaError(background((d) => { d.score.runs[0].triggered = false; })).includes('点名加载的轮次'));
+assert.ok(schemaError(background((d) => { d.score.prior = { layer: 'free-tier', model: 'GLM-5.3-Flash', total: 8.2, date: today }; })).includes('只有同款复核'));
+const confirmed = mutate((d) => {
+  Object.assign(d.score.tested, { layer: 'same-model', loadedBy: 'named' });
+  d.score.platformComplete = false;
+  d.score.dims.ease = 4;
+  d.score.prior = { layer: 'free-tier', model: 'GLM-5.3-Flash', total: 7.9, date: today };
+});
+assert.deepEqual(run(confirmed), [], '同款复核带上一层海选结果是合法的');
+assert.equal(schemaOk(background((d) => { d.score.runs[0].output = '/etc/passwd'; })), false, '产出路径只能在 skill-reports 下');
+assert.ok(schemaOk(background((d) => { d.score.runs[0].output = '/skill-reports/demo-skill/free-tier/LP-1-1.md'; })), '产出路径的合法写法应通过');
 
 // 状态约束
 assert.equal(schemaOk(mutate((d) => { d.status = 'pending'; })), false, '待测条目不得带 score');

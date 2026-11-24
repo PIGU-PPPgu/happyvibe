@@ -3,10 +3,11 @@
 // 纯模块：不碰 astro:content，node 可直跑。
 import { z } from 'zod';
 import { CATEGORIES, MIRROR_LICENSES, TEXTBOOK_CATEGORIES } from './skill-standard.ts';
-import type { CategoryKey, DimKey } from './skill-standard.ts';
+import type { CategoryKey, DimKey, LayerKey } from './skill-standard.ts';
 
 const CATEGORY_KEYS = CATEGORIES.map((c) => c.key) as [CategoryKey, ...CategoryKey[]];
 const DIM_KEYS = ['value', 'quality', 'ease', 'edu', 'safety'] as const;
+const LAYER_KEYS = ['workbuddy', 'same-model', 'free-tier'] as [LayerKey, ...LayerKey[]];
 
 const Dim = z.number().int().min(1).max(5);
 const Line = z.string().trim().min(1);
@@ -59,7 +60,13 @@ export const skillSchema = z
           model: Line,
           by: z.enum(['ai', 'teacher']),
           skillVersion: Line,
+          layer: z.enum(LAYER_KEYS),
+          loadedBy: z.enum(['natural', 'named']),
         }),
+        /** 更低一层的结果。同款复核后保留海选的分数，页面上并列显示。 */
+        prior: z
+          .object({ layer: z.literal('free-tier'), model: Line, total: z.number().min(0).max(10), date: Ymd })
+          .optional(),
         platformComplete: z.boolean(),
         runs: z
           .array(
@@ -70,6 +77,11 @@ export const skillSchema = z
               edits: z.number().min(0),
               severe: z.number().int().min(0),
               shot: z.string().optional(),
+              /** 原始产出的站内路径 */
+              output: z
+                .string()
+                .regex(/^\/skill-reports\/[a-z0-9][a-z0-9-]*\/[a-z0-9-]+\/[A-Za-z0-9.-]+\.md$/, '要写成 /skill-reports/<slug>/<层级>/<轮次>.md')
+                .optional(),
             })
           )
           .min(3),
@@ -116,6 +128,15 @@ export const skillSchema = z
     }
     if (s.textbookCheck && s.textbookCheck.passed > s.textbookCheck.total) {
       issue('抽检通过数不能超过总数', ['score', 'textbookCheck']);
+    }
+    if (s.tested.layer !== 'workbuddy' && s.platformComplete) {
+      issue('后台实测没有核对 WorkBuddy 上的功能，platformComplete 必须记 false', ['score', 'platformComplete']);
+    }
+    if (s.tested.loadedBy === 'named' && s.runs.some((r) => !r.triggered)) {
+      issue('点名加载的轮次技能一定被用到，triggered 都应记 true', ['score', 'runs']);
+    }
+    if (s.prior && s.tested.layer !== 'same-model') {
+      issue('只有同款复核的条目可以带上一层的海选结果', ['score', 'prior']);
     }
   });
 
