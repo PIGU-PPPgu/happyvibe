@@ -18,7 +18,9 @@ import { autoChecks, examFacts, gradeStats, letterFacts, lessonPlanFacts, textbo
 import { judgePrompt, parseJudgement } from './skilllab/judge_prompt.mjs';
 import { assembleEvidence, factNotes } from './skilllab/assemble_core.mjs';
 import { REQUEST_BUDGET, dedupe, pickMeta, prescreen } from './skilllab/scan_skillhub.mjs';
-import { bootstrapText, mainTurns, summarizeRollout } from './skilllab/rollout.mjs';
+import { bootstrapText, summarizeRollout } from './skilllab/rollout.mjs';
+import { readSession } from './skilllab/sessiondb.mjs';
+import { DatabaseSync } from 'node:sqlite';
 
 const task = (id) => TASKS.find((t) => t.id === id);
 
@@ -285,28 +287,71 @@ assert.equal(parseOutput(`<<<成品>>>\n${'数'.repeat(300)}`).ok, false, '缺�
 
 // ---------- 从会话记录里取事实 ----------
 {
-  const line = (finish, text, calls, source = 'main_turn', at = '00') => ({ querySource: source, startedAt: `2026-11-24T11:00:${at}.000Z`, completedAt: `2026-11-24T11:00:${at}.000Z`, response: { finishReason: finish, text, toolCalls: calls } });
+  const line = (finish, text, calls, at = '00') => ({ startedAt: `2026-11-24T11:00:${at}.000Z`, completedAt: `2026-11-24T11:00:${at}.000Z`, response: { finishReason: finish, text, toolCalls: calls } });
   const read = { name: 'Read', input: { file_path: '/abs/prompt.txt' } };
   const promptText = '前言与任务';
   const prompt = { promptAbs: '/abs/prompt.txt', promptHash: createHash('sha256').update(promptText).digest('hex'), promptText };
-  const records = [line('tool-calls', '', [read], 'main_turn', '00'), line('stop', '成品', [], 'main_turn', '30'), line('stop', '标题', [], 'session_title', '31')];
-  const good = summarizeRollout(mainTurns(records), prompt);
+  const good = summarizeRollout([line('stop', '成品', [read])], prompt);
   assert.equal(good.promptMatches, true, '读的就是指定的提示文件，内容与指纹一致');
   assert.equal(good.toolUses, 1);
   assert.equal(good.extraToolUses, 0);
   assert.equal(good.finalText, '成品');
   assert.equal(good.startedAt, '2026-11-24T11:00:00.000Z');
-  assert.equal(good.endedAt, '2026-11-24T11:00:30.000Z', '起标题的附带请求不计入结束时间');
-  const extra = summarizeRollout([line('tool-calls', '', [read]), line('tool-calls', '', [{ name: 'Glob', input: { pattern: '**/*' } }]), line('stop', '成品', [])], prompt);
+  const extra = summarizeRollout([line('stop', '成品', [read, { name: 'Glob', input: { pattern: '**/*' } }])], prompt);
   assert.equal(extra.extraToolUses, 1, '读提示文件之外的工具调用要算出来');
   assert.equal(extra.promptMatches, false);
-  const wrong = summarizeRollout([line('tool-calls', '', [{ name: 'Read', input: { file_path: '/abs/other.txt' } }]), line('stop', '成品', [])], prompt);
+  const wrong = summarizeRollout([line('stop', '成品', [{ name: 'Read', input: { file_path: '/abs/other.txt' } }])], prompt);
   assert.equal(wrong.promptMatches, false, '读的不是指定的提示文件');
   assert.equal(wrong.extraToolUses, 1);
-  assert.equal(summarizeRollout([line('tool-calls', '', [read]), line('stop', '成品', [])], { ...prompt, promptText: '被改过' }).promptMatches, false, '提示文件与计划里的指纹对不上');
-  assert.equal(summarizeRollout([line('tool-calls', '', [read])], prompt).finalText, '', '停在工具调用上的会话不算有产出');
-  assert.equal(summarizeRollout(mainTurns(records), { promptAbs: '/abs/prompt.txt', promptText: '随便' }).promptMatches, true, '没带指纹时只核对读取');
+  assert.equal(summarizeRollout([line('stop', '成品', [read])], { ...prompt, promptText: '被改过' }).promptMatches, false, '提示文件与计划里的指纹对不上');
+  assert.equal(summarizeRollout([line('running', '', [read])], prompt).finalText, '', '没收尾的会话不算有产出');
+  assert.equal(summarizeRollout([line('stop', '成品', [read])], { promptAbs: '/abs/prompt.txt', promptText: '随便' }).promptMatches, true, '没带指纹时只核对读取');
   assert.ok(bootstrapText('/abs/prompt.txt').includes('\n/abs/prompt.txt\n'), '开场话里带着提示文件的绝对路径');
+}
+{
+  // 从会话库里读：只认指定的会话号；系统的隐藏提示不算回答；同一条助手消息的几段文字拼起来
+  const file = join(mkdtempSync(join(tmpdir(), 'hv-sessiondb-')), 'db.sqlite');
+  const db = new DatabaseSync(file);
+  db.exec('CREATE TABLE message (id TEXT, session_id TEXT, time_created INTEGER, data TEXT, sequence INTEGER)');
+  db.exec('CREATE TABLE part (id TEXT, message_id TEXT, session_id TEXT, time_created INTEGER, data TEXT, sequence INTEGER)');
+  db.exec('CREATE TABLE turn_usage (session_id TEXT, status TEXT, started_at INTEGER, completed_at INTEGER, tool_call_count INTEGER)');
+  const msg = (id, sessionId, role, at) => db.prepare('INSERT INTO message VALUES (?, ?, ?, ?, 0)').run(id, sessionId, at, JSON.stringify({ role }));
+  const part = (id, messageId, sessionId, at, data) => db.prepare('INSERT INTO part VALUES (?, ?, ?, ?, ?, 0)').run(id, messageId, sessionId, at, JSON.stringify(data));
+  const S = 'sess_mine', O = 'sess_other';
+  msg('m0', S, 'user', 1000);
+  part('p0', 'm0', S, 1000, { type: 'text', text: '请读文件' });
+  part('p1', 'm0', S, 1001, { type: 'text', text: '系统的隐藏提示', synthetic: true });
+  msg('m1', S, 'assistant', 1100);
+  part('p2', 'm1', S, 1100, { type: 'tool', callID: 'c1', tool: 'Read', state: { status: 'completed', input: { file_path: '/abs/prompt.txt' }, output: '…' } });
+  msg('m2', S, 'assistant', 1200);
+  part('p3', 'm2', S, 1200, { type: 'reasoning', text: '思考' });
+  part('p4', 'm2', S, 1201, { type: 'text', text: '<<<成品>>>' });
+  part('p5', 'm2', S, 1202, { type: 'text', text: '正文' });
+  db.prepare('INSERT INTO turn_usage VALUES (?, ?, ?, ?, ?)').run(S, 'completed', 1000, 1300, 1);
+  msg('e0', 'sess_errored', 'assistant', 100);
+  part('e1', 'e0', 'sess_errored', 100, { type: 'text', text: '写到一半' });
+  db.prepare('INSERT INTO turn_usage VALUES (?, ?, ?, ?, ?)').run('sess_errored', 'error', 100, 200, 0);
+  msg('x0', O, 'assistant', 100);
+  part('x1', 'x0', O, 100, { type: 'text', text: '别的会话的内容' });
+  db.close();
+  try {
+    const mine = readSession(file, S);
+    assert.equal(mine.found, true);
+    assert.equal(mine.toolCountLogged, 1);
+    assert.deepEqual(mine.lines, [
+      {
+        startedAt: new Date(1000).toISOString(),
+        completedAt: new Date(1300).toISOString(),
+        response: { finishReason: 'stop', text: '<<<成品>>>\n正文', toolCalls: [{ name: 'Read', input: { file_path: '/abs/prompt.txt' }, status: 'completed' }] },
+      },
+    ]);
+    assert.equal(readSession(file, 'sess_nobody').found, false, '没登记的会话读不到东西');
+    assert.equal(readSession(file, 'sess_errored').lines[0].response.finishReason, 'error', '出错的会话照实报出错，不冒充还在跑');
+    // 别的会话的行一条也没带出来
+    assert.ok(!JSON.stringify(mine).includes('别的会话的内容') && !JSON.stringify(mine).includes('系统的隐藏提示'));
+  } finally {
+    rmSync(join(file, '..'), { recursive: true, force: true });
+  }
 }
 
 // ---------- 命令行全流程，自测批次 _selftest，跑完即删 ----------
@@ -314,8 +359,8 @@ const BATCH = '_selftest';
 const EVALD = `docs/skill-evals/${BATCH}`;
 const LABD = `.skilllab/${BATCH}`;
 const ENTRIES = '.skilllab/_selftest-entries';
-/** 自测用的会话记录目录，代替真正的 ZCode 记录目录 */
-const ROLLOUT = '.skilllab/_selftest-rollout';
+/** 自测用的会话库，代替真正的 ZCode 会话库 */
+const SESSION_DB_FILE = '.skilllab/_selftest-sessions.sqlite';
 const SELFTEST_CANDIDATE = {
   slug: 'selftest-skill', title: '自测假技能', category: 'lesson-plan',
   does: '命令行自测用的假技能。', summary: '不是真技能，只用来把命令行走一遍。',
@@ -337,7 +382,7 @@ const LETTER_CANDIDATE = {
   trigger: '帮我给家长写一封信', examples: ['帮我给全班家长写一封信'],
   audit: { network: 'none', credentials: false, studentData: 'none', overRead: false },
 };
-const cli = (...args) => execFileSync(process.execPath, ['scripts/skilllab.mjs', ...args], { encoding: 'utf8', env: { ...process.env, SKILLLAB_ROLLOUT_DIR: resolve(ROLLOUT) } });
+const cli = (...args) => execFileSync(process.execPath, ['scripts/skilllab.mjs', ...args], { encoding: 'utf8', env: { ...process.env, SKILLLAB_DB: resolve(SESSION_DB_FILE) } });
 const cliErr = (...args) => {
   try {
     execFileSync(process.execPath, ['scripts/skilllab.mjs', ...args], { encoding: 'utf8' });
@@ -347,15 +392,25 @@ const cliErr = (...args) => {
   }
 };
 const cleanup = () => {
-  for (const p of [EVALD, LABD, ENTRIES, ROLLOUT, 'public/skill-reports/selftest-skill', 'public/skill-reports/selftest-letter']) rmSync(p, { recursive: true, force: true });
+  for (const p of [EVALD, LABD, ENTRIES, SESSION_DB_FILE, 'public/skill-reports/selftest-skill', 'public/skill-reports/selftest-letter']) rmSync(p, { recursive: true, force: true });
 };
-/** 造一份会话记录：先读提示文件，再给出成品；起标题的附带请求也在 */
-const fakeRollout = (sessionId, promptAbs, finalText) => {
-  const record = (source, at, finish, text, calls) => JSON.stringify({ type: 'model_io', querySource: source, startedAt: `2026-11-24T11:00:${at}.000Z`, completedAt: `2026-11-24T11:00:${at}.000Z`, response: { finishReason: finish, text, toolCalls: calls } });
-  writeFileSync(
-    `${ROLLOUT}/model-io-${sessionId}.jsonl`,
-    [record('main_turn', '00', 'tool-calls', '', [{ name: 'Read', input: { file_path: promptAbs } }]), record('main_turn', '59', 'stop', finalText, []), record('session_title', '59', 'stop', '标题', [])].join('\n') + '\n'
-  );
+/** 往自测会话库里造一个会话：先读提示文件，再分两段给出成品 */
+const fakeSession = (sessionId, promptAbs, finalText) => {
+  const db = new DatabaseSync(SESSION_DB_FILE);
+  db.exec('CREATE TABLE IF NOT EXISTS message (id TEXT, session_id TEXT, time_created INTEGER, data TEXT, sequence INTEGER)');
+  db.exec('CREATE TABLE IF NOT EXISTS part (id TEXT, message_id TEXT, session_id TEXT, time_created INTEGER, data TEXT, sequence INTEGER)');
+  db.exec('CREATE TABLE IF NOT EXISTS turn_usage (session_id TEXT, status TEXT, started_at INTEGER, completed_at INTEGER, tool_call_count INTEGER)');
+  const msg = (id, role, at) => db.prepare('INSERT INTO message VALUES (?, ?, ?, ?, 0)').run(id, sessionId, at, JSON.stringify({ role }));
+  const part = (id, messageId, at, data) => db.prepare('INSERT INTO part VALUES (?, ?, ?, ?, ?, 0)').run(id, messageId, sessionId, at, JSON.stringify(data));
+  msg(`${sessionId}-m0`, 'user', 1795500000000);
+  part(`${sessionId}-p0`, `${sessionId}-m0`, 1795500000000, { type: 'text', text: '请读文件' });
+  msg(`${sessionId}-m1`, 'assistant', 1795500000100);
+  part(`${sessionId}-p1`, `${sessionId}-m1`, 1795500000100, { type: 'tool', tool: 'Read', state: { status: 'completed', input: { file_path: promptAbs } } });
+  msg(`${sessionId}-m2`, 'assistant', 1795500005900);
+  part(`${sessionId}-p2`, `${sessionId}-m2`, 1795500005900, { type: 'text', text: finalText.slice(0, 20) });
+  part(`${sessionId}-p3`, `${sessionId}-m2`, 1795500005901, { type: 'text', text: finalText.slice(20) });
+  db.prepare('INSERT INTO turn_usage VALUES (?, ?, ?, ?, ?)').run(sessionId, 'completed', 1795500000000, 1795500005900, 1);
+  db.close();
 };
 /** 评审结果要能在产出里找到引文才不会被当成可疑，样例产出全是「数」，引文就写「数」 */
 const outputJudgement = (edits = 2) => {
@@ -546,15 +601,15 @@ try {
   writeFileSync(`${EVALD}/candidates.json`, JSON.stringify([LETTER_CANDIDATE]));
   assert.ok(cli('plan', BATCH, 'free-tier').includes('1 个技能，6 轮运行'));
   const letterPlan = JSON.parse(readFileSync(`${EVALD}/plan-free-tier.json`, 'utf8'));
-  // 这一段走「开会话只传一句读文件的话，结果从会话记录里取」的路
-  mkdirSync(ROLLOUT, { recursive: true });
+  // 这一段走「开会话只传一句读文件的话，结果从会话库里取」的路
+  rmSync(SESSION_DB_FILE, { force: true });
   const open = JSON.parse(cli('todo', BATCH, 'free-tier', '8'));
   assert.deepEqual(open.map((x) => x.id), letterPlan.runs.map((r) => r.id));
   assert.ok(open[0].bootstrap.includes(`\n${open[0].promptAbs}\n`) && open[0].promptAbs.endsWith('/prompts/free-tier-selftest-letter-HS-1-1.txt'), '清单带着开场话与提示文件的绝对路径');
   const ledger = [];
   letterPlan.runs.forEach((r, i) => {
     const sessionId = `sess-selftest-${i}`;
-    fakeRollout(sessionId, open.find((x) => x.id === r.id).promptAbs, `<<<成品>>>\n${'数'.repeat(400)}\n<<<结束>>>`);
+    fakeSession(sessionId, open.find((x) => x.id === r.id).promptAbs, `<<<成品>>>\n${'数'.repeat(400)}\n<<<结束>>>`);
     ledger.push(`${r.id}=${sessionId}`);
   });
   assert.ok(cli('ledger', BATCH, 'free-tier', ...ledger).includes('已登记 6 个会话'));
@@ -567,7 +622,7 @@ try {
   const judgeLedger = [];
   letterPlan.runs.forEach((r, i) => {
     const sessionId = `sess-selftest-j${i}`;
-    fakeRollout(sessionId, judgeOpen.find((x) => x.id === r.id).promptAbs, JSON.stringify(judgementFor('home-school', r.kind === 'baseline' ? 6 : 2)));
+    fakeSession(sessionId, judgeOpen.find((x) => x.id === r.id).promptAbs, JSON.stringify(judgementFor('home-school', r.kind === 'baseline' ? 6 : 2)));
     judgeLedger.push(`${r.id}=${sessionId}`);
   });
   cli('ledger', BATCH, 'free-tier', ...judgeLedger, '--judge');

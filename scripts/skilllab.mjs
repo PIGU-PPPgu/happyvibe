@@ -12,13 +12,14 @@ import { autoChecks } from './skilllab/auto_checks.mjs';
 import { judgePrompt, parseJudgement } from './skilllab/judge_prompt.mjs';
 import { LAYER_MODELS, buildPlan, modelShort, tasksFor } from './skilllab/plan.mjs';
 import { buildPrompt, leakCheck, parseOutput, readSkillDir } from './skilllab/prompt.mjs';
-import { bootstrapText, mainTurns, summarizeRollout } from './skilllab/rollout.mjs';
+import { bootstrapText, summarizeRollout } from './skilllab/rollout.mjs';
+import { readSession } from './skilllab/sessiondb.mjs';
 
 const AGENT = 'ZCode 后台会话';
 const JUDGE_MODEL = 'GLM-5.3';
 const JUDGE_MODEL_ID = 'account:bigmodel-individual-coding-plan/GLM-5.3';
-/** ZCode 的会话记录目录，每个会话一个 model-io-<会话号>.jsonl。自测时用环境变量指到临时目录。只读登记过的会话，不枚举整个目录。 */
-const ROLLOUT_DIR = process.env.SKILLLAB_ROLLOUT_DIR ?? `${process.env.HOME}/.zcode/cli/rollout`;
+/** ZCode 的会话库。只读打开，只按登记过的会话号取行，不查别的会话。自测时用环境变量指到临时库。 */
+const SESSION_DB = process.env.SKILLLAB_DB ?? `${process.env.HOME}/.zcode/cli/db/db.sqlite`;
 const CSV = 'public/skill-tasks/grade-sample.csv';
 const EVAL = (batch) => `docs/skill-evals/${batch}`;
 const LAB = (batch) => `.skilllab/${batch}`;
@@ -563,8 +564,8 @@ function cmdLedger(batch, layer, pairs, { judge = false } = {}) {
 }
 
 /**
- * 从会话记录里取出每一轮的结果，写成与手写交回文件同形的 raw 文件。只读登记过的会话。
- * 会话还在跑、或者停在工具调用上的，先不收。
+ * 从会话库里取出每一轮的结果，写成与手写交回文件同形的 raw 文件。只读登记过的会话。
+ * 会话还在跑的先不收。ZCode 另有一个只留最近几个会话的滚动日志，不可靠，所以不用它。
  */
 function cmdCollect(batch, layer, { judge = false } = {}) {
   const file = ledgerFile(batch, layer, judge);
@@ -572,16 +573,22 @@ function cmdCollect(batch, layer, { judge = false } = {}) {
   const ledger = readJson(file);
   const plan = judge ? { runs: [] } : readJson(planPath(batch, layer));
   const outDir = judge ? `${LAB(batch)}/judge-raw` : `${LAB(batch)}/raw-${layer}`;
-  const tally = { done: 0, running: 0, missing: 0 };
+  const tally = { done: 0, running: 0, failed: 0, missing: 0 };
   for (const [runId, sessionId] of Object.entries(ledger)) {
-    const rollout = `${ROLLOUT_DIR}/model-io-${sessionId}.jsonl`;
-    if (!existsSync(rollout)) {
+    const session = readSession(SESSION_DB, sessionId);
+    if (!session.found) {
       tally.missing++;
       continue;
     }
-    const lines = mainTurns(readFileSync(rollout, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
-    if (!lines.length || lines.at(-1)?.response?.finishReason !== 'stop') {
-      tally.running++;
+    const lines = session.lines;
+    const finish = lines.at(-1)?.response?.finishReason;
+    // 没收尾的分两种：还在跑的等它；出错或被取消的不会再有结果，这一轮仍算待开，下次会重开
+    if (finish !== 'stop') {
+      if (finish === 'running') tally.running++;
+      else {
+        tally.failed++;
+        console.log(`  x ${runId}：会话${finish ?? '没有对话轮'}`);
+      }
       continue;
     }
     const promptAbs = resolve(`${LAB(batch)}/${judge ? 'judge' : 'prompts'}/${runId}.txt`);
@@ -590,7 +597,7 @@ function cmdCollect(batch, layer, { judge = false } = {}) {
     writeJson(`${outDir}/${runId}.json`, { sessionId, ...summarizeRollout(lines, { promptAbs, promptHash, promptText }) });
     tally.done++;
   }
-  console.log(`${batch}：${judge ? '评审会话' : `${layer} 会话`} ${Object.keys(ledger).length} 个，已收 ${tally.done} 个，还没收尾 ${tally.running} 个，没有记录 ${tally.missing} 个`);
+  console.log(`${batch}：${judge ? '评审会话' : `${layer} 会话`} ${Object.keys(ledger).length} 个，已收 ${tally.done} 个，还在跑 ${tally.running} 个，没跑成 ${tally.failed} 个，没有记录 ${tally.missing} 个`);
 }
 
 /** 引文可疑的评审，人看过产出后标记为可以采用。 */

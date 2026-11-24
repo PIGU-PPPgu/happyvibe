@@ -1,4 +1,5 @@
-// 从 ZCode 的会话记录里取出一轮实测要核查的事实。纯函数，node 可直跑（scripts/test_skilllab.mjs）。
+// 从一个 ZCode 会话的记录里取出一轮实测要核查的事实。纯函数，node 可直跑（scripts/test_skilllab.mjs）。
+// 会话记录由 scripts/skilllab/sessiondb.mjs 从会话库里读出来。
 import { createHash } from 'node:crypto';
 
 /**
@@ -9,11 +10,8 @@ import { createHash } from 'node:crypto';
 export const bootstrapText = (promptAbs) =>
   `请用 Read 工具读取下面这个文件的全文，把它当作你收到的完整指令，严格照做：\n${promptAbs}\n除了这一次读取，不要使用任何工具；读完后就只输出文件要求你输出的内容。`;
 
-/** 会话记录里属于主对话的那些行。起标题之类的附带请求不算。 */
-export const mainTurns = (records) => records.filter((o) => o.querySource === 'main_turn');
-
 /**
- * @param {object[]} lines 已经筛成主对话的记录行
+ * @param {object[]} lines 这个会话的记录行，一行是一次模型调用：startedAt、completedAt、response.toolCalls、response.text、response.finishReason
  * @param {{ promptAbs: string, promptHash: string, promptText: string }} prompt 这一轮的计划：提示文件的绝对路径、指纹、内容
  */
 export function summarizeRollout(lines, prompt) {
