@@ -32,8 +32,14 @@ const base = () => ({
 });
 
 const ctxOk = { exists: () => true, mtime: () => 2, newestMtime: () => 1 };
+/** 已实测条目的合法正文：三节，后两节要写到 40 字以上 */
+const BODY = [
+  '#### 输出样例', '', '这是输出样例的占位文字。', '',
+  '#### 修改处清单', '', '第一处：环节时间加起来是 50 分钟，要把练习环节从 15 分钟改成 10 分钟，并同步改过渡语。'.repeat(2), '',
+  '#### 我看到的', '', '我读了第 1 轮的产出：目标可观测，但导入环节写了 8 分钟，与后面标的不一致，需要核对。'.repeat(2),
+].join('\n');
 /** 过 schema 再跑交叉规则，返回 errors */
-const run = (d, ctx = ctxOk, body = '') => {
+const run = (d, ctx = ctxOk, body = BODY) => {
   const parsed = skillSchema.parse(d);
   return checkEntry('demo-skill', parsed, body, ctx).errors;
 };
@@ -131,4 +137,21 @@ assert.ok(run(mutate((d) => { d.cautions = ['很好用 📚']; })).some((e) => e
 assert.ok(run(base(), ctxOk, '正文里的 ✅ 也算').some((e) => e.includes('emoji')));
 assert.ok(run(mutate((d) => { d.does = '轻松搞定教案'; })).some((e) => e.includes('轻松搞定')));
 assert.ok(run(mutate((d) => { d.score.verdict = '这就是满分答案'; })).some((e) => e.includes('满分答案')));
+
+// 原始产出与正文两节
+const noOutput = { ...ctxOk, exists: (p) => !p.endsWith('LP-1-1.md') };
+const withOutput = mutate((d) => {
+  Object.assign(d.score.tested, { layer: 'free-tier', loadedBy: 'named' });
+  d.score.platformComplete = false;
+  d.score.dims.ease = 4;
+  d.score.runs[0].output = '/skill-reports/demo-skill/free-tier/LP-1-1.md';
+});
+assert.ok(run(withOutput, noOutput).some((e) => e.includes('原始产出不存在')));
+assert.deepEqual(run(withOutput), [], '产出文件在时不该报错');
+assert.ok(run(base(), ctxOk, '').some((e) => e.includes('缺「修改处清单」')));
+assert.ok(run(base(), ctxOk, '#### 修改处清单\n\n太短\n\n#### 我看到的\n\n' + '看'.repeat(60)).some((e) => e.includes('「修改处清单」一节不足 40 字')));
+const placeholderBody = BODY.slice(0, BODY.indexOf('#### 我看到的')) + '#### 我看到的\n\n待写';
+assert.ok(run(base(), ctxOk, placeholderBody).some((e) => e.includes('待写')), '我看到的整节还是待写');
+assert.ok(run(mutate((d) => { d.score.verdict = '待写'; })).some((e) => e.includes('待写')), '一句话理由不能留着待写');
+assert.ok(checkEntry('zz-preview-1', skillSchema.parse(base()), BODY, ctxOk).errors.some((e) => e.includes('版式预览的假条目')), '假条目不能提交');
 console.log('check_skills tests: PASS');

@@ -15,6 +15,13 @@ export const EMOJI_RE = /\p{Extended_Pictographic}|\uFE0F|\u20E3|[\u{1F1E6}-\u{1
 /** 评测超过这个月数要标「待复测」。 */
 export const STALE_MONTHS = 6;
 
+/** 已实测条目的正文必须有的两节，用三或四级标题。 */
+export const BODY_SECTIONS = ['修改处清单', '我看到的'];
+/** 正文每节至少这么多字，空节不算写了。 */
+export const BODY_MIN_CHARS = 40;
+/** 没写完时脚本会先放进这些词，提交前必须换成真内容。 */
+export const PLACEHOLDER_RE = /待写|待补/;
+
 /** 站内自己写的文本（不含上游技能原文）。 */
 function authoredText(d, body) {
   const parts = [
@@ -28,7 +35,7 @@ function authoredText(d, body) {
   return parts.filter(Boolean).join('\n');
 }
 
-function checkTested(slug, d, ctx, errors, warnings) {
+function checkTested(slug, d, body, ctx, errors, warnings) {
   const s = d.score;
   if (!CHECKLISTS[d.category]) {
     errors.push(`品类 ${d.category} 还没有检查单，不能有已实测条目`);
@@ -42,6 +49,7 @@ function checkTested(slug, d, ctx, errors, warnings) {
     if (!t) errors.push(`实测轮次的任务 ${r.task} 不属于品类 ${d.category}`);
     else if (t.id !== s.task && t.role !== 'second') errors.push(`任务 ${r.task} 既不是主任务 ${s.task} 也不是副任务`);
     if (r.shot && !ctx.exists(`public${r.shot}`)) errors.push(`证据截图不存在：${r.shot}`);
+    if (r.output && !ctx.exists(`public${r.output}`)) errors.push(`原始产出不存在：${r.output}`);
   }
   const diff = checklistDiff(d);
   if (diff.extra.length) errors.push(`检查单里多出标准没有的编号：${diff.extra.join('、')}`);
@@ -69,6 +77,13 @@ function checkTested(slug, d, ctx, errors, warnings) {
     if (zipAt == null) errors.push(`缺少技能包 public/skills/${slug}.zip，先跑 npm run build:skills`);
     else if ((ctx.newestMtime(`src/skills/${slug}`) ?? 0) > zipAt) errors.push(`技能包比源文件旧，重跑 npm run build:skills`);
   }
+
+  for (const title of BODY_SECTIONS) {
+    const section = new RegExp(`(?:^|\\n)#{3,4}\\s*${title}\\s*\\n([\\s\\S]*?)(?=\\n#{2,4}\\s|$)`);
+    const m = body.match(section);
+    if (!m) errors.push(`已实测条目的正文缺「${title}」一节，用三或四级标题`);
+    else if (m[1].trim().length < BODY_MIN_CHARS) errors.push(`已实测条目正文里的「${title}」一节不足 ${BODY_MIN_CHARS} 字，要写具体内容`);
+  }
 }
 
 /**
@@ -81,10 +96,14 @@ function checkTested(slug, d, ctx, errors, warnings) {
 export function checkEntry(slug, d, body, ctx) {
   const errors = [];
   const warnings = [];
+  if (slug.startsWith('zz-preview-')) errors.push('版式预览的假条目不能提交，先执行 node scripts/skilllab/preview_entries.mjs clean');
   const text = authoredText(d, body);
   const emoji = text.match(EMOJI_RE);
   if (emoji) errors.push(`站内文本含 emoji：${[...new Set(emoji)].join(' ')}`);
   for (const f of FILLER_WORDS) if (text.includes(f)) errors.push(`站内文本含「${f}」，属于填充词或替读者下结论`);
-  if (d.status === 'tested') checkTested(slug, d, ctx, errors, warnings);
+  if (d.status === 'tested') {
+    if (PLACEHOLDER_RE.test(`${d.score.verdict}\n${d.score.weakness}\n${body}`)) errors.push('一句话理由、短板或正文里还留着「待写」，提交前要换成真内容');
+    checkTested(slug, d, body, ctx, errors, warnings);
+  }
   return { errors, warnings };
 }
