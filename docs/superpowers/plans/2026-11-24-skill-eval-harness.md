@@ -2533,7 +2533,7 @@ function cmdScore(batch, slug, layer, { write = false, entriesDir = 'src/content
   const picked = pickRuns(batch, layer, (r) => r.slug === slug || (r.kind === 'baseline' && tasks.includes(r.task)));
   const usable = (r) => r.valid && r.judgement && !r.judgement.suspect;
   for (const r of picked.filter((x) => !usable(x))) {
-    console.log(`  ! ${x.id} 不能用：${x.voidReasons?.length ? x.voidReasons.join('；') : x.judgement?.suspect ? '引文可疑，等人看' : '还没有评审'}`);
+    console.log(`  ! ${r.id} 不能用：${r.voidReasons?.length ? r.voidReasons.join('；') : r.judgement?.suspect ? '引文可疑，等人看' : '还没有评审'}`);
   }
   const runs = picked
     .filter((r) => r.slug === slug && usable(r))
