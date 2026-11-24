@@ -38,6 +38,7 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   todo <批次> <层级> [数量] [--judge]   列出待开或待评审的轮次，给开会话的子代理用
   review-merge <批次>                   汇总人工复核记录，写初筛名单与候选表
   quotes <批次> <slug>                  核对条目正文里的引文都能在原始产出里找到
+  trust <批次> <层级> <轮次号>          引文可疑的评审，人看过后标记为可以采用
 层级取 free-tier 或 same-model。`;
 
 const readJson = (p) => JSON.parse(readFileSync(p, 'utf8'));
@@ -144,8 +145,15 @@ function cmdIngest(batch, layer) {
       judgement: undefined,
     };
     if (record.valid) {
-      writeText(`${EVAL(batch)}/${record.output}`, `${out.body}\n`);
+      const text = `${out.body}\n`;
+      const outPath = `${EVAL(batch)}/${record.output}`;
+      // 产出没变就保留已有的评审结果，免得重复 ingest 把评审抹掉
+      const prevPath = `${runsDir(batch, layer)}/${r.id}.json`;
+      const prev = existsSync(prevPath) ? readJson(prevPath) : null;
+      const unchanged = prev?.valid && existsSync(outPath) && readFileSync(outPath, 'utf8') === text;
+      if (!unchanged) writeText(outPath, text);
       record.auto = autoChecks(r.task, out.body, { csvText: csv });
+      if (unchanged) record.judgement = prev.judgement ?? undefined;
       tally.valid++;
     } else {
       tally.void++;
@@ -169,7 +177,7 @@ function cmdIngestJudgements(batch, layer) {
   let ok = 0;
   let suspect = 0;
   let failed = 0;
-  for (const r of listRuns(batch, layer).filter((x) => x.valid)) {
+  for (const r of listRuns(batch, layer).filter((x) => x.valid && !x.judgement?.reviewed)) {
     const rawPath = `${LAB(batch)}/judge-raw/${r.id}.json`;
     if (!existsSync(rawPath)) continue;
     const raw = readJson(rawPath);
@@ -289,6 +297,14 @@ function writeEntry({ batch, layer, slug, candidate: c, score, entriesDir }) {
       score.prior = { layer: 'free-tier', model: prev.tested.model, total: total(dims), date: prev.tested.date };
     } else if (prev?.prior && score.tested.layer === 'same-model') {
       score.prior = prev.prior;
+    }
+    // 同一层级重算：人写的一句话理由、短板和教研调整保留
+    if (prev?.tested?.layer === score.tested.layer) {
+      for (const k of ['verdict', 'weakness']) {
+        if (prev[k] && prev[k] !== '待写') score[k] = prev[k];
+      }
+      score.overrides = prev.overrides ?? [];
+      for (const o of score.overrides) score.dims[o.dim] = o.value;
     }
   } else {
     data = {
@@ -483,6 +499,17 @@ function cmdQuotes(batch, slug, { entriesDir = 'src/content/skills' } = {}) {
   if (miss.length) process.exitCode = 1;
 }
 
+/** 引文可疑的评审，人看过产出后标记为可以采用。 */
+function cmdTrust(batch, layer, runId) {
+  const file = `${runsDir(batch, layer)}/${runId}.json`;
+  must(existsSync(file), `没有这一轮的运行记录：${runId}`);
+  const r = readJson(file);
+  must(r.valid && r.judgement?.suspect, `${runId} 不是引文可疑的有效轮次`);
+  r.judgement = { ...r.judgement, suspect: false, reviewed: true };
+  writeJson(file, r);
+  console.log(`已把 ${runId} 的评审标记为人看过、可以采用`);
+}
+
 const [cmd, ...rest] = process.argv.slice(2);
 /** 取出并移除 `--名 值` 形式的选项，返回值 */
 const flag = (name) => {
@@ -502,6 +529,7 @@ try {
   else if (cmd === 'todo') cmdTodo(rest[0], rest[1], Number(rest[2] ?? 8), { judge: rest.includes('--judge') });
   else if (cmd === 'review-merge') cmdReviewMerge(rest[0], { entriesDir: flag('--entries-dir') ?? 'src/content/skills' });
   else if (cmd === 'quotes') cmdQuotes(rest[0], rest[1], { entriesDir: flag('--entries-dir') ?? 'src/content/skills' });
+  else if (cmd === 'trust') cmdTrust(rest[0], rest[1], rest[2]);
   else {
     console.error(USAGE);
     process.exit(2);

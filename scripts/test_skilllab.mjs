@@ -340,6 +340,20 @@ try {
   const judgedTwice = cli('ingest-judgements', BATCH, 'free-tier');
   assert.ok(judgedTwice.includes('评审并入 8 轮，引文可疑 0 轮'), judgedTwice);
   assert.equal(JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length, 0, '都评审过了，待评审清单为空');
+
+  // 重复 ingest 不抹掉评审
+  cli('ingest', BATCH, 'free-tier');
+  assert.equal(JSON.parse(cli('todo', BATCH, 'free-tier', '8', '--judge')).length, 0, '重复 ingest 后评审还在');
+
+  // 引文对不上的评审标为可疑，出分不用它；人看过、点了头才采用
+  const suspicious = outputJudgement();
+  for (const c of suspicious.checklist) c.quote = '产出里没有的一句引文';
+  for (const e of [...suspicious.edits, ...suspicious.severe]) e.quote = '产出里没有的一句引文';
+  writeFileSync(`${LABD}/judge-raw/free-tier-selftest-skill-LP-1-3.json`, JSON.stringify({ sessionId: 'j9', finalText: JSON.stringify(suspicious) }));
+  assert.ok(cli('ingest-judgements', BATCH, 'free-tier').includes('引文可疑 1 轮'));
+  assert.ok(cliErr('score', BATCH, 'selftest-skill', 'free-tier').includes('引文可疑'), '可疑的轮次不拿来出分');
+  cli('trust', BATCH, 'free-tier', 'free-tier-selftest-skill-LP-1-3');
+  assert.ok(cli('ingest-judgements', BATCH, 'free-tier').includes('引文可疑 0 轮'), '人看过之后不再标可疑');
   const printed = cli('score', BATCH, 'selftest-skill', 'free-tier');
   assert.ok(printed.includes('总分'), printed);
   assert.ok(printed.includes('检查单：LP1 LP2'), printed);
@@ -350,6 +364,12 @@ try {
   assert.ok(entry.includes('verdict: 待写'), '一句话理由先留待写，读过产出后再补');
   assert.ok(entry.includes('#### 我看到的'));
   assert.ok(existsSync('public/skill-reports/selftest-skill/free-tier/free-tier-selftest-skill-LP-1-1.md'), '原始产出拷到站内目录');
+
+  // 同一层级重算：人写的一句话理由与短板保留
+  writeFileSync(`${ENTRIES}/selftest-skill.md`, entry.replace('verdict: 待写', 'verdict: 真理由').replace('weakness: 待写', 'weakness: 真短板'));
+  cli('score', BATCH, 'selftest-skill', 'free-tier', '--write', '--entries-dir', ENTRIES);
+  const rewritten = readFileSync(`${ENTRIES}/selftest-skill.md`, 'utf8');
+  assert.ok(rewritten.includes('verdict: 真理由') && rewritten.includes('weakness: 真短板'), '重算不抹掉人写的一句话理由与短板');
 
   // 正文引文核对：一句引得到，一句引不到
   writeFileSync(
