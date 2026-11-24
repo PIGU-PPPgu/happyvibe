@@ -38,6 +38,7 @@
 | `scripts/skilllab/preview_entries.mjs` | 生成与清除版式预览用的假条目 |
 | `scripts/test_skilllab.mjs` | 实测台自测 |
 | `src/components/SkillLeaderboard.astro` | 榜单表 |
+| `src/styles/table.css` | 站内数据表的共用样式，新组件引入它 |
 | `src/pages/skills/eval-report.astro` | 「这次怎么测的」页 |
 | `src/data/skill-eval-report.json` | 报告页的数据 |
 
@@ -647,6 +648,25 @@ if (cmd === 'clean') {
 
 - [ ] **Step 2: 写榜单组件**
 
+先建站内数据表的共用样式 `src/styles/table.css`。新组件在 frontmatter 里引入它，不再各写一份；旧页面里已有的表格样式不动。
+
+```css
+/* 站内数据表的共用样式。新组件在自己的 frontmatter 里 import 这一个文件，不再各写一份。 */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tbl th, .tbl td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
+.tbl thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; white-space: nowrap; }
+.tbl tbody tr:last-child th, .tbl tbody tr:last-child td { border-bottom: none; }
+.tbl tbody th { font-weight: 600; }
+.tbl a { color: var(--gold-soft); }
+.tbl .num { text-align: right; white-space: nowrap; }
+.tbl .wrap { white-space: normal; min-width: 18em; }
+@media (max-width: 820px) {
+  .tbl th, .tbl td { padding: 9px 11px; font-size: 14px; }
+  .tbl .wrap { min-width: 12em; }
+}
+```
+
 `src/components/SkillLeaderboard.astro`：
 
 ```astro
@@ -654,6 +674,7 @@ if (cmd === 'clean') {
 /**
  * 榜单：已实测技能按总分排的一张表。已实测条目达到十个才在首页出现。
  */
+import '../styles/table.css';
 import { categoryLabel, LAYER_LABEL, LAYER_RANK } from '../lib/skillLabels';
 import type { ScoredSkill } from '../lib/skillEntries';
 import { withBase } from '../lib/urls';
@@ -702,19 +723,7 @@ const rows = [...skills]
   .lb { display: flex; flex-direction: column; gap: 10px; }
   .lb-t { margin: 0; font-size: 22px; }
   .lb-d { margin: 0; font-size: 14.5px; }
-  .tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
-  .tbl { width: 100%; border-collapse: collapse; font-size: 15px; }
-  .tbl th, .tbl td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.7; white-space: nowrap; }
-  .tbl thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; }
-  .tbl tbody tr:last-child td, .tbl tbody tr:last-child th { border-bottom: none; }
-  .tbl tbody th { font-weight: 600; }
-  .tbl a { color: var(--text); text-decoration: none; }
-  .tbl a:hover { color: var(--gold-soft); text-decoration: none; }
-  .num { text-align: right; }
   .lb-note { margin: 0; font-size: 13.5px; }
-  @media (max-width: 820px) {
-    .tbl th, .tbl td { padding: 9px 11px; font-size: 14px; }
-  }
 </style>
 ```
 
@@ -824,7 +833,7 @@ Expected: `git status --short` 只列出本任务新增与修改的文件，没�
 - [ ] **Step 7: 提交**
 
 ```bash
-cd ~/src/happyvibe && git add .gitignore scripts/skilllab/preview_entries.mjs src/components/SkillLeaderboard.astro src/pages/skills/index.astro src/data/skill-eval-report.json && git commit -m "工坊首页加榜单：十个以上已实测条目时出现，并列出实测层级"
+cd ~/src/happyvibe && git add .gitignore scripts/skilllab/preview_entries.mjs src/components/SkillLeaderboard.astro src/styles/table.css src/pages/skills/index.astro src/data/skill-eval-report.json && git commit -m "工坊首页加榜单：十个以上已实测条目时出现，并列出实测层级"
 ```
 
 ---
@@ -1079,6 +1088,7 @@ import type { CategoryKey } from '../../data/skill-standard';
 import { categoryLabel, LAYER_LABEL } from '../../lib/skillLabels';
 import { withBase } from '../../lib/urls';
 import report from '../../data/skill-eval-report.json';
+import '../../styles/table.css';
 
 const ready = report.funnel.ran + report.funnel.confirmed > 0;
 const VERDICT: Record<string, string> = {
@@ -1191,21 +1201,9 @@ const MODEL_LINES = [
   .rp-sec { display: flex; flex-direction: column; gap: 12px; }
   .rp-h2 { margin: 0; font-size: 24px; line-height: 1.4; }
   .lead { margin: 0; font-size: 16px; line-height: 1.8; }
-  .tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
-  .tbl { width: 100%; border-collapse: collapse; font-size: 15px; }
-  .tbl th, .tbl td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
-  .tbl thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; white-space: nowrap; }
-  .tbl tbody tr:last-child th, .tbl tbody tr:last-child td { border-bottom: none; }
-  .tbl tbody th { font-weight: 600; }
-  .tbl a { color: var(--gold-soft); }
-  .tbl .wrap { white-space: normal; min-width: 18em; }
   .counts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; }
   .counts li { display: flex; gap: 8px; }
   .facts { margin: 0; padding-left: 22px; font-size: 15px; line-height: 1.85; color: var(--text-muted); }
-  @media (max-width: 820px) {
-    .tbl th, .tbl td { padding: 9px 11px; font-size: 14px; }
-    .tbl .wrap { min-width: 12em; }
-  }
 </style>
 ```
 
