@@ -245,15 +245,35 @@ export const TASKS: readonly TaskDef[] = [
   },
 ];
 
+/** 实测层级：分数是在哪一层测出来的。层级只决定用哪份证据当主分，不参与算分。 */
+export type LayerKey = 'workbuddy' | 'same-model' | 'free-tier';
+export const LAYERS: readonly { key: LayerKey; label: string; meaning: string }[] = [
+  {
+    key: 'workbuddy',
+    label: 'WorkBuddy 实测',
+    meaning: '在 WorkBuddy 桌面版里，按老师平时的说法发任务，看技能会不会被自动调用，安装步骤也在这个界面上核对。',
+  },
+  {
+    key: 'same-model',
+    label: '同款复核',
+    meaning: '在后台开全新会话，用 WorkBuddy 默认的同款模型重跑。技能说明直接写进提示，不测会不会被自动调用。',
+  },
+  {
+    key: 'free-tier',
+    label: '免费档海选',
+    meaning: '在后台开全新会话，用免费档模型跑，用来在大批技能里分先后。结论比同款复核粗一层。',
+  },
+];
+
 /** 测试流程，评价标准页画成流程图。 */
 export const PROTOCOL: readonly { title: string; detail: string }[] = [
   { title: '候选', detail: '来源限 SkillHub 教育学习分类的逐条挑选、明确开源的 GitHub 仓库、教师投稿' },
   { title: '隔离下载', detail: '每个技能放独立空目录，只读不执行' },
   { title: '静态审查', detail: '通读全部文件，脚本扫描外联、删除、动态执行、凭据、提权、隐藏指令，核对许可证' },
   { title: '转载判定', detail: 'MIT、Apache-2.0 等明确开源许可的镜像，否则只评不转' },
-  { title: '装进 WorkBuddy', detail: '把技能目录放进本机技能目录，用完移除' },
-  { title: '实测', detail: 'WorkBuddy 桌面版，每次新会话，主任务 3 次，有副任务的品类加 1 次' },
-  { title: '定分', detail: '按规则从记录算出五个维度，填检查单与修改处清单' },
+  { title: '点名加载', detail: '技能说明直接写进提示，不安装、不运行脚本' },
+  { title: '实测', detail: '每次开全新会话，同一模型；主任务 3 轮，有副任务的品类加 1 轮；不装技能的对照每个任务另跑 3 轮' },
+  { title: '定分', detail: '数得清的交给脚本，其余由评审模型逐项对照检查单，再人工抽检两成' },
   { title: '入库', detail: '写条目、评测档案、技能包，构建，截图目检' },
   { title: '复测', detail: '上游更新后重跑；评测超过 6 个月标「待复测」' },
 ];
@@ -261,22 +281,28 @@ export const PROTOCOL: readonly { title: string; detail: string }[] = [
 /** 五条规矩。 */
 export const RULES: readonly string[] = [
   '没实测不出分。只做过静态审查的条目是「待测」，进候选池，不显示分数。',
-  '每份评分写明评测日期、技能版本、所用 Agent 与模型。',
+  '每份评分写明评测日期、技能版本、实测层级、所用 Agent 与模型。',
   '「AI 代测」与「教师试用」是两种证据，各自有各自的标记，不混为一谈。',
-  '没截图亲眼看过的输出不算测过。',
-  '一次只评一个技能，不批量套模板。',
+  '没亲眼读过的产出不算测过。',
+  '实测可以成批跑，条目不能成批套模板：每条的修改处和我看到的都引自具体产出。',
 ];
 
 /** 口径说明，评价标准页展示。 */
 export const TERMS: readonly { term: string; meaning: string }[] = [
   { term: '修改处', meaning: '老师必须改动才能用的一处。错别字一句算一处；缺一个必备栏目算一处；一段空话算一处。每处在评测档案里列出来。' },
   { term: '严重错误', meaning: '老师没发现就会交上去的错误，如公式算错、编造课标条目、数据对不上。' },
-  { term: '触发', meaning: '不点名技能，只按老师平时说话的方式发出任务，技能被调用记为触发。' },
-  { term: 'baseline', meaning: '不装技能，同一任务、同一模型、新会话跑一次，作为「不装技能」的对照。' },
+  { term: '触发', meaning: '不点名技能，只按老师平时说话的方式发出任务，技能被调用记为触发。后台点名加载时不测这一项，标「触发未测」。' },
+  { term: '对照', meaning: '不装技能，同一任务、同一模型、新会话各跑一遍，作为「不装技能」的参照。' },
+  { term: '实测层级', meaning: '分数在哪一层测出来的：WorkBuddy 实测、同款复核、免费档海选。层级只决定用哪份证据当主分，不参与算分。' },
+  { term: '点名加载', meaning: '把技能说明直接写进提示。技能一定被用到，但它会不会被自动调用没有测。' },
+  { term: '抽检', meaning: '每个批次随机抽两成已评审的产出，由人按同一口径重判。对不上就整批重判。' },
 ];
 
 export const STANDARD = {
-  version: '1.0',
+  version: '1.1',
   date: '2026-11-24',
-  changes: ['1.0（2026-11-24）：首版。五个维度与权重、分数规则、四份品类检查单、六道固定任务。'] as string[],
+  changes: [
+    '1.1（2026-11-24）：实测可以不在 WorkBuddy 桌面，改在后台开新会话跑，并标明实测层级；对照从每任务 1 轮改为 3 轮；新增点名加载与抽检两条口径。',
+    '1.0（2026-11-24）：首版。五个维度与权重、分数规则、四份品类检查单、六道固定任务。',
+  ] as string[],
 };

@@ -2,7 +2,7 @@
 // 跑法：node scripts/test_check_skills.mjs
 // 用一条证据与分数一致的合法条目做底，逐项把它改坏，确认每类错误都抓得到、合法情况不误报。
 import assert from 'node:assert/strict';
-import { CHECKLISTS } from '../src/data/skill-standard.ts';
+import { CHECKLISTS, LAYERS, STANDARD } from '../src/data/skill-standard.ts';
 import { skillSchema } from '../src/data/skill-schema.ts';
 import { computeDims } from '../src/lib/skillScore.ts';
 import { evidenceOf } from '../src/lib/skillEntryCore.ts';
@@ -43,6 +43,11 @@ const mutate = (fn) => {
   return d;
 };
 const schemaOk = (d) => skillSchema.safeParse(d).success;
+
+// 标准版本与实测层级
+assert.equal(STANDARD.version, '1.1', '标准要升到 1.1');
+assert.deepEqual(LAYERS.map((l) => l.key), ['workbuddy', 'same-model', 'free-tier'], '三个实测层级，从高到低');
+assert.ok(STANDARD.changes[0].startsWith('1.1（'), '变更记录最新的写在最前');
 
 // 合法条目：证据算出来的五维恰好是记录的 5/5/5/5/5，且零错误
 assert.deepEqual(computeDims(evidenceOf(base())), { value: 5, quality: 5, ease: 5, edu: 5, safety: 5 });
