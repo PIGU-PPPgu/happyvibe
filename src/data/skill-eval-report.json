@@ -1,0 +1,28 @@
+{
+  "batch": "",
+  "date": "",
+  "models": {
+    "free-tier": "",
+    "judge": "",
+    "same-model": ""
+  },
+  "funnel": {
+    "scanned": {},
+    "reviewed": 0,
+    "ran": 0,
+    "confirmed": 0
+  },
+  "byCategory": {},
+  "runs": {
+    "planned": 0,
+    "valid": 0,
+    "void": 0
+  },
+  "judge": {
+    "judged": 0,
+    "spotChecked": 0,
+    "redone": false,
+    "note": ""
+  },
+  "shortlist": []
+}

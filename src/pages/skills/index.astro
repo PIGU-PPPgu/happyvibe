@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ResourceHubHeader from '../../components/ResourceHubHeader.astro';
 import SkillCard from '../../components/SkillCard.astro';
+import SkillLeaderboard from '../../components/SkillLeaderboard.astro';
+import report from '../../data/skill-eval-report.json';
 import { CATEGORIES } from '../../data/skill-standard';
 import { hubCounts } from '../../lib/hubCounts';
 import { loadSkills } from '../../lib/skillEntries';
@@ -12,6 +14,8 @@ import { withBase } from '../../lib/urls';
 const { tested, pending, rejected } = await loadSkills();
 const counts = await hubCounts();
 const hasTested = tested.length > 0;
+// 已实测条目达到十个才出榜单
+const showBoard = tested.length >= 10;
 
 // 没有任何已实测条目的品类不出现在左栏
 const cats = CATEGORIES.map((c) => ({ ...c, n: tested.filter((s) => s.data.category === c.key).length })).filter((c) => c.n > 0);
@@ -19,16 +23,19 @@ const mirrorCount = pending.filter((s) => s.data.distribution === 'mirror').leng
 const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind === 'github' ? 'GitHub' : '本站');
 ---
 
-<BaseLayout title="资源中心 · Skill 工坊" description="给中小学老师的 Agent 技能，每个都在 WorkBuddy 上用真实教师任务实测过才出分；分数、短板和证据公开">
+<BaseLayout title="资源中心 · Skill 工坊" description="给中小学老师的 Agent 技能，用真实教师任务实测过才出分；分数、短板、实测层级和证据公开">
   <div class="container hub-page">
     <ResourceHubHeader active="skills" counts={counts}>
       <span slot="note">
         {hasTested
-          ? '每个 Skill 都在 WorkBuddy 上用真实教师任务实测过，分数、短板和证据都公开。'
-          : '候选技能已完成静态审查，尚未在 WorkBuddy 上实测。按规矩，没实测不出分。'}
+          ? '每个 Skill 都用真实教师任务实测过，分数、短板和证据都公开，并标明在哪一层、用哪个模型测的。'
+          : '候选技能已完成静态审查，还没有实测。按规矩，没实测不出分。'}
         <a class="std-link" href={withBase('/skills/standard/')}>评价标准 →</a>
+        {report.funnel.ran > 0 && <a class="std-link" href={withBase('/skills/eval-report/')}>这次怎么测的 →</a>}
       </span>
     </ResourceHubHeader>
+
+    {showBoard && <SkillLeaderboard skills={tested} />}
 
     {hasTested && (
       <div class="hub-layout">
@@ -58,7 +65,7 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
         <h2 class="status-t">已实测的技能还在测</h2>
         <p class="status-d">
           首批候选 {pending.length} 个，来源与许可证都已核对，其中 {mirrorCount} 个明确开源、已打包可下载。
-          实测按固定任务在 WorkBuddy 上跑，记录触发、耗时和要改的地方，再按规则算分。
+          实测按固定任务在后台开新会话跑，记录耗时和要改的地方，再按规则算分。
         </p>
         <a class="btn btn-ghost" href={withBase('/skills/standard/')}>看怎么测</a>
       </section>

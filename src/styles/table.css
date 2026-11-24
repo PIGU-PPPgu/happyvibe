@@ -1,0 +1,14 @@
+/* 站内数据表的共用样式。新组件在自己的 frontmatter 里 import 这一个文件，不再各写一份。 */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tbl th, .tbl td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
+.tbl thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; white-space: nowrap; }
+.tbl tbody tr:last-child th, .tbl tbody tr:last-child td { border-bottom: none; }
+.tbl tbody th { font-weight: 600; }
+.tbl a { color: var(--gold-soft); }
+.tbl .num { text-align: right; white-space: nowrap; }
+.tbl .wrap { white-space: normal; min-width: 18em; }
+@media (max-width: 820px) {
+  .tbl th, .tbl td { padding: 9px 11px; font-size: 14px; }
+  .tbl .wrap { min-width: 12em; }
+}

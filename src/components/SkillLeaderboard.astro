@@ -1,0 +1,55 @@
+---
+/**
+ * 榜单：已实测技能按总分排的一张表。已实测条目达到十个才在首页出现。
+ */
+import '../styles/table.css';
+import { categoryLabel, LAYER_LABEL, LAYER_RANK } from '../lib/skillLabels';
+import type { ScoredSkill } from '../lib/skillEntries';
+import { withBase } from '../lib/urls';
+
+interface Props {
+  skills: ScoredSkill[];
+}
+
+const { skills } = Astro.props;
+const meanEdits = (s: ScoredSkill) => {
+  const runs = s.evidence.runs;
+  return runs.length ? runs.reduce((a, r) => a + r.edits, 0) / runs.length : 0;
+};
+const rows = [...skills]
+  .sort((a, b) => b.total - a.total || (LAYER_RANK[b.data.score.tested.layer] ?? 0) - (LAYER_RANK[a.data.score.tested.layer] ?? 0) || a.data.title.localeCompare(b.data.title, 'zh'))
+  .map((s, i) => ({ rank: i + 1, slug: s.slug, title: s.data.title, category: s.data.category, total: s.total, tier: s.tier, layer: s.data.score.tested.layer, edits: meanEdits(s) }));
+---
+
+<section class="lb" aria-label="榜单">
+  <h2 class="lb-t">榜单</h2>
+  <p class="lb-d text-muted">按总分排。分数相同的时候，层级高的排前面。</p>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th scope="col">名次</th><th scope="col">技能</th><th scope="col">品类</th><th scope="col">总分</th><th scope="col">档位</th><th scope="col">实测层级</th><th scope="col">平均修改处</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            <td class="mono">{r.rank}</td>
+            <th scope="row"><a href={withBase(`/skills/${r.slug}/`)}>{r.title}</a></th>
+            <td>{categoryLabel(r.category)}</td>
+            <td class="mono num">{r.total.toFixed(1)}</td>
+            <td>{r.tier}</td>
+            <td>{LAYER_LABEL[r.layer]}</td>
+            <td class="mono num">{r.edits.toFixed(1)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="lb-note text-muted">修改处：老师必须改动才能用的一处。实测层级见评价标准的「实测层级」一节。</p>
+</section>
+
+<style>
+  .lb { display: flex; flex-direction: column; gap: 10px; }
+  .lb-t { margin: 0; font-size: 22px; }
+  .lb-d { margin: 0; font-size: 14.5px; }
+  .lb-note { margin: 0; font-size: 13.5px; }
+</style>
