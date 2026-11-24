@@ -30,8 +30,10 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
         {hasTested
           ? '每个 Skill 都用真实教师任务实测过，分数、短板和证据都公开，并标明在哪一层、用哪个模型测的。'
           : '候选技能已完成静态审查，还没有实测。按规矩，没实测不出分。'}
-        <a class="std-link" href={withBase('/skills/standard/')}>评价标准 →</a>
-        {report.funnel.ran > 0 && <a class="std-link" href={withBase('/skills/eval-report/')}>这次怎么测的 →</a>}
+        <span class="std-links">
+          <a class="std-link" href={withBase('/skills/standard/')}>评价标准 →</a>
+          {report.funnel.ran > 0 && <a class="std-link" href={withBase('/skills/eval-report/')}>这次怎么测的 →</a>}
+        </span>
       </span>
     </ResourceHubHeader>
 
@@ -161,6 +163,7 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
 <style>
   .hub-page { padding-block: 48px 40px; display: flex; flex-direction: column; gap: 22px; }
   .std-link { color: var(--gold-soft); margin-left: 10px; white-space: nowrap; }
+  .std-links { white-space: nowrap; }
 
   .hub-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
   .hub-rail { position: sticky; top: calc(var(--header-h) + 16px); display: flex; flex-direction: column; gap: 4px; }
@@ -182,7 +185,7 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
     font: inherit; font-size: 14px; padding: 7px 10px; border-radius: var(--radius-sm);
     border: 1px solid var(--line-strong); background: var(--bg-panel); color: var(--text);
   }
-  .sk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+  .sk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr)); gap: 16px; }
   .empty-note { padding: 30px 0; font-size: 15px; }
 
   .status { padding: 24px 26px; }

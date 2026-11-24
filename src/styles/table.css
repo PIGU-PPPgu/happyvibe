@@ -4,7 +4,7 @@
 .tbl th, .tbl td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
 .tbl thead th { color: var(--text-muted); font-weight: 500; font-size: 13px; white-space: nowrap; }
 .tbl tbody tr:last-child th, .tbl tbody tr:last-child td { border-bottom: none; }
-.tbl tbody th { font-weight: 600; }
+.tbl tbody th { font-weight: 600; white-space: nowrap; }
 .tbl a { color: var(--gold-soft); }
 .tbl .num { text-align: right; white-space: nowrap; }
 .tbl .wrap { white-space: normal; min-width: 18em; }
