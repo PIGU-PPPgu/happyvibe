@@ -44,6 +44,7 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   ingest <批次> <层级>                  核查交回的产出，写运行记录
   judge-prompts <批次> <层级>           给每轮有效运行出一份评审提示
   ingest-judgements <批次> <层级>       核查交回的评审，并入运行记录
+  judge-agree <批次> <层级> <目录>      另一批评审与已并入的逐轮比对（抽检、换评审模型的实验）；--out 存结果
   score <批次> <slug> <层级> [--write]  把一个技能的证据合成 score；--write 写进条目
                                         条目已在更高层级时拒绝覆盖，确要覆盖加 --force-layer
   report <批次> [--out <文件>]          汇总成报告数据
@@ -245,6 +246,75 @@ function cmdIngestJudgements(batch, layer) {
     ok++;
   }
   console.log(`${batch} / ${layer}：评审并入 ${ok} 轮，引文可疑 ${suspect} 轮，解析失败 ${failed} 轮`);
+}
+
+/**
+ * 另一批评审与已并入的评审逐轮比对：检查单逐项过没过是否一致、修改处数差多少、严重错误数是否一致。
+ * 抽检（另一个会话重判两成）和换评审模型的实验都用它。口径是评价标准里的「抽检」。
+ * @param {string} otherDir 另一批评审所在的目录，里面有 judge-raw/<轮次号>.json
+ */
+function cmdJudgeAgree(batch, layer, otherDir, { out } = {}) {
+  const reference = listRuns(batch, layer).filter((r) => r.valid && r.judgement);
+  must(reference.length, `${batch} / ${layer} 还没有并入评审`);
+  must(existsSync(`${otherDir}/judge-raw`), `没有 ${otherDir}/judge-raw`);
+  const rows = [];
+  for (const r of reference) {
+    const rawPath = `${otherDir}/judge-raw/${r.id}.json`;
+    if (!existsSync(rawPath)) continue;
+    const raw = readJson(rawPath);
+    let other;
+    try {
+      // 与并入时同样的两道关：评审会话没动过工具，检查单编号与标准对得上
+      must((raw.extraToolUses ?? raw.toolUses) === 0, '另一次评审动过工具或没报工具调用次数');
+      other = parseJudgement(raw.finalText);
+      must(other.checklist.map((c) => c.id).sort().join(',') === CHECKLISTS[r.category].map((c) => c.id).sort().join(','), '检查单编号与标准对不上');
+    } catch (err) {
+      rows.push({ id: r.id, unusable: err.message });
+      continue;
+    }
+    const base = r.judgement;
+    const items = base.checklist.map((c) => ({ id: c.id, same: c.pass === other.checklist.find((x) => x.id === c.id).pass }));
+    const edits = [base.edits.length, other.edits.length];
+    const severe = [base.severe.length, other.severe.length];
+    rows.push({
+      id: r.id,
+      items: items.length,
+      itemSame: items.filter((x) => x.same).length,
+      itemDiff: items.filter((x) => !x.same).map((x) => x.id),
+      edits,
+      editsOff: Math.abs(edits[0] - edits[1]) / Math.max(edits[0], edits[1], 1) > 0.3,
+      severe,
+    });
+  }
+  const used = rows.filter((x) => !x.unusable);
+  const sum = {
+    compared: used.length,
+    unusable: rows.length - used.length,
+    items: used.reduce((s, x) => s + x.items, 0),
+    itemSame: used.reduce((s, x) => s + x.itemSame, 0),
+    editsOff: used.filter((x) => x.editsOff).length,
+    severeDiff: used.filter((x) => x.severe[0] !== x.severe[1]).length,
+  };
+  // 抽检口径：严重错误数不一致超过 1 份，或修改处数偏差超过三成的超过五分之一，就算对不上
+  const pass = used.length > 0 && sum.severeDiff <= 1 && sum.editsOff <= used.length / 5;
+  for (const x of rows) {
+    if (x.unusable) console.log(`  x ${x.id}：${x.unusable}`);
+    else console.log(`  ${x.id}：检查单 ${x.itemSame}/${x.items} 一致${x.itemDiff.length ? `（${x.itemDiff.join(' ')} 不同）` : ''}；修改处 ${x.edits[0]} 对 ${x.edits[1]}${x.editsOff ? '，偏差超过三成' : ''}；严重错误 ${x.severe[0]} 对 ${x.severe[1]}`);
+  }
+  console.log(`比对 ${sum.compared} 轮，另有 ${sum.unusable} 轮用不了：检查单逐项一致 ${sum.itemSame}/${sum.items}；修改处数偏差超过三成 ${sum.editsOff} 轮；严重错误数不一致 ${sum.severeDiff} 轮。按抽检口径${pass ? '对得上' : '对不上'}`);
+  // 存成报告读的 spotcheck.json。整批重判有没有做，这个命令不知道，redone 留给重判后的人改
+  if (out) {
+    writeJson(out, {
+      spotChecked: sum.compared,
+      matches: pass,
+      redone: false,
+      note: `抽了 ${sum.compared} 份，检查单逐项一致 ${sum.itemSame}/${sum.items}，严重错误数不一致 ${sum.severeDiff} 份，修改处数偏差超过三成的 ${sum.editsOff} 份`,
+      ...sum,
+      itemAgreement: sum.items ? sum.itemSame / sum.items : 0,
+      pass,
+      rows,
+    });
+  }
 }
 
 function cmdScore(batch, slug, layer, { write = false, forceLayer = false, entriesDir = 'src/content/skills' } = {}) {
@@ -647,6 +717,7 @@ try {
   else if (cmd === 'ingest') cmdIngest(rest[0], rest[1]);
   else if (cmd === 'judge-prompts') cmdJudgePrompts(rest[0], rest[1]);
   else if (cmd === 'ingest-judgements') cmdIngestJudgements(rest[0], rest[1]);
+  else if (cmd === 'judge-agree') cmdJudgeAgree(rest[0], rest[1], rest[2], { out: flag('--out') });
   else if (cmd === 'score') {
     const write = rest.includes('--write');
     const forceLayer = rest.includes('--force-layer');

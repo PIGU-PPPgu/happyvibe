@@ -530,6 +530,29 @@ try {
   cli('ingest', BATCH, 'free-tier');
   assert.equal(todoJudge(), 0, '重复收产出后评审还在');
 
+  // 另一批评审与已并入的逐轮比对：修改处数偏差超过三成的超过五分之一算对不上；只有一轮偏差、某一项检查单不同，仍在口径之内
+  const ALT = `${LABD}/judge-alt`;
+  mkdirSync(`${ALT}/judge-raw`, { recursive: true });
+  const judgedRuns = readdirSync(`${EVALD}/runs/free-tier`)
+    .map((f) => JSON.parse(readFileSync(`${EVALD}/runs/free-tier/${f}`, 'utf8')))
+    .filter((r) => r.valid && r.judgement);
+  const altRaw = (id, j) => writeFileSync(`${ALT}/judge-raw/${id}.json`, JSON.stringify({ sessionId: 'j2', toolUses: 0, finalText: JSON.stringify(j) }));
+  judgedRuns.forEach((r, i) => {
+    const j = outputJudgement(i < 2 ? Math.round(r.judgement.edits.length * 1.5) : r.judgement.edits.length);
+    if (i === 2) j.checklist[0].pass = !r.judgement.checklist[0].pass;
+    altRaw(r.id, j);
+  });
+  const items = judgedRuns.length * 12;
+  const off = cli('judge-agree', BATCH, 'free-tier', ALT, '--out', `${ALT}/agreement.json`);
+  assert.ok(
+    off.includes(`比对 ${judgedRuns.length} 轮`) && off.includes(`检查单逐项一致 ${items - 1}/${items}`) && off.includes('修改处数偏差超过三成 2 轮') && off.includes('按抽检口径对不上'),
+    off
+  );
+  assert.equal(JSON.parse(readFileSync(`${ALT}/agreement.json`, 'utf8')).pass, false);
+  judgedRuns.forEach((r, i) => altRaw(r.id, outputJudgement(i === 0 ? Math.round(r.judgement.edits.length * 1.5) : r.judgement.edits.length)));
+  const same = cli('judge-agree', BATCH, 'free-tier', ALT);
+  assert.ok(same.includes('修改处数偏差超过三成 1 轮') && same.includes('按抽检口径对得上'), same);
+
   const printed = cli('score', BATCH, 'selftest-skill', 'free-tier');
   assert.ok(printed.includes('总分'), printed);
   assert.ok(printed.includes('检查单：LP1 LP2'), printed);
