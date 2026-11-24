@@ -34,7 +34,7 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 6. **排计划、出提示**。`node scripts/skilllab.mjs plan <批次> free-tier`。
 7. **开会话**。见下一节。
 8. **收产出**。导出会话结果后 `node scripts/skilllab.mjs ingest <批次> free-tier`。作废的轮次用 `node scripts/skilllab.mjs rerun <批次> free-tier <轮次号>` 追加重跑，再交回、再 `ingest`。
-9. **评审**。`node scripts/skilllab.mjs judge-prompts <批次> free-tier`，开评审会话，交回后 `node scripts/skilllab.mjs ingest-judgements <批次> free-tier`。引文可疑的轮次（超过三成引文在产出里找不到）要人看，`score` 不会用它们。人看过产出后，用 `node scripts/skilllab.mjs trust <批次> <层级> <轮次号>` 标记为可以采用。
+9. **评审**。`node scripts/skilllab.mjs judge-prompts <批次> free-tier`，开评审会话，交回后 `node scripts/skilllab.mjs ingest-judgements <批次> free-tier`。引文可疑的轮次（超过三成引文在产出里找不到）要主会话看，`score` 不会用它们。主会话逐字读过产出后，用 `node scripts/skilllab.mjs trust <批次> <层级> <轮次号>` 标记为可以采用。
 10. **抽检**。随机抽两成已评审的产出，不少于 10 份，按同一口径重判，与评审结果比对。严重错误数不一致超过 1 份，或修改处数偏差超过 30% 的超过五分之一，整批重判。结果写 `docs/skill-evals/<批次>/spotcheck.json`：`{ "spotChecked": 12, "redone": false, "note": "抽了 12 份，严重错误数全部一致，修改处数偏差最大 18%" }`。
 11. **出分、写条目**。`node scripts/skilllab.mjs score <批次> <slug> free-tier --write`。然后读产出，补一句话理由 `verdict`、短板 `weakness`、正文三节（输出样例、修改处清单、我看到的），每处引原文。`npm run check:skills` 不过不得提交。
 12. **复核、报告、页面**。海选总分前 10（触红线与抽检未过的除外）用 `node scripts/skilllab.mjs plan <批次> same-model --only <slug,slug,…>` 只给这十个排计划，`candidates.json` 原样保留，海选那份证据链才不断，`score --write` 会把海选分数存进 `prior`。最后 `node scripts/skilllab.mjs report <批次>`，构建，截图亲眼看过，提交。
@@ -53,7 +53,7 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 
 ## 脚本不替你做的事
 
-- **亲眼读**：每个技能至少 1 份带技能的产出；前 10 名每个读 1 份对照与 1 份带技能的产出。没读过的不许写「我看到的」。
+- **亲眼读**（由主会话逐字读，不是评审模型，也不是真人）：每个技能至少 1 份带技能的产出；前 10 名每个读 1 份对照与 1 份带技能的产出。没读过的不许写「我看到的」。
 - **写条目**：一句话理由、短板、正文三节，引具体产出的原文，不套模板。
 - **正文引号**：「」只用于逐字引自产出的原文，写完跑 `node scripts/skilllab.mjs quotes <批次> <slug>`，找不到 0 处才算过。界面上的名字不用引号。
 - **抽检**与返工判断。

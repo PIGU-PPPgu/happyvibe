@@ -49,7 +49,7 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   todo <批次> <层级> [数量] [--judge]   列出待开或待评审的轮次，给开会话的子代理用
   review-merge <批次>                   汇总人工复核记录，写初筛名单与候选表
   quotes <批次> <slug>                  核对条目正文里的引文都能在原始产出里找到
-  trust <批次> <层级> <轮次号>          引文可疑的评审，人看过后标记为可以采用
+  trust <批次> <层级> <轮次号>          引文可疑的评审，主会话看过产出后标记为可以采用
   ledger <批次> <层级> <轮次号>=<会话号>…  登记开会话得到的会话号（评审加 --judge）
   collect <批次> <层级> [--judge]      从会话记录里取出结果，写成 raw 或 judge-raw 文件
 层级取 free-tier 或 same-model。`;
@@ -238,7 +238,7 @@ function cmdIngestJudgements(batch, layer) {
     r.judgement = { ...j, quotes: quotes.length, quoteMiss: miss, suspect: quotes.length === 0 || miss / quotes.length > 0.3 };
     if (r.judgement.suspect) {
       suspect++;
-      console.log(`  ! ${r.id}：${miss}/${quotes.length} 条引文在产出里找不到，需要人看`);
+      console.log(`  ! ${r.id}：${miss}/${quotes.length} 条引文在产出里找不到，需要主会话看`);
     }
     writeJson(`${runsDir(batch, layer)}/${r.id}.json`, r);
     ok++;
@@ -255,7 +255,7 @@ function cmdScore(batch, slug, layer, { write = false, forceLayer = false, entri
   const picked = pickRuns(batch, layer, (r) => r.slug === slug || (r.kind === 'baseline' && tasks.includes(r.task)));
   const usable = (r) => r.valid && r.judgement && !r.judgement.suspect;
   for (const r of picked.filter((x) => !usable(x))) {
-    console.log(`  ! ${r.id} 不能用：${r.voidReasons?.length ? r.voidReasons.join('；') : r.judgement?.suspect ? '引文可疑，等人看' : '还没有评审'}`);
+    console.log(`  ! ${r.id} 不能用：${r.voidReasons?.length ? r.voidReasons.join('；') : r.judgement?.suspect ? '引文可疑，等主会话看' : '还没有评审'}`);
   }
   const runs = picked
     .filter((r) => r.slug === slug && usable(r))
@@ -600,7 +600,7 @@ function cmdCollect(batch, layer, { judge = false } = {}) {
   console.log(`${batch}：${judge ? '评审会话' : `${layer} 会话`} ${Object.keys(ledger).length} 个，已收 ${tally.done} 个，还在跑 ${tally.running} 个，没跑成 ${tally.failed} 个，没有记录 ${tally.missing} 个`);
 }
 
-/** 引文可疑的评审，人看过产出后标记为可以采用。 */
+/** 引文可疑的评审，主会话逐字看过产出后标记为可以采用。 */
 function cmdTrust(batch, layer, runId) {
   const file = `${runsDir(batch, layer)}/${runId}.json`;
   must(existsSync(file), `没有这一轮的运行记录：${runId}`);
@@ -608,7 +608,7 @@ function cmdTrust(batch, layer, runId) {
   must(r.valid && r.judgement?.suspect, `${runId} 不是引文可疑的有效轮次`);
   r.judgement = { ...r.judgement, suspect: false, reviewed: true };
   writeJson(file, r);
-  console.log(`已把 ${runId} 的评审标记为人看过、可以采用`);
+  console.log(`已把 ${runId} 的评审标记为主会话看过、可以采用`);
 }
 
 const [cmd, ...rest] = process.argv.slice(2);

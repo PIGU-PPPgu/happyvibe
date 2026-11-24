@@ -91,7 +91,7 @@ const MODEL_LINES = [
           <h2 class="rp-h2">评审与抽检</h2>
           <p>
             已评审 {report.judge.judged}
-            份产出。人工抽检 {report.judge.spotChecked}
+            份产出。另由一个 AI 会话抽检 {report.judge.spotChecked}
             份，{report.judge.spotChecked === 0 ? '还没有结论' : report.judge.redone ? '对不上，已整批重判' : '与评审结果对得上'}。{report.judge.note}
           </p>
         </section>

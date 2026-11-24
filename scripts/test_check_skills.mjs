@@ -2,7 +2,7 @@
 // 跑法：node scripts/test_check_skills.mjs
 // 用一条证据与分数一致的合法条目做底，逐项把它改坏，确认每类错误都抓得到、合法情况不误报。
 import assert from 'node:assert/strict';
-import { CHECKLISTS, LAYERS, STANDARD } from '../src/data/skill-standard.ts';
+import { CHECKLISTS, LAYERS, PROTOCOL, RULES, STANDARD, TERMS } from '../src/data/skill-standard.ts';
 import { skillSchema } from '../src/data/skill-schema.ts';
 import { computeDims } from '../src/lib/skillScore.ts';
 import { evidenceOf } from '../src/lib/skillEntryCore.ts';
@@ -51,9 +51,13 @@ const mutate = (fn) => {
 const schemaOk = (d) => skillSchema.safeParse(d).success;
 
 // 标准版本与实测层级
-assert.equal(STANDARD.version, '1.1', '标准要升到 1.1');
+assert.equal(STANDARD.version, '1.2', '标准要升到 1.2');
 assert.deepEqual(LAYERS.map((l) => l.key), ['workbuddy', 'same-model', 'free-tier'], '三个实测层级，从高到低');
-assert.ok(STANDARD.changes[0].startsWith('1.1（'), '变更记录最新的写在最前');
+assert.ok(STANDARD.changes[0].startsWith('1.2（'), '变更记录最新的写在最前');
+// 读产出和抽检是评审之外的另一个 AI 会话做的，站内文本不许说成是真人做的
+const standardText = [...RULES, ...TERMS.map((t) => t.meaning), ...PROTOCOL.map((p) => p.detail)].join('\n');
+assert.ok(!/被人|由人|人工抽检/.test(standardText), '读产出与抽检不写成真人做的');
+assert.ok(standardText.includes('另一个 AI 会话'), '写明是谁读的');
 
 // 合法条目：证据算出来的五维恰好是记录的 5/5/5/5/5，且零错误
 assert.deepEqual(computeDims(evidenceOf(base())), { value: 5, quality: 5, ease: 5, edu: 5, safety: 5 });
