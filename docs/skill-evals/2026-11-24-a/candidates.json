@@ -1003,57 +1003,6 @@
   "textOnly": false
  },
  {
-  "slug": "agent-skills--k12-lesson-plan-creation",
-  "title": "K12 教案与材料",
-  "category": "lesson-plan",
-  "does": "为数学、英语语言艺术、科学、社会课生成一节课的教案、学生材料和课堂观察表，导出成可编辑的 Word 文档",
-  "summary": "先按学科加载对应参考文件，写一份 lesson.json 作为共同底稿，再用脚本渲染出教案、学生材料、观察表等相互一致的文档。按美国课标（CCSS、NGSS、C3）编写，英文输出；Word 输出需要 Python 和 python-docx。",
-  "dir": ".skilllab/2026-11-24-a/fetched/agent-skills--k12-lesson-plan-creation",
-  "origin": "github",
-  "source": {
-   "kind": "github",
-   "author": "",
-   "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-plan-creation",
-   "repo": "learning-commons-org/agent-skills",
-   "path": "skills/k12-lesson-plan-creation",
-   "commit": "b23623c8b50fe0f5fd4e657b1d3c0e3e6618ada6",
-   "license": "Apache-2.0"
-  },
-  "distribution": "mirror",
-  "platforms": [
-   "workbuddy"
-  ],
-  "composition": "scripts",
-  "requires": [
-   "python"
-  ],
-  "install": {
-   "workbuddy": [
-    "下载技能包",
-    "打开 WorkBuddy，进入技能页",
-    "点添加技能，选上传技能，选中刚下载的压缩包"
-   ]
-  },
-  "trigger": "我明天要给五年级学生讲长除法，帮我做一份教案",
-  "examples": [
-   "我明天要给五年级学生讲长除法，帮我做完整的一套：教案、学生材料和观察表。"
-  ],
-  "cautions": [
-   "课标和学科参考按美国 CCSS、NGSS、C3 编写，输出为英文",
-   "scripts/render_all.sh 在缺少 python-docx 时会自动执行 pip install python-docx==1.1.2，需要联网",
-   "正文要求对老师只说「Word 文档」，不提工具名、文件名和脚本；出错时说文档没做成，不说脚本失败",
-   "能做 Design 页面的平台走页面渲染，否则走 Word；连上 Learning Commons 知识图谱时会调用它查课标，不连时教案末尾加一句未使用知识图谱",
-   "learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
-  ],
-  "audit": {
-   "network": "declared",
-   "credentials": false,
-   "studentData": "none",
-   "overRead": false
-  },
-  "textOnly": false
- },
- {
   "slug": "china-k12-teacher-skills--china-k12-lesson-differentiation",
   "title": "中国 K12 课时分层",
   "category": "lesson-plan",
@@ -1194,6 +1143,104 @@
   "textOnly": false
  },
  {
+  "slug": "education-agent-skills--culturally-responsive-teaching-designer",
+  "title": "文化回应教学改造",
+  "category": "lesson-plan",
+  "does": "改造一节课，把学生的文化背景和生活经验放到中心",
+  "summary": "英文技能，说明书带证据来源、输入输出字段、提示词和示例输出。面向英语课堂的中小学教师，只产出教学设计文本，不依赖脚本或外部接口。",
+  "dir": ".skilllab/2026-11-24-a/fetched/education-agent-skills--culturally-responsive-teaching-designer",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/global-cross-cultural-pedagogies/culturally-responsive-teaching-designer",
+   "repo": "GarethManning/education-agent-skills",
+   "path": "skills/global-cross-cultural-pedagogies/culturally-responsive-teaching-designer",
+   "commit": "135d6275e7db0657d70b147f46d3191c5430677d",
+   "version": "1.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "帮我把这节课改得更贴近学生的生活经验",
+  "examples": [
+   "帮我改造这节语文课，把学生所在社区的经验融进去。"
+  ],
+  "cautions": [
+   "英文技能，示例按英语课堂的年级和学科写",
+   "仓库许可证在 GitHub 上识别为 NOASSERTION",
+   "部分输入项（student_profiles、success_criteria）注明来自 context engine，仓库里没有这个上下文引擎，属可选项",
+   "产出的是一节课或一个环节的教学设计，不是完整教案文档"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
+  "slug": "education-agent-skills--differentiation-adapter",
+  "title": "学习需求差异化适配",
+  "category": "lesson-plan",
+  "does": "在不降低核心目标的前提下，按 SEND、EAL、资优等具体学习需求改编课堂任务",
+  "summary": "英文技能，说明书带证据来源、输入输出字段、提示词和示例输出。面向英语课堂的中小学教师，只产出教学设计文本，不依赖脚本或外部接口。",
+  "dir": ".skilllab/2026-11-24-a/fetched/education-agent-skills--differentiation-adapter",
+  "origin": "github",
+  "source": {
+   "kind": "github",
+   "author": "",
+   "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/differentiation-adapter",
+   "repo": "GarethManning/education-agent-skills",
+   "path": "skills/curriculum-assessment/differentiation-adapter",
+   "commit": "135d6275e7db0657d70b147f46d3191c5430677d",
+   "version": "1.0"
+  },
+  "distribution": "link",
+  "platforms": [
+   "workbuddy",
+   "generic"
+  ],
+  "composition": "prompt",
+  "requires": [],
+  "install": {
+   "workbuddy": [
+    "打开来源页，按页面说明取得技能包",
+    "打开 WorkBuddy，进入技能页",
+    "点添加技能，选上传技能，选中技能包"
+   ]
+  },
+  "trigger": "班里有阅读障碍和资优学生，帮我把这个任务做分层",
+  "examples": [
+   "这是一个科学课任务，班里有阅读障碍学生和资优学生，帮我改编任务但保持核心目标不变。"
+  ],
+  "cautions": [
+   "英文技能，示例按英语课堂的年级和学科写",
+   "仓库许可证在 GitHub 上识别为 NOASSERTION",
+   "部分输入项（student_profiles、success_criteria）注明来自 context engine，仓库里没有这个上下文引擎，属可选项",
+   "产出的是一节课或一个环节的教学设计，不是完整教案文档"
+  ],
+  "audit": {
+   "network": "none",
+   "credentials": false,
+   "studentData": "none",
+   "overRead": false
+  },
+  "textOnly": false
+ },
+ {
   "slug": "hs-it-lesson-design",
   "title": "高中信息技术教学设计",
   "category": "lesson-plan",
@@ -1236,63 +1283,6 @@
    "network": "none",
    "credentials": false,
    "studentData": "none",
-   "overRead": false
-  },
-  "textOnly": false
- },
- {
-  "slug": "k12-lesson-differentiation",
-  "title": "K12 课程分层设计",
-  "category": "lesson-plan",
-  "does": "把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单，可导出 Word",
-  "summary": "产出 1 份教师用分层方案和低于、达到、高于年级水平的 3 份学生分层学习单，在 Claude 上做成可编辑文档或设计页，其他环境用内置 Python 脚本渲染成 Word 和 HTML。面向美国中小学数学、英语、科学、社会学科教师，以 CCSS、NGSS 和州课标为基准，能识别 Illustrative Mathematics 和 OpenSciEd 课程，不连 Learning Commons 课标库也能用。会请老师提供学生英语水平、IEP、504 等信息来调整分层。",
-  "dir": ".skilllab/2026-11-24-a/fetched/k12-teacher-skills--k12-lesson-differentiation",
-  "origin": "github",
-  "source": {
-   "kind": "github",
-   "author": "Anthropic、Learning Commons",
-   "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-differentiation",
-   "repo": "anthropics/k12-teacher-skills",
-   "path": "plugin/skills/k12-lesson-differentiation",
-   "commit": "31fd6dbb0c07cb50bb3ce7f62a4135a393bd0e8c",
-   "license": "Apache-2.0"
-  },
-  "distribution": "mirror",
-  "platforms": [
-   "claude-code",
-   "generic"
-  ],
-  "composition": "scripts",
-  "requires": [
-   "python",
-   "network"
-  ],
-  "install": {
-   "workbuddy": [
-    "下载技能包",
-    "打开 WorkBuddy，进入技能页",
-    "点添加技能，选上传技能，选中刚下载的压缩包"
-   ]
-  },
-  "trigger": "把这份教案改成分层版，我班学生水平差很多",
-  "examples": [
-   "这是我的《一次函数》教案，帮我做成三个层次的版本，低于、达到、高于年级水平各一份。",
-   "把 4.NF.A.1 这节课做成三份分层学习单，班里有英语新手学生，需要句子支架。"
-  ],
-  "cautions": [
-   "脚本发现缺少 python-docx 时会自动执行 pip install 联网安装 python-docx==1.1.2；装不上就只输出 HTML，并报错退出",
-   "输出目录里同名的 .docx 和 .html 会被直接覆盖，不提示",
-   "说明书要求 Agent 不打开、不查看渲染脚本，直接运行；对老师不提工具名和文件名，脚本出错时只说文档没能生成",
-   "会请老师提供学生英语水平、IEP、504 等信息，并写进 differentiation.json 和输出文档，测试时用虚构信息",
-   "以美国 CCSS、NGSS 和州课标为基准，默认用全国课标，社会学科会先问老师在哪个州；国内老师直接用，课标条目对不上",
-   "老师给的是链接时，会联网抓取这份教案",
-   "开工前会先问老师要完整版还是先看草稿",
-   "Claude 文档和设计页只在 Claude 上可用，其他环境走 Word 路径"
-  ],
-  "audit": {
-   "network": "declared",
-   "credentials": false,
-   "studentData": "local",
    "overRead": false
   },
   "textOnly": false

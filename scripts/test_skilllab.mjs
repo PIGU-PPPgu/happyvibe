@@ -402,7 +402,7 @@ const cliErr = (...args) => {
   }
 };
 const cleanup = () => {
-  for (const p of [EVALD, LABD, ENTRIES, SESSION_DB_FILE, 'public/skill-reports/selftest-skill', 'public/skill-reports/selftest-letter']) rmSync(p, { recursive: true, force: true });
+  for (const p of [EVALD, LABD, ENTRIES, SESSION_DB_FILE, 'public/skill-reports/selftest-skill', 'public/skill-reports/selftest-letter', 'scripts/skilllab/fixtures/selftest-skill-copy', 'scripts/skilllab/fixtures/selftest-skill-alt']) rmSync(p, { recursive: true, force: true });
 };
 /** 往自测会话库里造一个会话：先读提示文件，再分两段给出成品 */
 const fakeSession = (sessionId, promptAbs, finalText) => {
@@ -582,17 +582,27 @@ try {
     composition: 'prompt', requires: [], audit: { network: 'none', credentials: false, studentData: 'none', overRead: false },
     trigger: '帮我写教案', examples: ['帮我写一节数轴的教案'],
   });
+  const skillDir = 'scripts/skilllab/fixtures/selftest-skill';
+  // 第二条用的技能说明要和第一条不同，否则会被当成同一份技能
+  mkdirSync('scripts/skilllab/fixtures/selftest-skill-alt', { recursive: true });
+  writeFileSync('scripts/skilllab/fixtures/selftest-skill-alt/SKILL.md', `${readFileSync(`${skillDir}/SKILL.md`, 'utf8')}\n这一句是为了让这份技能说明与 selftest-skill 不同。\n`);
   writeFileSync(`${LABD}/review/a.json`, JSON.stringify(review('review-a')));
-  writeFileSync(`${LABD}/review/b.json`, JSON.stringify({ ...review('review-b'), license: null }));
+  writeFileSync(`${LABD}/review/b.json`, JSON.stringify({ ...review('review-b'), dir: 'scripts/skilllab/fixtures/selftest-skill-alt', license: null }));
   writeFileSync(`${LABD}/review/c.json`, JSON.stringify({ slug: 'review-c', name: '复核 c', url: '', source: 'skillhub', verdict: 'out', why: '面向家长，不是老师', category: null }));
   writeFileSync(`${LABD}/review/d.json`, JSON.stringify({ slug: 'review-d', name: '复核 d', url: '', source: 'skillhub', verdict: 'redline', why: '读取凭据文件', category: null }));
+  // 技能说明与 review-a 逐字相同的另一份（换行不同也算相同），只测评分高的那份
+  mkdirSync('scripts/skilllab/fixtures/selftest-skill-copy', { recursive: true });
+  writeFileSync('scripts/skilllab/fixtures/selftest-skill-copy/SKILL.md', readFileSync(`${skillDir}/SKILL.md`, 'utf8').replace(/\n/g, '\r\n\r\n'));
+  writeFileSync(`${LABD}/review/e.json`, JSON.stringify({ ...review('review-e'), rating: 3, dir: 'scripts/skilllab/fixtures/selftest-skill-copy' }));
   writeFileSync(`${LABD}/scan/skillhub.json`, JSON.stringify({ unique: 900 }));
   // 静态审查的输出也放在 review 目录里，它不是复核记录
   writeFileSync(`${LABD}/review/review-a.audit.json`, JSON.stringify({ files: ['SKILL.md'], risks: [] }));
-  assert.ok(cli('review-merge', BATCH).includes('候选 2 个'));
+  const merged = cli('review-merge', BATCH);
+  assert.ok(merged.includes('候选 2 个'), merged);
   const screening = JSON.parse(readFileSync(`${EVALD}/screening.json`, 'utf8'));
-  assert.equal(screening.reviewed, 4);
-  assert.equal(screening.items.length, 4);
+  assert.equal(screening.reviewed, 5);
+  assert.equal(screening.items.length, 5);
+  assert.ok(screening.items.find((x) => x.name === '复核 review-e').reason.includes('与 review-a 的技能说明逐字相同'), '重复的技能说明只测一份');
   assert.deepEqual(screening.scanned, { skillhub: 900, github: 0, other: 0 });
   const cands = JSON.parse(readFileSync(`${EVALD}/candidates.json`, 'utf8'));
   assert.deepEqual(

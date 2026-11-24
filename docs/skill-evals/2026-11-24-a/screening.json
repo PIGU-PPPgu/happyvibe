@@ -1059,8 +1059,8 @@
    "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/global-cross-cultural-pedagogies/culturally-responsive-teaching-designer",
    "source": "github",
    "category": "lesson-plan",
-   "verdict": "out",
-   "reason": "候选已满：说明书定位是给教师设计文化回应教学改造，属备课教案；纯文字技能，没有脚本和外部接口"
+   "verdict": "ran",
+   "reason": "说明书定位是给教师设计文化回应教学改造，属备课教案；纯文字技能，没有脚本和外部接口"
   },
   {
    "name": "curriculum-knowledge-architecture-designer",
@@ -1083,8 +1083,8 @@
    "url": "https://github.com/GarethManning/education-agent-skills/tree/main/skills/curriculum-assessment/differentiation-adapter",
    "source": "github",
    "category": "lesson-plan",
-   "verdict": "out",
-   "reason": "候选已满：说明书定位是给教师设计学习需求差异化适配，属备课教案；纯文字技能，没有脚本和外部接口"
+   "verdict": "ran",
+   "reason": "说明书定位是给教师设计学习需求差异化适配，属备课教案；纯文字技能，没有脚本和外部接口"
   },
   {
    "name": "disciplinary-writing-scaffold",
@@ -1475,16 +1475,16 @@
    "url": "https://github.com/anthropics/k12-teacher-skills/tree/main/plugin/skills/k12-lesson-differentiation",
    "source": "github",
    "category": "lesson-plan",
-   "verdict": "ran",
-   "reason": "把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 课标库也能运行；5 个脚本逐行看过，只把 JSON 渲染成 Word 和 HTML，不读取凭据、不删除文件；缺 python-docx 时会自动 pip 安装"
+   "verdict": "out",
+   "reason": "与 agent-skills--k12-lesson-differentiation 的技能说明逐字相同，只测一份：把老师已有的一节课改编成 1 份教师用分层方案和 3 份学生分层学习单，属备课教案；说明书和各学科参考文件都写明不连 Learning Commons 课标库也能运行；5 个脚本逐行看过，只把 JSON 渲染成 Word 和 HTML，不读取凭据、不删除文件；缺 python-docx 时会自动 pip 安装"
   },
   {
    "name": "k12-lesson-plan-creation",
    "url": "https://github.com/learning-commons-org/agent-skills/tree/main/skills/k12-lesson-plan-creation",
    "source": "github",
    "category": "lesson-plan",
-   "verdict": "ran",
-   "reason": "面向 K-12 教师按学科参考文件写 lesson.json，再用随附 Python 脚本渲染 Word 和 HTML；可选的 Learning Commons 知识图谱不连也能用。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
+   "verdict": "out",
+   "reason": "与 k12-lesson-plan-creation 的技能说明逐字相同，只测一份：面向 K-12 教师按学科参考文件写 lesson.json，再用随附 Python 脚本渲染 Word 和 HTML；可选的 Learning Commons 知识图谱不连也能用。learning-commons-org/agent-skills 是另一个来源仓库，与 anthropics/k12-teacher-skills 里的同名技能 SKILL.md 逐字节相同；记录另起文件名，不覆盖已有候选的记录"
   },
   {
    "name": "k12-lesson-planning",

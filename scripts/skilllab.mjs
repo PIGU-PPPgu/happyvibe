@@ -2,6 +2,7 @@
 // 会话的开、等、导出不在脚本里，由主会话用子代理做，步骤见 skills/skill-evaluation/SKILL.md。
 // 设计见 docs/superpowers/specs/2026-11-24-skill-eval-background-harness-design.md
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { basename, dirname, join, resolve } from 'node:path';
 import yaml from 'js-yaml';
 import { CHECKLISTS, MIRROR_LICENSES } from '../src/data/skill-standard.ts';
@@ -495,7 +496,8 @@ function toCandidate(r, entriesDir) {
   return c;
 }
 
-/** 汇总人工复核记录：写初筛名单与候选表。候选表按品类上限截取，同品类里评分高的先进。 */
+/** 汇总人工复核记录：写初筛名单与候选表。候选表按品类上限截取，同品类里评分高的先进，同分按名称顺序。
+ *  技能说明逐字相同的几份只测一份：已有条目的优先，其次评分高、名称靠前的。 */
 function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
   const dir = `${LAB(batch)}/review`;
   must(existsSync(dir), `没有复核记录目录 ${dir}`);
@@ -506,14 +508,36 @@ function cmdReviewMerge(batch, { entriesDir = 'src/content/skills' } = {}) {
     const p = `${LAB(batch)}/scan/${s}.json`;
     scanned[s] = existsSync(p) ? (readJson(p).unique ?? readJson(p).length ?? 0) : 0;
   }
+  const sameText = new Map();
+  {
+    const groups = new Map();
+    for (const r of records) {
+      if (r.verdict !== 'ran' || !r.dir || !existsSync(`${r.dir}/SKILL.md`)) continue;
+      const key = createHash('sha1').update(readFileSync(`${r.dir}/SKILL.md`, 'utf8').replace(/\s+/g, ' ').trim()).digest('hex');
+      groups.set(key, [...(groups.get(key) ?? []), r]);
+    }
+    for (const list of groups.values()) {
+      if (list.length < 2) continue;
+      list.sort(
+        (a, b) =>
+          Number(existsSync(`${entriesDir}/${b.slug}.md`)) - Number(existsSync(`${entriesDir}/${a.slug}.md`)) ||
+          (b.rating ?? 0) - (a.rating ?? 0) ||
+          String(a.slug).localeCompare(String(b.slug))
+      );
+      for (const r of list.slice(1)) sameText.set(r, list[0]);
+    }
+  }
   const kept = {};
   const candidates = [];
   const items = records
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || String(a.slug ?? a.name).localeCompare(String(b.slug ?? b.name)))
     .map((r) => {
       let verdict = r.verdict;
       let reason = r.why ?? '';
-      if (verdict === 'ran') {
+      if (sameText.has(r)) {
+        verdict = 'out';
+        reason = `与 ${sameText.get(r).slug} 的技能说明逐字相同，只测一份：${reason}`;
+      } else if (verdict === 'ran') {
         const n = kept[r.category] ?? 0;
         if (n >= (CAPS[r.category] ?? 0)) {
           verdict = 'out';
