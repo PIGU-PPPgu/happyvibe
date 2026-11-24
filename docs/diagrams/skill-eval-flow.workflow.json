@@ -93,7 +93,7 @@
       "col": 1,
       "type": "backend",
       "label": "5–6 实测",
-      "sublabel": "装进 WorkBuddy，固定任务跑 3 次",
+      "sublabel": "后台开新会话，固定任务跑 3 轮",
       "width": 176,
       "height": 60
     },
@@ -103,7 +103,7 @@
       "col": 1,
       "type": "security",
       "label": "7 定分",
-      "sublabel": "按截图与记录算分",
+      "sublabel": "按记录算分并抽检",
       "width": 176,
       "height": 60
     },

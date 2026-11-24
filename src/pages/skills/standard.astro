@@ -4,6 +4,7 @@ import {
   CATEGORIES,
   CHECKLISTS,
   DIMS,
+  LAYERS,
   PROTOCOL,
   RED_LINES,
   RULES,
@@ -21,6 +22,7 @@ const SECTIONS = [
   { id: 'redlines', title: '红线' },
   { id: 'tiers', title: '档位' },
   { id: 'how', title: '我们怎么测' },
+  { id: 'layers', title: '实测层级' },
   { id: 'tasks', title: '固定测试任务' },
   { id: 'checklists', title: '品类检查单' },
   { id: 'evidence', title: '证据从哪来' },
@@ -31,7 +33,7 @@ const stageLabel = (id: string) => ({ daily: '每日', weekly: '每周', monthly
 const categoryOf = (id: string) => CATEGORIES.find((c) => c.key === id);
 ---
 
-<BaseLayout title="Skill 评价标准 · 资源中心" description="HappyVibe 数智学园评价一个 Skill 好不好的标准：五个维度与权重、每一档怎么判、红线、怎么在 WorkBuddy 上实测">
+<BaseLayout title="Skill 评价标准 · 资源中心" description="HappyVibe 数智学园评价一个 Skill 好不好的标准：五个维度与权重、每一档怎么判、红线、怎么实测">
   <div class="container std-page">
     <nav class="crumbs mono" aria-label="面包屑">
       <a href={withBase('/skills/')}>Skill 工坊</a><span aria-hidden="true">/</span>
@@ -159,6 +161,17 @@ const categoryOf = (id: string) => CATEGORIES.find((c) => c.key === id);
           </dl>
         </section>
 
+        <section id="layers" class="std-sec" aria-label="实测层级">
+          <h2 class="std-h2">实测层级</h2>
+          <p class="lead">分数在哪一层测出来的，卡片上就标哪一层。层级只决定用哪份证据当主分，不参与算分。</p>
+          <dl class="terms">
+            {LAYERS.map((l) => (
+              <div><dt>{l.label}</dt><dd>{l.meaning}</dd></div>
+            ))}
+          </dl>
+          <p class="lead">后台两层都测过的技能，主分用同款复核的结果，海选的分数并列显示。</p>
+        </section>
+
         <section id="tasks" class="std-sec" aria-label="固定测试任务">
           <h2 class="std-h2">固定测试任务</h2>
           <p class="lead">同品类的 Skill 用同一道任务，分数才可比。任务用统一的脱敏输入。</p>
@@ -210,11 +223,11 @@ const categoryOf = (id: string) => CATEGORIES.find((c) => c.key === id);
           <dl class="terms">
             <div>
               <dt>AI 代测</dt>
-              <dd>由 AI 操作 WorkBuddy 桌面版，按固定任务实测并记录。评测档案写明当时的 WorkBuddy 版本与模型。</dd>
+              <dd>由 AI 按固定任务实测并记录，可以在 WorkBuddy 桌面版，也可以在后台会话。评测档案写明实测层级、Agent 与模型。</dd>
             </div>
             <div>
               <dt>教师试用</dt>
-              <dd>由老师亲手在 WorkBuddy 里试用后给出的确认。它和 AI 代测是两种证据，各自有各自的标记，不互相替代。</dd>
+              <dd>由老师亲手试用后给出的确认。它和 AI 代测是两种证据，各自有各自的标记，不互相替代。</dd>
             </div>
             <div>
               <dt>平台 AI 评分</dt>
