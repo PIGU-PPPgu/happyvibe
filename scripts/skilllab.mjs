@@ -53,6 +53,7 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   quotes <批次> <slug>                  核对条目正文里的引文都能在原始产出里找到
   trust <批次> <层级> <轮次号>          引文可疑的评审，主会话看过产出后标记为可以采用
   rejudge <批次> <层级> [轮次号…]       撤掉评审、重新排进待评审（评审提示或检查单改了之后用；不写轮次号就撤全部）
+  digest <批次> <slug> <层级>           写条目前看的证据摘要：各轮评审指出了什么、对照怎样
   ledger <批次> <层级> <轮次号>=<会话号>…  登记开会话得到的会话号（评审加 --judge）
   collect <批次> <层级> [--judge]      从会话记录里取出结果，写成 raw 或 judge-raw 文件
 层级取 free-tier 或 same-model。`;
@@ -316,6 +317,37 @@ function cmdJudgeAgree(batch, layer, otherDir, { out } = {}) {
       rows,
     });
   }
+}
+
+const clip = (s) => {
+  const t = String(s ?? '').replace(/\s+/g, ' ').trim();
+  return t.length > 80 ? `${t.slice(0, 80)}…` : t;
+};
+
+/**
+ * 写条目前看的一份证据摘要：这个技能各轮评审指出了什么，对照怎样。只有评审的结论和引文，
+ * 产出原文要另外逐字读。
+ */
+function cmdDigest(batch, slug, layer) {
+  const c = readJson(`${EVAL(batch)}/candidates.json`).find((x) => x.slug === slug);
+  must(c, `candidates.json 里没有 ${slug}`);
+  const main = tasksFor(c.category).find((t) => t.role === 'main');
+  const runs = pickRuns(batch, layer, (r) => r.slug === slug || (r.kind === 'baseline' && r.task === main.id));
+  console.log(`${c.title}（${slug}）｜${c.category}｜${c.distribution === 'mirror' ? '镜像' : '只评不转'}｜${c.does}`);
+  console.log(`条目${existsSync(`src/content/skills/${slug}.md`) ? '已存在' : '还没有'}｜触发句${c.trigger ? '有' : '缺'}｜示例${c.examples?.length ? '有' : '缺'}｜注意 ${c.cautions?.length ?? 0} 条`);
+  const one = (r) => {
+    const j = r.judgement;
+    const state = !r.valid ? `作废：${(r.voidReasons ?? []).join('；')}` : !j ? '还没评审' : j.suspect ? '引文可疑，等人看' : '';
+    console.log(`\n■ ${r.id}｜${r.seconds} 秒｜正文 ${r.auto?.bodyChars ?? '?'} 字${state ? `｜${state}` : ''}${r.output ? `｜${r.output}` : ''}`);
+    if (!j) return;
+    for (const x of j.checklist) if (!x.pass) console.log(`  不过 ${x.id}：${x.note || '（没写原因）'}`);
+    j.edits.forEach((e, i) => console.log(`  改${i + 1}「${clip(e.quote)}」：${e.problem}`));
+    j.severe.forEach((e, i) => console.log(`  严重${i + 1}「${clip(e.quote)}」：${e.problem}`));
+  };
+  const byOrder = (a, b) => Number(a.kind === 'baseline') - Number(b.kind === 'baseline') || a.task.localeCompare(b.task) || a.round - b.round;
+  for (const r of [...runs].sort(byOrder)) if (r.kind === 'skill') one(r);
+  console.log('\n对照（不装技能）');
+  for (const r of [...runs].sort(byOrder)) if (r.kind === 'baseline') one(r);
 }
 
 function cmdScore(batch, slug, layer, { write = false, forceLayer = false, entriesDir = 'src/content/skills' } = {}) {
@@ -711,6 +743,19 @@ function cmdRejudge(batch, layer, runIds = []) {
     const rawPath = `${LAB(batch)}/judge-raw/${r.id}.json`;
     if (existsSync(rawPath)) renameSync(rawPath, `${rawPath}.prev-${stamp}`);
   }
+  // 评审登记表里对应的旧会话也要去掉：留着的话，下一波「等完」会把旧会话的结果重新收回来
+  const ledgerPath = ledgerFile(batch, layer, true);
+  if (existsSync(ledgerPath)) {
+    const ledger = readJson(ledgerPath);
+    let dropped = 0;
+    for (const r of targets) {
+      if (ledger[r.id]) {
+        delete ledger[r.id];
+        dropped++;
+      }
+    }
+    if (dropped) writeJson(ledgerPath, ledger);
+  }
   console.log(`${batch} / ${layer}：撤掉 ${targets.length} 轮的评审，重新排进待评审；旧交回文件改名为 .prev-${stamp}`);
 }
 
@@ -739,6 +784,7 @@ try {
   else if (cmd === 'ingest-judgements') cmdIngestJudgements(rest[0], rest[1]);
   else if (cmd === 'judge-agree') cmdJudgeAgree(rest[0], rest[1], rest[2], { out: flag('--out') });
   else if (cmd === 'rejudge') cmdRejudge(rest[0], rest[1], rest.slice(2));
+  else if (cmd === 'digest') cmdDigest(rest[0], rest[1], rest[2]);
   else if (cmd === 'score') {
     const write = rest.includes('--write');
     const forceLayer = rest.includes('--force-layer');

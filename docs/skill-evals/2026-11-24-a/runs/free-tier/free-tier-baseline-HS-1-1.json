@@ -23,5 +23,62 @@
   "statesSevenPm": true,
   "numberedItems": 3,
   "mentionsRanking": false
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "恳请家长以平和的心态看待分数，多看到孩子的努力与成长。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "总体来看，大多数孩子学习态度端正，课堂参与积极，作业完成认真；部分孩子在基础知识和学习习惯上仍有提升空间，这正是我们下一阶段共同努力的方向。",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "另外，学校定于下周四晚上7点在本班教室召开家长会，届时将通报班级整体学习情况，并与您面对面交流，请您提前安排好时间，准时参加。",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "一、每天安排固定的学习时间，陪孩子制定简单的复习与预习计划；\n二、多与孩子聊聊在校的收获与困惑，耐心倾听，发现问题及时与老师沟通；\n三、保证孩子充足睡眠与适度运动，以良好状态投入学习。",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "X年级X班班主任\nX月X日",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "您好！期中考试已经结束，孩子们本阶段的学习情况已陆续反馈。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "一次考试只是学习路上的检验，恳请家长以平和的心态看待分数，多看到孩子的努力与成长。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": true,
+    "quote": "X年级X班班主任\nX月X日",
+    "note": ""
+   }
+  ],
+  "edits": [],
+  "severe": [],
+  "quotes": 8,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }
