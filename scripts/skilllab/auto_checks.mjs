@@ -103,6 +103,7 @@ export function letterFacts(text) {
   const items = [...text.matchAll(/(?:^|\n)[ \t]*(?:[1-9][.．、]|[一二三四五][、.]|[①②③④⑤⑥⑦⑧⑨])/g)].length;
   return {
     cjkChars: cjk,
+    bodyCjkChars: [...stripNote(text)].filter((c) => /[\u4e00-\u9fff]/.test(c)).length,
     statesThursday: /下周四|周四|星期四/.test(text),
     statesSevenPm: /晚上\s*(?:7|七)\s*点|19[:：]00/.test(text),
     numberedItems: items,
@@ -110,14 +111,30 @@ export function letterFacts(text) {
   };
 }
 
+/**
+ * 去掉成品末尾的「说明」假设段。提示要求把假设列在成品最后，它不是成品本身，篇幅和字数都不该算它。
+ * 只认离结尾很近、里面没有小标题的那一段；正文中间的「说明」不动。
+ */
+export function stripNote(text) {
+  let cut = text.length;
+  for (const m of text.matchAll(/(?:^|\n)[ \t]*说明[：:]/g)) {
+    const tail = text.slice(m.index);
+    if ([...tail].length <= 500 && !/^#{1,6}\s/m.test(tail)) cut = m.index;
+  }
+  return text.slice(0, cut).trim();
+}
+
+/** 正文有多少字：不算空白，不算末尾的说明假设段。 */
+export const bodyLength = (text) => [...stripNote(text)].filter((c) => !/\s/.test(c)).length;
+
 export function textbookCheck(taskId, text) {
   const marks = TEXTBOOK_MARKS[taskId] ?? [];
   return { total: marks.length, passed: marks.filter((m) => text.includes(m)).length };
 }
 
-/** 按任务分发。 */
+/** 按任务分发。每个任务都带正文多少字，检查单里论篇幅的条目以它为准。 */
 export function autoChecks(taskId, text, { csvText } = {}) {
-  const facts = { taskId };
+  const facts = { taskId, bodyChars: bodyLength(text) };
   if (taskId === 'LP-1' || taskId === 'LP-2') Object.assign(facts, lessonPlanFacts(text), { textbook: textbookCheck(taskId, text) });
   else if (taskId === 'EX-1') Object.assign(facts, examFacts(text), { textbook: textbookCheck(taskId, text) });
   else if (taskId === 'HW-1') Object.assign(facts, homeworkFacts(text));

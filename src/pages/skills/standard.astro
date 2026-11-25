@@ -204,7 +204,7 @@ const categoryOf = (id: string) => CATEGORIES.find((c) => c.key === id);
                         <thead><tr><th scope="col">编号</th><th scope="col">计入</th><th scope="col">条目</th></tr></thead>
                         <tbody>
                           {list.map((it) => (
-                            <tr><td class="mono">{it.id}</td><td>{it.kind === 'Q' ? '出活' : it.rule ? '懂教育 · 规矩' : '懂教育'}</td><td>{it.text}</td></tr>
+                            <tr><td class="mono now">{it.id}</td><td class="now">{it.kind === 'Q' ? '出活' : it.rule ? '懂教育 · 规矩' : '懂教育'}</td><td>{it.text}<span class="cl-how">判法：{it.how}</span></td></tr>
                           ))}
                         </tbody>
                       </table>
@@ -331,6 +331,9 @@ const categoryOf = (id: string) => CATEGORIES.find((c) => c.key === id);
   .cl summary:hover { color: var(--gold-soft); }
   .cl-n { font-size: 12.5px; color: var(--text-faint); font-weight: 400; margin-left: auto; }
   .cl .tbl-wrap { border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+  /* 检查单条目下面的判法：比条目小一号，颜色淡一档 */
+  .cl-how { display: block; margin-top: 4px; font-size: 13.5px; line-height: 1.75; color: var(--text-muted); }
+  .cl .tbl .now { white-space: nowrap; }
   .cl-pending { margin: 0; padding: 0 18px 14px 40px; font-size: 14.5px; }
   .changes { padding-left: 20px; list-style: disc; color: var(--text-muted); font-size: 15px; line-height: 1.8; }
 

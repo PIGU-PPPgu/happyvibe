@@ -33,8 +33,8 @@ description: 评测一个 Agent Skill 并入库到 Skill 工坊。做 skill 评�
 5. **进候选表**。`candidates.json` 的每一项由 `review-merge` 从复核记录生成，字段见 `scripts/skilllab.mjs` 里的 `toCandidate`。`audit` 一项在静态审查时填。
 6. **排计划、出提示**。`node scripts/skilllab.mjs plan <批次> free-tier`。
 7. **开会话**。见下一节。
-8. **收产出**。导出会话结果后 `node scripts/skilllab.mjs ingest <批次> free-tier`。作废的轮次用 `node scripts/skilllab.mjs rerun <批次> free-tier <轮次号>` 追加重跑，再交回、再 `ingest`。
-9. **评审**。`node scripts/skilllab.mjs judge-prompts <批次> free-tier`，开评审会话，交回后 `node scripts/skilllab.mjs ingest-judgements <批次> free-tier`。引文可疑的轮次（超过三成引文在产出里找不到）要主会话看，`score` 不会用它们。主会话逐字读过产出后，用 `node scripts/skilllab.mjs trust <批次> <层级> <轮次号>` 标记为可以采用。
+8. **收产出**。导出会话结果后 `node scripts/skilllab.mjs ingest <批次> free-tier`。标记的尖括号写少了也算（第一批里 18 轮有 17 轮栽在解析太死上）；有开始标记、没有结束标记的才算作废。作废的轮次用 `node scripts/skilllab.mjs rerun <批次> free-tier <轮次号>` 追加重跑，再交回、再 `ingest`。
+9. **评审**。`node scripts/skilllab.mjs judge-prompts <批次> free-tier`，开评审会话，交回后 `node scripts/skilllab.mjs ingest-judgements <批次> free-tier`。引文可疑的轮次（超过三成引文在产出里找不到）要主会话看，`score` 不会用它们。主会话逐字读过产出后，用 `node scripts/skilllab.mjs trust <批次> <层级> <轮次号>` 标记为可以采用。评审提示带着检查单每一条的判法；检查单或评审提示改了，先 `node scripts/skilllab.mjs rejudge <批次> <层级>` 把已并入的评审撤掉，整批按同一版重新评。
 10. **抽检**。随机抽两成已评审的产出，不少于 10 份，按同一口径重判，与评审结果比对。重判由主会话做，结果放一个单独目录的 `judge-raw/<轮次号>.json`（字段 `{ sessionId, toolUses: 0, finalText }`，`finalText` 是评审 JSON），不碰正式的评审文件。然后 `node scripts/skilllab.mjs judge-agree <批次> <层级> <那个目录> --out docs/skill-evals/<批次>/spotcheck.json`。严重错误数不一致超过 1 份，或修改处数偏差超过 30% 的超过五分之一，整批重判；重判完把 `spotcheck.json` 里的 `redone` 改成 `true`。
 11. **出分、写条目**。`node scripts/skilllab.mjs score <批次> <slug> free-tier --write`。然后读产出，补一句话理由 `verdict`、短板 `weakness`、正文三节（输出样例、修改处清单、我看到的），每处引原文。`npm run check:skills` 不过不得提交。
 12. **复核、报告、页面**。海选总分前 10（触红线与抽检未过的除外）用 `node scripts/skilllab.mjs plan <批次> same-model --only <slug,slug,…>` 只给这十个排计划，`candidates.json` 原样保留，海选那份证据链才不断，`score --write` 会把海选分数存进 `prior`。最后 `node scripts/skilllab.mjs report <批次>`，构建，截图亲眼看过，提交。

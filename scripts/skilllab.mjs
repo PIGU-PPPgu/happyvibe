@@ -52,6 +52,7 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   review-merge <批次>                   汇总人工复核记录，写初筛名单与候选表
   quotes <批次> <slug>                  核对条目正文里的引文都能在原始产出里找到
   trust <批次> <层级> <轮次号>          引文可疑的评审，主会话看过产出后标记为可以采用
+  rejudge <批次> <层级> [轮次号…]       撤掉评审、重新排进待评审（评审提示或检查单改了之后用；不写轮次号就撤全部）
   ledger <批次> <层级> <轮次号>=<会话号>…  登记开会话得到的会话号（评审加 --judge）
   collect <批次> <层级> [--judge]      从会话记录里取出结果，写成 raw 或 judge-raw 文件
 层级取 free-tier 或 same-model。`;
@@ -696,6 +697,23 @@ function cmdCollect(batch, layer, { judge = false } = {}) {
   console.log(`${batch}：${judge ? '评审会话' : `${layer} 会话`} ${Object.keys(ledger).length} 个，已收 ${tally.done} 个，还在跑 ${tally.running} 个，没跑成 ${tally.failed} 个，没有记录 ${tally.missing} 个`);
 }
 
+/**
+ * 把已并入的评审撤掉，这些轮次重新排进待评审。评审提示或检查单改了之后，整批要按同一版重新评。
+ * 不写轮次号就撤全部。旧的评审交回文件改名留档，不删。
+ */
+function cmdRejudge(batch, layer, runIds = []) {
+  const targets = listRuns(batch, layer).filter((r) => r.valid && r.judgement && (runIds.length === 0 || runIds.includes(r.id)));
+  must(targets.length, `${batch} / ${layer} 没有可撤的评审`);
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13);
+  for (const r of targets) {
+    delete r.judgement;
+    writeJson(`${runsDir(batch, layer)}/${r.id}.json`, r);
+    const rawPath = `${LAB(batch)}/judge-raw/${r.id}.json`;
+    if (existsSync(rawPath)) renameSync(rawPath, `${rawPath}.prev-${stamp}`);
+  }
+  console.log(`${batch} / ${layer}：撤掉 ${targets.length} 轮的评审，重新排进待评审；旧交回文件改名为 .prev-${stamp}`);
+}
+
 /** 引文可疑的评审，主会话逐字看过产出后标记为可以采用。 */
 function cmdTrust(batch, layer, runId) {
   const file = `${runsDir(batch, layer)}/${runId}.json`;
@@ -720,6 +738,7 @@ try {
   else if (cmd === 'judge-prompts') cmdJudgePrompts(rest[0], rest[1]);
   else if (cmd === 'ingest-judgements') cmdIngestJudgements(rest[0], rest[1]);
   else if (cmd === 'judge-agree') cmdJudgeAgree(rest[0], rest[1], rest[2], { out: flag('--out') });
+  else if (cmd === 'rejudge') cmdRejudge(rest[0], rest[1], rest.slice(2));
   else if (cmd === 'score') {
     const write = rest.includes('--write');
     const forceLayer = rest.includes('--force-layer');

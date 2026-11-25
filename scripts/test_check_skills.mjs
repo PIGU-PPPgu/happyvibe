@@ -51,9 +51,13 @@ const mutate = (fn) => {
 const schemaOk = (d) => skillSchema.safeParse(d).success;
 
 // 标准版本与实测层级
-assert.equal(STANDARD.version, '1.2', '标准要升到 1.2');
+assert.equal(STANDARD.version, '1.3', '标准要升到 1.3');
 assert.deepEqual(LAYERS.map((l) => l.key), ['workbuddy', 'same-model', 'free-tier'], '三个实测层级，从高到低');
-assert.ok(STANDARD.changes[0].startsWith('1.2（'), '变更记录最新的写在最前');
+assert.ok(STANDARD.changes[0].startsWith('1.3（'), '变更记录最新的写在最前');
+// 检查单每一条都要写明判法：评审按它判，同一份产出不同轮次的松紧才一样
+for (const [cat, items] of Object.entries(CHECKLISTS)) {
+  assert.ok(items.every((it) => it.how && it.how.length >= 8), `${cat} 检查单有一条没写判法`);
+}
 // 读产出和抽检是评审之外的另一个 AI 会话做的，站内文本不许说成是真人做的
 const standardText = [...RULES, ...TERMS.map((t) => t.meaning), ...PROTOCOL.map((p) => p.detail)].join('\n');
 assert.ok(!/被人|由人|人工抽检/.test(standardText), '读产出与抽检不写成真人做的');
