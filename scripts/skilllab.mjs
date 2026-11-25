@@ -335,6 +335,11 @@ function cmdDigest(batch, slug, layer) {
   const runs = pickRuns(batch, layer, (r) => r.slug === slug || (r.kind === 'baseline' && r.task === main.id));
   console.log(`${c.title}（${slug}）｜${c.category}｜${c.distribution === 'mirror' ? '镜像' : '只评不转'}｜${c.does}`);
   console.log(`条目${existsSync(`src/content/skills/${slug}.md`) ? '已存在' : '还没有'}｜触发句${c.trigger ? '有' : '缺'}｜示例${c.examples?.length ? '有' : '缺'}｜注意 ${c.cautions?.length ?? 0} 条`);
+  const planFile = planPath(batch, layer);
+  const planRun = existsSync(planFile) ? readJson(planFile).runs.find((r) => r.kind === 'skill' && r.slug === slug) : null;
+  console.log(`技能说明：${c.summary}`);
+  console.log(`带进会话${planRun?.skillTruncated ? `前 ${planRun.skillChars} 字，后面的没带` : '全文'}｜依赖 ${c.requires?.length ? c.requires.join('、') : '无'}｜${c.textOnly ? '价值主要靠脚本，只评了文字指引' : '文字指引为主'}`);
+  for (const x of c.cautions ?? []) console.log(`注意：${x}`);
   const one = (r) => {
     const j = r.judgement;
     const state = !r.valid ? `作废：${(r.voidReasons ?? []).join('；')}` : !j ? '还没评审' : j.suspect ? '引文可疑，等人看' : '';
