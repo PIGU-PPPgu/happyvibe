@@ -1,0 +1,27 @@
+{
+ "id": "free-tier-edupi--02-parent-1on1-message-HS-1-2",
+ "kind": "skill",
+ "slug": "edupi--02-parent-1on1-message",
+ "category": "home-school",
+ "task": "HS-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_e2cff1df-1454-4b37-ac4e-da7cb5bb9e2c",
+ "startedAt": "2026-11-24T16:21:58.002Z",
+ "endedAt": "2026-11-24T16:23:13.780Z",
+ "seconds": 76,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-edupi--02-parent-1on1-message-HS-1-2.md",
+ "auto": {
+  "taskId": "HS-1",
+  "bodyChars": 386,
+  "cjkChars": 417,
+  "bodyCjkChars": 331,
+  "statesThursday": true,
+  "statesSevenPm": true,
+  "numberedItems": 3,
+  "mentionsRanking": false
+ }
+}

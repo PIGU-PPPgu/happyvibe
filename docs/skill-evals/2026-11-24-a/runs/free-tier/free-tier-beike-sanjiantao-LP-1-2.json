@@ -1,0 +1,36 @@
+{
+ "id": "free-tier-beike-sanjiantao-LP-1-2",
+ "kind": "skill",
+ "slug": "beike-sanjiantao",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_535b3524-76bb-4cfe-a63e-1af4fd23561a",
+ "startedAt": "2026-11-24T16:29:57.576Z",
+ "endedAt": "2026-11-24T16:34:01.047Z",
+ "seconds": 243,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-beike-sanjiantao-LP-1-2.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 4008,
+  "segmentMinutes": [
+   5,
+   12,
+   7,
+   3,
+   45
+  ],
+  "segmentMinutesSum": 72,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": true,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

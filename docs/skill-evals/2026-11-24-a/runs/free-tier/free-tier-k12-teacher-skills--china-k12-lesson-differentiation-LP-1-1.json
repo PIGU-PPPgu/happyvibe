@@ -1,0 +1,36 @@
+{
+ "id": "free-tier-k12-teacher-skills--china-k12-lesson-differentiation-LP-1-1",
+ "kind": "skill",
+ "slug": "k12-teacher-skills--china-k12-lesson-differentiation",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_aaa02baa-f415-4dd3-acac-91b8d63f6513",
+ "startedAt": "2026-11-24T17:16:12.269Z",
+ "endedAt": "2026-11-24T17:23:47.091Z",
+ "seconds": 455,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-k12-teacher-skills--china-k12-lesson-differentiation-LP-1-1.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 5372,
+  "segmentMinutes": [
+   35,
+   6,
+   35,
+   35,
+   35
+  ],
+  "segmentMinutesSum": 146,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": true,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

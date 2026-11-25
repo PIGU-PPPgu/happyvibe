@@ -1,0 +1,41 @@
+{
+ "id": "free-tier-k12-lesson-plan-creation-LP-1-2",
+ "kind": "skill",
+ "slug": "k12-lesson-plan-creation",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_a4e5f714-b7a1-44ba-8902-0ec274d1ac96",
+ "startedAt": "2026-11-24T16:52:55.210Z",
+ "endedAt": "2026-11-24T16:58:16.301Z",
+ "seconds": 321,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-k12-lesson-plan-creation-LP-1-2.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 4770,
+  "segmentMinutes": [
+   45,
+   5,
+   2,
+   10,
+   10,
+   12,
+   3,
+   4,
+   1,
+   4
+  ],
+  "segmentMinutesSum": 96,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": true,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

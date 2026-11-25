@@ -62,8 +62,9 @@ for (const slug of slugs) {
   const d = readEntry(slug);
   const zipPath = join(OUT, `${slug}.zip`);
   if (!d) {
-    console.error(`✗ ${slug}：缺少条目 ${ENTRIES}/${slug}.md`);
-    failed++;
+    // 镜像先于入库：候选定下来就镜像，条目要到出分那一步才建。没有条目的先不出包，有旧包的一并清掉
+    console.log(`- ${slug}：镜像好了，还没有条目，先不出技能包`);
+    rmSync(zipPath, { force: true });
     continue;
   }
   if (d.distribution !== 'mirror') {

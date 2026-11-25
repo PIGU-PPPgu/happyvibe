@@ -1,0 +1,34 @@
+{
+ "id": "free-tier-current-affairs-exam-materials-EX-1-1",
+ "kind": "skill",
+ "slug": "current-affairs-exam-materials",
+ "category": "assignment",
+ "task": "EX-1",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_964c9998-bcb9-4cc1-a180-effff055677d",
+ "startedAt": "2026-11-24T15:45:31.266Z",
+ "endedAt": "2026-11-24T15:47:12.192Z",
+ "seconds": 101,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-current-affairs-exam-materials-EX-1-1.md",
+ "auto": {
+  "taskId": "EX-1",
+  "bodyChars": 386,
+  "scoreMarks": [
+   100
+  ],
+  "scoreMarksSum": 100,
+  "states100Points": true,
+  "states45Minutes": true,
+  "hasAnswer": true,
+  "hasBlueprint": true,
+  "bigSections": 0,
+  "textbook": {
+   "total": 3,
+   "passed": 2
+  }
+ }
+}

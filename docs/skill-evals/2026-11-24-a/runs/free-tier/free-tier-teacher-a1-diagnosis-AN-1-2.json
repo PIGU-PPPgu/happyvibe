@@ -1,0 +1,68 @@
+{
+ "id": "free-tier-teacher-a1-diagnosis-AN-1-2",
+ "kind": "skill",
+ "slug": "teacher-a1-diagnosis",
+ "category": "analysis",
+ "task": "AN-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_20b89823-b66f-4532-96e3-8259b609766e",
+ "startedAt": "2026-11-24T15:25:54.114Z",
+ "endedAt": "2026-11-24T15:29:08.017Z",
+ "seconds": 194,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-teacher-a1-diagnosis-AN-1-2.md",
+ "auto": {
+  "taskId": "AN-1",
+  "bodyChars": 1052,
+  "truth": {
+   "语文": {
+    "count": 45,
+    "absent": 0,
+    "sum": 3981,
+    "pass": 43,
+    "max": 120,
+    "min": 59,
+    "mean": 88.5,
+    "passRate": 96
+   },
+   "数学": {
+    "count": 44,
+    "absent": 1,
+    "sum": 3253,
+    "pass": 37,
+    "max": 100,
+    "min": 26,
+    "mean": 73.9,
+    "passRate": 84
+   },
+   "英语": {
+    "count": 44,
+    "absent": 1,
+    "sum": 3775,
+    "pass": 34,
+    "max": 114,
+    "min": 52,
+    "mean": 85.8,
+    "passRate": 77
+   }
+  },
+  "cited": {
+   "语文": {
+    "mean": true,
+    "passRate": false
+   },
+   "数学": {
+    "mean": true,
+    "passRate": false
+   },
+   "英语": {
+    "mean": true,
+    "passRate": false
+   }
+  },
+  "mentionsAbsent": true
+ }
+}

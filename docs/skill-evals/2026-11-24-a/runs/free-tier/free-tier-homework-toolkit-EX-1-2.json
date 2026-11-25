@@ -1,0 +1,38 @@
+{
+ "id": "free-tier-homework-toolkit-EX-1-2",
+ "kind": "skill",
+ "slug": "homework-toolkit",
+ "category": "assignment",
+ "task": "EX-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_d5704851-c761-42a7-81c4-c3f52d148aeb",
+ "startedAt": "2026-11-24T16:09:34.035Z",
+ "endedAt": "2026-11-24T16:10:32.928Z",
+ "seconds": 59,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-homework-toolkit-EX-1-2.md",
+ "auto": {
+  "taskId": "EX-1",
+  "bodyChars": 700,
+  "scoreMarks": [
+   100,
+   100,
+   3,
+   3,
+   60
+  ],
+  "scoreMarksSum": 266,
+  "states100Points": true,
+  "states45Minutes": true,
+  "hasAnswer": true,
+  "hasBlueprint": true,
+  "bigSections": 0,
+  "textbook": {
+   "total": 3,
+   "passed": 2
+  }
+ }
+}

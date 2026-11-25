@@ -24,8 +24,6 @@ const TEXT_EXT = new Set(['.md', '.txt', '.json', '.yaml', '.yml', '.csv', '.xml
 export const MAX_FILE_BYTES = 200000;
 /** 文件清单最多列这么多条 */
 export const MAX_LISTING = 200;
-const OPEN = '<<<成品>>>';
-const CLOSE = '<<<结束>>>';
 
 /** SKILL.md 排最前，其余按路径排。 */
 const skillOrder = (a, b) => (a.path === 'SKILL.md' ? 0 : 1) - (b.path === 'SKILL.md' ? 0 : 1) || a.path.localeCompare(b.path);
@@ -106,13 +104,31 @@ export function buildPrompt(taskId, { files = null, csvText } = {}) {
   };
 }
 
+/**
+ * 标记两端尖括号的个数允许少几个：模型常把 <<<成品>>> 写成 <<<成品> 或 <<<成品，开头、结尾和内容本身都是完整的。
+ * 带 「>」 的标记后面接什么都行（正文常紧接在同一行）；整个没有 「>」 的，后面必须是空白或结尾，免得把「<<<成品化」这种正文当成标记。
+ */
+const OPEN_RE = /<{2,3}成品>{1,3}|<{2,3}成品(?=\s|$)/g;
+const CLOSE_RE = /<{2,3}结束>{1,3}|<{2,3}结束(?=\s|$)/g;
+
+/** 开始标记第一次出现的末尾位置，和结束标记最后一次出现的起始位置；没有就是 -1。 */
+const markSpan = (out, re) => {
+  let firstEnd = -1;
+  let lastStart = -1;
+  for (const m of out.matchAll(re)) {
+    if (firstEnd < 0) firstEnd = m.index + m[0].length;
+    lastStart = m.index;
+  }
+  return { firstEnd, lastStart };
+};
+
 /** 从会话的最后一条消息里取出成品。 */
 export function parseOutput(finalText) {
   const out = String(finalText ?? '');
-  const open = out.indexOf(OPEN);
-  const close = out.lastIndexOf(CLOSE);
+  const open = markSpan(out, OPEN_RE).firstEnd;
+  const close = markSpan(out, CLOSE_RE).lastStart;
   if (open < 0 || close < open) return { ok: false, body: '', reason: '缺少成品标记' };
-  const body = out.slice(open + OPEN.length, close).trim();
+  const body = out.slice(open, close).trim();
   if ([...body].length < MIN_OUTPUT_CHARS) return { ok: false, body, reason: `成品不足 ${MIN_OUTPUT_CHARS} 字` };
   return { ok: true, body, reason: '' };
 }

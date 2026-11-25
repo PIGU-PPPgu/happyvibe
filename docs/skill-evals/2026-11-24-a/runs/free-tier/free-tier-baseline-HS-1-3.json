@@ -1,0 +1,27 @@
+{
+ "id": "free-tier-baseline-HS-1-3",
+ "kind": "baseline",
+ "slug": null,
+ "category": "home-school",
+ "task": "HS-1",
+ "round": 3,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_bac86ef0-6873-4c29-bc10-c3a9361ab2dc",
+ "startedAt": "2026-11-24T17:30:45.786Z",
+ "endedAt": "2026-11-24T17:31:37.380Z",
+ "seconds": 52,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-baseline-HS-1-3.md",
+ "auto": {
+  "taskId": "HS-1",
+  "bodyChars": 380,
+  "cjkChars": 381,
+  "bodyCjkChars": 329,
+  "statesThursday": true,
+  "statesSevenPm": true,
+  "numberedItems": 3,
+  "mentionsRanking": false
+ }
+}

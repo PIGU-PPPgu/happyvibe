@@ -1,0 +1,27 @@
+{
+ "id": "free-tier-edupi--01-parent-daily-notice-HS-1-2",
+ "kind": "skill",
+ "slug": "edupi--01-parent-daily-notice",
+ "category": "home-school",
+ "task": "HS-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_702668a6-7219-4343-aa8c-c275fdc8c858",
+ "startedAt": "2026-11-24T16:19:11.373Z",
+ "endedAt": "2026-11-24T16:19:36.211Z",
+ "seconds": 25,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-edupi--01-parent-daily-notice-HS-1-2.md",
+ "auto": {
+  "taskId": "HS-1",
+  "bodyChars": 307,
+  "cjkChars": 327,
+  "bodyCjkChars": 267,
+  "statesThursday": true,
+  "statesSevenPm": false,
+  "numberedItems": 3,
+  "mentionsRanking": true
+ }
+}

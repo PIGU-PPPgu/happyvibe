@@ -1,0 +1,18 @@
+{
+ "id": "free-tier-k12-skills--k12-lesson-differentiation-LP-1-2",
+ "kind": "skill",
+ "slug": "k12-skills--k12-lesson-differentiation",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_2e060098-ea45-44cf-90f2-57f543854299",
+ "startedAt": "2026-11-24T16:52:59.049Z",
+ "endedAt": "2026-11-24T17:15:16.738Z",
+ "seconds": 1338,
+ "valid": false,
+ "voidReasons": [
+  "缺少成品标记"
+ ]
+}

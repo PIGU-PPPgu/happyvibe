@@ -1866,6 +1866,21 @@
    "promptHash": "26c8ea095ccb2bb2780138253ec01987de5d82327fec6cbc45505324846dc83f",
    "skillTruncated": false,
    "skillChars": 0
+  },
+  {
+   "id": "free-tier-k12-skills--k12-lesson-differentiation-LP-1-2-retry1",
+   "kind": "skill",
+   "slug": "k12-skills--k12-lesson-differentiation",
+   "category": "lesson-plan",
+   "task": "LP-1",
+   "round": 2,
+   "layer": "free-tier",
+   "model": "account:bigmodel-individual-coding-plan/GLM-5.3-Flash",
+   "prompt": "prompts/free-tier-k12-skills--k12-lesson-differentiation-LP-1-2-retry1.txt",
+   "promptHash": "66446a296b88151825d68e91a2ab35b8bc62b0e6323911d8a4a1945ad4004002",
+   "skillTruncated": true,
+   "skillChars": 30000,
+   "retryOf": "free-tier-k12-skills--k12-lesson-differentiation-LP-1-2"
   }
  ]
 }

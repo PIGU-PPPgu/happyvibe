@@ -1,0 +1,52 @@
+{
+ "id": "free-tier-k12-skills--k12-lesson-planning-LP-1-2",
+ "kind": "skill",
+ "slug": "k12-skills--k12-lesson-planning",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_fe88dd6f-b8e7-43f6-b212-91855c9c8601",
+ "startedAt": "2026-11-24T17:16:03.859Z",
+ "endedAt": "2026-11-24T17:20:51.801Z",
+ "seconds": 288,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-k12-skills--k12-lesson-planning-LP-1-2.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 5512,
+  "segmentMinutes": [
+   5,
+   10,
+   10,
+   12,
+   6,
+   4,
+   2,
+   5,
+   2,
+   3,
+   15,
+   10,
+   5,
+   15,
+   30,
+   5,
+   10,
+   10,
+   12,
+   5,
+   3
+  ],
+  "segmentMinutesSum": 179,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": true,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

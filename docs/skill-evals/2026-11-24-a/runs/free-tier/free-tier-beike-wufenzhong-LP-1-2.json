@@ -1,0 +1,42 @@
+{
+ "id": "free-tier-beike-wufenzhong-LP-1-2",
+ "kind": "skill",
+ "slug": "beike-wufenzhong",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_abaece42-39b1-4515-aa76-e38ba8931d8d",
+ "startedAt": "2026-11-24T16:36:24.937Z",
+ "endedAt": "2026-11-24T16:38:05.163Z",
+ "seconds": 100,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-beike-wufenzhong-LP-1-2.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 3034,
+  "segmentMinutes": [
+   5,
+   20,
+   7,
+   2,
+   6,
+   7,
+   12,
+   8,
+   5,
+   3,
+   10
+  ],
+  "segmentMinutesSum": 85,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

@@ -1,0 +1,42 @@
+{
+ "id": "free-tier-k12-skills--k12-lesson-differentiation-LP-2-1",
+ "kind": "skill",
+ "slug": "k12-skills--k12-lesson-differentiation",
+ "category": "lesson-plan",
+ "task": "LP-2",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_22b74176-a66c-4ec6-857e-56074b96ccfe",
+ "startedAt": "2026-11-24T16:53:01.619Z",
+ "endedAt": "2026-11-24T16:56:34.105Z",
+ "seconds": 212,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-k12-skills--k12-lesson-differentiation-LP-2-1.md",
+ "auto": {
+  "taskId": "LP-2",
+  "bodyChars": 2955,
+  "segmentMinutes": [
+   45,
+   5,
+   15,
+   12,
+   5,
+   5,
+   3,
+   10,
+   5,
+   15,
+   15
+  ],
+  "segmentMinutesSum": 135,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": true,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

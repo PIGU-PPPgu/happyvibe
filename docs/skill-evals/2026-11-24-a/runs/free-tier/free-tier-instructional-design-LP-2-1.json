@@ -1,0 +1,44 @@
+{
+ "id": "free-tier-instructional-design-LP-2-1",
+ "kind": "skill",
+ "slug": "instructional-design",
+ "category": "lesson-plan",
+ "task": "LP-2",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_61dd0bab-9b92-472b-8ff4-b9cb20d4601c",
+ "startedAt": "2026-11-24T16:45:04.521Z",
+ "endedAt": "2026-11-24T16:50:10.967Z",
+ "seconds": 306,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-instructional-design-LP-2-1.md",
+ "auto": {
+  "taskId": "LP-2",
+  "bodyChars": 8594,
+  "segmentMinutes": [
+   5,
+   12,
+   8,
+   10,
+   7,
+   3,
+   5,
+   12,
+   8,
+   10,
+   7,
+   3,
+   3
+  ],
+  "segmentMinutesSum": 93,
+  "states45Minutes": false,
+  "mentionsHomework": true,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "id": "free-tier-parent-meeting-speech-HS-1-2",
+ "kind": "skill",
+ "slug": "parent-meeting-speech",
+ "category": "home-school",
+ "task": "HS-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_fd9c1e9e-3fba-472c-84bf-f2eccdd2f8fa",
+ "startedAt": "2026-11-24T16:22:01.427Z",
+ "endedAt": "2026-11-24T16:23:39.561Z",
+ "seconds": 98,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-parent-meeting-speech-HS-1-2.md",
+ "auto": {
+  "taskId": "HS-1",
+  "bodyChars": 399,
+  "cjkChars": 446,
+  "bodyCjkChars": 357,
+  "statesThursday": true,
+  "statesSevenPm": true,
+  "numberedItems": 3,
+  "mentionsRanking": true
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "id": "free-tier-parent-teacher-comm-coach-HS-1-1",
+ "kind": "skill",
+ "slug": "parent-teacher-comm-coach",
+ "category": "home-school",
+ "task": "HS-1",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_0a5bc4d4-27f9-44a9-ba4a-3800a24c7224",
+ "startedAt": "2026-11-24T16:24:46.433Z",
+ "endedAt": "2026-11-24T16:28:07.328Z",
+ "seconds": 201,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-parent-teacher-comm-coach-HS-1-1.md",
+ "auto": {
+  "taskId": "HS-1",
+  "bodyChars": 561,
+  "cjkChars": 531,
+  "bodyCjkChars": 457,
+  "statesThursday": true,
+  "statesSevenPm": true,
+  "numberedItems": 3,
+  "mentionsRanking": true
+ }
+}

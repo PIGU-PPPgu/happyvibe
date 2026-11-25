@@ -1,0 +1,27 @@
+{
+ "id": "free-tier-class-assistant-HS-1-3",
+ "kind": "skill",
+ "slug": "class-assistant",
+ "category": "home-school",
+ "task": "HS-1",
+ "round": 3,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_837e4ab7-e2a1-4087-bd66-c16d13234f0f",
+ "startedAt": "2026-11-24T16:19:09.120Z",
+ "endedAt": "2026-11-24T16:20:23.406Z",
+ "seconds": 74,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-class-assistant-HS-1-3.md",
+ "auto": {
+  "taskId": "HS-1",
+  "bodyChars": 377,
+  "cjkChars": 396,
+  "bodyCjkChars": 334,
+  "statesThursday": true,
+  "statesSevenPm": true,
+  "numberedItems": 3,
+  "mentionsRanking": true
+ }
+}

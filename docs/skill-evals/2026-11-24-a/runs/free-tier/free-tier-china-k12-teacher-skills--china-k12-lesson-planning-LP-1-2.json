@@ -1,0 +1,30 @@
+{
+ "id": "free-tier-china-k12-teacher-skills--china-k12-lesson-planning-LP-1-2",
+ "kind": "skill",
+ "slug": "china-k12-teacher-skills--china-k12-lesson-planning",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_3e04898e-d8dd-47b5-9c5a-db3e1debd5ba",
+ "startedAt": "2026-11-24T16:40:36.553Z",
+ "endedAt": "2026-11-24T16:41:53.232Z",
+ "seconds": 77,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-china-k12-teacher-skills--china-k12-lesson-planning-LP-1-2.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 3378,
+  "segmentMinutes": [],
+  "segmentMinutesSum": 0,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

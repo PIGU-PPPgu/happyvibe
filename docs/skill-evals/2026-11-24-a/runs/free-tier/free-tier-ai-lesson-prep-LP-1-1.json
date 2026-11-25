@@ -1,0 +1,40 @@
+{
+ "id": "free-tier-ai-lesson-prep-LP-1-1",
+ "kind": "skill",
+ "slug": "ai-lesson-prep",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_b10b578b-a3e8-4206-82aa-d63def41db92",
+ "startedAt": "2026-11-24T16:29:54.559Z",
+ "endedAt": "2026-11-24T16:31:29.926Z",
+ "seconds": 95,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-ai-lesson-prep-LP-1-1.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 3860,
+  "segmentMinutes": [
+   45,
+   5,
+   18,
+   6,
+   4,
+   4,
+   4,
+   15,
+   7
+  ],
+  "segmentMinutesSum": 108,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

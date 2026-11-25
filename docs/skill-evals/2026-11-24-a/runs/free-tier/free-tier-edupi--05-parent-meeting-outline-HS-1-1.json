@@ -1,0 +1,27 @@
+{
+ "id": "free-tier-edupi--05-parent-meeting-outline-HS-1-1",
+ "kind": "skill",
+ "slug": "edupi--05-parent-meeting-outline",
+ "category": "home-school",
+ "task": "HS-1",
+ "round": 1,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_ace228ac-a4f7-4300-a44b-2a5f260ee24a",
+ "startedAt": "2026-11-24T16:21:59.259Z",
+ "endedAt": "2026-11-24T16:23:00.317Z",
+ "seconds": 61,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-edupi--05-parent-meeting-outline-HS-1-1.md",
+ "auto": {
+  "taskId": "HS-1",
+  "bodyChars": 395,
+  "cjkChars": 417,
+  "bodyCjkChars": 345,
+  "statesThursday": true,
+  "statesSevenPm": true,
+  "numberedItems": 3,
+  "mentionsRanking": true
+ }
+}

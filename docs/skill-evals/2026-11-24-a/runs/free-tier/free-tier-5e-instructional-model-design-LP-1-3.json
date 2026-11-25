@@ -1,0 +1,43 @@
+{
+ "id": "free-tier-5e-instructional-model-design-LP-1-3",
+ "kind": "skill",
+ "slug": "5e-instructional-model-design",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 3,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_7e0a2448-bda1-46c5-8e24-59e2eaeb2438",
+ "startedAt": "2026-11-24T16:24:49.639Z",
+ "endedAt": "2026-11-24T16:26:57.120Z",
+ "seconds": 127,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-5e-instructional-model-design-LP-1-3.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 4540,
+  "segmentMinutes": [
+   4,
+   15,
+   6,
+   2,
+   9,
+   4,
+   3,
+   3,
+   10,
+   2,
+   7,
+   45
+  ],
+  "segmentMinutesSum": 110,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

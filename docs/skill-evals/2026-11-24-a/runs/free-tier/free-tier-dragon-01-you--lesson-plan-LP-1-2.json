@@ -1,0 +1,46 @@
+{
+ "id": "free-tier-dragon-01-you--lesson-plan-LP-1-2",
+ "kind": "skill",
+ "slug": "dragon-01-you--lesson-plan",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_e0ef5a21-2716-4900-af02-76a818ba13b9",
+ "startedAt": "2026-11-24T16:44:55.036Z",
+ "endedAt": "2026-11-24T16:47:33.501Z",
+ "seconds": 158,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-dragon-01-you--lesson-plan-LP-1-2.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 5420,
+  "segmentMinutes": [
+   5,
+   20,
+   7,
+   7,
+   6,
+   5,
+   2,
+   6,
+   4,
+   5,
+   2,
+   5,
+   20,
+   15,
+   5
+  ],
+  "segmentMinutesSum": 114,
+  "states45Minutes": true,
+  "mentionsHomework": true,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

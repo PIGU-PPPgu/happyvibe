@@ -1,0 +1,30 @@
+{
+ "id": "free-tier-czyuwenjxsj-thb-LP-1-3",
+ "kind": "skill",
+ "slug": "czyuwenjxsj-thb",
+ "category": "lesson-plan",
+ "task": "LP-1",
+ "round": 3,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_d1aa3214-ea28-43ed-9ab9-42b4a1144243",
+ "startedAt": "2026-11-24T16:40:42.428Z",
+ "endedAt": "2026-11-24T16:41:47.442Z",
+ "seconds": 65,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-czyuwenjxsj-thb-LP-1-3.md",
+ "auto": {
+  "taskId": "LP-1",
+  "bodyChars": 299,
+  "segmentMinutes": [],
+  "segmentMinutesSum": 0,
+  "states45Minutes": false,
+  "mentionsHomework": false,
+  "mentionsCheck": false,
+  "textbook": {
+   "total": 3,
+   "passed": 3
+  }
+ }
+}

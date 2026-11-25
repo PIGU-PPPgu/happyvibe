@@ -1,0 +1,34 @@
+{
+ "id": "free-tier-xiaozhi-teach-exam-designer-EX-1-2",
+ "kind": "skill",
+ "slug": "xiaozhi-teach-exam-designer",
+ "category": "assignment",
+ "task": "EX-1",
+ "round": 2,
+ "layer": "free-tier",
+ "model": "GLM-5.3-Flash",
+ "sessionId": "sess_2c39b457-eb37-4eb1-a253-df2793977dec",
+ "startedAt": "2026-11-24T16:19:05.421Z",
+ "endedAt": "2026-11-24T16:20:44.430Z",
+ "seconds": 99,
+ "valid": true,
+ "voidReasons": [],
+ "output": "outputs/free-tier-xiaozhi-teach-exam-designer-EX-1-2.md",
+ "auto": {
+  "taskId": "EX-1",
+  "bodyChars": 670,
+  "scoreMarks": [
+   100
+  ],
+  "scoreMarksSum": 100,
+  "states100Points": true,
+  "states45Minutes": true,
+  "hasAnswer": true,
+  "hasBlueprint": true,
+  "bigSections": 0,
+  "textbook": {
+   "total": 3,
+   "passed": 2
+  }
+ }
+}
