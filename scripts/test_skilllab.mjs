@@ -582,6 +582,12 @@ try {
   // 证据摘要：各轮评审指出了什么、对照怎样，给写条目的人看
   const digest = cli('digest', BATCH, 'selftest-skill', 'free-tier');
   assert.ok(digest.includes('自测假技能（selftest-skill）') && digest.includes('对照（不装技能）') && digest.includes('outputs/free-tier-selftest-skill-LP-1-1.md') && digest.includes('改1「'), digest);
+  // 抽检抽样：不少于 10 份、不足 10 份就全抽；种子固定，重跑抽出的是同一批
+  const spotA = cli('spotpick', BATCH, 'free-tier');
+  const spotB = cli('spotpick', BATCH, 'free-tier');
+  assert.ok(spotA.includes('已评审 8 轮，抽 8 轮'), spotA);
+  assert.equal(spotA, spotB, '重跑抽出的是同一批');
+  assert.deepEqual(JSON.parse(readFileSync(`${EVALD}/spotcheck-sample.json`, 'utf8')).ids, spotA.split('\n').filter((l) => l.startsWith('  ')).map((l) => l.trim()), '名单存档，和打印的一致');
 
   const printed = cli('score', BATCH, 'selftest-skill', 'free-tier');
   assert.ok(printed.includes('总分'), printed);

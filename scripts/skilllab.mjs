@@ -54,6 +54,7 @@ const USAGE = `用法：node scripts/skilllab.mjs <子命令> …
   trust <批次> <层级> <轮次号>          引文可疑的评审，主会话看过产出后标记为可以采用
   rejudge <批次> <层级> [轮次号…]       撤掉评审、重新排进待评审（评审提示或检查单改了之后用；不写轮次号就撤全部）
   digest <批次> <slug> <层级>           写条目前看的证据摘要：各轮评审指出了什么、对照怎样
+  spotpick <批次> <层级> [比例]        抽检抽样：从已评审的轮次里按比例随机抽（默认两成，不少于 10 份），名单存档
   ledger <批次> <层级> <轮次号>=<会话号>…  登记开会话得到的会话号（评审加 --judge）
   collect <批次> <层级> [--judge]      从会话记录里取出结果，写成 raw 或 judge-raw 文件
 层级取 free-tier 或 same-model。`;
@@ -328,6 +329,26 @@ const clip = (s) => {
  * 写条目前看的一份证据摘要：这个技能各轮评审指出了什么，对照怎样。只有评审的结论和引文，
  * 产出原文要另外逐字读。
  */
+/**
+ * 抽检抽样：从已评审的有效轮次里按比例随机抽，不少于 10 份。种子取自批次和层级，重跑抽出的是同一批，
+ * 抽检的结果才查得回来。引文可疑的轮次不抽，它们本来就要主会话自己看。
+ */
+function cmdSpotpick(batch, layer, fraction = 0.2) {
+  const judged = listRuns(batch, layer).filter((r) => r.valid && r.judgement && !r.judgement.suspect).sort((a, b) => a.id.localeCompare(b.id));
+  must(judged.length, `${batch} / ${layer} 还没有可抽的评审`);
+  must(fraction > 0 && fraction <= 1, '比例要在 0 到 1 之间');
+  const n = Math.min(judged.length, Math.max(10, Math.ceil(judged.length * fraction)));
+  let seed = [...`${batch}|${layer}`].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7) || 1;
+  const next = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0), seed / 2 ** 32);
+  const pool = judged.map((r) => r.id);
+  const ids = [];
+  while (ids.length < n) ids.push(pool.splice(Math.floor(next() * pool.length), 1)[0]);
+  ids.sort();
+  writeJson(`${EVAL(batch)}/spotcheck-sample.json`, { layer, fraction, judged: judged.length, sampled: ids.length, ids });
+  console.log(`${batch} / ${layer}：已评审 ${judged.length} 轮，抽 ${ids.length} 轮，名单存在 ${EVAL(batch)}/spotcheck-sample.json`);
+  for (const id of ids) console.log(`  ${id}`);
+}
+
 function cmdDigest(batch, slug, layer) {
   const c = readJson(`${EVAL(batch)}/candidates.json`).find((x) => x.slug === slug);
   must(c, `candidates.json 里没有 ${slug}`);
@@ -790,6 +811,7 @@ try {
   else if (cmd === 'judge-agree') cmdJudgeAgree(rest[0], rest[1], rest[2], { out: flag('--out') });
   else if (cmd === 'rejudge') cmdRejudge(rest[0], rest[1], rest.slice(2));
   else if (cmd === 'digest') cmdDigest(rest[0], rest[1], rest[2]);
+  else if (cmd === 'spotpick') cmdSpotpick(rest[0], rest[1], rest[2] === undefined ? 0.2 : Number(rest[2]));
   else if (cmd === 'score') {
     const write = rest.includes('--write');
     const forceLayer = rest.includes('--force-layer');
