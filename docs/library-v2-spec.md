@@ -12,7 +12,7 @@
 | 实测 | `git rev-parse --verify 941574a6^{commit}` 与 `3f1dcad3^{commit}` 均返回完整 SHA；HEAD=3f1dcad3（资源库清零）；scripts/ 完整 | 两 commit 均 `fatal: Needed a single revision`；HEAD=7cd5cddf；`git log` 深遍历断在缺失对象 `e4143c91`；**工作树损坏**：scripts/ 仅剩 `__pycache__`，src/interactives 仅 1 文件（`math/bsuex-7a-1-3-section/index.mjs`），public/interactives/ 为空，git status 大量未提交删除，package.json scripts 仍指向已删文件 |
 
 结论与规矩：
-1. **v2 一切施工动作发生在工作仓**；对 `941574a6` / `3f1dcad3` 的每一处引用均指基准仓历史，工作仓内落地前不可 `git show`。
+1. **v2 一切施工动作发生在工作仓**；对 `941574a6` / `3f1dcad3` 的每一处引用均指基准仓历史，工作仓内落地前不可 `git show`。2026-11-26 基准仓清除了 `loop.log` 的历史，10 月 27 日之后的提交号都变了：下文的 `941574a6` 现为 `ba2d0954`，`3f1dcad3` 现为 `f2680ad5`；旧号在整仓备份 `~/src/happyvibe-backup-2026-11-26.git` 里。
 2. **P0-P2（含 P1.5）未完成前，任何资源件不开工**（§6）。
 3. 构建链现状（实测）：`build_interactives.mjs` 只打包含 `index.mjs` 的目录（:1 注释、:53-54 `entry=index.mjs; if (!existsSync(entry)) continue`）；`test_interactives.mjs` 的被测名单来自构建生成的 `scripts/.interactives-report.json`（:12）；产物无 `__HV__{...}__HV__` 标记即判「无自测报告」fail（:27-28）；旗舰在 941574a6 本身也从未进过 `public/interactives/`（ls-tree 0 个 kdedraw 产物）。**因此 v2 六源文件的构建、被测资格、报告注入全部依赖 §6 P1.5 新增的构建分支——这是机器验收链的前置，不是可选项。**
 
