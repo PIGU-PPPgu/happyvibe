@@ -23,5 +23,62 @@
   "statesSevenPm": true,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "成绩上的差异属于正常范围，反映的是这一阶段的学习掌握情况。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "我们不排名、不公开点评任何一个孩子，孩子个人的具体表现，欢迎您会后单独与我交流。",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "下周四晚上7点，在本班教室召开家长会。",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "先作业后娱乐：放学后先完成作业，再安排玩耍和电子产品的时间；孩子写作业时尽量不打扰、不代做。",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "班主任\nX月X日",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "您好！期中考试已经结束，先向大家说明整体情况：本次考查整体平稳，班级秩序和作业状态比较稳定，大部分孩子都能跟上教学进度；成绩上的差异属于正常范围，反映的是这一阶段的学习掌握情况。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "按时睡觉、按时到校，早晨的状态直接影响一上午的听课质量。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": true,
+    "quote": "我会当面说明期中整体情况和下半学期的教学安排，也会留时间回答大家关心的问题，请您提前安排好时间准时参加。",
+    "note": ""
+   }
+  ],
+  "edits": [],
+  "severe": [],
+  "quotes": 8,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

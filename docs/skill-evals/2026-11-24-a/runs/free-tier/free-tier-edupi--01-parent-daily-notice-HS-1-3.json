@@ -23,5 +23,67 @@
   "statesSevenPm": true,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "这次考试整体平稳，大部分孩子作答认真、按时完成。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "信里不排名、不点名，每个孩子的具体情况欢迎家长会后单独找我聊。",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "下周四晚上 7 点在本班教室开家长会",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "一、看成绩时先看孩子自己的进步，和孩子一起分析具体错在哪，不和其他孩子比较。",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "班主任\n[日期]",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": false,
+    "quote": "期中考试已经结束，先向大家说明整体情况",
+    "note": "脚本数出正文汉字数 298 字，低于 400 字左右（320 到 480 字）的下限"
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "感谢大家一直以来的配合。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": false,
+    "quote": "另外通知一件事：下周四晚上 7 点在本班教室开家长会",
+    "note": "HS6 字数不达标导致本项不过；[日期] 属通用占位，按判法不算留白"
+   }
+  ],
+  "edits": [
+   {
+    "quote": "感谢大家一直以来的配合。",
+    "problem": "全文正文按脚本数仅 298 个汉字，低于老师要求 400 字左右（320—480 字）的下限，需在整体情况或建议部分扩写约 30—80 字"
+   }
+  ],
+  "severe": [],
+  "quotes": 9,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

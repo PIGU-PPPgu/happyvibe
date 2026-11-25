@@ -23,5 +23,62 @@
   "statesSevenPm": false,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "这些都是可以改的，不必因一次考试给孩子太大压力，也不必拿成绩和别的孩子比，多看他自己的进步就好。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "这段时间班里学习状态比较稳定，多数孩子上课认真、作业按时交，考试里也看得出平时的积累",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "下周四（12月3日）晚上7:00，在本班教室开家长会。",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "1. 每天固定时间写作业，桌上只留要用的东西，完成后对照记事本检查一遍再收书包。",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "班主任\n2026年11月25日",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "期中考试已经结束，先向大家报个整体情况。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "感谢您一直以来的支持，周四见。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": true,
+    "quote": "如有冲突，请提前私信我，另约沟通时间。",
+    "note": ""
+   }
+  ],
+  "edits": [],
+  "severe": [],
+  "quotes": 8,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

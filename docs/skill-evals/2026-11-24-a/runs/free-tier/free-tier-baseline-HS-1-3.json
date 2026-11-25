@@ -23,5 +23,62 @@
   "statesSevenPm": true,
   "numberedItems": 3,
   "mentionsRanking": false
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "请家长不必拿分数相互比较，也不要因此责备孩子，和孩子一起看错题、找原因，比追究分数更有帮助。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "整体来看，全班学习状态稳定，多数孩子比开学时更踏实，答题也比以往认真",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "下周四晚上7点在本班教室召开家长会",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "一、陪孩子把试卷订正一遍，重点弄清错因，而不是只盯着分数；",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "尊敬的各位家长：",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "您好！期中考试已经结束。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "感谢您一直以来的理解与配合！",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": true,
+    "quote": "班主任（姓名）",
+    "note": ""
+   }
+  ],
+  "edits": [],
+  "severe": [],
+  "quotes": 8,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }
