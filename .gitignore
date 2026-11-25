@@ -20,3 +20,4 @@ scripts/.visual-review.json
 public/skills/
 .skilllab/
 src/content/skills/zz-preview-*.md
+/loop.log
