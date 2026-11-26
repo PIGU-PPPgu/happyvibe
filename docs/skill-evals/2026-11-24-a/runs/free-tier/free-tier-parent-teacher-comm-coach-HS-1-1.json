@@ -23,5 +23,72 @@
   "statesSevenPm": true,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "先向您道一声辛苦——孩子们的每一点进步，背后都有您的陪伴与支持。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "每位孩子的成绩单和试卷，我会单独发给您，方便您了解孩子的具体情况。",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "下周四晚上 7 点，在本班教室召开家长会。",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "每天固定一个时间段，让孩子安静完成作业，您再翻看作业本、签个字；",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "亲爱的各位家长：",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "这次考试，全班整体情况平稳。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "期待下周四与您见面，咱们一起把这半程陪孩子走稳。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": false,
+    "quote": "📊 自检报告",
+    "note": "信末混入整段 AI 自检报告（字数自评、五大原则、输入完整度、confidence），不属于信件内容，发出前必须删除；不删这封信不能直接发"
+   }
+  ],
+  "edits": [
+   {
+    "quote": "📊 自检报告",
+    "problem": "整段删除：这是 AI 的内部输出（含 emoji、confidence 等数据），留在落款之后，不属于给家长的信，老师必须删掉才能发出"
+   }
+  ],
+  "severe": [
+   {
+    "quote": "confidence：0.82",
+    "problem": "AI 自检输出连同内部数据（字数自评、五大原则、输入完整度、置信度）留在成品末尾，老师没发现就会连同信一起发给家长，暴露 AI 生成痕迹；其中自评「字数：约 400 字（含标点）」与实际正文也不符"
+   }
+  ],
+  "quotes": 10,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

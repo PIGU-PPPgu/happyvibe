@@ -23,5 +23,62 @@
   "statesSevenPm": false,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "相信您和孩子一样，很关心这两个月的学习情况，也向一直支持班级工作的大家道一声辛苦。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "按惯例，这次不排名、不公布个人分数，每位孩子的试卷和答题情况我会逐一整理",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "下周四（12 月 3 日）晚上 7:00，在本班教室召开期中家长会。",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "1. 拿到试卷后，先让孩子自己说说每道错题的错因，您多听、少评判；\n2. 近两周帮孩子把作息固定下来，每天留一段安静的写作业和复习时间；\n3. 若发现孩子情绪低落、压力较大，请先耐心倾听，再及时和我联系。",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "亲爱的各位家长朋友：",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "您好！期中考试已经结束，相信您和孩子一样，很关心这两个月的学习情况，也向一直支持班级工作的大家道一声辛苦。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "感谢大家一直以来的信任与配合，期待下周四见面。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": true,
+    "quote": "X 年级 X 班班主任　X 老师",
+    "note": ""
+   }
+  ],
+  "edits": [],
+  "severe": [],
+  "quotes": 8,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

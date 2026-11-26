@@ -23,5 +23,67 @@
   "statesSevenPm": false,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "这是学习过程中的正常现象，请您不必焦虑。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "本次不公布排名",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "另外，下周四（12 月 3 日）晚上 7:00，我将在本班教室召开期中家长会（本次不公布排名），讲评整体情况，并和您面对面交流孩子的具体安排。",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "每天固定 20-30 分钟的作业和复习时间，帮孩子把学习节奏稳下来；",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "—— 班主任〔您的姓名〕",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "字数：约 406 字（目标 400 左右）✅",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "孩子的每一点进步，都离不开您在背后的用心陪伴。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": false,
+    "quote": "📊 自检报告",
+    "note": "信件正文后附带一段 📊 自检报告（含 ✅、confidence：0.93），不是给家长的信件内容，老师发出前必须整段删除"
+   }
+  ],
+  "edits": [
+   {
+    "quote": "📊 自检报告",
+    "problem": "删除从「📊 自检报告」到「confidence：0.93」的整段自检报告，家长信里不应带这段内容，不删无法直接发出"
+   }
+  ],
+  "severe": [],
+  "quotes": 9,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

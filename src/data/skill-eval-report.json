@@ -13,14 +13,14 @@
    "other": 0
   },
   "reviewed": 339,
-  "ran": 27,
+  "ran": 35,
   "confirmed": 0
  },
  "byCategory": {
   "lesson-plan": 15,
-  "assignment": 6,
-  "home-school": 5,
-  "analysis": 1
+  "assignment": 8,
+  "home-school": 6,
+  "analysis": 6
  },
  "runs": {
   "planned": 134,
@@ -28,7 +28,7 @@
   "void": 1
  },
  "judge": {
-  "judged": 109,
+  "judged": 133,
   "spotChecked": 0,
   "redone": false,
   "note": "还没抽检"
