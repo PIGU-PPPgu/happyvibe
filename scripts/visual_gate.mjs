@@ -3,6 +3,7 @@
 //   L1 取证——每资源 × 深浅主题 × 首末环节帧，无头截图存 scripts/.visual-evidence/（gitignored）
 //   L2 像素规则——截图非空白；浅色主题截图与深色截图确有显著差异（防浅色没生效）
 //   L3 目检册——scripts/.visual-review.json 记录视觉模型/人眼逐张结论，buildHash 过期即 FAIL
+// 独立网页课件（构建报告里 form=standalone）是纸面单主题、不分环节：只截一张首屏，只查非空白，不查双主题差异。
 // 用法：node scripts/visual_gate.mjs（取证+规则+册检查）；--sheets-only 只重出拼图供目检
 import { execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -12,22 +13,25 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 
 const run = promisify(execFile);
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const report = JSON.parse(await readFile('scripts/.interactives-report.json', 'utf8'));
 const names = process.argv.includes('--sheets-only') ? [] : Object.keys(report);
+const standalone = (n) => report[n]?.form === 'standalone';
 const EV_DIR = 'scripts/.visual-evidence';
 const MANIFEST = 'scripts/.visual-review.json';
 
 await mkdir(EV_DIR, { recursive: true });
-const buildHash = createHash('md5').update(JSON.stringify(report)).digest('hex').slice(0, 12);
+// 键按名称排序后再算：目录遍历顺序因文件系统而异，不让它影响 buildHash
+const sortedReport = Object.fromEntries(Object.keys(report).sort().map((k) => [k, report[k]]));
+const buildHash = createHash('md5').update(JSON.stringify(sortedReport)).digest('hex').slice(0, 12);
 
 // ---------- L1 取证 ----------
 const machineProblems = [];
 const evidence = {};
 for (const name of names) {
   evidence[name] = {};
-  for (const theme of ['dark', 'light']) {
-    for (const [tag, step] of [['s0', '0'], ['sN', '99']]) {
+  for (const theme of standalone(name) ? ['dark'] : ['dark', 'light']) {
+    for (const [tag, step] of standalone(name) ? [['s0', '0']] : [['s0', '0'], ['sN', '99']]) {
       const file = `${EV_DIR}/${name}-${theme}-${tag}.png`;
       try {
         await run(CHROME, [
@@ -96,6 +100,8 @@ def ui_mean(p):
     return sum(vals)/len(vals)
 diffs = {}
 for name, shots in ev.items():
+    if 'light-s0' not in shots:
+        continue
     try:
         diffs[name] = round(abs(ui_mean(shots['dark-s0']) - ui_mean(shots['light-s0'])), 1)
     except Exception:
@@ -160,7 +166,7 @@ print('sheets ok')
   });
 }
 
-console.log(`视觉闸门 · build ${buildHash} · 取证 ${names.length} 资源 × 双主题 × 首末帧`);
+console.log(`视觉闸门 · build ${buildHash} · 取证 ${names.length} 资源（模板壳：双主题 × 首末帧；独立网页课件：首屏一张）`);
 if (machineProblems.length) {
   for (const p of machineProblems) console.log('FAIL ' + p);
 }

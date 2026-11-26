@@ -27,6 +27,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # 资源库的卡片预览图不进仓库，每次构建重出：先把独立网页课件从源码内联成单文件，再用构建机自带的 Chrome 截图
+      - run: python3 -c "import PIL" || (sudo apt-get update && sudo apt-get install -y python3-pil)
+      - run: npm run build:interactives
+      - run: npm run build:previews
+        env:
+          CHROME: /usr/bin/google-chrome
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

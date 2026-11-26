@@ -1,147 +1,17 @@
 {
-  "buildHash": "51c14950d8e9",
-  "reviewer": "zcode（拼图亲检 + 全内容矩阵实测）",
-  "verdicts": "28 pass",
+  "buildHash": "8a55422442e8",
+  "reviewer": "zcode 主会话（取证截图逐张目检 + 产物与源码逐字节比对）",
+  "verdicts": "2 pass",
   "results": {
-    "chinese-tianjingsa": {
+    "math-bs-7a-2-2": {
       "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
+      "method": "首屏取证截图目检（封面、目录四幕、本课要点、播放条完整）；产物由源码内联重建，与 2026-11-02 上线的那份逐字节相同；自带契约测试通过",
+      "at": "2026-11-26"
     },
-    "history-dynasties": {
+    "geography-rj-7a-1-3": {
       "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-cube-nets": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-rect-volume": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "history-qin-unify": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "history-silk-road": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "chinese-stroke-order": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "history-bronze": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "chinese-pinyin": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-views": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "chinese-punctuation": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "history-modern-timeline": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "history-reform-open": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "chinese-rhetoric": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-function-lab": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "chinese-classical-words": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "history-new-routes": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-quadratic": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "chinese-essay-structure": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "history-world-wars": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-circle-angle": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "chinese-famous-lines": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-unit-circle": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-solid-section": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "math-number-line": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "bsuex-7a-2-4-add": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "bsuex-7a-2-5-sub": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
-    },
-    "bsuex-7a-1-3-section": {
-      "verdict": "pass",
-      "method": "双主题拼图亲检 + analyze_image 抽检；bsuex-7a-1-3-section 全内容矩阵线上/本地实测（9 预设读数、三环节、quiz/小结/讲解浮层、onboard 关闭）",
-      "at": "2026-10-18"
+      "method": "首屏取证截图目检（封面、目录、手绘校园图完整）；产物由源码内联重建，与上线那份只差 </style> 前一个空行；自带引擎与契约测试通过",
+      "at": "2026-11-26"
     }
   }
 }

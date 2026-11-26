@@ -1,15 +1,43 @@
 // 交互资源自测 harness：无头浏览器逐个加载 ?selftest=1，收集控制台报错、
 // 画布分区内容统计、资源内置断言（__hvPushCheck），全部通过才 PASS
+// 独立网页课件（构建报告里 form=standalone）没有 ?selftest=1 接口：功能检查跑它自带的 tests/*.test.cjs。
 // 用法：node scripts/test_interactives.mjs [name...]（不带参数跑全部）
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 
 const run = promisify(execFile);
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const report = JSON.parse(await readFile('scripts/.interactives-report.json', 'utf8'));
 const only = process.argv.slice(2);
 const names = only.length ? only : Object.keys(report);
+const standalone = (name) => report[name]?.form === 'standalone';
+
+async function testStandalone(name) {
+  const problems = [];
+  let found = false;
+  for (const s of await readdir('src/interactives', { withFileTypes: true })) {
+    if (!s.isDirectory() || s.name === '_shared') continue;
+    const dir = `src/interactives/${s.name}/${name}/tests`;
+    if (!existsSync(dir)) continue;
+    found = true;
+    const tests = (await readdir(dir)).filter((f) => /\.test\.(cjs|mjs|js)$/.test(f)).sort();
+    if (!tests.length) { problems.push('tests/ 里没有测试文件'); break; }
+    for (const t of tests) {
+      try {
+        await run('node', [`${dir}/${t}`], { timeout: 120000, maxBuffer: 8 * 1024 * 1024 });
+      } catch (e) {
+        const tail = String(e.stderr || e.stdout || e.message).trim().split('\n').slice(-3).join(' | ');
+        problems.push(`${t} 未通过: ${tail.slice(0, 240)}`);
+      }
+    }
+    break;
+  }
+  if (!found) problems.push('找不到自带测试目录 tests/');
+  if (!problems.length) console.log(`      ${name}: 自带测试通过`);
+  return { name, pass: problems.length === 0, problems, quiz: 0 };
+}
 
 async function fetchReport(name, theme) {
   const url = `file://${process.cwd()}/public/interactives/${name}.html?selftest=1${theme ? '&theme=light' : ''}`;
@@ -34,6 +62,7 @@ async function fetchReport(name, theme) {
 }
 
 async function testOne(name) {
+  if (standalone(name)) return testStandalone(name);
   const dark = await fetchReport(name, false);
   if (dark.err) return { name, pass: false, problems: [dark.err] };
   const r = dark.report;
@@ -115,8 +144,10 @@ async function worker() {
 await Promise.all(Array.from({ length: 3 }, worker));
 
 const failed = results.filter((r) => !r.pass);
-const withQuiz = results.filter((r) => r.quiz > 0);
-console.log(`\nharness: ${results.length - failed.length}/${results.length} 通过；随堂检测覆盖 ${withQuiz.length}/${results.length}`);
+// 随堂检测覆盖只统计模板壳资源（独立网页课件的检测页不走 harness 的随堂检测接口）
+const shell = results.filter((r) => !standalone(r.name));
+const withQuiz = shell.filter((r) => r.quiz > 0);
+console.log(`\nharness: ${results.length - failed.length}/${results.length} 通过；模板壳自测 ${shell.length} 个，随堂检测覆盖 ${withQuiz.length}/${shell.length}；独立网页课件自带测试 ${results.length - shell.length} 个`);
 if (failed.length) {
   console.log(`未过：${failed.map((f) => f.name).join('，')}`);
   process.exit(1);

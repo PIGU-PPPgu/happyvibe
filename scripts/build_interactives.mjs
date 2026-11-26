@@ -27,9 +27,14 @@ function promoteColor0(glb) {
 
 // 资源目录内的 *.glb（Blender 资产）构建期转 base64 模块 <name>.glb.b64.mjs，index.mjs 直接 import 使用；
 // 产物仍是零外链单文件（GLB 内嵌），断网投屏承诺不破。
+//
+// 另一种形态：独立网页课件。目录里没有 index.mjs、有 index.html（自带 css/ 与 js/，不经模板）。
+// 把 <link rel="stylesheet"> 与 <script src> 指向的本地文件原样内联成单文件。
+// 拼法沿用 2026-11-02 上线的那两节：样式去掉末尾空白后补一个换行，脚本原样保留再补一个换行。
+// 这类资源的体积上限、哪些闸门适用，见 check_interactives.mjs。
 import { build } from 'esbuild';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const SRC = 'src/interactives';
@@ -37,6 +42,17 @@ const OUT = 'public/interactives';
 const template = await readFile(path.join(SRC, '_shared', 'template.html'), 'utf8');
 // 可选：node scripts/build_interactives.mjs <slug>... 只构建指定资源，报告与既有条目合并
 const only = process.argv.slice(2);
+
+function inlineStandalone(dir, html) {
+  const read = (rel) => readFileSync(path.join(dir, rel), 'utf8');
+  const out = html
+    .replace(/<link rel="stylesheet" href="(css\/[^"?]+)(?:\?[^"]*)?">/g, (_, f) => `<style>\n${read(f).replace(/\s+$/, '')}\n</style>`)
+    .replace(/<script src="(js\/[^"?]+)(?:\?[^"]*)?"><\/script>/g, (_, f) => `<script>\n${read(f)}\n</script>`);
+  // 内联完不许再留本地文件引用，否则单文件拿走后就是断链
+  const left = [...out.matchAll(/\b(?:src|href)\s*=\s*["'](?!https?:|data:|#|mailto:)([^"']+)["']/g)].map((m) => m[1]);
+  if (left.length) throw new Error(`${dir} 内联后仍有本地引用：${left.join('、')}`);
+  return out;
+}
 
 let report = {};
 try {
@@ -50,7 +66,21 @@ for (const s of await readdir(SRC, { withFileTypes: true })) {
     if (only.length > 0 && !only.includes(e.name)) continue;
     const dir = path.join(SRC, s.name, e.name);
     const entry = path.join(dir, 'index.mjs');
-    if (!existsSync(entry)) continue;
+    const page = path.join(dir, 'index.html');
+    if (!existsSync(entry) && !existsSync(page)) continue;
+    const meta = JSON.parse(await readFile(path.join(dir, 'meta.json'), 'utf8'));
+    await mkdir(OUT, { recursive: true });
+    const outFile = path.join(OUT, `${e.name}.html`);
+
+    if (!existsSync(entry)) {
+      const html = inlineStandalone(dir, await readFile(page, 'utf8'));
+      // 内容没变就不重写：产物的修改时间一变，卡片预览图就会被判过期
+      if (!existsSync(outFile) || (await readFile(outFile, 'utf8')) !== html) await writeFile(outFile, html);
+      report[e.name] = { kind: meta.kind === 'interactive-3d' ? 'interactive-3d' : 'interactive-2d', form: 'standalone', bytes: Buffer.byteLength(html) };
+      count++;
+      console.log(`built ${e.name}.html  独立网页  ${(Buffer.byteLength(html) / 1024).toFixed(1)}KB`);
+      continue;
+    }
     // GLB 资产 → base64 模块（构建期生成，gitignore 掉生成物）
     for (const f of await readdir(dir)) {
       if (f.endsWith('.glb')) {
@@ -58,7 +88,6 @@ for (const s of await readdir(SRC, { withFileTypes: true })) {
         await writeFile(path.join(dir, f + '.b64.mjs'), `export default 'data:model/gltf-binary;base64,${b64}';\n`);
       }
     }
-    const meta = JSON.parse(await readFile(path.join(dir, 'meta.json'), 'utf8'));
     const result = await build({
       entryPoints: [entry],
       bundle: true,
@@ -76,8 +105,7 @@ for (const s of await readdir(SRC, { withFileTypes: true })) {
       .replaceAll('__TITLE__', meta.title)
       .replaceAll('__HINT__', meta.hint || '')
       .replace('__BUNDLE__', () => js);
-    await mkdir(OUT, { recursive: true });
-    await writeFile(path.join(OUT, `${e.name}.html`), html);
+    await writeFile(outFile, html);
     report[e.name] = { kind: is3d ? 'interactive-3d' : 'interactive-2d', bytes: html.length };
     count++;
     console.log(`built ${e.name}.html  ${is3d ? '3d' : '2d'}  ${(html.length / 1024).toFixed(1)}KB`);

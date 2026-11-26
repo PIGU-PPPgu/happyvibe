@@ -3,14 +3,28 @@
 // 截图后做像素级空白检测（中心区色彩桶数 / 标准差），空白即重试，最多 4 次——
 // WebGL 资源无头截图常拍出"命令成功但画面全空"的帧，退出码检测不到。
 // 用法：node scripts/build_resource_previews.mjs [name...]（不带参数跑全部）
+// 依赖：无头 Chrome（路径可用环境变量 CHROME 指定）与 python3 的 Pillow。截图转 JPEG 也用 Pillow，
+// 不用 macOS 自带的 sips，GitHub Pages 的 Linux 构建机上才能跑。
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { readFile, mkdir, rm, readdir } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 
 const run = promisify(execFile);
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const report = JSON.parse(await readFile('scripts/.interactives-report.json', 'utf8'));
 const names = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(report);
+
+// PNG → 最长边 720 的 JPEG（质量 72）
+async function toJpeg(tmp, out) {
+  const py = 'from PIL import Image\n'
+    + 'import sys\n'
+    + 'im=Image.open(sys.argv[1]).convert("RGB")\n'
+    + 'im.thumbnail((720,720),Image.LANCZOS)\n'
+    + 'im.save(sys.argv[2],"JPEG",quality=72)\n';
+  await run('python3', ['-c', py, tmp, out], { timeout: 30000 });
+}
 
 async function shot(name, tmp) {
   await run(CHROME, [
@@ -19,7 +33,7 @@ async function shot(name, tmp) {
     `--screenshot=${tmp}`,
     `file://${process.cwd()}/public/interactives/${name}.html?pv=1&embed=1`,
   ], { timeout: 60000 });
-  await run('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '-Z', '720', tmp, '--out', `public/previews/${name}.jpg`], { timeout: 30000 });
+  await toJpeg(tmp, `public/previews/${name}.jpg`);
 }
 // 空白检测：中心 60% 区域色彩桶数（40 级量化）与亮度标准差
 async function blankMetric(name) {
@@ -41,7 +55,7 @@ async function blankMetric(name) {
 await mkdir('public/previews', { recursive: true });
 let fail = 0;
 for (const name of names) {
-  const tmp = `/tmp/hv-preview-${name}.png`;
+  const tmp = path.join(os.tmpdir(), `hv-preview-${name}.png`);
   try {
     let ok = false, last = '';
     for (let i = 0; i < 4 && !ok; i++) {
