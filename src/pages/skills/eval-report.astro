@@ -21,6 +21,17 @@ const SOURCE: Record<string, string> = { skillhub: 'SkillHub', github: 'GitHub',
 const scanned = report.funnel.scanned as Record<string, number>;
 const scannedTotal = Object.values(scanned).reduce((a, b) => a + b, 0);
 const scannedLine = Object.entries(scanned).map(([k, v]) => `${SOURCE[k] ?? k} ${v}`).join('，');
+// 还没做完的环节如实列出来；全部做完后列表为空，不显示
+const inProgress = [
+  report.judge.judged < report.runs.valid && `评审进行中：${report.runs.valid} 份有效产出里已评审 ${report.judge.judged} 份。`,
+  report.judge.spotChecked === 0 && '抽检还没做。按流程，抽检过后才出分。',
+  report.funnel.confirmed === 0 && `同款复核还没开始：海选出分靠前的会用 ${report.models['same-model']} 重跑。`,
+].filter((t): t is string => Boolean(t));
+// 入围名单：已复核、已实测、触红线的默认可见；没入围的条数多，折叠起来，点开才看
+const rank: Record<string, number> = { confirmed: 0, ran: 1, redline: 2, out: 3 };
+const ordered = [...report.shortlist].sort((a, b) => (rank[a.verdict] ?? 9) - (rank[b.verdict] ?? 9));
+const shortlistShown = ordered.filter((s) => s.verdict !== 'out');
+const shortlistOut = ordered.filter((s) => s.verdict === 'out');
 const MODEL_LINES = [
   { label: LAYER_LABEL['free-tier'], model: report.models['free-tier'] },
   { label: LAYER_LABEL['same-model'], model: report.models['same-model'] },
@@ -50,8 +61,13 @@ const MODEL_LINES = [
         <section class="rp-sec" aria-label="概况">
           <h2 class="rp-h2">概况</h2>
           <p class="lead">
-            批次 <span class="mono">{report.batch}</span>，{report.date} 出的结果。
+            批次 <span class="mono">{report.batch}</span>，数据更新于 {report.date}。
           </p>
+          {inProgress.length > 0 && (
+            <ul class="rp-todo">
+              {inProgress.map((t) => <li>{t}</li>)}
+            </ul>
+          )}
           <div class="tbl-wrap">
             <table class="tbl">
               <thead>
@@ -101,24 +117,49 @@ const MODEL_LINES = [
           {report.shortlist.length === 0 ? (
             <p class="text-muted">名单在人工复核完成后补上。</p>
           ) : (
-            <div class="tbl-wrap">
-              <table class="tbl">
-                <thead>
-                  <tr><th scope="col">名称</th><th scope="col">来源</th><th scope="col">品类</th><th scope="col">结论</th><th scope="col">原因</th></tr>
-                </thead>
-                <tbody>
-                  {report.shortlist.map((s) => (
-                    <tr>
-                      <th scope="row">{s.url ? <a href={s.url} target="_blank" rel="noopener">{s.name} →</a> : s.name}</th>
-                      <td>{SOURCE[s.source] ?? s.source}</td>
-                      <td>{s.category ? categoryLabel(s.category as CategoryKey) : '未归类'}</td>
-                      <td>{VERDICT[s.verdict] ?? s.verdict}</td>
-                      <td class="wrap">{s.reason}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <>
+              <div class="tbl-wrap">
+                <table class="tbl rp-list">
+                  <thead>
+                    <tr><th scope="col">名称</th><th scope="col">来源</th><th scope="col">品类</th><th scope="col">结论</th><th scope="col">原因</th></tr>
+                  </thead>
+                  <tbody>
+                    {shortlistShown.map((s) => (
+                      <tr>
+                        <th scope="row">{s.url ? <a href={s.url} target="_blank" rel="noopener">{s.name} →</a> : s.name}</th>
+                        <td>{SOURCE[s.source] ?? s.source}</td>
+                        <td>{s.category ? categoryLabel(s.category as CategoryKey) : '未归类'}</td>
+                        <td>{VERDICT[s.verdict] ?? s.verdict}</td>
+                        <td class="wrap">{s.reason}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {shortlistOut.length > 0 && (
+                <details class="rp-more">
+                  <summary>没入围这一轮实测的 {shortlistOut.length} 个，点开看原因</summary>
+                  <div class="tbl-wrap">
+                    <table class="tbl rp-list">
+                      <thead>
+                        <tr><th scope="col">名称</th><th scope="col">来源</th><th scope="col">品类</th><th scope="col">结论</th><th scope="col">原因</th></tr>
+                      </thead>
+                      <tbody>
+                        {shortlistOut.map((s) => (
+                          <tr>
+                            <th scope="row">{s.url ? <a href={s.url} target="_blank" rel="noopener">{s.name} →</a> : s.name}</th>
+                            <td>{SOURCE[s.source] ?? s.source}</td>
+                            <td>{s.category ? categoryLabel(s.category as CategoryKey) : '未归类'}</td>
+                            <td>{VERDICT[s.verdict] ?? s.verdict}</td>
+                            <td class="wrap">{s.reason}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              )}
+            </>
           )}
         </section>
       </div>
@@ -137,6 +178,12 @@ const MODEL_LINES = [
   .rp-sec { display: flex; flex-direction: column; gap: 12px; }
   .rp-h2 { margin: 0; font-size: 24px; line-height: 1.4; }
   .lead { margin: 0; font-size: 16px; line-height: 1.8; }
+  .rp-todo { margin: 0; padding-left: 1.2em; font-size: 15px; line-height: 1.8; }
+  /* 入围名单：名称列允许换行，来源、品类、结论三列不折行，原因列占剩下的宽度 */
+  .rp-list tbody th { white-space: normal; min-width: 15em; }
+  .rp-list td:nth-child(2), .rp-list td:nth-child(3), .rp-list td:nth-child(4) { white-space: nowrap; }
+  .rp-list td.wrap { min-width: 15em; }
+  .rp-more summary { cursor: pointer; color: var(--gold); font-size: 15px; padding: 6px 0; }
   .counts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; }
   .counts li { display: flex; gap: 8px; }
   .facts { margin: 0; padding-left: 22px; font-size: 15px; line-height: 1.85; color: var(--text-muted); }

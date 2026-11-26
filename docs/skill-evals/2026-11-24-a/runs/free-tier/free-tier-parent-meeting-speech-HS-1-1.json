@@ -23,5 +23,71 @@
   "statesSevenPm": true,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "这次我们不排名次、不点名，也恳请您先不比较分数，把目光放在孩子的习惯和方法上，这比盯住一次成绩更能帮助孩子进步。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "这次我们不排名次、不点名",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "家长会定于下周四晚上7点召开，地点为【待老师补充教室】",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "一、先聊感受，再谈分数。看到试卷后，不妨先问问孩子考试时哪里顺利、哪里紧张，再一起看错题。",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "【待老师补充】\nX年X班班主任",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "你们好！期中考试已经顺利结束。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "感谢您一直以来的理解与支持，期待下周四与您见面！",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": true,
+    "quote": "X年X班班主任",
+    "note": ""
+   }
+  ],
+  "edits": [
+   {
+    "quote": "地点为【待老师补充教室】",
+    "problem": "家长会教室为占位，发出前需补上具体教室"
+   },
+   {
+    "quote": "【待老师补充】\nX年X班班主任",
+    "problem": "署名姓名与班级名均为占位，发出前需补老师姓名和实际班级"
+   }
+  ],
+  "severe": [],
+  "quotes": 10,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

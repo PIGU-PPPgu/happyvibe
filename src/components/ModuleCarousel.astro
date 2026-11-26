@@ -51,7 +51,8 @@ const cards = MODULES.map((m) => ({
       <button class="arrow" type="button" data-next aria-label="下一个模块">→</button>
     </div>
 
-    <a class="cta btn btn-gold" data-cta href={withBase(cards[0].href)}>
+    {/* cards[].href 上面已经带基路径，这里不能再包一层：GitHub Pages 镜像的基路径是 /happyvibe/，包两次就成了 /happyvibe/happyvibe/… */}
+    <a class="cta btn btn-gold" data-cta href={cards[0].href}>
       进入 <span data-cta-code>{cards[0].code} {cards[0].title}</span> →
     </a>
 

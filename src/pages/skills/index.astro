@@ -20,6 +20,10 @@ const showBoard = tested.length >= 10;
 // 没有任何已实测条目的品类不出现在左栏
 const cats = CATEGORIES.map((c) => ({ ...c, n: tested.filter((s) => s.data.category === c.key).length })).filter((c) => c.n > 0);
 const mirrorCount = pending.filter((s) => s.data.distribution === 'mirror').length;
+// 候选池分两类：进了这一轮实测的（在候选表里，评完出分），和人工复核时没入围的（这一轮不测，不会有分数）
+const inBatch = new Set<string>(report.candidateSlugs ?? []);
+const poolIn = pending.filter((s) => inBatch.has(s.slug));
+const poolOut = pending.filter((s) => !inBatch.has(s.slug));
 const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind === 'github' ? 'GitHub' : '本站');
 ---
 
@@ -28,7 +32,7 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
     <ResourceHubHeader active="skills" counts={counts}>
       <span slot="note">
         {hasTested
-          ? '出了分的 Skill 都用真实教师任务实测过，分数、短板和证据都公开，并标明在哪一层、用哪个模型测的；没测的列在候选池里，不出分。'
+          ? '出了分的 Skill 都用真实教师任务实测过，分数、短板和证据都公开，并标明在哪一层、用哪个模型测的。还没出分的列在候选池里。'
           : '候选技能已完成静态审查，还没有实测。按规矩，没实测不出分。'}
         <span class="std-links">
           <a class="std-link" href={withBase('/skills/standard/')}>评价标准 →</a>
@@ -76,7 +80,12 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
     {pending.length > 0 && (
       <section class="pool" aria-label="候选池">
         <h2 class="pool-t">候选池<span class="pool-n mono">{pending.length}</span></h2>
-        <p class="pool-d text-muted">以下是待测技能。静态审查已过，还没有分数，也没有安装步骤。</p>
+        {poolIn.length > 0 && (
+          <p class="pool-d text-muted">其中 {poolIn.length} 个进了第一轮实测。评审和抽检做完才出分，现在还没有分数，也还没有评测档案。</p>
+        )}
+        {poolOut.length > 0 && (
+          <p class="pool-d text-muted">另外 {poolOut.length} 个在人工复核时评分不够或被淘汰，这一轮没有测，不会有分数，列在这里只作记录。</p>
+        )}
         <div class="p-grid">
           {pending.map((s) => {
             const d = s.data;
@@ -85,7 +94,7 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
               <article class="p-card">
                 <div class="p-head">
                   <h3 class="p-title"><a href={withBase(`/skills/${s.slug}/`)}>{d.title}</a></h3>
-                  <span class="p-status">待测</span>
+                  <span class="p-status">{inBatch.has(s.slug) ? '待出分' : '未入围'}</span>
                 </div>
                 <p class="p-does">{d.does}</p>
                 <p class="p-sum">{d.summary}</p>

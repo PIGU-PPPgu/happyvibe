@@ -510,6 +510,8 @@ function writeEntry({ batch, layer, slug, candidate: c, score, entriesDir, force
 function cmdReport(batch, { out = 'src/data/skill-eval-report.json' } = {}) {
   const screening = existsSync(`${EVAL(batch)}/screening.json`) ? readJson(`${EVAL(batch)}/screening.json`) : { scanned: {}, items: [] };
   const spot = existsSync(`${EVAL(batch)}/spotcheck.json`) ? readJson(`${EVAL(batch)}/spotcheck.json`) : { spotChecked: 0, redone: false, note: '还没抽检' };
+  // 进了这一轮实测的技能（候选表）：页面据此区分「在测、待出分」和「人工复核时没入围」
+  const candidateSlugs = existsSync(`${EVAL(batch)}/candidates.json`) ? readJson(`${EVAL(batch)}/candidates.json`).map((c) => c.slug).sort() : [];
   const runs = { planned: 0, valid: 0, void: 0 };
   const ranSlugs = new Set();
   const confirmedSlugs = new Set();
@@ -554,6 +556,7 @@ function cmdReport(batch, { out = 'src/data/skill-eval-report.json' } = {}) {
     runs,
     judge: { judged, ...spot },
     shortlist: screening.items,
+    candidateSlugs,
   };
   writeJson(out, report);
   console.log(`已写入 ${out}：海选出分 ${report.funnel.ran} 个，同款复核 ${report.funnel.confirmed} 个，运行 ${runs.valid}/${runs.planned} 轮有效`);

@@ -173,6 +173,17 @@ assert.throws(() => parseJudgement('没有结果'), /没有 JSON/);
 assert.throws(() => parseJudgement('{"checklist": []}'), /缺 checklist、edits 或 severe/);
 assert.throws(() => parseJudgement('{不是 json}'), /不是合法 JSON/);
 {
+  // 评审把产出里的英文双引号原样抄进字符串、没有转义：解析器补转义，引文里那对引号原样保留
+  const loose = '{"checklist":[{"id":"LP4","pass":false,"quote":"预案 1 → 话术："零下 5℃ 在哪一侧？"","note":"没有点明难点"}],"edits":[],"severe":[]}';
+  assert.throws(() => JSON.parse(loose), SyntaxError, '这份文本按严格 JSON 确实是坏的');
+  const got = parseJudgement(loose);
+  assert.equal(got.checklist[0].quote, '预案 1 → 话术："零下 5℃ 在哪一侧？"');
+  assert.equal(got.checklist[0].note, '没有点明难点');
+  // 本来就转义好的不受影响
+  const fine = '{"checklist":[{"id":"LP1","pass":true,"quote":"他说 \\"好\\"","note":"引号本来就转义了"}],"edits":[],"severe":[]}';
+  assert.equal(parseJudgement(fine).checklist[0].quote, '他说 "好"');
+}
+{
   // 引文核对：整条找得到算；不相邻的几行接成一条、每行都逐字找得到也算；编出来的不算
   const output = '## 一、基本信息 教材：北师大版七年级上册 课题：2.2 数轴 课型：新授课 ## 五、教学过程 环节一：复习导入（5 分钟） 说明。';
   assert.equal(quoteFound('教材：北师大版七年级上册', output), true);

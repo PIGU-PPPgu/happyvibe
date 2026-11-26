@@ -9,6 +9,8 @@ if (!existsSync(DIST)) {
   console.error(`找不到 ${DIST}/，先 npm run build`);
   process.exit(2);
 }
+// 站点带基路径时（GitHub Pages 镜像是 /happyvibe/，即构建时的 PUBLIC_BASE），站内链接都带这个前缀，核对前先去掉
+const BASE = (process.env.PUBLIC_BASE ?? '/').replace(/\/?$/, '/');
 
 const walk = (d, out = []) => {
   for (const e of readdirSync(d, { withFileTypes: true })) {
@@ -38,7 +40,7 @@ for (const page of pages) {
     try {
       url = decodeURIComponent(url);
     } catch {}
-    const target = url.startsWith('/') ? join(DIST, url) : resolve(dirname(page), url);
+    const target = url.startsWith('/') ? join(DIST, BASE !== '/' && url.startsWith(BASE) ? url.slice(BASE.length - 1) : url) : resolve(dirname(page), url);
     checked++;
     if (exists(target) || exists(`${target}/index.html`) || exists(`${target}.html`)) continue;
     missing.push({ from: relative(DIST, page), to: raw });

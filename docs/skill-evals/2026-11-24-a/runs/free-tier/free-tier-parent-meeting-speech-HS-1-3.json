@@ -23,5 +23,62 @@
   "statesSevenPm": true,
   "numberedItems": 3,
   "mentionsRanking": true
+ },
+ "judgement": {
+  "checklist": [
+   {
+    "id": "HS1",
+    "pass": true,
+    "quote": "请家长和我们一起，多看到孩子的努力与进步，少做孩子之间的比较，保护好他们的学习信心。",
+    "note": ""
+   },
+   {
+    "id": "HS2",
+    "pass": true,
+    "quote": "本次成绩不进行排名、不公开比较、不点名，每个孩子的具体情况，欢迎您通过【待老师补充：联系渠道】与我单独沟通。",
+    "note": ""
+   },
+   {
+    "id": "HS3",
+    "pass": true,
+    "quote": "另外通知您：下周四晚上 7 点召开期中家长会，地点：【待老师补充：地点】。会上我会整体说明班级情况与后续安排，欢迎您准时参加。",
+    "note": ""
+   },
+   {
+    "id": "HS4",
+    "pass": true,
+    "quote": "一、稳住作息。保证孩子睡眠时间，学习和休息的时段相对固定，考后不熬夜赶进度，让状态先稳下来。",
+    "note": ""
+   },
+   {
+    "id": "HS5",
+    "pass": true,
+    "quote": "亲爱的家长朋友们：",
+    "note": ""
+   },
+   {
+    "id": "HS6",
+    "pass": true,
+    "quote": "您好！期中考试已经结束，孩子们这一阶段的学习告一段落。",
+    "note": ""
+   },
+   {
+    "id": "HS7",
+    "pass": true,
+    "quote": "二、平和复盘。和孩子聊试卷时，先听孩子自己讲，再一起找办法，不只盯着分数，也少提“别人家的孩子”。",
+    "note": ""
+   },
+   {
+    "id": "HS8",
+    "pass": true,
+    "quote": "地点：【待老师补充：地点】",
+    "note": ""
+   }
+  ],
+  "edits": [],
+  "severe": [],
+  "quotes": 8,
+  "quoteMiss": 0,
+  "suspect": false
  }
 }

@@ -58,17 +58,58 @@ export function quoteFound(quote, output) {
   return lines.length > 1 && lines.some((l) => l.length >= 8) && lines.every((l) => output.includes(l));
 }
 
+/**
+ * 评审模型有时把产出里的英文双引号原样抄进 JSON 字符串，没有转义（2026-11-26 实证，同一轮连坏两次）。
+ * 这里只给字符串内部的引号补转义：字符串里的引号，后面紧跟结构字符（, } ] :）或已经到头，才算结束引号；
+ * 其余的按字面量处理。只动引号的转义，不动任何内容。
+ */
+export function escapeInnerQuotes(text) {
+  let out = '';
+  let inString = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (!inString) {
+      if (c === '"') inString = true;
+      out += c;
+      continue;
+    }
+    if (c === '\\') {
+      out += c + (text[i + 1] ?? '');
+      i++;
+      continue;
+    }
+    if (c !== '"') {
+      out += c;
+      continue;
+    }
+    let j = i + 1;
+    while (j < text.length && /\s/.test(text[j])) j++;
+    if (j >= text.length || ',}]:'.includes(text[j])) {
+      inString = false;
+      out += c;
+    } else {
+      out += '\\"';
+    }
+  }
+  return out;
+}
+
 /** 从评审会话的最后一条消息里取出结果。取第一个左花括号到最后一个右花括号之间的内容。 */
 export function parseJudgement(text) {
   const raw = String(text ?? '');
   const a = raw.indexOf('{');
   const b = raw.lastIndexOf('}');
   if (a < 0 || b < a) throw new Error('评审结果里没有 JSON');
+  const body = raw.slice(a, b + 1);
   let j;
   try {
-    j = JSON.parse(raw.slice(a, b + 1));
+    j = JSON.parse(body);
   } catch (err) {
-    throw new Error(`评审结果不是合法 JSON：${err.message}`);
+    try {
+      j = JSON.parse(escapeInnerQuotes(body));
+    } catch {
+      throw new Error(`评审结果不是合法 JSON：${err.message}`);
+    }
   }
   if (!Array.isArray(j.checklist) || !Array.isArray(j.edits) || !Array.isArray(j.severe)) {
     throw new Error('评审结果缺 checklist、edits 或 severe');

@@ -7,6 +7,7 @@ import type { ScoreFrontmatter } from '../../data/skill-schema';
 import { isScored, summaryOf } from '../../lib/skillEntryCore';
 import { COMPOSITION_LABEL, EVIDENCE_LABEL, LAYER_LABEL, PLATFORM_LABEL, REQUIRES_LABEL, categoryLabel, formatSeconds } from '../../lib/skillLabels';
 import { withBase } from '../../lib/urls';
+import report from '../../data/skill-eval-report.json';
 import '../../styles/table.css';
 
 export async function getStaticPaths() {
@@ -65,7 +66,9 @@ const badge = (d: typeof entry.data) => [
   d.distribution === 'mirror' ? '开源镜像' : '只评不转',
   ...d.requires.map((r) => `需要${REQUIRES_LABEL[r] ?? r}`),
 ];
-const statusLine = d.status === 'tested' ? `${LAYER_LABEL[s!.tested.layer]} · ${EVIDENCE_LABEL[s!.tested.by]} · ${s!.tested.date}` : d.status === 'pending' ? '待测' : '不收录';
+// pending 条目分两种：进了这一轮实测的（在候选表里，评完出分），和人工复核时没入围的
+const inBatch = (report.candidateSlugs ?? []).includes(entry.id);
+const statusLine = d.status === 'tested' ? `${LAYER_LABEL[s!.tested.layer]} · ${EVIDENCE_LABEL[s!.tested.by]} · ${s!.tested.date}` : d.status === 'pending' ? (inBatch ? '待出分' : '未入围') : '不收录';
 ---
 
 <BaseLayout title={`${d.title} · Skill 工坊`} description={d.does}>
@@ -91,8 +94,11 @@ const statusLine = d.status === 'tested' ? `${LAYER_LABEL[s!.tested.layer]} · $
       </div>
     </header>
 
-    {d.status === 'pending' && (
-      <p class="notice text-muted">这个技能已通过静态审查，还没有实测，所以没有分数，也没有安装步骤。评测完成后这一页会补上评分卡与评测档案。</p>
+    {d.status === 'pending' && inBatch && (
+      <p class="notice text-muted">这个技能进了第一轮实测，评审和抽检还没有做完，所以还没有分数，也没有评测档案。出分后这一页会补上评分卡。</p>
+    )}
+    {d.status === 'pending' && !inBatch && (
+      <p class="notice text-muted">这个技能在人工复核时评分不够或被淘汰，没有进这一轮实测，所以没有分数，也没有评测档案。</p>
     )}
     {d.status === 'rejected' && (
       <p class="notice reject">不收录：{d.rejectReason}</p>
