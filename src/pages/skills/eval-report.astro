@@ -6,6 +6,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import type { CategoryKey } from '../../data/skill-standard';
 import { categoryLabel, LAYER_LABEL } from '../../lib/skillLabels';
+import { loadSkills } from '../../lib/skillEntries';
 import { withBase } from '../../lib/urls';
 import report from '../../data/skill-eval-report.json';
 import '../../styles/table.css';
@@ -22,9 +23,12 @@ const scanned = report.funnel.scanned as Record<string, number>;
 const scannedTotal = Object.values(scanned).reduce((a, b) => a + b, 0);
 const scannedLine = Object.entries(scanned).map(([k, v]) => `${SOURCE[k] ?? k} ${v}`).join('，');
 // 还没做完的环节如实列出来；全部做完后列表为空，不显示
+const candidates = report.candidateSlugs?.length ?? 0;
+const scored = (await loadSkills()).tested.length;
 const inProgress = [
   report.judge.judged < report.runs.valid && `评审进行中：${report.runs.valid} 份有效产出里已评审 ${report.judge.judged} 份。`,
   report.judge.spotChecked === 0 && '抽检还没做。按流程，抽检过后才出分。',
+  scored < candidates && `分数和条目在逐个补：进了实测的 ${candidates} 个技能里，已有 ${scored} 个出了分。`,
   report.funnel.confirmed === 0 && `同款复核还没开始：海选出分靠前的会用 ${report.models['same-model']} 重跑。`,
 ].filter((t): t is string => Boolean(t));
 // 入围名单：已复核、已实测、触红线的默认可见；没入围的条数多，折叠起来，点开才看
