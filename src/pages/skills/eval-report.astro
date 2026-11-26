@@ -125,15 +125,15 @@ const MODEL_LINES = [
               <div class="tbl-wrap">
                 <table class="tbl rp-list">
                   <thead>
-                    <tr><th scope="col">名称</th><th scope="col">来源</th><th scope="col">品类</th><th scope="col">结论</th><th scope="col">原因</th></tr>
+                    <tr><th scope="col">名称</th><th scope="col">结论</th><th scope="col">品类</th><th scope="col">来源</th><th scope="col">原因</th></tr>
                   </thead>
                   <tbody>
                     {shortlistShown.map((s) => (
                       <tr>
                         <th scope="row">{s.url ? <a href={s.url} target="_blank" rel="noopener">{s.name} →</a> : s.name}</th>
-                        <td>{SOURCE[s.source] ?? s.source}</td>
-                        <td>{s.category ? categoryLabel(s.category as CategoryKey) : '未归类'}</td>
                         <td>{VERDICT[s.verdict] ?? s.verdict}</td>
+                        <td>{s.category ? categoryLabel(s.category as CategoryKey) : '未归类'}</td>
+                        <td>{SOURCE[s.source] ?? s.source}</td>
                         <td class="wrap">{s.reason}</td>
                       </tr>
                     ))}
@@ -146,15 +146,15 @@ const MODEL_LINES = [
                   <div class="tbl-wrap">
                     <table class="tbl rp-list">
                       <thead>
-                        <tr><th scope="col">名称</th><th scope="col">来源</th><th scope="col">品类</th><th scope="col">结论</th><th scope="col">原因</th></tr>
+                        <tr><th scope="col">名称</th><th scope="col">结论</th><th scope="col">品类</th><th scope="col">来源</th><th scope="col">原因</th></tr>
                       </thead>
                       <tbody>
                         {shortlistOut.map((s) => (
                           <tr>
                             <th scope="row">{s.url ? <a href={s.url} target="_blank" rel="noopener">{s.name} →</a> : s.name}</th>
-                            <td>{SOURCE[s.source] ?? s.source}</td>
-                            <td>{s.category ? categoryLabel(s.category as CategoryKey) : '未归类'}</td>
                             <td>{VERDICT[s.verdict] ?? s.verdict}</td>
+                            <td>{s.category ? categoryLabel(s.category as CategoryKey) : '未归类'}</td>
+                            <td>{SOURCE[s.source] ?? s.source}</td>
                             <td class="wrap">{s.reason}</td>
                           </tr>
                         ))}
@@ -188,6 +188,11 @@ const MODEL_LINES = [
   .rp-list td:nth-child(2), .rp-list td:nth-child(3), .rp-list td:nth-child(4) { white-space: nowrap; }
   .rp-list td.wrap { min-width: 15em; }
   .rp-more summary { cursor: pointer; color: var(--gold); font-size: 15px; padding: 6px 0; }
+  /* 窄屏：名称与原因列收窄，名称后面紧跟着结论，不横向滑动也看得到结论 */
+  @media (max-width: 820px) {
+    .rp-list tbody th { min-width: 10em; }
+    .rp-list td.wrap { min-width: 13em; }
+  }
   .counts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; }
   .counts li { display: flex; gap: 8px; }
   .facts { margin: 0; padding-left: 22px; font-size: 15px; line-height: 1.85; color: var(--text-muted); }
