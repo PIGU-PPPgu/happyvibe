@@ -28,7 +28,7 @@ const sourceName = (kind: string) => (kind === 'skillhub' ? 'SkillHub' : kind ==
     <ResourceHubHeader active="skills" counts={counts}>
       <span slot="note">
         {hasTested
-          ? '每个 Skill 都用真实教师任务实测过，分数、短板和证据都公开，并标明在哪一层、用哪个模型测的。'
+          ? '出了分的 Skill 都用真实教师任务实测过，分数、短板和证据都公开，并标明在哪一层、用哪个模型测的；没测的列在候选池里，不出分。'
           : '候选技能已完成静态审查，还没有实测。按规矩，没实测不出分。'}
         <span class="std-links">
           <a class="std-link" href={withBase('/skills/standard/')}>评价标准 →</a>

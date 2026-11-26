@@ -22,7 +22,7 @@ const toolCount = (await getCollection('tools')).length;
 const { tested } = await loadSkills();
 const hubFacts = [
   `${ownCount} 件自产课件可下载、断网可投屏`,
-  ...(tested.length ? [`${tested.length} 个 Skill 在 WorkBuddy 上实测过并给了分`] : []),
+  ...(tested.length ? [`${tested.length} 个 Skill 用真实教师任务实测过并给了分`] : []),
   `${toolCount} 个工具`,
 ];
 

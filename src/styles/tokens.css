@@ -404,6 +404,14 @@ a:hover {
   vertical-align: top;
 }
 
+/* 窄屏下首列按词换行：中文不在两个字之间硬断，「入场」「探究」这类短标签保持完整；
+   长标签仍然在词与标点之间换行，不会把表格撑宽 */
+@media (max-width: 720px) {
+  .prose td:first-child {
+    word-break: keep-all;
+  }
+}
+
 .prose tr:nth-child(even) td {
   background: rgba(166, 61, 151, 0.05);
 }
